@@ -1,6 +1,8 @@
 package root
 
 import (
+	"taikun-cli/cmd/noop"
+
 	"github.com/spf13/cobra"
 )
 
@@ -13,6 +15,8 @@ func NewCmdRoot() *cobra.Command {
 			// Do Stuff Here
 		},
 	}
+
+	cmd.AddCommand(noop.NewCmdNoop())
 
 	return cmd
 }
