@@ -8,12 +8,9 @@ import (
 
 func NewCmdRoot() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "taikun",
+		Use:   "taikun <command> <subcommand> [flags]",
 		Short: "Taikun CLI",
 		Long:  `Manage Taikun resources from the command line.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			// Do Stuff Here
-		},
 	}
 
 	cmd.AddCommand(noop.NewCmdNoop())
