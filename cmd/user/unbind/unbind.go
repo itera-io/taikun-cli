@@ -27,10 +27,10 @@ func NewCmdUnbind() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
-	cmd.MarkFlagRequired("username")
+	cmdutils.MarkFlagRequired(cmd, "username")
 
 	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	cmd.MarkFlagRequired("project-id")
+	cmdutils.MarkFlagRequired(cmd, "project-id")
 
 	return cmd
 }
