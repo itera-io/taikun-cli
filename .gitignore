@@ -1,2 +1,5 @@
 # Ignore taikun binary 
 taikun
+
+# Other
+*.tmp
