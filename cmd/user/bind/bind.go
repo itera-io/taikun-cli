@@ -1,7 +1,6 @@
 package bind
 
 import (
-	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 
@@ -54,7 +53,7 @@ func bindRun(opts *BindOptions) (err error) {
 	params := user_projects.NewUserProjectsBindProjectsParams().WithV(cmdutils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
-		fmt.Println(response.Payload)
+		cmdutils.PrettyPrint(response.Payload)
 	}
 
 	return
