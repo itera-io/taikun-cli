@@ -1,2 +1,6 @@
-# Ignore taikun binary 
+# Ignore taikun binaries
 taikun
+taikun-cli
+
+# Other
+*.tmp
