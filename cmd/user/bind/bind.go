@@ -14,14 +14,14 @@ type BindOptions struct {
 	ProjectID int
 }
 
-func NewCmdBind(apiClient *api.Client) *cobra.Command {
+func NewCmdBind() *cobra.Command {
 	var opts BindOptions
 
 	cmd := &cobra.Command{
 		Use:   "bind",
 		Short: "Bind a user to a project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return bindRun(&opts, apiClient)
+			return bindRun(&opts)
 		},
 	}
 
@@ -34,7 +34,9 @@ func NewCmdBind(apiClient *api.Client) *cobra.Command {
 	return cmd
 }
 
-func bindRun(opts *BindOptions, apiClient *api.Client) (err error) {
+func bindRun(opts *BindOptions) (err error) {
+	apiClient := api.NewClient()
+
 	body := &models.BindProjectsCommand{
 		UserID: opts.UserID,
 		Projects: []*models.UpdateUserProjectDto{

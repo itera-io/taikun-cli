@@ -2,12 +2,11 @@ package noop
 
 import (
 	"fmt"
-	"taikun-cli/api"
 
 	"github.com/spf13/cobra"
 )
 
-func NewCmdNoop(apiClient *api.Client) *cobra.Command {
+func NewCmdNoop() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "noop",
 		Short: "Do nothing",

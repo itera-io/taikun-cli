@@ -35,7 +35,7 @@ type Client struct {
 	refreshToken string
 }
 
-func NewClient() (*Client, error) {
+func newClientCore() (*Client, error) {
 	email, keycloakEnabled := os.LookupEnv(TaikunKeycloakEmailEnvVar)
 	password := os.Getenv(TaikunKeycloakPasswordEnvVar)
 
@@ -76,6 +76,15 @@ To override the default API host, set %s.`,
 		password:            password,
 		useKeycloakEndpoint: keycloakEnabled,
 	}, nil
+}
+
+func NewClient() *Client {
+	apiClient, err := newClientCore()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	return apiClient
 }
 
 type jwtData struct {
