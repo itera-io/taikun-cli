@@ -35,7 +35,10 @@ func NewCmdBind() *cobra.Command {
 }
 
 func bindRun(opts *BindOptions) (err error) {
-	apiClient := api.NewClient()
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
 
 	body := &models.BindProjectsCommand{
 		UserID: opts.UserID,
