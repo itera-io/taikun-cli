@@ -11,7 +11,7 @@ import (
 )
 
 type BindOptions struct {
-	UserID    string
+	Username  string
 	ProjectID int
 }
 
@@ -26,8 +26,8 @@ func NewCmdBind() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.UserID, "user-id", "u", "", "User ID (required)")
-	cmd.MarkFlagRequired("user-id")
+	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
+	cmd.MarkFlagRequired("username")
 
 	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
 	cmd.MarkFlagRequired("project-id")
@@ -42,7 +42,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	body := &models.BindProjectsCommand{
-		UserID: opts.UserID,
+		UserName: opts.Username,
 		Projects: []*models.UpdateUserProjectDto{
 			{
 				ProjectID: int32(opts.ProjectID),
