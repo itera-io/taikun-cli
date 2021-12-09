@@ -2,6 +2,7 @@ package bind
 
 import (
 	"fmt"
+	"taikun-cli/api"
 
 	"github.com/spf13/cobra"
 )
@@ -11,7 +12,7 @@ type BindOptions struct {
 	ProjectID int
 }
 
-func NewCmdBind() *cobra.Command {
+func NewCmdBind(apiClient *api.Client) *cobra.Command {
 	var opts BindOptions
 
 	cmd := &cobra.Command{
