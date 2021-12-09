@@ -10,9 +10,10 @@ import (
 
 func NewCmdRoot(apiClient *api.Client) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "taikun <command> <subcommand> [flags]",
-		Short: "Taikun CLI",
-		Long:  `Manage Taikun resources from the command line.`,
+		Use:          "taikun <command> <subcommand> [flags]",
+		Short:        "Taikun CLI",
+		Long:         `Manage Taikun resources from the command line.`,
+		SilenceUsage: true,
 	}
 
 	cmd.AddCommand(noop.NewCmdNoop(apiClient))
