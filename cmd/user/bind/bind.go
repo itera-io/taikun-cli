@@ -23,6 +23,7 @@ func NewCmdBind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return bindRun(&opts)
 		},
+		Args: cobra.NoArgs,
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
