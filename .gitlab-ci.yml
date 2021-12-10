@@ -1,0 +1,9 @@
+image: alpine:3.15
+
+stages:
+  - build
+  - lint
+
+include:
+  - ci-templates/.build.yaml
+  - ci-templates/.lint.yaml
