@@ -11,6 +11,7 @@ import (
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 	// TODO add other flags
 }
 
@@ -26,6 +27,7 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	// TODO add other flags
 
 	return cmd
@@ -50,11 +52,19 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		users = append(users, response.Payload.Data...)
 		usersCount := int32(len(users))
+		if opts.Limit != 0 && usersCount >= opts.Limit {
+			break
+		}
 		if usersCount == response.Payload.TotalCount {
 			break
 		}
 		params = params.WithOffset(&usersCount)
 	}
+
+	if opts.Limit != 0 && int32(len(users)) > opts.Limit {
+		users = users[:opts.Limit]
+	}
+
 	cmdutils.PrettyPrint(users)
 	return
 }
