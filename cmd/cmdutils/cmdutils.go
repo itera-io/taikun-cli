@@ -11,6 +11,12 @@ import (
 
 const ApiVersion = "1"
 
+var SortDirection = "asc"
+
+func ReverseSortDirection() {
+	SortDirection = "desc"
+}
+
 const prettyPrintPrefix = ""
 const prettyPrintIndent = "    "
 

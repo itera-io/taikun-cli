@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 
@@ -10,9 +11,10 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID int32
-	Limit          int32
-	// TODO add other flags
+	Limit                int32
+	OrganizationID       int32
+	ReverseSortDirection bool
+	SortBy               string
 }
 
 func NewCmdList() *cobra.Command {
@@ -24,11 +26,13 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun(&opts)
 		},
+		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
-	// TODO add other flags
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
 	return cmd
 }
@@ -42,6 +46,13 @@ func listRun(opts *ListOptions) (err error) {
 	params := users.NewUsersListParams().WithV(cmdutils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
+	}
+	if opts.ReverseSortDirection {
+		cmdutils.ReverseSortDirection()
+	}
+	if opts.SortBy != "" {
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
 	users := []*models.UserForListDto{}
