@@ -3,7 +3,7 @@ lint:
   allow_failure: false
   image: alpine:3.15
   script:
+    - apk add --no-cache go
     # From https://golangci-lint.run/usage/install/#ci-installation:
     - wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.43.0
-    - apk add --no-cache go
-    - $GOPATH/bin/golangci-lint run -v
+    - ./bin/golangci-lint run -v
