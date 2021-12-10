@@ -1,0 +1,6 @@
+compile:
+  stage: build
+  allow_failure: false
+  image: golang:1.17-alpine
+  script:
+    - go build .

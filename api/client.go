@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -45,9 +44,8 @@ func NewClient() (*Client, error) {
 	}
 
 	if email == "" || password == "" {
-		return nil, errors.New(
-			fmt.Sprintf(
-				`Please set your Taikun credentials.
+		return nil, fmt.Errorf(
+			`Please set your Taikun credentials.
 To authenticate with your Taikun account, set the following environment variables:
 %s
 %s
@@ -57,12 +55,12 @@ To authenticate with Keycloak, set the following environment variables:
 %s
 
 To override the default API host, set %s.`,
-				TaikunKeycloakEmailEnvVar,
-				TaikunKeycloakPasswordEnvVar,
-				TaikunEmailEnvVar,
-				TaikunPasswordEnvVar,
-				TaikunApiHostEnvVar,
-			))
+			TaikunKeycloakEmailEnvVar,
+			TaikunKeycloakPasswordEnvVar,
+			TaikunEmailEnvVar,
+			TaikunPasswordEnvVar,
+			TaikunApiHostEnvVar,
+		)
 	}
 
 	transportConfig := client.DefaultTransportConfig()

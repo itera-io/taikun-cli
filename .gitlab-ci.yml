@@ -1,0 +1,13 @@
+stages:
+  - build
+  - lint
+
+include:
+  - ci-templates/.build.yaml
+  - ci-templates/.lint.yaml
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "dev"'
