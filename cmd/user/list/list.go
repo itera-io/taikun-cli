@@ -5,6 +5,7 @@ import (
 	"taikun-cli/cmd/cmdutils"
 
 	"github.com/itera-io/taikungoclient/client/users"
+	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -40,10 +41,20 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	response, err := apiClient.Client.Users.UsersList(params, apiClient)
-	if err == nil {
-		cmdutils.PrettyPrint(response.Payload.Data)
-	}
 
+	users := []*models.UserForListDto{}
+	for {
+		response, err := apiClient.Client.Users.UsersList(params, apiClient)
+		if err != nil {
+			return err
+		}
+		users = append(users, response.Payload.Data...)
+		usersCount := int32(len(users))
+		if usersCount == response.Payload.TotalCount {
+			break
+		}
+		params = params.WithOffset(&usersCount)
+	}
+	cmdutils.PrettyPrint(users)
 	return
 }
