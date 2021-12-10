@@ -1,3 +1,8 @@
 lint:
   stage: lint
-  # FIXME
+  allow_failure: false
+  image: golang:1.17-alpine
+  script:
+    # From https://golangci-lint.run/usage/install/#ci-installation:
+    - wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.43.0
+    - golangci-lint run -v
