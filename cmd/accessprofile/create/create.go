@@ -21,15 +21,14 @@ func NewCmdCreate() *cobra.Command {
 	var opts CreateOptions
 
 	cmd := &cobra.Command{
-		Use:   "create",
+		Use:   "create <name>",
 		Short: "Create an access profile",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			opts.Name = args[0]
 			return createRun(&opts)
 		},
 	}
-
-	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
-	cmdutils.MarkFlagRequired(cmd, "name")
 
 	cmd.Flags().StringVarP(&opts.HttpProxy, "http-proxy", "p", "", "Http Proxy URL")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
