@@ -1,6 +1,10 @@
 package sshuser
 
-import "github.com/spf13/cobra"
+import (
+	"taikun-cli/cmd/accessprofile/sshuser/list"
+
+	"github.com/spf13/cobra"
+)
 
 func NewCmdSshUser() *cobra.Command {
 	cmd := &cobra.Command{
@@ -9,7 +13,7 @@ func NewCmdSshUser() *cobra.Command {
 		Aliases: []string{"ssh"},
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(list.NewCmdList())
 
 	return cmd
 }
