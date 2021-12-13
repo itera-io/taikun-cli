@@ -12,8 +12,10 @@ func GetUserRole(role string) models.UserRole {
 	if role == "user" {
 		return 400
 	}
-	// manager
-	return 200
+	if role == "manager" {
+		return 200
+	}
+	return -1
 }
 
 func Atoi32(str string) (int32, error) {
