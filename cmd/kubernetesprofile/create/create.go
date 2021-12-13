@@ -34,8 +34,8 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().BoolVar(&opts.AllowSchedulingOnMaster, "allow-master-scheduling", false, "Allow scheduling on master nodes")
 	cmd.Flags().BoolVar(&opts.ExposeNodePortOnBastion, "expose-node-port-on-bastion", false, "Expose Node Port on Bastion")
-	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "octavia-enabled", false, "Enable Octavia Load Balancer")
-	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "taikun-lb-enabled", false, "Enable Taikun Load Balancer")
+	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
+	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
 
 	return cmd
 }
