@@ -1,9 +1,6 @@
 package create
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 
@@ -72,10 +69,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(cmdutils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
-		// TODO PrettyPrint CmdUtils
-		// cmdutils.PrettyPrint(response.Payload)
-		jsonPayload, _ := json.MarshalIndent(response.Payload, "", "    ")
-		fmt.Println(string(jsonPayload))
+		cmdutils.PrettyPrint(response.Payload)
 	}
 
 	return

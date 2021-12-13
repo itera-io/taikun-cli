@@ -40,9 +40,6 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	params := access_profiles.NewAccessProfilesDeleteParams().WithV(cmdutils.ApiVersion).WithID(opts.ID)
 	_, _, err = apiClient.Client.AccessProfiles.AccessProfilesDelete(params, apiClient)
 	if err == nil {
-		// TODO PrettyPrint CmdUtils
-		// cmdutils.PrettyPrint(response.Payload)
-		//jsonPayload, _ := json.MarshalIndent(response.Payload, "", "    ")
 		fmt.Println("Access Profile deleted")
 	}
 

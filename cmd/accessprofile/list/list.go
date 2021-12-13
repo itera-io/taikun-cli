@@ -1,7 +1,6 @@
 package list
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"taikun-cli/api"
@@ -50,12 +49,10 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		// TODO
-		//cmdutils.ReverseSortDirection()
+		cmdutils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		// TODO
-		//params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
@@ -80,9 +77,6 @@ func listRun(opts *ListOptions) (err error) {
 		accessProfiles = accessProfiles[:opts.Limit]
 	}
 
-	// TODO
-	//cmdutils.PrettyPrint(accessProfiles)
-	jsonPayload, _ := json.MarshalIndent(accessProfiles, "", "    ")
-	fmt.Println(string(jsonPayload))
+	cmdutils.PrettyPrint(accessProfiles)
 	return
 }
