@@ -28,11 +28,11 @@ func NewCmdCreate() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&opts.Name, "name", "", "Name (required)")
+	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(cmd, "name")
 
-	cmd.Flags().StringVar(&opts.HttpProxy, "http-proxy", "", "HttpProxy")
-	cmd.Flags().Int32Var(&opts.OrganizationID, "organization-id", 0, "Organization ID")
+	cmd.Flags().StringVarP(&opts.HttpProxy, "http-proxy", "p", "", "Http Proxy URL")
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().StringSliceVar(&opts.DNSServers, "dns-servers", []string{}, "DNS Servers")
 	cmd.Flags().StringSliceVar(&opts.NTPServers, "ntp-servers", []string{}, "NTP Servers")
 
