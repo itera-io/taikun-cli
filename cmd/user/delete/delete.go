@@ -8,19 +8,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type DeleteOptions struct {
-	UserID string
-}
-
 func NewCmdDelete() *cobra.Command {
-	var opts DeleteOptions
-
 	cmd := &cobra.Command{
 		Use:   "delete <user-id>",
 		Short: "Delete user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.UserID = args[0]
-			return deleteRun(&opts)
+			return deleteRun(args[0])
 		},
 		Args: cobra.ExactArgs(1),
 	}
@@ -28,13 +21,13 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(opts *DeleteOptions) (err error) {
+func deleteRun(id string) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := users.NewUsersDeleteParams().WithV(cmdutils.ApiVersion).WithID(opts.UserID)
+	params := users.NewUsersDeleteParams().WithV(cmdutils.ApiVersion).WithID(id)
 	response, _, err := apiClient.Client.Users.UsersDelete(params, apiClient)
 	if err == nil {
 		cmdutils.PrettyPrint(response)
