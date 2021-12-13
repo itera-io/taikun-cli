@@ -10,8 +10,9 @@ import (
 
 func NewCmdAccessProfile() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "access-profile <command>",
-		Short: "Manage access profiles",
+		Use:     "access-profile <command>",
+		Short:   "Manage access profiles",
+		Aliases: []string{"access"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())
