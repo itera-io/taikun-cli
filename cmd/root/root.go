@@ -4,6 +4,7 @@ import (
 	"taikun-cli/cmd/accessprofile"
 	"taikun-cli/cmd/billingcredential"
 	"taikun-cli/cmd/noop"
+	"taikun-cli/cmd/organization"
 	"taikun-cli/cmd/user"
 
 	"github.com/spf13/cobra"
@@ -17,9 +18,10 @@ func NewCmdRoot() *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	cmd.AddCommand(noop.NewCmdNoop())
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
 	cmd.AddCommand(billingcredential.NewCmdBillingCredential())
+	cmd.AddCommand(noop.NewCmdNoop())
+	cmd.AddCommand(organization.NewCmdOrganization())
 	cmd.AddCommand(user.NewCmdUser())
 
 	return cmd
