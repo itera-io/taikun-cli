@@ -63,14 +63,14 @@ func listRun(opts *ListOptions) (err error) {
 			return err
 		}
 		accessProfiles = append(accessProfiles, response.Payload.Data...)
-		usersCount := int32(len(accessProfiles))
-		if opts.Limit != 0 && usersCount >= opts.Limit {
+		count := int32(len(accessProfiles))
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
-		if usersCount == response.Payload.TotalCount {
+		if count == response.Payload.TotalCount {
 			break
 		}
-		params = params.WithOffset(&usersCount)
+		params = params.WithOffset(&count)
 	}
 
 	if opts.Limit != 0 && int32(len(accessProfiles)) > opts.Limit {
