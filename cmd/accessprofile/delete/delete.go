@@ -14,19 +14,12 @@ func NewCmdDelete() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete <access-profile-id>",
 		Short: "Delete an access profile",
-		Args: func(cmd *cobra.Command, args []string) error {
-			if len(args) != 1 {
-				return fmt.Errorf("accepts 1 arg, received %d", len(args))
-			}
-			_, err := cmdutils.Atoi32(args[0])
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := cmdutils.Atoi32(args[0])
 			if err != nil {
 				return fmt.Errorf("the given id must be a number")
 			}
-
-			return nil
-		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			id, _ := cmdutils.Atoi32(args[0])
 			return deleteRun(id)
 		},
 	}
