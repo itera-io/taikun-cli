@@ -1,6 +1,10 @@
 package flavor
 
-import "github.com/spf13/cobra"
+import (
+	"taikun-cli/cmd/flavor/bind"
+
+	"github.com/spf13/cobra"
+)
 
 func NewCmdFlavor() *cobra.Command {
 	cmd := &cobra.Command{
@@ -8,7 +12,7 @@ func NewCmdFlavor() *cobra.Command {
 		Short: "Get flavor info and manage project-flavor bindings",
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(bind.NewCmdBind())
 
 	return cmd
 }
