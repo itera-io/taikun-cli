@@ -2,6 +2,7 @@ package root
 
 import (
 	"taikun-cli/cmd/noop"
+	"taikun-cli/cmd/organization"
 	"taikun-cli/cmd/user"
 
 	"github.com/spf13/cobra"
@@ -16,6 +17,7 @@ func NewCmdRoot() *cobra.Command {
 	}
 
 	cmd.AddCommand(noop.NewCmdNoop())
+	cmd.AddCommand(organization.NewCmdOrganization())
 	cmd.AddCommand(user.NewCmdUser())
 
 	return cmd
