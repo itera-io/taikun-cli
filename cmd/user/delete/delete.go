@@ -1,6 +1,7 @@
 package delete
 
 import (
+	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 
@@ -28,9 +29,9 @@ func deleteRun(id string) (err error) {
 	}
 
 	params := users.NewUsersDeleteParams().WithV(cmdutils.ApiVersion).WithID(id)
-	response, _, err := apiClient.Client.Users.UsersDelete(params, apiClient)
+	_, _, err = apiClient.Client.Users.UsersDelete(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response)
+		fmt.Println("User deleted")
 	}
 
 	return
