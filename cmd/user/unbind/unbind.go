@@ -1,4 +1,4 @@
-package bind
+package unbind
 
 import (
 	"taikun-cli/api"
@@ -9,19 +9,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type BindOptions struct {
+type UnbindOptions struct {
 	Username  string
 	ProjectID int
 }
 
-func NewCmdBind() *cobra.Command {
-	var opts BindOptions
+func NewCmdUnbind() *cobra.Command {
+	var opts UnbindOptions
 
 	cmd := &cobra.Command{
-		Use:   "bind",
-		Short: "Bind a user to a project",
+		Use:   "unbind",
+		Short: "Unbind a user from a project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return bindRun(&opts)
+			return unbindRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
@@ -35,7 +35,7 @@ func NewCmdBind() *cobra.Command {
 	return cmd
 }
 
-func bindRun(opts *BindOptions) (err error) {
+func unbindRun(opts *UnbindOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -46,7 +46,7 @@ func bindRun(opts *BindOptions) (err error) {
 		Projects: []*models.UpdateUserProjectDto{
 			{
 				ProjectID: int32(opts.ProjectID),
-				IsBound:   true,
+				IsBound:   false,
 			},
 		},
 	}
