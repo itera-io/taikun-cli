@@ -20,7 +20,12 @@ func ReverseSortDirection() {
 const prettyPrintPrefix = ""
 const prettyPrintIndent = "    "
 
+var emptyStruct struct{}
+
 func PrettyPrint(data interface{}) error {
+	if data == nil {
+		data = emptyStruct
+	}
 	jsonBytes, err := json.MarshalIndent(data, prettyPrintPrefix, prettyPrintIndent)
 	if err != nil {
 		return err
