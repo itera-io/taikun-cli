@@ -2,6 +2,7 @@ package user
 
 import (
 	"taikun-cli/cmd/user/bind"
+	"taikun-cli/cmd/user/create"
 	"taikun-cli/cmd/user/list"
 	"taikun-cli/cmd/user/unbind"
 
@@ -15,6 +16,7 @@ func NewCmdUser() *cobra.Command {
 	}
 
 	cmd.AddCommand(bind.NewCmdBind())
+	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(unbind.NewCmdUnbind())
 
