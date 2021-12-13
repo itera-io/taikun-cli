@@ -2,5 +2,8 @@
 taikun
 taikun-cli
 
+# Jetbrains
+.idea
+
 # Other
 *.tmp
