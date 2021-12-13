@@ -1,6 +1,10 @@
 package organization
 
-import "github.com/spf13/cobra"
+import (
+	"taikun-cli/cmd/organization/list"
+
+	"github.com/spf13/cobra"
+)
 
 func NewCmdOrganization() *cobra.Command {
 	cmd := &cobra.Command{
@@ -9,7 +13,7 @@ func NewCmdOrganization() *cobra.Command {
 		Aliases: []string{"org"},
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(list.NewCmdList())
 
 	return cmd
 }
