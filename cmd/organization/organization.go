@@ -1,6 +1,7 @@
 package organization
 
 import (
+	"taikun-cli/cmd/organization/create"
 	"taikun-cli/cmd/organization/delete"
 	"taikun-cli/cmd/organization/list"
 
@@ -14,6 +15,7 @@ func NewCmdOrganization() *cobra.Command {
 		Aliases: []string{"org"},
 	}
 
+	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
 
