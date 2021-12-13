@@ -1,6 +1,7 @@
 package root
 
 import (
+	"taikun-cli/cmd/accessprofile"
 	"taikun-cli/cmd/noop"
 	"taikun-cli/cmd/user"
 
@@ -16,6 +17,7 @@ func NewCmdRoot() *cobra.Command {
 	}
 
 	cmd.AddCommand(noop.NewCmdNoop())
+	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
 	cmd.AddCommand(user.NewCmdUser())
 
 	return cmd
