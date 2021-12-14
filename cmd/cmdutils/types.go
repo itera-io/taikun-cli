@@ -7,6 +7,9 @@ import (
 	"github.com/itera-io/taikungoclient/models"
 )
 
+const UnlockedMode = "unlock"
+const LockedMode = "lock"
+
 func GetUserRole(role string) models.UserRole {
 	role = strings.ToLower(role)
 	if role == "user" {
