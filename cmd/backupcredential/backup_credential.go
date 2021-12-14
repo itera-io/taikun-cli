@@ -2,6 +2,7 @@ package backupcredential
 
 import (
 	"taikun-cli/cmd/backupcredential/create"
+	"taikun-cli/cmd/backupcredential/delete"
 	"taikun-cli/cmd/backupcredential/list"
 
 	"github.com/spf13/cobra"
@@ -15,6 +16,7 @@ func NewCmdBackupCredential() *cobra.Command {
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
 
 	return cmd
