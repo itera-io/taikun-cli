@@ -55,7 +55,6 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	if opts.SortBy != "" {
 		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
-		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
 	users := []*models.UserForListDto{}
