@@ -4,6 +4,7 @@ import (
 	"taikun-cli/cmd/backupcredential/create"
 	"taikun-cli/cmd/backupcredential/delete"
 	"taikun-cli/cmd/backupcredential/list"
+	"taikun-cli/cmd/backupcredential/lock"
 	"taikun-cli/cmd/backupcredential/unlock"
 
 	"github.com/spf13/cobra"
@@ -19,6 +20,7 @@ func NewCmdBackupCredential() *cobra.Command {
 	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(lock.NewCmdLock())
 	cmd.AddCommand(unlock.NewCmdUnlock())
 
 	return cmd
