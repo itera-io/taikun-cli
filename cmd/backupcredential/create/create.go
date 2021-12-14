@@ -1,9 +1,11 @@
 package create
 
 import (
+	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 
+	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -26,6 +28,13 @@ func NewCmdCreate() *cobra.Command {
 		Short: "Create a backup credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			isValid, err := backupCredentialIsValid(&opts)
+			if err != nil {
+				return err
+			}
+			if !isValid {
+				return fmt.Errorf("backup credential must be valid")
+			}
 			opts.S3Name = args[0]
 			return createRun(&opts)
 		},
@@ -46,6 +55,22 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	return cmd
+}
+
+func backupCredentialIsValid(opts *CreateOptions) (bool, error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return false, err
+	}
+	body := models.CheckS3Command{
+		S3AccessKeyID: opts.S3AccessKey,
+		S3SecretKey:   opts.S3SecretKey,
+		S3Endpoint:    opts.S3Endpoint,
+		S3Region:      opts.S3Region,
+	}
+	params := checker.NewCheckerS3Params().WithV(cmdutils.ApiVersion).WithBody(&body)
+	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
+	return err == nil, nil
 }
 
 func createRun(opts *CreateOptions) (err error) {
