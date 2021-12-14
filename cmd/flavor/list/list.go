@@ -29,6 +29,9 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("the given ID must be a number")
 			}
+			if opts.Limit < 0 {
+				return fmt.Errorf("limit flag must be positive")
+			}
 			opts.ProjectID = projectID
 			return listRun(&opts)
 		},
