@@ -11,8 +11,10 @@ import (
 )
 
 type AllOptions struct {
-	CloudCredentialID int32
-	Limit             int32
+	CloudCredentialID    int32
+	Limit                int32
+	ReverseSortDirection bool
+	SortBy               string
 }
 
 func NewCmdAll() *cobra.Command {
@@ -32,7 +34,9 @@ func NewCmdAll() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results")
+	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
 	return cmd
 }
@@ -45,6 +49,12 @@ func allRun(opts *AllOptions) (err error) {
 
 	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(cmdutils.ApiVersion)
 	params = params.WithCloudID(opts.CloudCredentialID)
+	if opts.ReverseSortDirection {
+		cmdutils.ReverseSortDirection()
+	}
+	if opts.SortBy != "" {
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+	}
 
 	flavors := []*models.FlavorsListDto{}
 	for {
