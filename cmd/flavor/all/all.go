@@ -12,6 +12,7 @@ import (
 
 type AllOptions struct {
 	CloudCredentialID int32
+	Limit             int32
 }
 
 func NewCmdAll() *cobra.Command {
@@ -30,6 +31,8 @@ func NewCmdAll() *cobra.Command {
 			return allRun(&opts)
 		},
 	}
+
+	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results")
 
 	return cmd
 }
@@ -51,9 +54,16 @@ func allRun(opts *AllOptions) (err error) {
 		}
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
 	}
 
 	cmdutils.PrettyPrint(flavors)
