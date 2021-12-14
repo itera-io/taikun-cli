@@ -11,7 +11,10 @@ import (
 )
 
 type ListOptions struct {
-	ProjectID int32
+	Limit                int32
+	ProjectID            int32
+	ReverseSortDirection bool
+	SortBy               string
 }
 
 func NewCmdList() *cobra.Command {
@@ -31,6 +34,10 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results")
+	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
+
 	return cmd
 }
 
@@ -42,6 +49,12 @@ func listRun(opts *ListOptions) (err error) {
 
 	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(cmdutils.ApiVersion)
 	params = params.WithProjectID(&opts.ProjectID)
+	if opts.ReverseSortDirection {
+		cmdutils.ReverseSortDirection()
+	}
+	if opts.SortBy != "" {
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}
 	for {
@@ -49,12 +62,19 @@ func listRun(opts *ListOptions) (err error) {
 		if err != nil {
 			return err
 		}
-
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
+
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
 	}
 
 	cmdutils.PrettyPrint(flavors)
