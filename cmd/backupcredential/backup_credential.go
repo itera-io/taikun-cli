@@ -1,6 +1,10 @@
 package backupcredential
 
-import "github.com/spf13/cobra"
+import (
+	"taikun-cli/cmd/backupcredential/list"
+
+	"github.com/spf13/cobra"
+)
 
 func NewCmdBackupCredential() *cobra.Command {
 	cmd := &cobra.Command{
@@ -9,7 +13,7 @@ func NewCmdBackupCredential() *cobra.Command {
 		Aliases: []string{"bc"},
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(list.NewCmdList())
 
 	return cmd
 }
