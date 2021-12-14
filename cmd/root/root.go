@@ -2,6 +2,7 @@ package root
 
 import (
 	"taikun-cli/cmd/accessprofile"
+	"taikun-cli/cmd/backupcredential"
 	"taikun-cli/cmd/billingcredential"
 	"taikun-cli/cmd/kubernetesprofile"
 	"taikun-cli/cmd/organization"
@@ -19,6 +20,7 @@ func NewCmdRoot() *cobra.Command {
 	}
 
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
+	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
 	cmd.AddCommand(billingcredential.NewCmdBillingCredential())
 	cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile())
 	cmd.AddCommand(organization.NewCmdOrganization())
