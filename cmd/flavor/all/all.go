@@ -82,6 +82,7 @@ func allRun(opts *AllOptions) (err error) {
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+		params = params.WithOffset(&flavorsCount)
 	}
 
 	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
