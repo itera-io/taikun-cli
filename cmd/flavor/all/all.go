@@ -14,7 +14,9 @@ type AllOptions struct {
 	CloudCredentialID    int32
 	Limit                int32
 	MaxCPU               int32
+	MaxRAM               float64
 	MinCPU               int32
+	MinRAM               float64
 	ReverseSortDirection bool
 	SortBy               string
 }
@@ -38,7 +40,9 @@ func NewCmdAll() *cobra.Command {
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32Var(&opts.MaxCPU, "max-cpu", 36, "Maximal CPU count")
+	cmd.Flags().Float64Var(&opts.MaxRAM, "max-ram", 500, "Maximal RAM size in GiB")
 	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
+	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
 	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results")
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
@@ -54,6 +58,9 @@ func allRun(opts *AllOptions) (err error) {
 	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(cmdutils.ApiVersion)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
+	minRAM := cmdutils.GiBToMiB(opts.MinRAM)
+	maxRAM := cmdutils.GiBToMiB(opts.MaxRAM)
+	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
 	if opts.ReverseSortDirection {
 		cmdutils.ReverseSortDirection()
 	}

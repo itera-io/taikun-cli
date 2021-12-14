@@ -25,3 +25,7 @@ func Atoi32(str string) (int32, error) {
 	}
 	return int32(res), nil
 }
+
+func GiBToMiB(gibiBytes float64) int32 {
+	return int32(gibiBytes * 1024)
+}
