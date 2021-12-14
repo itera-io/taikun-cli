@@ -13,6 +13,8 @@ import (
 type AllOptions struct {
 	CloudCredentialID    int32
 	Limit                int32
+	MaxCPU               int32
+	MinCPU               int32
 	ReverseSortDirection bool
 	SortBy               string
 }
@@ -35,6 +37,8 @@ func NewCmdAll() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().Int32Var(&opts.MaxCPU, "max-cpu", 36, "Maximal CPU count")
+	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
 	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results")
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
@@ -49,6 +53,7 @@ func allRun(opts *AllOptions) (err error) {
 
 	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(cmdutils.ApiVersion)
 	params = params.WithCloudID(opts.CloudCredentialID)
+	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
 	if opts.ReverseSortDirection {
 		cmdutils.ReverseSortDirection()
 	}
