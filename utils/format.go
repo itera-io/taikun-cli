@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -16,6 +17,8 @@ var emptyStruct struct{}
 
 const prettyPrintPrefix = ""
 const prettyPrintIndent = "    "
+
+var WrongIDArgumentFormatError = errors.New("The ID argument must be a number.")
 
 func marshalJsonData(data interface{}) []byte {
 	if data == nil {

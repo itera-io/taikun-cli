@@ -1,7 +1,6 @@
 package lock
 
 import (
-	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/utils"
 
@@ -18,7 +17,7 @@ func NewCmdLock() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			backupCredentialID, err := utils.Atoi32(args[0])
 			if err != nil {
-				return fmt.Errorf("the given ID must be a number")
+				return utils.WrongIDArgumentFormatError
 			}
 			return lockRun(backupCredentialID)
 		},

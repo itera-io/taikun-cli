@@ -26,7 +26,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			accessProfileID, err := utils.Atoi32(args[0])
 			if err != nil {
-				return fmt.Errorf("the given ID must be a number")
+				return utils.WrongIDArgumentFormatError
 			}
 			if opts.Limit < 0 {
 				return fmt.Errorf("limit flag must be positive")

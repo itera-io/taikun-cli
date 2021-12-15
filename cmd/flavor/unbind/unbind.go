@@ -1,7 +1,6 @@
 package unbind
 
 import (
-	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/utils"
 
@@ -19,7 +18,7 @@ func NewCmdUnbind() *cobra.Command {
 			for i, arg := range args {
 				binding, err := utils.Atoi32(arg)
 				if err != nil {
-					return fmt.Errorf("the given IDs must be numbers")
+					return utils.WrongIDArgumentFormatError
 				}
 				bindings[i] = binding
 			}
