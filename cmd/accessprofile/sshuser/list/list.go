@@ -56,6 +56,6 @@ func listRun(opts *ListOptions) (err error) {
 		sshUsers = sshUsers[:opts.Limit]
 	}
 
-	utils.PrettyPrint(sshUsers)
+	utils.PrettyPrintJson(sshUsers)
 	return
 }

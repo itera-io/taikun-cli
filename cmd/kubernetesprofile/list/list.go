@@ -80,6 +80,6 @@ func listRun(opts *ListOptions) (err error) {
 		kubernetesProfiles = kubernetesProfiles[:opts.Limit]
 	}
 
-	utils.PrettyPrint(kubernetesProfiles)
+	utils.PrettyPrintJson(kubernetesProfiles)
 	return
 }

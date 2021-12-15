@@ -79,6 +79,6 @@ func listRun(opts *ListOptions) (err error) {
 		users = users[:opts.Limit]
 	}
 
-	utils.PrettyPrint(users)
+	utils.PrettyPrintJson(users)
 	return
 }

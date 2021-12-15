@@ -54,7 +54,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	params := user_projects.NewUserProjectsBindProjectsParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
-		utils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

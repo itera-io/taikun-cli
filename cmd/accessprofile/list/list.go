@@ -78,6 +78,6 @@ func listRun(opts *ListOptions) (err error) {
 		accessProfiles = accessProfiles[:opts.Limit]
 	}
 
-	utils.PrettyPrint(accessProfiles)
+	utils.PrettyPrintJson(accessProfiles)
 	return
 }

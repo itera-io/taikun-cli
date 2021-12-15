@@ -68,7 +68,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

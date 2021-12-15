@@ -73,6 +73,6 @@ func listRun(opts *ListOptions) (err error) {
 		organizations = organizations[:opts.Limit]
 	}
 
-	utils.PrettyPrint(organizations)
+	utils.PrettyPrintJson(organizations)
 	return
 }

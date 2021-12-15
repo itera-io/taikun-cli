@@ -61,7 +61,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := ops_credentials.NewOpsCredentialsCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.OpsCredentials.OpsCredentialsCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

@@ -58,7 +58,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

@@ -81,6 +81,6 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	utils.PrettyPrint(flavors)
+	utils.PrettyPrintJson(flavors)
 	return
 }

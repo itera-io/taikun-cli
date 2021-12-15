@@ -10,7 +10,7 @@ var emptyStruct struct{}
 const prettyPrintPrefix = ""
 const prettyPrintIndent = "    "
 
-func PrettyPrint(data interface{}) error {
+func PrettyPrintJson(data interface{}) error {
 	if data == nil {
 		data = emptyStruct
 	}

@@ -68,6 +68,6 @@ func listRun(opts *ListOptions) (err error) {
 		billingCredentials = billingCredentials[:opts.Limit]
 	}
 
-	utils.PrettyPrint(billingCredentials)
+	utils.PrettyPrintJson(billingCredentials)
 	return
 }

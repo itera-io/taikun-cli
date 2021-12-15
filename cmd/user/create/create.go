@@ -59,7 +59,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := users.NewUsersCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.Users.UsersCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

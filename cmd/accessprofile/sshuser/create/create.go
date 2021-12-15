@@ -78,7 +78,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := ssh_users.NewSSHUsersCreateParams().WithV(utils.ApiVersion).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrint(response)
+		utils.PrettyPrintJson(response)
 	}
 
 	return

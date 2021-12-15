@@ -46,7 +46,7 @@ func bindRun(opts *BindOptions) (err error) {
 	params := flavors.NewFlavorsBindToProjectParams().WithV(utils.ApiVersion).WithBody(&body)
 	response, err := apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
 	if err == nil {
-		utils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return
