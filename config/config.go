@@ -9,6 +9,8 @@ func init() {
 var OutputFormat string
 var OutputFormatInvalidError = errors.New("Unknown output format")
 
+var ShowLargeValues bool
+
 const (
 	OutputFormatJson  = "json"
 	OutputFormatTable = "table"

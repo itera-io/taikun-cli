@@ -30,6 +30,9 @@ func NewCmdRoot() *cobra.Command {
 		),
 	)
 
+	cmd.PersistentFlags().BoolVar(&config.ShowLargeValues, "show-large-values", false,
+		"Prevent trimming of large cell values")
+
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
 	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
 	cmd.AddCommand(billingcredential.NewCmdBillingCredential())

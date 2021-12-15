@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"taikun-cli/config"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -94,6 +95,22 @@ func newTable() table.Writer {
 	return t
 }
 
+const maxColumnWidth = 40
+const trimmedValueSuffix = "..."
+
+func trimCellValue(value interface{}) interface{} {
+	if !config.ShowLargeValues {
+		if str, isString := value.(string); isString {
+			if len(str) > maxColumnWidth {
+				str = str[:(maxColumnWidth - len(trimmedValueSuffix))]
+				str += trimmedValueSuffix
+			}
+			return str
+		}
+	}
+	return value
+}
+
 func PrettyPrintTable(resources interface{}, fields ...string) {
 	t := newTable()
 
@@ -104,7 +121,7 @@ func PrettyPrintTable(resources interface{}, fields ...string) {
 	for _, resourceMap := range resourceMaps {
 		row := make([]interface{}, len(fields))
 		for i, field := range fields {
-			row[i] = resourceMap[field]
+			row[i] = trimCellValue(resourceMap[field])
 		}
 		t.AppendRow(table.Row(row))
 	}
