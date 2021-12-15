@@ -36,7 +36,7 @@ func deleteRun(id int32) (err error) {
 	params := ops_credentials.NewOpsCredentialsDeleteParams().WithV(utils.ApiVersion).WithID(id)
 	_, _, err = apiClient.Client.OpsCredentials.OpsCredentialsDelete(params, apiClient)
 	if err == nil {
-		fmt.Println("Billing Credential deleted")
+		utils.PrintDeleteSuccess("Billing credential", id)
 	}
 
 	return
