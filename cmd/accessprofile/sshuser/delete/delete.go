@@ -39,7 +39,7 @@ func deleteRun(id int32) (err error) {
 	_, err = apiClient.Client.SSHUsers.SSHUsersDelete(params, apiClient)
 
 	if err == nil {
-		fmt.Println("SSH user deleted")
+		utils.PrintDeleteSuccess("SSH user", id)
 	}
 
 	return
