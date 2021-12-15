@@ -52,9 +52,9 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	params := user_projects.NewUserProjectsBindProjectsParams().WithV(utils.ApiVersion).WithBody(body)
-	response, err := apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
+	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		utils.PrintStandardSuccess()
 	}
 
 	return
