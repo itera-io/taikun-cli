@@ -3,7 +3,7 @@ package unlock
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -16,7 +16,7 @@ func NewCmdUnlock() *cobra.Command {
 		Short: "Unlock a backup credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			backupCredentialID, err := cmdutils.Atoi32(args[0])
+			backupCredentialID, err := utils.Atoi32(args[0])
 			if err != nil {
 				return fmt.Errorf("the given ID must be a number")
 			}
@@ -35,12 +35,12 @@ func unlockRun(id int32) (err error) {
 
 	body := models.BackupLockManagerCommand{
 		ID:   id,
-		Mode: cmdutils.UnlockedMode,
+		Mode: utils.UnlockedMode,
 	}
-	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(cmdutils.ApiVersion).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(utils.ApiVersion).WithBody(&body)
 	_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)
 	if err == nil {
-		fmt.Println("Backup credential unlocked")
+		utils.PrintStandardSuccess()
 	}
 
 	return
