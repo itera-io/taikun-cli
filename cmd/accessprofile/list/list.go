@@ -56,7 +56,7 @@ func listRun(opts *ListOptions) (err error) {
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
-	var accessProfiles []*models.AccessProfilesListDto
+	var accessProfiles = make([]*models.AccessProfilesListDto, 0)
 	for {
 		response, err := apiClient.Client.AccessProfiles.AccessProfilesList(params, apiClient)
 		if err != nil {

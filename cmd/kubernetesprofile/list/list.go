@@ -56,7 +56,7 @@ func listRun(opts *ListOptions) (err error) {
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
-	var kubernetesProfiles []*models.KubernetesProfilesListDto
+	var kubernetesProfiles = make([]*models.KubernetesProfilesListDto, 0)
 	for {
 		response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesList(params, apiClient)
 		if err != nil {

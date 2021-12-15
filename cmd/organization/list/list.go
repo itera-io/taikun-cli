@@ -48,7 +48,7 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
 	}
 
-	organizations := []*models.OrganizationDetailsDto{}
+	var organizations = make([]*models.OrganizationDetailsDto, 0)
 	for {
 		response, err := apiClient.Client.Organizations.OrganizationsList(params, apiClient)
 		if err != nil {
