@@ -3,6 +3,7 @@ package all
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/config"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -33,6 +34,9 @@ func NewCmdAll() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("the given ID must be a number")
 			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
+			}
 			opts.CloudCredentialID = cloudCredentialID
 			return allRun(&opts)
 		},
@@ -47,6 +51,22 @@ func NewCmdAll() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
 	return cmd
+}
+
+func printResults(flavors []*models.FlavorsListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(flavors)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(flavors))
+		for i, flavor := range flavors {
+			data[i] = flavor
+		}
+		utils.PrettyPrintTable(data,
+			"name",
+			"cpu",
+			"ram",
+		)
+	}
 }
 
 func allRun(opts *AllOptions) (err error) {
@@ -89,6 +109,6 @@ func allRun(opts *AllOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	utils.PrettyPrintJson(flavors)
+	printResults(flavors)
 	return
 }

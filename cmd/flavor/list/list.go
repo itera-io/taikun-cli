@@ -3,6 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/config"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
@@ -32,6 +33,9 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return fmt.Errorf("limit flag must be positive")
 			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
+			}
 			opts.ProjectID = projectID
 			return listRun(&opts)
 		},
@@ -42,6 +46,26 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
 	return cmd
+}
+
+func printResults(flavors []*models.BoundFlavorsForProjectsListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(flavors)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(flavors))
+		for i, flavor := range flavors {
+			data[i] = flavor
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"cpu",
+			"isAws",
+			"isAzure",
+			"isOpenstack",
+			"projectName",
+		)
+	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -81,6 +105,6 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	utils.PrettyPrintJson(flavors)
+	printResults(flavors)
 	return
 }
