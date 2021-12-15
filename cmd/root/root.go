@@ -1,6 +1,7 @@
 package root
 
 import (
+	"fmt"
 	"taikun-cli/cmd/accessprofile"
 	"taikun-cli/cmd/backupcredential"
 	"taikun-cli/cmd/billingcredential"
@@ -9,6 +10,7 @@ import (
 	"taikun-cli/cmd/kubernetesprofile"
 	"taikun-cli/cmd/organization"
 	"taikun-cli/cmd/user"
+	"taikun-cli/config"
 
 	"github.com/spf13/cobra"
 )
@@ -20,6 +22,13 @@ func NewCmdRoot() *cobra.Command {
 		Long:         `Manage Taikun resources from the command line.`,
 		SilenceUsage: true,
 	}
+
+	cmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "f", config.OutputFormatTable,
+		fmt.Sprintf(
+			"Output format: \"%s\" or \"%s\"",
+			config.OutputFormatJson, config.OutputFormatTable,
+		),
+	)
 
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
 	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
