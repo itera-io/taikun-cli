@@ -36,7 +36,7 @@ func deleteRun(id int32) (err error) {
 	params = params.WithOrganizationID(id)
 	_, _, err = apiClient.Client.Organizations.OrganizationsDelete(params, apiClient)
 	if err == nil {
-		fmt.Println("Organization deleted")
+		utils.PrintDeleteSuccess("Organization", id)
 	}
 
 	return

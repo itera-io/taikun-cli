@@ -45,9 +45,9 @@ func createRun(opts *models.OrganizationCreateCommand) (err error) {
 	}
 
 	params := organizations.NewOrganizationsCreateParams().WithV(utils.ApiVersion).WithBody(opts)
-	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
+	_, err = apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		utils.PrintStandardSuccess()
 	}
 
 	return
