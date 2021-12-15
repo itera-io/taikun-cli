@@ -3,6 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/config"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
@@ -27,6 +28,9 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return fmt.Errorf("limit flag must be positive")
 			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
+			}
 			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
@@ -38,6 +42,23 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
 	return cmd
+}
+
+func printResults(accessProfiles []*models.AccessProfilesListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(accessProfiles)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(accessProfiles))
+		for i, accessProfile := range accessProfiles {
+			data[i] = accessProfile
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"organizationName",
+			"isLocked",
+		)
+	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -78,6 +99,6 @@ func listRun(opts *ListOptions) (err error) {
 		accessProfiles = accessProfiles[:opts.Limit]
 	}
 
-	utils.PrettyPrintJson(accessProfiles)
+	printResults(accessProfiles)
 	return
 }

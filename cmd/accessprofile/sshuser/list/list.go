@@ -3,9 +3,11 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/config"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
+	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -29,6 +31,9 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return fmt.Errorf("limit flag must be positive")
 			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
+			}
 			opts.AccessProfileID = accessProfileID
 			return listRun(&opts)
 		},
@@ -37,6 +42,22 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 
 	return cmd
+}
+
+func printResults(sshUsers []*models.SSHUsersListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(sshUsers)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(sshUsers))
+		for i, sshUser := range sshUsers {
+			data[i] = sshUser
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"sshPublicKey",
+		)
+	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -56,6 +77,6 @@ func listRun(opts *ListOptions) (err error) {
 		sshUsers = sshUsers[:opts.Limit]
 	}
 
-	utils.PrettyPrintJson(sshUsers)
+	printResults(sshUsers)
 	return
 }
