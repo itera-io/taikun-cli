@@ -42,7 +42,13 @@ func NewCmdList() *cobra.Command {
 
 func listRun(opts *ListOptions) (err error) {
 	err = openstack.ListRun((*openstack.ListOptions)(opts))
+	if err != nil {
+		return
+	}
 	err = azure.ListRun((*azure.ListOptions)(opts))
+	if err != nil {
+		return
+	}
 	err = aws.ListRun((*aws.ListOptions)(opts))
 	return
 }
