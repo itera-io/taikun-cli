@@ -1,7 +1,6 @@
 package list
 
 import (
-	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
@@ -24,7 +23,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List billing credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return fmt.Errorf("limit flag must be positive")
+				return utils.NegativeLimitFlagError
 			}
 			return listRun(&opts)
 		},

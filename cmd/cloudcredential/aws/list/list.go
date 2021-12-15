@@ -27,7 +27,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List aws cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return fmt.Errorf("limit flag must be positive")
+				return utils.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
