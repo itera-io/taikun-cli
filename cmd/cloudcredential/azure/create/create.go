@@ -10,12 +10,14 @@ import (
 )
 
 type CreateOptions struct {
-	Name                string
-	AzureSubscriptionId string
-	AzureClientId       string
-	AzureClientSecret   string
-	AzureTenantId       string
-	OrganizationID      int32
+	Name                  string
+	AzureSubscriptionId   string
+	AzureClientId         string
+	AzureClientSecret     string
+	AzureTenantId         string
+	AzureLocation         string
+	AzureAvailabilityZone string
+	OrganizationID        int32
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -43,6 +45,12 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.AzureTenantId, "tenant-id", "t", "", "Azure Tenant ID (required)")
 	cmdutils.MarkFlagRequired(cmd, "tenant-id")
 
+	cmd.Flags().StringVarP(&opts.AzureLocation, "location", "l", "", "Azure Location (required)")
+	cmdutils.MarkFlagRequired(cmd, "location")
+
+	cmd.Flags().StringVarP(&opts.AzureAvailabilityZone, "availability-zone", "a", "", "Azure Availability Zone (required)")
+	cmdutils.MarkFlagRequired(cmd, "availability-zone")
+
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
 	return cmd
@@ -55,12 +63,14 @@ func createRun(opts *CreateOptions) (err error) {
 	}
 
 	body := &models.CreateAzureCloudCommand{
-		Name:                opts.Name,
-		AzureSubscriptionID: opts.AzureSubscriptionId,
-		AzureClientID:       opts.AzureClientId,
-		AzureClientSecret:   opts.AzureClientSecret,
-		AzureTenantID:       opts.AzureTenantId,
-		OrganizationID:      opts.OrganizationID,
+		Name:                  opts.Name,
+		AzureSubscriptionID:   opts.AzureSubscriptionId,
+		AzureClientID:         opts.AzureClientId,
+		AzureClientSecret:     opts.AzureClientSecret,
+		AzureTenantID:         opts.AzureTenantId,
+		AzureLocation:         opts.AzureLocation,
+		AzureAvailabilityZone: opts.AzureAvailabilityZone,
+		OrganizationID:        opts.OrganizationID,
 	}
 
 	params := azure.NewAzureCreateParams().WithV(cmdutils.ApiVersion).WithBody(body)
