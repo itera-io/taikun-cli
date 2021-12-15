@@ -2,6 +2,7 @@ package list
 
 import (
 	"fmt"
+
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 
@@ -57,7 +58,7 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
 	}
 
-	users := []*models.UserForListDto{}
+	var users = make([]*models.UserForListDto, 0)
 	for {
 		response, err := apiClient.Client.Users.UsersList(params, apiClient)
 		if err != nil {
