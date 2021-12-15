@@ -44,9 +44,9 @@ func bindRun(opts *BindOptions) (err error) {
 		Flavors:   opts.Flavors,
 	}
 	params := flavors.NewFlavorsBindToProjectParams().WithV(utils.ApiVersion).WithBody(&body)
-	response, err := apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
+	_, err = apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		utils.PrintStandardSuccess()
 	}
 
 	return
