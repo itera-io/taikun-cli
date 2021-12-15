@@ -41,6 +41,8 @@ func NewCmdCreate() *cobra.Command {
 	cmdutils.MarkFlagRequired(cmd, "region")
 
 	cmd.Flags().StringVarP(&opts.AWSAvailabilityZone, "availability-zone", "z", "", "AWS Availability Zone")
+	cmdutils.MarkFlagRequired(cmd, "availability-zone")
+
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
 	return cmd
