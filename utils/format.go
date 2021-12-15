@@ -134,3 +134,7 @@ func PrintDeleteSuccess(resourceName string, id interface{}) {
 	fmt.Print(id)
 	fmt.Println(" was deleted successfully.")
 }
+
+func PrintStandardSuccess() {
+	fmt.Println("Operation was successful.")
+}
