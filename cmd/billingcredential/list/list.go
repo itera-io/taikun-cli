@@ -3,6 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/config"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
@@ -34,6 +35,26 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	return cmd
+}
+
+func printResults(billingCredentials []*models.OperationCredentialsListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(billingCredentials)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(billingCredentials))
+		for i, billingCredential := range billingCredentials {
+			data[i] = billingCredential
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"organizationName",
+			"prometheusUsername",
+			"prometheusUrl",
+			"isDefault",
+			"isLocked",
+		)
+	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -68,6 +89,6 @@ func listRun(opts *ListOptions) (err error) {
 		billingCredentials = billingCredentials[:opts.Limit]
 	}
 
-	utils.PrettyPrintJson(billingCredentials)
+	printResults(billingCredentials)
 	return
 }
