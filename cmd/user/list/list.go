@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
@@ -47,15 +47,15 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := users.NewUsersListParams().WithV(cmdutils.ApiVersion)
+	params := users.NewUsersListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 	}
 
 	var users = make([]*models.UserForListDto, 0)
@@ -79,6 +79,6 @@ func listRun(opts *ListOptions) (err error) {
 		users = users[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(users)
+	utils.PrettyPrint(users)
 	return
 }

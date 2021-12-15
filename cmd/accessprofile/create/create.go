@@ -2,7 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -65,10 +65,10 @@ func createRun(opts *CreateOptions) (err error) {
 		NtpServers:     NTPServers,
 	}
 
-	params := access_profiles.NewAccessProfilesCreateParams().WithV(cmdutils.ApiVersion).WithBody(body)
+	params := access_profiles.NewAccessProfilesCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrettyPrint(response.Payload)
 	}
 
 	return

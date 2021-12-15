@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/spf13/cobra"
@@ -16,7 +16,7 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete a kubernetes profile",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := cmdutils.Atoi32(args[0])
+			id, err := utils.Atoi32(args[0])
 			if err != nil {
 				return fmt.Errorf("the given id must be a number")
 			}
@@ -33,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(cmdutils.ApiVersion).WithID(id)
+	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(utils.ApiVersion).WithID(id)
 	_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
 	if err == nil {
 		fmt.Println("Kubernetes Profile deleted")

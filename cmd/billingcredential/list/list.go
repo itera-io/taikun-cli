@@ -3,7 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -42,7 +42,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := ops_credentials.NewOpsCredentialsListParams().WithV(cmdutils.ApiVersion)
+	params := ops_credentials.NewOpsCredentialsListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
@@ -68,6 +68,6 @@ func listRun(opts *ListOptions) (err error) {
 		billingCredentials = billingCredentials[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(billingCredentials)
+	utils.PrettyPrint(billingCredentials)
 	return
 }

@@ -2,7 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
@@ -31,10 +31,10 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Email, "email", "e", "", "Email (required)")
-	cmdutils.MarkFlagRequired(cmd, "email")
+	utils.MarkFlagRequired(cmd, "email")
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
-	cmdutils.MarkFlagRequired(cmd, "role")
+	utils.MarkFlagRequired(cmd, "role")
 
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
@@ -52,14 +52,14 @@ func createRun(opts *CreateOptions) (err error) {
 		DisplayName:    opts.DisplayName,
 		Email:          opts.Email,
 		OrganizationID: opts.OrganizationID,
-		Role:           cmdutils.GetUserRole(opts.Role),
+		Role:           utils.GetUserRole(opts.Role),
 		Username:       opts.Username,
 	}
 
-	params := users.NewUsersCreateParams().WithV(cmdutils.ApiVersion).WithBody(body)
+	params := users.NewUsersCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.Users.UsersCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrettyPrint(response.Payload)
 	}
 
 	return

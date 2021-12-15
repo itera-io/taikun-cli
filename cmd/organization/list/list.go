@@ -3,7 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -44,12 +44,12 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsListParams().WithV(cmdutils.ApiVersion)
+	params := organizations.NewOrganizationsListParams().WithV(utils.ApiVersion)
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
@@ -73,6 +73,6 @@ func listRun(opts *ListOptions) (err error) {
 		organizations = organizations[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(organizations)
+	utils.PrettyPrint(organizations)
 	return
 }

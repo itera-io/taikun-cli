@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -47,15 +47,15 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(cmdutils.ApiVersion)
+	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
@@ -80,6 +80,6 @@ func listRun(opts *ListOptions) (err error) {
 		kubernetesProfiles = kubernetesProfiles[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(kubernetesProfiles)
+	utils.PrettyPrint(kubernetesProfiles)
 	return
 }

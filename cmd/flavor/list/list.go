@@ -3,7 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
@@ -25,7 +25,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List a project's bound flavors",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			projectID, err := cmdutils.Atoi32(args[0])
+			projectID, err := utils.Atoi32(args[0])
 			if err != nil {
 				return fmt.Errorf("the given ID must be a number")
 			}
@@ -50,13 +50,13 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(cmdutils.ApiVersion)
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(utils.ApiVersion)
 	params = params.WithProjectID(&opts.ProjectID)
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}
@@ -81,6 +81,6 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(flavors)
+	utils.PrettyPrint(flavors)
 	return
 }

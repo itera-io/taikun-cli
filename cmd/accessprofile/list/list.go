@@ -3,7 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -46,15 +46,15 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := access_profiles.NewAccessProfilesListParams().WithV(cmdutils.ApiVersion)
+	params := access_profiles.NewAccessProfilesListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 	}
 
 	var accessProfiles = make([]*models.AccessProfilesListDto, 0)
@@ -78,6 +78,6 @@ func listRun(opts *ListOptions) (err error) {
 		accessProfiles = accessProfiles[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(accessProfiles)
+	utils.PrettyPrint(accessProfiles)
 	return
 }
