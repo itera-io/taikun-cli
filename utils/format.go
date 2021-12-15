@@ -111,3 +111,9 @@ func PrettyPrintTable(resources interface{}, fields ...string) {
 
 	t.Render()
 }
+
+func PrintDeleteSuccess(resourceName string, id interface{}) {
+	fmt.Printf("%s with ID ", resourceName)
+	fmt.Print(id)
+	fmt.Println(" was deleted successfully.")
+}
