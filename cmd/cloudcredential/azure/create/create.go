@@ -2,7 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/azure"
 	"github.com/itera-io/taikungoclient/models"
@@ -34,22 +34,22 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.AzureSubscriptionId, "subscription-id", "s", "", "Azure Subscription ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "subscription-id")
+	utils.MarkFlagRequired(cmd, "subscription-id")
 
 	cmd.Flags().StringVarP(&opts.AzureClientId, "client-id", "c", "", "Azure Client ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "client-id")
+	utils.MarkFlagRequired(cmd, "client-id")
 
 	cmd.Flags().StringVarP(&opts.AzureClientSecret, "client-secret", "p", "", "Azure Client Secret (required)")
-	cmdutils.MarkFlagRequired(cmd, "client-secret")
+	utils.MarkFlagRequired(cmd, "client-secret")
 
 	cmd.Flags().StringVarP(&opts.AzureTenantId, "tenant-id", "t", "", "Azure Tenant ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "tenant-id")
+	utils.MarkFlagRequired(cmd, "tenant-id")
 
 	cmd.Flags().StringVarP(&opts.AzureLocation, "location", "l", "", "Azure Location (required)")
-	cmdutils.MarkFlagRequired(cmd, "location")
+	utils.MarkFlagRequired(cmd, "location")
 
 	cmd.Flags().StringVarP(&opts.AzureAvailabilityZone, "availability-zone", "a", "", "Azure Availability Zone (required)")
-	cmdutils.MarkFlagRequired(cmd, "availability-zone")
+	utils.MarkFlagRequired(cmd, "availability-zone")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
@@ -73,10 +73,10 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:        opts.OrganizationID,
 	}
 
-	params := azure.NewAzureCreateParams().WithV(cmdutils.ApiVersion).WithBody(body)
+	params := azure.NewAzureCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

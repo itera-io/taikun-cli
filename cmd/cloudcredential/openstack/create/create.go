@@ -2,7 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/openstack"
 	"github.com/itera-io/taikungoclient/models"
@@ -39,25 +39,25 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "OpenStack Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "username")
+	utils.MarkFlagRequired(cmd, "username")
 
 	cmd.Flags().StringVarP(&opts.Password, "password", "p", "", "OpenStack Password (required)")
-	cmdutils.MarkFlagRequired(cmd, "password")
+	utils.MarkFlagRequired(cmd, "password")
 
 	cmd.Flags().StringVarP(&opts.Domain, "domain", "d", "", "OpenStack Domain (required)")
-	cmdutils.MarkFlagRequired(cmd, "domain")
+	utils.MarkFlagRequired(cmd, "domain")
 
 	cmd.Flags().StringVar(&opts.URL, "url", "", "OpenStack URL (required)")
-	cmdutils.MarkFlagRequired(cmd, "url")
+	utils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().StringVar(&opts.Project, "project", "", "OpenStack Project (required)")
-	cmdutils.MarkFlagRequired(cmd, "project")
+	utils.MarkFlagRequired(cmd, "project")
 
 	cmd.Flags().StringVarP(&opts.Region, "region", "r", "", "OpenStack Region (required)")
-	cmdutils.MarkFlagRequired(cmd, "region")
+	utils.MarkFlagRequired(cmd, "region")
 
 	cmd.Flags().StringVar(&opts.PublicNetwork, "public-network", "", "OpenStack Public Network (required)")
-	cmdutils.MarkFlagRequired(cmd, "public-network")
+	utils.MarkFlagRequired(cmd, "public-network")
 
 	cmd.Flags().StringVar(&opts.AvailabilityZone, "availability-zone", "", "OpenStack Availability Zone")
 	cmd.Flags().StringVar(&opts.InternalSubnetId, "internal-subnet-id", "", "OpenStack Internal Subnet ID")
@@ -91,10 +91,10 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:            opts.OrganizationID,
 	}
 
-	params := openstack.NewOpenstackCreateParams().WithV(cmdutils.ApiVersion).WithBody(body)
+	params := openstack.NewOpenstackCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.Openstack.OpenstackCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

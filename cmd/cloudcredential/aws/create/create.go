@@ -2,7 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/aws"
 	"github.com/itera-io/taikungoclient/models"
@@ -32,20 +32,20 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.AWSSecretAccessKey, "secret-access-key", "s", "", "AWS Secret Access Key (required)")
-	cmdutils.MarkFlagRequired(cmd, "secret-access-key")
+	utils.MarkFlagRequired(cmd, "secret-access-key")
 
 	cmd.Flags().StringVarP(&opts.AWSAccessKeyID, "access-key-id", "a", "", "AWS Access Key ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "access-key-id")
+	utils.MarkFlagRequired(cmd, "access-key-id")
 
 	cmd.Flags().StringVarP(&opts.AWSRegion, "region", "r", "", "AWS Region (required)")
-	cmdutils.MarkFlagRequired(cmd, "region")
-	cmdutils.RegisterFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	utils.MarkFlagRequired(cmd, "region")
+	utils.RegisterFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		apiClient, err := api.NewClient()
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
 		}
 
-		params := aws.NewAwsRegionListParams().WithV(cmdutils.ApiVersion)
+		params := aws.NewAwsRegionListParams().WithV(utils.ApiVersion)
 		result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
@@ -60,7 +60,7 @@ func NewCmdCreate() *cobra.Command {
 	})
 
 	cmd.Flags().StringVarP(&opts.AWSAvailabilityZone, "availability-zone", "z", "", "AWS Availability Zone")
-	cmdutils.MarkFlagRequired(cmd, "availability-zone")
+	utils.MarkFlagRequired(cmd, "availability-zone")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
@@ -82,10 +82,10 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:      opts.OrganizationID,
 	}
 
-	params := aws.NewAwsCreateParams().WithV(cmdutils.ApiVersion).WithBody(body)
+	params := aws.NewAwsCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrettyPrintJson(response.Payload)
 	}
 
 	return

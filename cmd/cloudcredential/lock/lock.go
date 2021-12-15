@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -17,9 +17,9 @@ func NewCmdLock() *cobra.Command {
 		Short: "Lock a cloud credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := cmdutils.Atoi32(args[0])
+			id, err := utils.Atoi32(args[0])
 			if err != nil {
-				return fmt.Errorf("the given id must be a number")
+				return fmt.Errorf("the given ID must be a number")
 			}
 			return lockRun(id)
 		},
@@ -38,10 +38,10 @@ func lockRun(id int32) (err error) {
 		ID:   id,
 		Mode: "lock",
 	}
-	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(cmdutils.ApiVersion).WithBody(body)
+	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(utils.ApiVersion).WithBody(body)
 	_, err = apiClient.Client.CloudCredentials.CloudCredentialsLockManager(params, apiClient)
 	if err == nil {
-		fmt.Println("Cloud Credential locked")
+		utils.PrintStandardSuccess()
 	}
 
 	return

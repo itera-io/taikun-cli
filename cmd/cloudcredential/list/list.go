@@ -6,6 +6,7 @@ import (
 	aws "taikun-cli/cmd/cloudcredential/aws/list"
 	azure "taikun-cli/cmd/cloudcredential/azure/list"
 	openstack "taikun-cli/cmd/cloudcredential/openstack/list"
+	"taikun-cli/config"
 
 	"github.com/spf13/cobra"
 )
@@ -27,6 +28,9 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return fmt.Errorf("limit flag must be positive")
 			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
+			}
 			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
@@ -45,10 +49,12 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return
 	}
+	fmt.Println()
 	err = azure.ListRun((*azure.ListOptions)(opts))
 	if err != nil {
 		return
 	}
+	fmt.Println()
 	err = aws.ListRun((*aws.ListOptions)(opts))
 	return
 }
