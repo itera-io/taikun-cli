@@ -1,10 +1,9 @@
 package cmdutils
 
 import (
-	"log"
-
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
