@@ -3,6 +3,7 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/config"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
@@ -26,6 +27,9 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return fmt.Errorf("limit flag must be positive")
 			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
+			}
 			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
@@ -36,6 +40,31 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
 	return cmd
+}
+
+func printResults(organizations []*models.OrganizationDetailsDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(organizations)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(organizations))
+		for i, organization := range organizations {
+			data[i] = organization
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"fullName",
+			"discountRate",
+			"partnerName",
+			"isEligibleUpdateSubscription",
+			"isLocked",
+			"isReadOnly",
+			"users",
+			"cloudCredentials",
+			"projects",
+			"servers",
+		)
+	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -73,6 +102,6 @@ func listRun(opts *ListOptions) (err error) {
 		organizations = organizations[:opts.Limit]
 	}
 
-	utils.PrettyPrintJson(organizations)
+	printResults(organizations)
 	return
 }
