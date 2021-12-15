@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
+	"taikun-cli/config"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/users"
@@ -28,6 +29,9 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return fmt.Errorf("limit flag must be positive")
 			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
+			}
 			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
@@ -39,6 +43,26 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
 
 	return cmd
+}
+
+func printResults(users []*models.UserForListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(users)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(users))
+		for i, user := range users {
+			data[i] = user
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"username",
+			"role",
+			"organizationName",
+			"email",
+			"isEmailConfirmed",
+			"isEmailNotificationEnabled",
+		)
+	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -79,6 +103,6 @@ func listRun(opts *ListOptions) (err error) {
 		users = users[:opts.Limit]
 	}
 
-	utils.PrettyPrintJson(users)
+	printResults(users)
 	return
 }
