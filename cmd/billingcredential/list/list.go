@@ -47,7 +47,7 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 
-	var billingCredentials []*models.OperationCredentialsListDto
+	var billingCredentials = make([]*models.OperationCredentialsListDto, 0)
 	for {
 		response, err := apiClient.Client.OpsCredentials.OpsCredentialsList(params, apiClient)
 		if err != nil {

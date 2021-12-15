@@ -57,7 +57,7 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
 	}
 
-	var accessProfiles []*models.AccessProfilesListDto
+	var accessProfiles = make([]*models.AccessProfilesListDto, 0)
 	for {
 		response, err := apiClient.Client.AccessProfiles.AccessProfilesList(params, apiClient)
 		if err != nil {
