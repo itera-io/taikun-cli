@@ -58,7 +58,7 @@ func createRun(opts *CreateOptions) (err error) {
 		Name:                opts.Name,
 		AwsSecretAccessKey:  opts.AWSSecretAccessKey,
 		AwsAccessKeyID:      opts.AWSAccessKeyID,
-		AwsRegion:           cmdutils.GetAWSRegion(opts.AWSRegion),
+		AwsRegion:           opts.AWSRegion,
 		AwsAvailabilityZone: opts.AWSAvailabilityZone,
 		OrganizationID:      opts.OrganizationID,
 	}
