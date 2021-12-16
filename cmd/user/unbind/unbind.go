@@ -2,6 +2,7 @@ package unbind
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/user_projects"
@@ -27,10 +28,10 @@ func NewCmdUnbind() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
-	utils.MarkFlagRequired(cmd, "username")
+	cmdutils.MarkFlagRequired(cmd, "username")
 
 	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	utils.MarkFlagRequired(cmd, "project-id")
+	cmdutils.MarkFlagRequired(cmd, "project-id")
 
 	return cmd
 }

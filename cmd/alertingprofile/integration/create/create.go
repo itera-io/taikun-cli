@@ -2,6 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
@@ -41,11 +42,11 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.URL, "url", "u", "", "URL (required)")
-	utils.MarkFlagRequired(cmd, "url")
+	cmdutils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
-	utils.MarkFlagRequired(cmd, "type")
-	utils.RegisterStaticFlagCompletion(cmd, "type", utils.MapKeys(utils.AlertingIntegrationTypes)...)
+	cmdutils.MarkFlagRequired(cmd, "type")
+	cmdutils.RegisterStaticFlagCompletion(cmd, "type", utils.MapKeys(utils.AlertingIntegrationTypes)...)
 
 	cmd.Flags().StringVar(&opts.Token, "token", "", "Token")
 

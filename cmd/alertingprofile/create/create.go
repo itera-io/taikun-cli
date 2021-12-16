@@ -3,6 +3,7 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -42,7 +43,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.SlackConfigurationID, "slack-configuration-id", "s", 0, "Slack configuration ID")
 	cmd.Flags().StringSliceVarP(&opts.Emails, "emails", "e", []string{}, "Emails")
 	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "None", "Reminder")
-	utils.RegisterStaticFlagCompletion(cmd, "reminder", utils.MapKeys(utils.AlertingReminders)...)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", utils.MapKeys(utils.AlertingReminders)...)
 
 	return cmd
 }

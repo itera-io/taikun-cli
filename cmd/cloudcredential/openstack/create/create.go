@@ -2,6 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/openstack"
@@ -39,25 +40,25 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "OpenStack Username (required)")
-	utils.MarkFlagRequired(cmd, "username")
+	cmdutils.MarkFlagRequired(cmd, "username")
 
 	cmd.Flags().StringVarP(&opts.Password, "password", "p", "", "OpenStack Password (required)")
-	utils.MarkFlagRequired(cmd, "password")
+	cmdutils.MarkFlagRequired(cmd, "password")
 
 	cmd.Flags().StringVarP(&opts.Domain, "domain", "d", "", "OpenStack Domain (required)")
-	utils.MarkFlagRequired(cmd, "domain")
+	cmdutils.MarkFlagRequired(cmd, "domain")
 
 	cmd.Flags().StringVar(&opts.URL, "url", "", "OpenStack URL (required)")
-	utils.MarkFlagRequired(cmd, "url")
+	cmdutils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().StringVar(&opts.Project, "project", "", "OpenStack Project (required)")
-	utils.MarkFlagRequired(cmd, "project")
+	cmdutils.MarkFlagRequired(cmd, "project")
 
 	cmd.Flags().StringVarP(&opts.Region, "region", "r", "", "OpenStack Region (required)")
-	utils.MarkFlagRequired(cmd, "region")
+	cmdutils.MarkFlagRequired(cmd, "region")
 
 	cmd.Flags().StringVar(&opts.PublicNetwork, "public-network", "", "OpenStack Public Network (required)")
-	utils.MarkFlagRequired(cmd, "public-network")
+	cmdutils.MarkFlagRequired(cmd, "public-network")
 
 	cmd.Flags().StringVar(&opts.AvailabilityZone, "availability-zone", "", "OpenStack Availability Zone")
 	cmd.Flags().StringVar(&opts.InternalSubnetId, "internal-subnet-id", "", "OpenStack Internal Subnet ID")

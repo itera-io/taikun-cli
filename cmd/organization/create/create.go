@@ -2,6 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/common"
@@ -25,7 +26,7 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.FullName, "full-name", "f", "", "Full name (required)")
-	utils.MarkFlagRequired(cmd, "full-name")
+	cmdutils.MarkFlagRequired(cmd, "full-name")
 
 	cmd.Flags().StringVarP(&opts.Address, "address", "a", "", "Address")
 	cmd.Flags().StringVarP(&opts.BillingEmail, "billing-email", "b", "", "Billing email")
@@ -36,7 +37,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.VatNumber, "vat-number", "v", "", "VAT number")
 
 	cmd.Flags().StringVar(&opts.Country, "country", "", "Country")
-	utils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmdutils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		apiClient, err := api.NewClient()
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault

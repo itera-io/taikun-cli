@@ -3,6 +3,7 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/checker"
@@ -40,10 +41,10 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().Int32VarP(&opts.AccessProfileID, "access-profile-id", "a", 0, "Access profile's ID (required)")
-	utils.MarkFlagRequired(cmd, "access-profile-id")
+	cmdutils.MarkFlagRequired(cmd, "access-profile-id")
 
 	cmd.Flags().StringVarP(&opts.PublicKey, "public-key", "p", "", "Public key (required)")
-	utils.MarkFlagRequired(cmd, "public-key")
+	cmdutils.MarkFlagRequired(cmd, "public-key")
 
 	return cmd
 }

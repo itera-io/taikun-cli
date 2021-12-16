@@ -2,6 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/users"
@@ -38,11 +39,11 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Email, "email", "e", "", "Email (required)")
-	utils.MarkFlagRequired(cmd, "email")
+	cmdutils.MarkFlagRequired(cmd, "email")
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
-	utils.MarkFlagRequired(cmd, "role")
-	utils.RegisterStaticFlagCompletion(cmd, "role", utils.MapKeys(utils.UserRoles)...)
+	cmdutils.MarkFlagRequired(cmd, "role")
+	cmdutils.RegisterStaticFlagCompletion(cmd, "role", utils.MapKeys(utils.UserRoles)...)
 
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")

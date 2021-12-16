@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -36,7 +37,7 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.URL, "url", "u", "", "URL (required)")
-	utils.MarkFlagRequired(cmd, "url")
+	cmdutils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().StringSliceVarP(&opts.Headers, "headers", "H", []string{}, "Headers (format: \"key=value,key2=value2,...\")")
 

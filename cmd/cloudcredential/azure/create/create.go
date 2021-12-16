@@ -2,6 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/azure"
@@ -34,22 +35,22 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.AzureSubscriptionId, "subscription-id", "s", "", "Azure Subscription ID (required)")
-	utils.MarkFlagRequired(cmd, "subscription-id")
+	cmdutils.MarkFlagRequired(cmd, "subscription-id")
 
 	cmd.Flags().StringVarP(&opts.AzureClientId, "client-id", "c", "", "Azure Client ID (required)")
-	utils.MarkFlagRequired(cmd, "client-id")
+	cmdutils.MarkFlagRequired(cmd, "client-id")
 
 	cmd.Flags().StringVarP(&opts.AzureClientSecret, "client-secret", "p", "", "Azure Client Secret (required)")
-	utils.MarkFlagRequired(cmd, "client-secret")
+	cmdutils.MarkFlagRequired(cmd, "client-secret")
 
 	cmd.Flags().StringVarP(&opts.AzureTenantId, "tenant-id", "t", "", "Azure Tenant ID (required)")
-	utils.MarkFlagRequired(cmd, "tenant-id")
+	cmdutils.MarkFlagRequired(cmd, "tenant-id")
 
 	cmd.Flags().StringVarP(&opts.AzureLocation, "location", "l", "", "Azure Location (required)")
-	utils.MarkFlagRequired(cmd, "location")
+	cmdutils.MarkFlagRequired(cmd, "location")
 
 	cmd.Flags().StringVarP(&opts.AzureAvailabilityZone, "availability-zone", "a", "", "Azure Availability Zone (required)")
-	utils.MarkFlagRequired(cmd, "availability-zone")
+	cmdutils.MarkFlagRequired(cmd, "availability-zone")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 

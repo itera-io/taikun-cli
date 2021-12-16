@@ -2,6 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/aws"
@@ -32,14 +33,14 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.AWSSecretAccessKey, "secret-access-key", "s", "", "AWS Secret Access Key (required)")
-	utils.MarkFlagRequired(cmd, "secret-access-key")
+	cmdutils.MarkFlagRequired(cmd, "secret-access-key")
 
 	cmd.Flags().StringVarP(&opts.AWSAccessKeyID, "access-key-id", "a", "", "AWS Access Key ID (required)")
-	utils.MarkFlagRequired(cmd, "access-key-id")
+	cmdutils.MarkFlagRequired(cmd, "access-key-id")
 
 	cmd.Flags().StringVarP(&opts.AWSRegion, "region", "r", "", "AWS Region (required)")
-	utils.MarkFlagRequired(cmd, "region")
-	utils.RegisterFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmdutils.MarkFlagRequired(cmd, "region")
+	cmdutils.RegisterFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		apiClient, err := api.NewClient()
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
@@ -60,7 +61,7 @@ func NewCmdCreate() *cobra.Command {
 	})
 
 	cmd.Flags().StringVarP(&opts.AWSAvailabilityZone, "availability-zone", "z", "", "AWS Availability Zone")
-	utils.MarkFlagRequired(cmd, "availability-zone")
+	cmdutils.MarkFlagRequired(cmd, "availability-zone")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 

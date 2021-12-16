@@ -3,6 +3,7 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/checker"
@@ -41,16 +42,16 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.S3AccessKey, "s3-access-key", "a", "", "S3 access key (required)")
-	utils.MarkFlagRequired(cmd, "s3-access-key")
+	cmdutils.MarkFlagRequired(cmd, "s3-access-key")
 
 	cmd.Flags().StringVarP(&opts.S3SecretKey, "s3-secret-key", "s", "", "S3 secret key (required)")
-	utils.MarkFlagRequired(cmd, "s3-secret-key")
+	cmdutils.MarkFlagRequired(cmd, "s3-secret-key")
 
 	cmd.Flags().StringVarP(&opts.S3Endpoint, "s3-endpoint", "e", "", "S3 endpoint (required)")
-	utils.MarkFlagRequired(cmd, "s3-endpoint")
+	cmdutils.MarkFlagRequired(cmd, "s3-endpoint")
 
 	cmd.Flags().StringVarP(&opts.S3Region, "s3-region", "r", "", "S3 region (required)")
-	utils.MarkFlagRequired(cmd, "s3-region")
+	cmdutils.MarkFlagRequired(cmd, "s3-region")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 

@@ -2,6 +2,7 @@ package bind
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
@@ -28,7 +29,7 @@ func NewCmdBind() *cobra.Command {
 	}
 
 	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	utils.MarkFlagRequired(cmd, "project-id")
+	cmdutils.MarkFlagRequired(cmd, "project-id")
 
 	return cmd
 }
