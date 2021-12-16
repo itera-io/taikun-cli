@@ -1,6 +1,7 @@
 package create
 
 import (
+	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/utils"
 
@@ -60,9 +61,10 @@ func createRun(opts *CreateOptions) (err error) {
 	}
 
 	if len(opts.Emails) != 0 {
+		fmt.Println(opts.Emails)
 		emails := make([]*models.AlertingEmailDto, len(opts.Emails))
 		for i, email := range opts.Emails {
-			emails[i].Email = email
+			emails[i] = &models.AlertingEmailDto{Email: email}
 		}
 		body.Emails = emails
 	}
