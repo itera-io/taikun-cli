@@ -3,6 +3,7 @@ package root
 import (
 	"fmt"
 	"taikun-cli/cmd/accessprofile"
+	"taikun-cli/cmd/alertingprofile"
 	"taikun-cli/cmd/backupcredential"
 	"taikun-cli/cmd/billingcredential"
 	"taikun-cli/cmd/cloudcredential"
@@ -34,6 +35,7 @@ func NewCmdRoot() *cobra.Command {
 		"Prevent trimming of large cell values")
 
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
+	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
 	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
 	cmd.AddCommand(billingcredential.NewCmdBillingCredential())
 	cmd.AddCommand(cloudcredential.NewCmdBillingCredential())
