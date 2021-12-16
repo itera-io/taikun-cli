@@ -17,3 +17,9 @@ func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f func(cmd 
 		log.Fatal(err)
 	}
 }
+
+func RegisterStaticFlagCompletion(cmd *cobra.Command, flagName string, values ...string) {
+	RegisterFlagCompletionFunc(cmd, flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return values, cobra.ShellCompDirectiveDefault
+	})
+}
