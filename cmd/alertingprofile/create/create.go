@@ -3,7 +3,10 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -27,11 +30,11 @@ func NewCmdCreate() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-			if !utils.MapContains(utils.AlertingReminders, opts.Reminder) {
-				return utils.UnknownFlagValueError(
+			if !types.MapContains(types.AlertingReminders, opts.Reminder) {
+				return types.UnknownFlagValueError(
 					"reminder",
 					opts.Reminder,
-					utils.MapKeys(utils.AlertingReminders),
+					types.MapKeys(types.AlertingReminders),
 				)
 			}
 			return createRun(&opts)
@@ -42,7 +45,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.SlackConfigurationID, "slack-configuration-id", "s", 0, "Slack configuration ID")
 	cmd.Flags().StringSliceVarP(&opts.Emails, "emails", "e", []string{}, "Emails")
 	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "None", "Reminder")
-	utils.RegisterStaticFlagCompletion(cmd, "reminder", utils.MapKeys(utils.AlertingReminders)...)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", types.MapKeys(types.AlertingReminders)...)
 
 	return cmd
 }
@@ -56,7 +59,7 @@ func createRun(opts *CreateOptions) (err error) {
 	body := models.CreateAlertingProfileCommand{
 		Name:                 opts.Name,
 		OrganizationID:       opts.OrganizationID,
-		Reminder:             utils.GetAlertingReminder(opts.Reminder),
+		Reminder:             types.GetAlertingReminder(opts.Reminder),
 		SlackConfigurationID: opts.SlackConfigurationID,
 	}
 
@@ -69,10 +72,10 @@ func createRun(opts *CreateOptions) (err error) {
 		body.Emails = emails
 	}
 
-	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		format.PrettyPrintJson(response.Payload)
 	}
 
 	return

@@ -2,8 +2,11 @@ package list
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
-	"taikun-cli/utils"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
@@ -25,15 +28,15 @@ func NewCmdList() *cobra.Command {
 		Short: "List a project's bound flavors",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			projectID, err := utils.Atoi32(args[0])
+			projectID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			opts.ProjectID = projectID
 			return listRun(&opts)
@@ -49,13 +52,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(flavors []*models.BoundFlavorsForProjectsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(flavors)
+		format.PrettyPrintJson(flavors)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(flavors))
 		for i, flavor := range flavors {
 			data[i] = flavor
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"cpu",
@@ -73,13 +76,13 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(utils.ApiVersion)
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(apiconfig.Version)
 	params = params.WithProjectID(&opts.ProjectID)
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}

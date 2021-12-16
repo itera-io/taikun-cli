@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"strings"
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
+	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -26,9 +30,9 @@ func NewCmdAdd() *cobra.Command {
 		Short: "Add a webhook to an alerting profile",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			alertingProfileID, err := utils.Atoi32(args[0])
+			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return addRun(&opts)
@@ -36,7 +40,7 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.URL, "url", "u", "", "URL (required)")
-	utils.MarkFlagRequired(cmd, "url")
+	cmdutils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().StringSliceVarP(&opts.Headers, "headers", "H", []string{}, "Headers (format: \"key=value,key2=value2,...\")")
 
@@ -49,7 +53,7 @@ func getAlertingProfileWebhooks(id int32) ([]*models.AlertingWebhookDto, error) 
 		return nil, err
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(utils.ApiVersion)
+	params := alerting_profiles.NewAlertingProfilesListParams().WithV(apiconfig.Version)
 	params = params.WithID(&id)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
@@ -101,13 +105,13 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	alertingWebhooks = append(alertingWebhooks, newAlertingWebhook)
-	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(utils.ApiVersion)
+	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(apiconfig.Version)
 	params = params.WithID(opts.AlertingProfileID)
 	params = params.WithBody(alertingWebhooks)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

@@ -2,7 +2,9 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -31,13 +33,13 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.PrometheusUsername, "prometheus-username", "u", "", "Prometheus Username (required)")
-	utils.MarkFlagRequired(cmd, "prometheus-username")
+	cmdutils.MarkFlagRequired(cmd, "prometheus-username")
 
 	cmd.Flags().StringVarP(&opts.PrometheusPassword, "prometheus-password", "p", "", "Prometheus Password (required)")
-	utils.MarkFlagRequired(cmd, "prometheus-password")
+	cmdutils.MarkFlagRequired(cmd, "prometheus-password")
 
 	cmd.Flags().StringVar(&opts.PrometheusURL, "prometheus-url", "", "Prometheus URL (required)")
-	utils.MarkFlagRequired(cmd, "prometheus-url")
+	cmdutils.MarkFlagRequired(cmd, "prometheus-url")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
@@ -58,10 +60,10 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:     opts.OrganizationID,
 	}
 
-	params := ops_credentials.NewOpsCredentialsCreateParams().WithV(utils.ApiVersion).WithBody(body)
+	params := ops_credentials.NewOpsCredentialsCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.OpsCredentials.OpsCredentialsCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		format.PrettyPrintJson(response.Payload)
 	}
 
 	return

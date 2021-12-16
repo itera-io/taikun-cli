@@ -2,7 +2,9 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/itera-io/taikungoclient/client/organizations"
@@ -25,7 +27,7 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.FullName, "full-name", "f", "", "Full name (required)")
-	utils.MarkFlagRequired(cmd, "full-name")
+	cmdutils.MarkFlagRequired(cmd, "full-name")
 
 	cmd.Flags().StringVarP(&opts.Address, "address", "a", "", "Address")
 	cmd.Flags().StringVarP(&opts.BillingEmail, "billing-email", "b", "", "Billing email")
@@ -36,13 +38,13 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.VatNumber, "vat-number", "v", "", "VAT number")
 
 	cmd.Flags().StringVar(&opts.Country, "country", "", "Country")
-	utils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmdutils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		apiClient, err := api.NewClient()
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
 		}
 
-		params := common.NewCommonGetCountryListParams().WithV(utils.ApiVersion)
+		params := common.NewCommonGetCountryListParams().WithV(apiconfig.Version)
 		result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
@@ -65,10 +67,10 @@ func createRun(opts *models.OrganizationCreateCommand) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsCreateParams().WithV(utils.ApiVersion).WithBody(opts)
+	params := organizations.NewOrganizationsCreateParams().WithV(apiconfig.Version).WithBody(opts)
 	_, err = apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

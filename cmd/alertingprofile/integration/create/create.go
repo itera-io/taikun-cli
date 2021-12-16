@@ -2,7 +2,11 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
+	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/itera-io/taikungoclient/models"
@@ -24,16 +28,16 @@ func NewCmdCreate() *cobra.Command {
 		Short: "Create an alerting integration",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !utils.MapContains(utils.AlertingIntegrationTypes, opts.Type) {
-				return utils.UnknownFlagValueError(
+			if !types.MapContains(types.AlertingIntegrationTypes, opts.Type) {
+				return types.UnknownFlagValueError(
 					"type",
 					opts.Type,
-					utils.MapKeys(utils.AlertingIntegrationTypes),
+					types.MapKeys(types.AlertingIntegrationTypes),
 				)
 			}
-			alertingProfileID, err := utils.Atoi32(args[0])
+			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return createRun(&opts)
@@ -41,11 +45,11 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.URL, "url", "u", "", "URL (required)")
-	utils.MarkFlagRequired(cmd, "url")
+	cmdutils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
-	utils.MarkFlagRequired(cmd, "type")
-	utils.RegisterStaticFlagCompletion(cmd, "type", utils.MapKeys(utils.AlertingIntegrationTypes)...)
+	cmdutils.MarkFlagRequired(cmd, "type")
+	cmdutils.RegisterStaticFlagCompletion(cmd, "type", types.MapKeys(types.AlertingIntegrationTypes)...)
 
 	cmd.Flags().StringVar(&opts.Token, "token", "", "Token")
 
@@ -63,13 +67,13 @@ func createRun(opts *CreateOptions) (err error) {
 		AlertingIntegration: &models.AlertingIntegrationDto{
 			URL:                     opts.URL,
 			Token:                   opts.Token,
-			AlertingIntegrationType: utils.GetAlertingIntegrationType(opts.Type),
+			AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
 		},
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	if _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

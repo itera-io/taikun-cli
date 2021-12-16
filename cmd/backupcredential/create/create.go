@@ -3,7 +3,9 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
@@ -41,16 +43,16 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.S3AccessKey, "s3-access-key", "a", "", "S3 access key (required)")
-	utils.MarkFlagRequired(cmd, "s3-access-key")
+	cmdutils.MarkFlagRequired(cmd, "s3-access-key")
 
 	cmd.Flags().StringVarP(&opts.S3SecretKey, "s3-secret-key", "s", "", "S3 secret key (required)")
-	utils.MarkFlagRequired(cmd, "s3-secret-key")
+	cmdutils.MarkFlagRequired(cmd, "s3-secret-key")
 
 	cmd.Flags().StringVarP(&opts.S3Endpoint, "s3-endpoint", "e", "", "S3 endpoint (required)")
-	utils.MarkFlagRequired(cmd, "s3-endpoint")
+	cmdutils.MarkFlagRequired(cmd, "s3-endpoint")
 
 	cmd.Flags().StringVarP(&opts.S3Region, "s3-region", "r", "", "S3 region (required)")
-	utils.MarkFlagRequired(cmd, "s3-region")
+	cmdutils.MarkFlagRequired(cmd, "s3-region")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
@@ -68,7 +70,7 @@ func backupCredentialIsValid(opts *CreateOptions) (bool, error) {
 		S3Endpoint:    opts.S3Endpoint,
 		S3Region:      opts.S3Region,
 	}
-	params := checker.NewCheckerS3Params().WithV(utils.ApiVersion).WithBody(&body)
+	params := checker.NewCheckerS3Params().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
 	return err == nil, nil
 }
@@ -90,10 +92,10 @@ func createRun(opts *CreateOptions) (err error) {
 		body.OrganizationID = opts.OrganizationID
 	}
 
-	params := s3_credentials.NewS3CredentialsCreateParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response)
+		format.PrettyPrintJson(response)
 	}
 
 	return

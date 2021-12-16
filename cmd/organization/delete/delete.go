@@ -2,7 +2,10 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/spf13/cobra"
@@ -14,9 +17,9 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete organization",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			organizationID, err := utils.Atoi32(args[0])
+			organizationID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			return deleteRun(organizationID)
 		},
@@ -31,11 +34,11 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsDeleteParams().WithV(utils.ApiVersion)
+	params := organizations.NewOrganizationsDeleteParams().WithV(apiconfig.Version)
 	params = params.WithOrganizationID(id)
 	_, _, err = apiClient.Client.Organizations.OrganizationsDelete(params, apiClient)
 	if err == nil {
-		utils.PrintDeleteSuccess("Organization", id)
+		format.PrintDeleteSuccess("Organization", id)
 	}
 
 	return

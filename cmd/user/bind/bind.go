@@ -2,7 +2,9 @@ package bind
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/user_projects"
 	"github.com/itera-io/taikungoclient/models"
@@ -27,10 +29,10 @@ func NewCmdBind() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
-	utils.MarkFlagRequired(cmd, "username")
+	cmdutils.MarkFlagRequired(cmd, "username")
 
 	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	utils.MarkFlagRequired(cmd, "project-id")
+	cmdutils.MarkFlagRequired(cmd, "project-id")
 
 	return cmd
 }
@@ -51,10 +53,10 @@ func bindRun(opts *BindOptions) (err error) {
 		},
 	}
 
-	params := user_projects.NewUserProjectsBindProjectsParams().WithV(utils.ApiVersion).WithBody(body)
+	params := user_projects.NewUserProjectsBindProjectsParams().WithV(apiconfig.Version).WithBody(body)
 	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

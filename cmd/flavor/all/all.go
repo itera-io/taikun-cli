@@ -2,8 +2,11 @@ package all
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
-	"taikun-cli/utils"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -29,12 +32,12 @@ func NewCmdAll() *cobra.Command {
 		Short: "List all flavors by cloud credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cloudCredentialID, err := utils.Atoi32(args[0])
+			cloudCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			opts.CloudCredentialID = cloudCredentialID
 			return allRun(&opts)
@@ -54,13 +57,13 @@ func NewCmdAll() *cobra.Command {
 
 func printResults(flavors []*models.FlavorsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(flavors)
+		format.PrettyPrintJson(flavors)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(flavors))
 		for i, flavor := range flavors {
 			data[i] = flavor
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"name",
 			"cpu",
 			"ram",
@@ -74,17 +77,17 @@ func allRun(opts *AllOptions) (err error) {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(utils.ApiVersion)
+	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(apiconfig.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
-	minRAM := utils.GiBToMiB(opts.MinRAM)
-	maxRAM := utils.GiBToMiB(opts.MaxRAM)
+	minRAM := types.GiBToMiB(opts.MinRAM)
+	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.FlavorsListDto{}

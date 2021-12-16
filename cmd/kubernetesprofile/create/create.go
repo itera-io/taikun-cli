@@ -2,7 +2,8 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -55,10 +56,10 @@ func createRun(opts *CreateOptions) (err error) {
 		TaikunLBEnabled:         opts.TaikunLBEnabled,
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(utils.ApiVersion).WithBody(body)
+	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		format.PrettyPrintJson(response.Payload)
 	}
 
 	return

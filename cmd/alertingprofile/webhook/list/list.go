@@ -3,8 +3,11 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
-	"taikun-cli/utils"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -25,14 +28,14 @@ func NewCmdList() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
-			alertingProfileID, err := utils.Atoi32(args[0])
+			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)
@@ -46,13 +49,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(alertingWebhooks []*models.AlertingWebhookDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(alertingWebhooks)
+		format.PrettyPrintJson(alertingWebhooks)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(alertingWebhooks))
 		for i, alertingWebhook := range alertingWebhooks {
 			data[i] = alertingWebhook
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"url",
 		)
 	}
@@ -64,7 +67,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(utils.ApiVersion)
+	params := alerting_profiles.NewAlertingProfilesListParams().WithV(apiconfig.Version)
 	params = params.WithID(&opts.AlertingProfileID)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)

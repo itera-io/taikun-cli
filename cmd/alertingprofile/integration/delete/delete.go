@@ -2,7 +2,10 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/spf13/cobra"
@@ -14,9 +17,9 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete an alerting integration",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := utils.Atoi32(args[0])
+			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			return deleteRun(id)
 		},
@@ -31,10 +34,10 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(utils.ApiVersion).WithID(id)
+	params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(apiconfig.Version).WithID(id)
 	_, _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsDelete(params, apiClient)
 	if err == nil {
-		utils.PrintDeleteSuccess("Alerting integration", id)
+		format.PrintDeleteSuccess("Alerting integration", id)
 	}
 
 	return

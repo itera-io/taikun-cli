@@ -2,8 +2,11 @@ package list
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
-	"taikun-cli/utils"
+	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
@@ -23,15 +26,15 @@ func NewCmdList() *cobra.Command {
 		Short: "List access profile's SSH users",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			accessProfileID, err := utils.Atoi32(args[0])
+			accessProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			opts.AccessProfileID = accessProfileID
 			return listRun(&opts)
@@ -45,13 +48,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(sshUsers []*models.SSHUsersListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(sshUsers)
+		format.PrettyPrintJson(sshUsers)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(sshUsers))
 		for i, sshUser := range sshUsers {
 			data[i] = sshUser
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"sshPublicKey",
@@ -65,7 +68,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := ssh_users.NewSSHUsersListParams().WithV(utils.ApiVersion).WithAccessProfileID(opts.AccessProfileID)
+	params := ssh_users.NewSSHUsersListParams().WithV(apiconfig.Version).WithAccessProfileID(opts.AccessProfileID)
 	response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
 	if err != nil {
 		return err

@@ -2,8 +2,10 @@ package list
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
-	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -24,10 +26,10 @@ func NewCmdList() *cobra.Command {
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			return listRun(&opts)
 		},
@@ -43,13 +45,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(organizations []*models.OrganizationDetailsDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(organizations)
+		format.PrettyPrintJson(organizations)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(organizations))
 		for i, organization := range organizations {
 			data[i] = organization
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"fullName",
@@ -72,12 +74,12 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsListParams().WithV(utils.ApiVersion)
+	params := organizations.NewOrganizationsListParams().WithV(apiconfig.Version)
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)

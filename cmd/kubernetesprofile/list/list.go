@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
-	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -27,10 +29,10 @@ func NewCmdList() *cobra.Command {
 		Short: "List kubernetes profiles",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			return listRun(&opts)
 		},
@@ -47,13 +49,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(kubernetesProfiles []*models.KubernetesProfilesListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(kubernetesProfiles)
+		format.PrettyPrintJson(kubernetesProfiles)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(kubernetesProfiles))
 		for i, kubernetesProfile := range kubernetesProfiles {
 			data[i] = kubernetesProfile
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"organizationName",
@@ -72,15 +74,15 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(utils.ApiVersion)
+	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(apiconfig.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
