@@ -3,6 +3,7 @@ package all
 import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
@@ -33,10 +34,10 @@ func NewCmdAll() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cloudCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return format.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			opts.CloudCredentialID = cloudCredentialID
 			return allRun(&opts)

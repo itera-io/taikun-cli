@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
@@ -27,14 +28,14 @@ func NewCmdList() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return format.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return format.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)

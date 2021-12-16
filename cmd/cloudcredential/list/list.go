@@ -6,8 +6,8 @@ import (
 	aws "taikun-cli/cmd/cloudcredential/aws/list"
 	azure "taikun-cli/cmd/cloudcredential/azure/list"
 	openstack "taikun-cli/cmd/cloudcredential/openstack/list"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
-	"taikun-cli/utils/format"
 
 	"github.com/spf13/cobra"
 )
@@ -27,10 +27,10 @@ func NewCmdList() *cobra.Command {
 		Short: "List cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return format.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			return listRun(&opts)
 		},

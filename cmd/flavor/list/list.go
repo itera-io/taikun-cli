@@ -3,6 +3,7 @@ package list
 import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/config"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
@@ -29,13 +30,13 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			projectID, err := types.Atoi32(args[0])
 			if err != nil {
-				return format.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			if opts.Limit < 0 {
-				return format.NegativeLimitFlagError
+				return cmderr.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
-				return config.OutputFormatInvalidError
+				return cmderr.OutputFormatInvalidError
 			}
 			opts.ProjectID = projectID
 			return listRun(&opts)

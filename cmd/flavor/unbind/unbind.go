@@ -3,6 +3,7 @@ package unbind
 import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -20,7 +21,7 @@ func NewCmdUnbind() *cobra.Command {
 			for i, arg := range args {
 				binding, err := types.Atoi32(arg)
 				if err != nil {
-					return format.WrongIDArgumentFormatError
+					return cmderr.WrongIDArgumentFormatError
 				}
 				bindings[i] = binding
 			}

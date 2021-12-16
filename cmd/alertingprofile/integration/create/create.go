@@ -3,6 +3,7 @@ package create
 import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
@@ -36,7 +37,7 @@ func NewCmdCreate() *cobra.Command {
 			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return format.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return createRun(&opts)

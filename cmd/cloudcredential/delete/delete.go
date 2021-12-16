@@ -3,6 +3,7 @@ package delete
 import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -18,7 +19,7 @@ func NewCmdDelete() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return format.WrongIDArgumentFormatError
+				return cmderr.WrongIDArgumentFormatError
 			}
 			return deleteRun(id)
 		},
