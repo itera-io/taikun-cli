@@ -25,7 +25,7 @@ func NewCmdRoot() *cobra.Command {
 
 	cmd.PersistentFlags().StringVar(&config.OutputFormat, "format", config.OutputFormatTable,
 		fmt.Sprintf(
-			"Output format: \"%s\" or \"%s\"",
+			"Output format for list-type commands: \"%s\" or \"%s\"",
 			config.OutputFormatJson, config.OutputFormatTable,
 		),
 	)
