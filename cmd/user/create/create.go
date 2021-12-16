@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
@@ -26,11 +27,11 @@ func NewCmdCreate() *cobra.Command {
 		Short: "Create user",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Username = args[0]
-			if !utils.MapContains(utils.UserRoles, opts.Role) {
-				return utils.UnknownFlagValueError(
+			if !types.MapContains(types.UserRoles, opts.Role) {
+				return types.UnknownFlagValueError(
 					"role",
 					opts.Role,
-					utils.MapKeys(utils.UserRoles),
+					types.MapKeys(types.UserRoles),
 				)
 			}
 			return createRun(&opts)
@@ -43,7 +44,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(cmd, "role")
-	cmdutils.RegisterStaticFlagCompletion(cmd, "role", utils.MapKeys(utils.UserRoles)...)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "role", types.MapKeys(types.UserRoles)...)
 
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
@@ -61,7 +62,7 @@ func createRun(opts *CreateOptions) (err error) {
 		DisplayName:    opts.DisplayName,
 		Email:          opts.Email,
 		OrganizationID: opts.OrganizationID,
-		Role:           utils.GetUserRole(opts.Role),
+		Role:           types.GetUserRole(opts.Role),
 		Username:       opts.Username,
 	}
 

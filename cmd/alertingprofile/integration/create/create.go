@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/itera-io/taikungoclient/models"
@@ -25,14 +26,14 @@ func NewCmdCreate() *cobra.Command {
 		Short: "Create an alerting integration",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !utils.MapContains(utils.AlertingIntegrationTypes, opts.Type) {
-				return utils.UnknownFlagValueError(
+			if !types.MapContains(types.AlertingIntegrationTypes, opts.Type) {
+				return types.UnknownFlagValueError(
 					"type",
 					opts.Type,
-					utils.MapKeys(utils.AlertingIntegrationTypes),
+					types.MapKeys(types.AlertingIntegrationTypes),
 				)
 			}
-			alertingProfileID, err := utils.Atoi32(args[0])
+			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
 				return utils.WrongIDArgumentFormatError
 			}
@@ -46,7 +47,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(cmd, "type")
-	cmdutils.RegisterStaticFlagCompletion(cmd, "type", utils.MapKeys(utils.AlertingIntegrationTypes)...)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "type", types.MapKeys(types.AlertingIntegrationTypes)...)
 
 	cmd.Flags().StringVar(&opts.Token, "token", "", "Token")
 
@@ -64,7 +65,7 @@ func createRun(opts *CreateOptions) (err error) {
 		AlertingIntegration: &models.AlertingIntegrationDto{
 			URL:                     opts.URL,
 			Token:                   opts.Token,
-			AlertingIntegrationType: utils.GetAlertingIntegrationType(opts.Type),
+			AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
 		},
 	}
 

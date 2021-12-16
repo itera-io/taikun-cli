@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
@@ -23,7 +24,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List access profile's SSH users",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			accessProfileID, err := utils.Atoi32(args[0])
+			accessProfileID, err := types.Atoi32(args[0])
 			if err != nil {
 				return utils.WrongIDArgumentFormatError
 			}

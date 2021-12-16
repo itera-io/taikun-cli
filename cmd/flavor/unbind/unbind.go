@@ -3,6 +3,7 @@ package unbind
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
@@ -16,7 +17,7 @@ func NewCmdUnbind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bindings := make([]int32, len(args))
 			for i, arg := range args {
-				binding, err := utils.Atoi32(arg)
+				binding, err := types.Atoi32(arg)
 				if err != nil {
 					return utils.WrongIDArgumentFormatError
 				}

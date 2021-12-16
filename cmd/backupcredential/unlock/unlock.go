@@ -3,6 +3,7 @@ package unlock
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -15,7 +16,7 @@ func NewCmdUnlock() *cobra.Command {
 		Short: "Unlock a backup credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			backupCredentialID, err := utils.Atoi32(args[0])
+			backupCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
 				return utils.WrongIDArgumentFormatError
 			}
@@ -34,7 +35,7 @@ func unlockRun(id int32) (err error) {
 
 	body := models.BackupLockManagerCommand{
 		ID:   id,
-		Mode: utils.UnlockedMode,
+		Mode: types.UnlockedMode,
 	}
 	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(utils.ApiVersion).WithBody(&body)
 	_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)

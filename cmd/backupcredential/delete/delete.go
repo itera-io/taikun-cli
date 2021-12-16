@@ -3,6 +3,7 @@ package delete
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/spf13/cobra"
@@ -14,7 +15,7 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete a backup credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			backupCredentialID, err := utils.Atoi32(args[0])
+			backupCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
 				return utils.WrongIDArgumentFormatError
 			}

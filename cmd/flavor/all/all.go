@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -29,7 +30,7 @@ func NewCmdAll() *cobra.Command {
 		Short: "List all flavors by cloud credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cloudCredentialID, err := utils.Atoi32(args[0])
+			cloudCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
 				return utils.WrongIDArgumentFormatError
 			}
@@ -77,8 +78,8 @@ func allRun(opts *AllOptions) (err error) {
 	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(utils.ApiVersion)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
-	minRAM := utils.GiBToMiB(opts.MinRAM)
-	maxRAM := utils.GiBToMiB(opts.MaxRAM)
+	minRAM := types.GiBToMiB(opts.MinRAM)
+	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
 	if opts.ReverseSortDirection {
 		utils.ReverseSortDirection()

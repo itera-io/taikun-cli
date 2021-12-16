@@ -5,6 +5,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -30,7 +31,7 @@ func NewCmdList() *cobra.Command {
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
 			}
-			alertingProfileID, err := utils.Atoi32(args[0])
+			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
 				return utils.WrongIDArgumentFormatError
 			}
