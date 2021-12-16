@@ -1,6 +1,10 @@
 package integration
 
-import "github.com/spf13/cobra"
+import (
+	"taikun-cli/cmd/alertingprofile/integration/list"
+
+	"github.com/spf13/cobra"
+)
 
 func NewCmdIntegration() *cobra.Command {
 	cmd := &cobra.Command{
@@ -8,7 +12,7 @@ func NewCmdIntegration() *cobra.Command {
 		Short: "Manage alerting integrations",
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(list.NewCmdList())
 
 	return cmd
 }
