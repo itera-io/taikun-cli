@@ -3,6 +3,7 @@ package lock
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
@@ -18,7 +19,7 @@ func NewCmdLock() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			backupCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			return lockRun(backupCredentialID)
 		},
@@ -40,7 +41,7 @@ func lockRun(id int32) (err error) {
 	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(utils.ApiVersion).WithBody(&body)
 	_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

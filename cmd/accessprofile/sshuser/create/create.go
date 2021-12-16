@@ -5,6 +5,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -79,7 +80,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := ssh_users.NewSSHUsersCreateParams().WithV(utils.ApiVersion).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response)
+		format.PrettyPrintJson(response)
 	}
 
 	return

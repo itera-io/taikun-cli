@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/users"
@@ -69,7 +70,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := users.NewUsersCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.Users.UsersCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		format.PrettyPrintJson(response.Payload)
 	}
 
 	return

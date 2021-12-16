@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -26,7 +27,7 @@ func NewCmdList() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -45,13 +46,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(alertingProfiles []*models.AlertingProfilesListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(alertingProfiles)
+		format.PrettyPrintJson(alertingProfiles)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(alertingProfiles))
 		for i, alertingProfile := range alertingProfiles {
 			data[i] = alertingProfile
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"organizationName",

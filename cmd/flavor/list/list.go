@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
@@ -28,10 +29,10 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			projectID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -50,13 +51,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(flavors []*models.BoundFlavorsForProjectsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(flavors)
+		format.PrettyPrintJson(flavors)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(flavors))
 		for i, flavor := range flavors {
 			data[i] = flavor
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"cpu",

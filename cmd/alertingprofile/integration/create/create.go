@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
@@ -35,7 +36,7 @@ func NewCmdCreate() *cobra.Command {
 			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return createRun(&opts)
@@ -71,7 +72,7 @@ func createRun(opts *CreateOptions) (err error) {
 
 	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(utils.ApiVersion).WithBody(&body)
 	if _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

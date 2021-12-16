@@ -3,6 +3,7 @@ package clear
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -18,7 +19,7 @@ func NewCmdClear() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			return clearRun(id)
 		},
@@ -39,7 +40,7 @@ func clearRun(id int32) (err error) {
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

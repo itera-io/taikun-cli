@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/itera-io/taikungoclient/client/organizations"
@@ -69,7 +70,7 @@ func createRun(opts *models.OrganizationCreateCommand) (err error) {
 	params := organizations.NewOrganizationsCreateParams().WithV(utils.ApiVersion).WithBody(opts)
 	_, err = apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

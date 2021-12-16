@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -25,7 +26,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List access profiles",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -45,13 +46,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(accessProfiles []*models.AccessProfilesListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(accessProfiles)
+		format.PrettyPrintJson(accessProfiles)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(accessProfiles))
 		for i, accessProfile := range accessProfiles {
 			data[i] = accessProfile
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"organizationName",

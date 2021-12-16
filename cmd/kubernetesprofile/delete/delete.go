@@ -3,6 +3,7 @@ package delete
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
@@ -17,7 +18,7 @@ func NewCmdDelete() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			return deleteRun(id)
 		},
@@ -35,7 +36,7 @@ func deleteRun(id int32) (err error) {
 	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(utils.ApiVersion).WithID(id)
 	_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
 	if err == nil {
-		utils.PrintDeleteSuccess("Kubernetes profile", id)
+		format.PrintDeleteSuccess("Kubernetes profile", id)
 	}
 
 	return

@@ -5,6 +5,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -74,7 +75,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(utils.ApiVersion).WithBody(&body)
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		format.PrettyPrintJson(response.Payload)
 	}
 
 	return

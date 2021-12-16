@@ -3,6 +3,7 @@ package delete
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -17,7 +18,7 @@ func NewCmdDelete() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			return deleteRun(id)
 		},
@@ -35,7 +36,7 @@ func deleteRun(id int32) (err error) {
 	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(utils.ApiVersion).WithCloudID(id)
 	_, _, err = apiClient.Client.CloudCredentials.CloudCredentialsDelete(params, apiClient)
 	if err == nil {
-		utils.PrintDeleteSuccess("Cloud credential", id)
+		format.PrintDeleteSuccess("Cloud credential", id)
 	}
 
 	return

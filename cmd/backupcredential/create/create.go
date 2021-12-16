@@ -5,6 +5,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
@@ -94,7 +95,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := s3_credentials.NewS3CredentialsCreateParams().WithV(utils.ApiVersion).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response)
+		format.PrettyPrintJson(response)
 	}
 
 	return

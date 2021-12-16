@@ -6,6 +6,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -27,7 +28,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List aws cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -47,13 +48,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(credentials []*models.AmazonCredentialsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(credentials)
+		format.PrettyPrintJson(credentials)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(credentials))
 		for i, credential := range credentials {
 			data[i] = credential
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"organizationName",

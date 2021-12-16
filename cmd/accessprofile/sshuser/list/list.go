@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -26,10 +27,10 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			accessProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -46,13 +47,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(sshUsers []*models.SSHUsersListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(sshUsers)
+		format.PrettyPrintJson(sshUsers)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(sshUsers))
 		for i, sshUser := range sshUsers {
 			data[i] = sshUser
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"sshPublicKey",

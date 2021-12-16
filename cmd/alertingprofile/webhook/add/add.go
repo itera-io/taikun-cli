@@ -7,6 +7,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -30,7 +31,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return addRun(&opts)
@@ -109,7 +110,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

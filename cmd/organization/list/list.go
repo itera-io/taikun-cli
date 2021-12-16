@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -24,7 +25,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -43,13 +44,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(organizations []*models.OrganizationDetailsDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(organizations)
+		format.PrettyPrintJson(organizations)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(organizations))
 		for i, organization := range organizations {
 			data[i] = organization
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"fullName",

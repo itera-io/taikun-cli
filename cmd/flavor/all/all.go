@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -32,7 +33,7 @@ func NewCmdAll() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cloudCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -55,13 +56,13 @@ func NewCmdAll() *cobra.Command {
 
 func printResults(flavors []*models.FlavorsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(flavors)
+		format.PrettyPrintJson(flavors)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(flavors))
 		for i, flavor := range flavors {
 			data[i] = flavor
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"name",
 			"cpu",
 			"ram",

@@ -3,6 +3,7 @@ package unbind
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
@@ -19,7 +20,7 @@ func NewCmdUnbind() *cobra.Command {
 			for i, arg := range args {
 				binding, err := types.Atoi32(arg)
 				if err != nil {
-					return utils.WrongIDArgumentFormatError
+					return format.WrongIDArgumentFormatError
 				}
 				bindings[i] = binding
 			}
@@ -43,7 +44,7 @@ func unbindRun(bindings []int32) (err error) {
 	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(utils.ApiVersion).WithBody(&body)
 	_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
 	if err == nil {
-		utils.PrintStandardSuccess()
+		format.PrintStandardSuccess()
 	}
 
 	return

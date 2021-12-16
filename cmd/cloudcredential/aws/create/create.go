@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/aws"
 	"github.com/itera-io/taikungoclient/models"
@@ -86,7 +87,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := aws.NewAwsCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		format.PrettyPrintJson(response.Payload)
 	}
 
 	return

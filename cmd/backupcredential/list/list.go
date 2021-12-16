@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -24,7 +25,7 @@ func NewCmdList() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
@@ -41,13 +42,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(backupCredentials []*models.BackupCredentialsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(backupCredentials)
+		format.PrettyPrintJson(backupCredentials)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(backupCredentials))
 		for i, backupCredential := range backupCredentials {
 			data[i] = backupCredential
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"organizationName",
 			"s3Name",

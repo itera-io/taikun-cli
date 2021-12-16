@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
@@ -25,14 +26,14 @@ func NewCmdList() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			if !config.OutputFormatIsValid() {
 				return config.OutputFormatInvalidError
 			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return utils.WrongIDArgumentFormatError
+				return format.WrongIDArgumentFormatError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)
@@ -46,13 +47,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(alertingIntegrations []*models.AlertingIntegrationsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(alertingIntegrations)
+		format.PrettyPrintJson(alertingIntegrations)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(alertingIntegrations))
 		for i, alertingIntegration := range alertingIntegrations {
 			data[i] = alertingIntegration
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"alertingProfileName",
 			"url",

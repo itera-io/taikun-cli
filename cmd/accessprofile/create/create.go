@@ -3,6 +3,7 @@ package create
 import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -68,7 +69,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(utils.ApiVersion).WithBody(body)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
-		utils.PrettyPrintJson(response.Payload)
+		format.PrettyPrintJson(response.Payload)
 	}
 
 	return

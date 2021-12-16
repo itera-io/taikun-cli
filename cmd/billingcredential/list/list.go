@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/config"
 	"taikun-cli/utils"
+	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -23,7 +24,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List billing credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return utils.NegativeLimitFlagError
+				return format.NegativeLimitFlagError
 			}
 			return listRun(&opts)
 		},
@@ -38,13 +39,13 @@ func NewCmdList() *cobra.Command {
 
 func printResults(billingCredentials []*models.OperationCredentialsListDto) {
 	if config.OutputFormat == config.OutputFormatJson {
-		utils.PrettyPrintJson(billingCredentials)
+		format.PrettyPrintJson(billingCredentials)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		data := make([]interface{}, len(billingCredentials))
 		for i, billingCredential := range billingCredentials {
 			data[i] = billingCredential
 		}
-		utils.PrettyPrintTable(data,
+		format.PrettyPrintTable(data,
 			"id",
 			"name",
 			"organizationName",
