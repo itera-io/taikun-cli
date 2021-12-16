@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/utils"
 
+	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -29,11 +30,31 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Address, "address", "a", "", "Address")
 	cmd.Flags().StringVarP(&opts.BillingEmail, "billing-email", "b", "", "Billing email")
 	cmd.Flags().StringVar(&opts.City, "city", "", "City")
-	cmd.Flags().StringVar(&opts.Country, "country", "", "Country")
 	cmd.Flags().Float64VarP(&opts.DiscountRate, "discount-rate", "d", 100, "Discount rate")
 	cmd.Flags().StringVarP(&opts.Email, "email", "e", "", "Email")
 	cmd.Flags().StringVarP(&opts.Phone, "phone", "p", "", "Phone")
 	cmd.Flags().StringVarP(&opts.VatNumber, "vat-number", "v", "", "VAT number")
+
+	cmd.Flags().StringVar(&opts.Country, "country", "", "Country")
+	utils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		apiClient, err := api.NewClient()
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveDefault
+		}
+
+		params := common.NewCommonGetCountryListParams().WithV(utils.ApiVersion)
+		result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveDefault
+		}
+
+		countryNames := make([]string, 0)
+		for _, countryListDto := range result.Payload {
+			countryNames = append(countryNames, countryListDto.Name)
+		}
+
+		return countryNames, cobra.ShellCompDirectiveDefault
+	})
 
 	return cmd
 }
