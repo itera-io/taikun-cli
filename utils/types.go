@@ -29,6 +29,17 @@ func UnknownFlagValueError(flag string, received string, expected []string) erro
 	return fmt.Errorf("Unknown %s: %s, expected one of %v.", flag, received, expected)
 }
 
+var AlertingIntegrationTypes = map[string]interface{}{
+	"opsgenie":       models.AlertingIntegrationType(100),
+	"pagerduty":      models.AlertingIntegrationType(200),
+	"splunk":         models.AlertingIntegrationType(300),
+	"microsoftteams": models.AlertingIntegrationType(400),
+}
+
+func GetAlertingIntegrationType(integrationType string) models.AlertingIntegrationType {
+	return AlertingIntegrationTypes[integrationType].(models.AlertingIntegrationType)
+}
+
 var UserRoles = map[string]interface{}{
 	"user":    models.UserRole(400),
 	"manager": models.UserRole(200),
