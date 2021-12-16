@@ -38,3 +38,9 @@ func MarkFlagRequired(cmd *cobra.Command, flag string) {
 		log.Fatal(err)
 	}
 }
+
+func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective)) {
+	if err := cmd.RegisterFlagCompletionFunc(flagName, f); err != nil {
+		log.Fatal(err)
+	}
+}
