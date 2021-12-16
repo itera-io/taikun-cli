@@ -3,7 +3,7 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
@@ -41,16 +41,16 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.S3AccessKey, "s3-access-key", "a", "", "S3 access key (required)")
-	cmdutils.MarkFlagRequired(cmd, "s3-access-key")
+	utils.MarkFlagRequired(cmd, "s3-access-key")
 
 	cmd.Flags().StringVarP(&opts.S3SecretKey, "s3-secret-key", "s", "", "S3 secret key (required)")
-	cmdutils.MarkFlagRequired(cmd, "s3-secret-key")
+	utils.MarkFlagRequired(cmd, "s3-secret-key")
 
 	cmd.Flags().StringVarP(&opts.S3Endpoint, "s3-endpoint", "e", "", "S3 endpoint (required)")
-	cmdutils.MarkFlagRequired(cmd, "s3-endpoint")
+	utils.MarkFlagRequired(cmd, "s3-endpoint")
 
 	cmd.Flags().StringVarP(&opts.S3Region, "s3-region", "r", "", "S3 region (required)")
-	cmdutils.MarkFlagRequired(cmd, "s3-region")
+	utils.MarkFlagRequired(cmd, "s3-region")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
@@ -68,7 +68,7 @@ func backupCredentialIsValid(opts *CreateOptions) (bool, error) {
 		S3Endpoint:    opts.S3Endpoint,
 		S3Region:      opts.S3Region,
 	}
-	params := checker.NewCheckerS3Params().WithV(cmdutils.ApiVersion).WithBody(&body)
+	params := checker.NewCheckerS3Params().WithV(utils.ApiVersion).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
 	return err == nil, nil
 }
@@ -90,10 +90,10 @@ func createRun(opts *CreateOptions) (err error) {
 		body.OrganizationID = opts.OrganizationID
 	}
 
-	params := s3_credentials.NewS3CredentialsCreateParams().WithV(cmdutils.ApiVersion).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsCreateParams().WithV(utils.ApiVersion).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response)
+		utils.PrettyPrintJson(response)
 	}
 
 	return

@@ -2,7 +2,7 @@ package create
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -24,7 +24,7 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.FullName, "full-name", "f", "", "Full name (required)")
-	cmdutils.MarkFlagRequired(cmd, "full-name")
+	utils.MarkFlagRequired(cmd, "full-name")
 
 	cmd.Flags().StringVarP(&opts.Address, "address", "a", "", "Address")
 	cmd.Flags().StringVarP(&opts.BillingEmail, "billing-email", "b", "", "Billing email")
@@ -44,10 +44,10 @@ func createRun(opts *models.OrganizationCreateCommand) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsCreateParams().WithV(cmdutils.ApiVersion).WithBody(opts)
-	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
+	params := organizations.NewOrganizationsCreateParams().WithV(utils.ApiVersion).WithBody(opts)
+	_, err = apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrintStandardSuccess()
 	}
 
 	return

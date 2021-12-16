@@ -3,7 +3,7 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -40,10 +40,10 @@ func NewCmdCreate() *cobra.Command {
 	}
 
 	cmd.Flags().Int32VarP(&opts.AccessProfileID, "access-profile-id", "a", 0, "Access profile's ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "access-profile-id")
+	utils.MarkFlagRequired(cmd, "access-profile-id")
 
 	cmd.Flags().StringVarP(&opts.PublicKey, "public-key", "p", "", "Public key (required)")
-	cmdutils.MarkFlagRequired(cmd, "public-key")
+	utils.MarkFlagRequired(cmd, "public-key")
 
 	return cmd
 }
@@ -57,7 +57,7 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	body := models.SSHKeyCommand{
 		SSHPublicKey: sshPublicKey,
 	}
-	params := checker.NewCheckerSSHParams().WithV(cmdutils.ApiVersion).WithBody(&body)
+	params := checker.NewCheckerSSHParams().WithV(utils.ApiVersion).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerSSH(params, apiClient)
 
 	return err == nil, nil
@@ -75,10 +75,10 @@ func createRun(opts *CreateOptions) (err error) {
 		SSHPublicKey:    opts.PublicKey,
 	}
 
-	params := ssh_users.NewSSHUsersCreateParams().WithV(cmdutils.ApiVersion).WithBody(&body)
+	params := ssh_users.NewSSHUsersCreateParams().WithV(utils.ApiVersion).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response)
+		utils.PrettyPrintJson(response)
 	}
 
 	return

@@ -2,7 +2,7 @@ package unbind
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/user_projects"
 	"github.com/itera-io/taikungoclient/models"
@@ -27,10 +27,10 @@ func NewCmdUnbind() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "username")
+	utils.MarkFlagRequired(cmd, "username")
 
 	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "project-id")
+	utils.MarkFlagRequired(cmd, "project-id")
 
 	return cmd
 }
@@ -51,10 +51,10 @@ func unbindRun(opts *UnbindOptions) (err error) {
 		},
 	}
 
-	params := user_projects.NewUserProjectsBindProjectsParams().WithV(cmdutils.ApiVersion).WithBody(body)
-	response, err := apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
+	params := user_projects.NewUserProjectsBindProjectsParams().WithV(utils.ApiVersion).WithBody(body)
+	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrintStandardSuccess()
 	}
 
 	return

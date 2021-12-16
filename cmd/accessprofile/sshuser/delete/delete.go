@@ -1,9 +1,8 @@
 package delete
 
 import (
-	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
@@ -16,9 +15,9 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete SSH user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			sshUserID, err := cmdutils.Atoi32(args[0])
+			sshUserID, err := utils.Atoi32(args[0])
 			if err != nil {
-				return fmt.Errorf("the given ID must be a number")
+				return utils.WrongIDArgumentFormatError
 			}
 			return deleteRun(sshUserID)
 		},
@@ -35,11 +34,11 @@ func deleteRun(id int32) (err error) {
 	body := models.DeleteSSHUserCommand{
 		ID: id,
 	}
-	params := ssh_users.NewSSHUsersDeleteParams().WithV(cmdutils.ApiVersion).WithBody(&body)
+	params := ssh_users.NewSSHUsersDeleteParams().WithV(utils.ApiVersion).WithBody(&body)
 	_, err = apiClient.Client.SSHUsers.SSHUsersDelete(params, apiClient)
 
 	if err == nil {
-		fmt.Println("SSH user deleted")
+		utils.PrintDeleteSuccess("SSH user", id)
 	}
 
 	return

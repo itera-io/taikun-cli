@@ -1,9 +1,8 @@
 package delete
 
 import (
-	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
@@ -28,10 +27,10 @@ func deleteRun(id string) (err error) {
 		return
 	}
 
-	params := users.NewUsersDeleteParams().WithV(cmdutils.ApiVersion).WithID(id)
+	params := users.NewUsersDeleteParams().WithV(utils.ApiVersion).WithID(id)
 	_, _, err = apiClient.Client.Users.UsersDelete(params, apiClient)
 	if err == nil {
-		fmt.Println("User deleted")
+		utils.PrintDeleteSuccess("User", id)
 	}
 
 	return

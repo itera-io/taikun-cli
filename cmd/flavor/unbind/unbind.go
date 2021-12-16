@@ -1,9 +1,8 @@
 package unbind
 
 import (
-	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
@@ -17,9 +16,9 @@ func NewCmdUnbind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bindings := make([]int32, len(args))
 			for i, arg := range args {
-				binding, err := cmdutils.Atoi32(arg)
+				binding, err := utils.Atoi32(arg)
 				if err != nil {
-					return fmt.Errorf("the given IDs must be numbers")
+					return utils.WrongIDArgumentFormatError
 				}
 				bindings[i] = binding
 			}
@@ -40,10 +39,10 @@ func unbindRun(bindings []int32) (err error) {
 	body := models.UnbindFlavorFromProjectCommand{
 		Ids: bindings,
 	}
-	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(cmdutils.ApiVersion).WithBody(&body)
-	response, err := apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
+	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(utils.ApiVersion).WithBody(&body)
+	_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
 	if err == nil {
-		cmdutils.PrettyPrint(response.Payload)
+		utils.PrintStandardSuccess()
 	}
 
 	return

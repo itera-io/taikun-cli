@@ -1,9 +1,9 @@
 package all
 
 import (
-	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/config"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -29,9 +29,12 @@ func NewCmdAll() *cobra.Command {
 		Short: "List all flavors by cloud credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cloudCredentialID, err := cmdutils.Atoi32(args[0])
+			cloudCredentialID, err := utils.Atoi32(args[0])
 			if err != nil {
-				return fmt.Errorf("the given ID must be a number")
+				return utils.WrongIDArgumentFormatError
+			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
 			}
 			opts.CloudCredentialID = cloudCredentialID
 			return allRun(&opts)
@@ -49,23 +52,39 @@ func NewCmdAll() *cobra.Command {
 	return cmd
 }
 
+func printResults(flavors []*models.FlavorsListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(flavors)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(flavors))
+		for i, flavor := range flavors {
+			data[i] = flavor
+		}
+		utils.PrettyPrintTable(data,
+			"name",
+			"cpu",
+			"ram",
+		)
+	}
+}
+
 func allRun(opts *AllOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(cmdutils.ApiVersion)
+	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(utils.ApiVersion)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
-	minRAM := cmdutils.GiBToMiB(opts.MinRAM)
-	maxRAM := cmdutils.GiBToMiB(opts.MaxRAM)
+	minRAM := utils.GiBToMiB(opts.MinRAM)
+	maxRAM := utils.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 	}
 
 	flavors := []*models.FlavorsListDto{}
@@ -89,6 +108,6 @@ func allRun(opts *AllOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(flavors)
+	printResults(flavors)
 	return
 }

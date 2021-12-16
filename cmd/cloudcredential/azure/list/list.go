@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/config"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -26,7 +27,10 @@ func NewCmdList() *cobra.Command {
 		Short: "List azure cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return fmt.Errorf("limit flag must be positive")
+				return utils.NegativeLimitFlagError
+			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
 			}
 			return ListRun(&opts)
 		},
@@ -41,21 +45,41 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
+func printResults(credentials []*models.AzureCredentialsListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(credentials)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(credentials))
+		for i, credential := range credentials {
+			data[i] = credential
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"organizationName",
+			"location",
+			"availabilityZone",
+			"isDefault",
+			"isLocked",
+		)
+	}
+}
+
 func ListRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(cmdutils.ApiVersion)
+	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
@@ -80,6 +104,6 @@ func ListRun(opts *ListOptions) (err error) {
 		azureCloudCredentials = azureCloudCredentials[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(azureCloudCredentials)
+	printResults(azureCloudCredentials)
 	return
 }

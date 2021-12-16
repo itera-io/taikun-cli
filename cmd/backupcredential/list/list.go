@@ -1,9 +1,9 @@
 package list
 
 import (
-	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/config"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -24,7 +24,10 @@ func NewCmdList() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return fmt.Errorf("limit flag must be positive")
+				return utils.NegativeLimitFlagError
+			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
 			}
 			return listRun(&opts)
 		},
@@ -36,13 +39,34 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
+func printResults(backupCredentials []*models.BackupCredentialsListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(backupCredentials)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(backupCredentials))
+		for i, backupCredential := range backupCredentials {
+			data[i] = backupCredential
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"organizationName",
+			"s3Name",
+			"s3AccessKeyId",
+			"s3Endpoint",
+			"s3Region",
+			"isDefault",
+			"isLocked",
+		)
+	}
+}
+
 func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := s3_credentials.NewS3CredentialsListParams().WithV(cmdutils.ApiVersion)
+	params := s3_credentials.NewS3CredentialsListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
@@ -68,6 +92,6 @@ func listRun(opts *ListOptions) (err error) {
 		backupCredentials = backupCredentials[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(backupCredentials)
+	printResults(backupCredentials)
 	return
 }

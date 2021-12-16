@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/config"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -26,7 +27,10 @@ func NewCmdList() *cobra.Command {
 		Short: "List kubernetes profiles",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return fmt.Errorf("limit flag must be positive")
+				return utils.NegativeLimitFlagError
+			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
 			}
 			return listRun(&opts)
 		},
@@ -41,21 +45,42 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
+func printResults(kubernetesProfiles []*models.KubernetesProfilesListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(kubernetesProfiles)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(kubernetesProfiles))
+		for i, kubernetesProfile := range kubernetesProfiles {
+			data[i] = kubernetesProfile
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"organizationName",
+			"taikunLBEnabled",
+			"octaviaEnabled",
+			"exposeNodePortOnBastion",
+			"cni",
+			"allowSchedulingOnMaster",
+		)
+	}
+}
+
 func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(cmdutils.ApiVersion)
+	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
@@ -80,6 +105,6 @@ func listRun(opts *ListOptions) (err error) {
 		kubernetesProfiles = kubernetesProfiles[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(kubernetesProfiles)
+	printResults(kubernetesProfiles)
 	return
 }

@@ -1,9 +1,9 @@
 package list
 
 import (
-	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/config"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -24,7 +24,10 @@ func NewCmdList() *cobra.Command {
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return fmt.Errorf("limit flag must be positive")
+				return utils.NegativeLimitFlagError
+			}
+			if !config.OutputFormatIsValid() {
+				return config.OutputFormatInvalidError
 			}
 			return listRun(&opts)
 		},
@@ -38,18 +41,43 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
+func printResults(organizations []*models.OrganizationDetailsDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(organizations)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(organizations))
+		for i, organization := range organizations {
+			data[i] = organization
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"fullName",
+			"discountRate",
+			"partnerName",
+			"isEligibleUpdateSubscription",
+			"isLocked",
+			"isReadOnly",
+			"users",
+			"cloudCredentials",
+			"projects",
+			"servers",
+		)
+	}
+}
+
 func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := organizations.NewOrganizationsListParams().WithV(cmdutils.ApiVersion)
+	params := organizations.NewOrganizationsListParams().WithV(utils.ApiVersion)
 	if opts.ReverseSortDirection {
-		cmdutils.ReverseSortDirection()
+		utils.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&cmdutils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
@@ -73,6 +101,6 @@ func listRun(opts *ListOptions) (err error) {
 		organizations = organizations[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(organizations)
+	printResults(organizations)
 	return
 }

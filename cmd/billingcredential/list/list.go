@@ -1,9 +1,9 @@
 package list
 
 import (
-	"fmt"
 	"taikun-cli/api"
-	"taikun-cli/cmd/cmdutils"
+	"taikun-cli/config"
+	"taikun-cli/utils"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -23,7 +23,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List billing credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
-				return fmt.Errorf("limit flag must be positive")
+				return utils.NegativeLimitFlagError
 			}
 			return listRun(&opts)
 		},
@@ -36,13 +36,33 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
+func printResults(billingCredentials []*models.OperationCredentialsListDto) {
+	if config.OutputFormat == config.OutputFormatJson {
+		utils.PrettyPrintJson(billingCredentials)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		data := make([]interface{}, len(billingCredentials))
+		for i, billingCredential := range billingCredentials {
+			data[i] = billingCredential
+		}
+		utils.PrettyPrintTable(data,
+			"id",
+			"name",
+			"organizationName",
+			"prometheusUsername",
+			"prometheusUrl",
+			"isDefault",
+			"isLocked",
+		)
+	}
+}
+
 func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := ops_credentials.NewOpsCredentialsListParams().WithV(cmdutils.ApiVersion)
+	params := ops_credentials.NewOpsCredentialsListParams().WithV(utils.ApiVersion)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
@@ -68,6 +88,6 @@ func listRun(opts *ListOptions) (err error) {
 		billingCredentials = billingCredentials[:opts.Limit]
 	}
 
-	cmdutils.PrettyPrint(billingCredentials)
+	printResults(billingCredentials)
 	return
 }
