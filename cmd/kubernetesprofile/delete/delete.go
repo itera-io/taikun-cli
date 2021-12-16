@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -33,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(utils.ApiVersion).WithID(id)
+	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(apiconfig.Version).WithID(id)
 	_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
 	if err == nil {
 		format.PrintDeleteSuccess("Kubernetes profile", id)

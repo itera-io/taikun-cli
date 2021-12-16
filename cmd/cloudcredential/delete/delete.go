@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -33,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(utils.ApiVersion).WithCloudID(id)
+	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(apiconfig.Version).WithCloudID(id)
 	_, _, err = apiClient.Client.CloudCredentials.CloudCredentialsDelete(params, apiClient)
 	if err == nil {
 		format.PrintDeleteSuccess("Cloud credential", id)

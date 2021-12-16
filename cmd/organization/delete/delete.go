@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -33,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsDeleteParams().WithV(utils.ApiVersion)
+	params := organizations.NewOrganizationsDeleteParams().WithV(apiconfig.Version)
 	params = params.WithOrganizationID(id)
 	_, _, err = apiClient.Client.Organizations.OrganizationsDelete(params, apiClient)
 	if err == nil {

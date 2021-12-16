@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -52,7 +52,7 @@ func getAlertingProfileWebhooks(id int32) ([]*models.AlertingWebhookDto, error) 
 		return nil, err
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(utils.ApiVersion)
+	params := alerting_profiles.NewAlertingProfilesListParams().WithV(apiconfig.Version)
 	params = params.WithID(&id)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
@@ -104,7 +104,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	alertingWebhooks = append(alertingWebhooks, newAlertingWebhook)
-	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(utils.ApiVersion)
+	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(apiconfig.Version)
 	params = params.WithID(opts.AlertingProfileID)
 	params = params.WithBody(alertingWebhooks)
 

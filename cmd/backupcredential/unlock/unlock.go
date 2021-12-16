@@ -2,7 +2,7 @@ package unlock
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -38,7 +38,7 @@ func unlockRun(id int32) (err error) {
 		ID:   id,
 		Mode: types.UnlockedMode,
 	}
-	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)
 	if err == nil {
 		format.PrintStandardSuccess()

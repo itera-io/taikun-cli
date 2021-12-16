@@ -2,7 +2,7 @@ package unbind
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -41,7 +41,7 @@ func unbindRun(bindings []int32) (err error) {
 	body := models.UnbindFlavorFromProjectCommand{
 		Ids: bindings,
 	}
-	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
 	if err == nil {
 		format.PrintStandardSuccess()

@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -36,7 +36,7 @@ func deleteRun(id int32) (err error) {
 	body := models.DeleteSSHUserCommand{
 		ID: id,
 	}
-	params := ssh_users.NewSSHUsersDeleteParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := ssh_users.NewSSHUsersDeleteParams().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.SSHUsers.SSHUsersDelete(params, apiClient)
 
 	if err == nil {

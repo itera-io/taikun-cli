@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -33,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(utils.ApiVersion)
+	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(apiconfig.Version)
 	params = params.WithID(id)
 	_, _, err = apiClient.Client.S3Credentials.S3CredentialsDelete(params, apiClient)
 	if err == nil {

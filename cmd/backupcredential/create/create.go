@@ -3,8 +3,8 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/checker"
@@ -70,7 +70,7 @@ func backupCredentialIsValid(opts *CreateOptions) (bool, error) {
 		S3Endpoint:    opts.S3Endpoint,
 		S3Region:      opts.S3Region,
 	}
-	params := checker.NewCheckerS3Params().WithV(utils.ApiVersion).WithBody(&body)
+	params := checker.NewCheckerS3Params().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
 	return err == nil, nil
 }
@@ -92,7 +92,7 @@ func createRun(opts *CreateOptions) (err error) {
 		body.OrganizationID = opts.OrganizationID
 	}
 
-	params := s3_credentials.NewS3CredentialsCreateParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
 		format.PrettyPrintJson(response)

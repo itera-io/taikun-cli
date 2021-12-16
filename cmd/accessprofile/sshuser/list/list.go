@@ -2,8 +2,8 @@ package list
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -67,7 +67,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := ssh_users.NewSSHUsersListParams().WithV(utils.ApiVersion).WithAccessProfileID(opts.AccessProfileID)
+	params := ssh_users.NewSSHUsersListParams().WithV(apiconfig.Version).WithAccessProfileID(opts.AccessProfileID)
 	response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
 	if err != nil {
 		return err

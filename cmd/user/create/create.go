@@ -2,8 +2,8 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -67,7 +67,7 @@ func createRun(opts *CreateOptions) (err error) {
 		Username:       opts.Username,
 	}
 
-	params := users.NewUsersCreateParams().WithV(utils.ApiVersion).WithBody(body)
+	params := users.NewUsersCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.Users.UsersCreate(params, apiClient)
 	if err == nil {
 		format.PrettyPrintJson(response.Payload)

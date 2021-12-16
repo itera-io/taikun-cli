@@ -3,8 +3,8 @@ package create
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -72,7 +72,7 @@ func createRun(opts *CreateOptions) (err error) {
 		body.Emails = emails
 	}
 
-	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
 		format.PrettyPrintJson(response.Payload)

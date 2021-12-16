@@ -2,7 +2,7 @@ package lock
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -38,7 +38,7 @@ func lockRun(id int32) (err error) {
 		ID:   id,
 		Mode: "lock",
 	}
-	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(utils.ApiVersion).WithBody(body)
+	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(apiconfig.Version).WithBody(body)
 	_, err = apiClient.Client.CloudCredentials.CloudCredentialsLockManager(params, apiClient)
 	if err == nil {
 		format.PrintStandardSuccess()

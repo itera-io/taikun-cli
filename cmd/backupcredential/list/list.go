@@ -2,8 +2,8 @@ package list
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
@@ -67,7 +67,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := s3_credentials.NewS3CredentialsListParams().WithV(utils.ApiVersion)
+	params := s3_credentials.NewS3CredentialsListParams().WithV(apiconfig.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}

@@ -2,8 +2,8 @@ package all
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -76,17 +76,17 @@ func allRun(opts *AllOptions) (err error) {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(utils.ApiVersion)
+	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(apiconfig.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
 	minRAM := types.GiBToMiB(opts.MinRAM)
 	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.FlavorsListDto{}

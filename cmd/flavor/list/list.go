@@ -2,8 +2,8 @@ package list
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -75,13 +75,13 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(utils.ApiVersion)
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(apiconfig.Version)
 	params = params.WithProjectID(&opts.ProjectID)
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}

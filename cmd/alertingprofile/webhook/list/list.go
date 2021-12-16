@@ -3,8 +3,8 @@ package list
 import (
 	"fmt"
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -66,7 +66,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(utils.ApiVersion)
+	params := alerting_profiles.NewAlertingProfilesListParams().WithV(apiconfig.Version)
 	params = params.WithID(&opts.AlertingProfileID)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
@@ -73,15 +73,15 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(utils.ApiVersion)
+	params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(apiconfig.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 

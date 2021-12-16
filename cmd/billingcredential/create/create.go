@@ -2,8 +2,8 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
@@ -60,7 +60,7 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:     opts.OrganizationID,
 	}
 
-	params := ops_credentials.NewOpsCredentialsCreateParams().WithV(utils.ApiVersion).WithBody(body)
+	params := ops_credentials.NewOpsCredentialsCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.OpsCredentials.OpsCredentialsCreate(params, apiClient)
 	if err == nil {
 		format.PrettyPrintJson(response.Payload)

@@ -2,8 +2,8 @@ package list
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
@@ -73,12 +73,12 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsListParams().WithV(utils.ApiVersion)
+	params := organizations.NewOrganizationsListParams().WithV(apiconfig.Version)
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)

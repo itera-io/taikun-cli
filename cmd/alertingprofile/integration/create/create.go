@@ -2,8 +2,8 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -70,7 +70,7 @@ func createRun(opts *CreateOptions) (err error) {
 		},
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	if _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
 		format.PrintStandardSuccess()
 	}

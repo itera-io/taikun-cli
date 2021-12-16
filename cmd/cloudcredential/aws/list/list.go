@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/config"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -72,15 +72,15 @@ func ListRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(utils.ApiVersion)
+	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(apiconfig.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if opts.ReverseSortDirection {
-		utils.ReverseSortDirection()
+		apiconfig.ReverseSortDirection()
 	}
 	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&utils.SortDirection)
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 

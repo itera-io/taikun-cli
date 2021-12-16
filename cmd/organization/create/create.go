@@ -2,8 +2,8 @@ package create
 
 import (
 	"taikun-cli/api"
+	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/common"
@@ -44,7 +44,7 @@ func NewCmdCreate() *cobra.Command {
 			return []string{}, cobra.ShellCompDirectiveDefault
 		}
 
-		params := common.NewCommonGetCountryListParams().WithV(utils.ApiVersion)
+		params := common.NewCommonGetCountryListParams().WithV(apiconfig.Version)
 		result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
@@ -67,7 +67,7 @@ func createRun(opts *models.OrganizationCreateCommand) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsCreateParams().WithV(utils.ApiVersion).WithBody(opts)
+	params := organizations.NewOrganizationsCreateParams().WithV(apiconfig.Version).WithBody(opts)
 	_, err = apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
 		format.PrintStandardSuccess()

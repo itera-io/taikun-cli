@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -36,7 +36,7 @@ func deleteRun(id int32) (err error) {
 
 	body := models.DeleteAlertingProfilesCommand{ID: id}
 
-	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(utils.ApiVersion).WithBody(&body)
+	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(apiconfig.Version).WithBody(&body)
 	_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
 	if err == nil {
 		format.PrintDeleteSuccess("Alerting profile", id)

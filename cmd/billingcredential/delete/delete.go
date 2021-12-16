@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -33,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := ops_credentials.NewOpsCredentialsDeleteParams().WithV(utils.ApiVersion).WithID(id)
+	params := ops_credentials.NewOpsCredentialsDeleteParams().WithV(apiconfig.Version).WithID(id)
 	_, _, err = apiClient.Client.OpsCredentials.OpsCredentialsDelete(params, apiClient)
 	if err == nil {
 		format.PrintDeleteSuccess("Billing credential", id)

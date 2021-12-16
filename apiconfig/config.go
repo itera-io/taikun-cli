@@ -1,6 +1,6 @@
-package utils
+package apiconfig
 
-const ApiVersion = "1"
+const Version = "1"
 
 var SortDirection = "asc"
 

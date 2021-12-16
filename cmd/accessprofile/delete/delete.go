@@ -2,7 +2,7 @@ package delete
 
 import (
 	"taikun-cli/api"
-	"taikun-cli/utils"
+	"taikun-cli/apiconfig"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
@@ -33,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := access_profiles.NewAccessProfilesDeleteParams().WithV(utils.ApiVersion).WithID(id)
+	params := access_profiles.NewAccessProfilesDeleteParams().WithV(apiconfig.Version).WithID(id)
 	_, _, err = apiClient.Client.AccessProfiles.AccessProfilesDelete(params, apiClient)
 	if err == nil {
 		format.PrintDeleteSuccess("Access profile", id)
