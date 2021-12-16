@@ -1,6 +1,10 @@
 package webhook
 
-import "github.com/spf13/cobra"
+import (
+	"taikun-cli/cmd/alertingprofile/webhook/list"
+
+	"github.com/spf13/cobra"
+)
 
 func NewCmdWebhook() *cobra.Command {
 	cmd := &cobra.Command{
@@ -8,7 +12,7 @@ func NewCmdWebhook() *cobra.Command {
 		Short: "Manage alerting profile webhooks",
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(list.NewCmdList())
 
 	return cmd
 }
