@@ -125,7 +125,11 @@ func PrettyPrintTable(resources interface{}, fields ...string) {
 	for _, resourceMap := range resourceMaps {
 		row := make([]interface{}, len(fields))
 		for i, field := range fields {
-			row[i] = trimCellValue(resourceMap[field])
+			if value, found := resourceMap[field]; found {
+				row[i] = trimCellValue(value)
+			} else {
+				row[i] = ""
+			}
 		}
 		t.AppendRow(table.Row(row))
 	}
