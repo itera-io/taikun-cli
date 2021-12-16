@@ -23,7 +23,7 @@ func NewCmdRoot() *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	cmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "f", config.OutputFormatTable,
+	cmd.PersistentFlags().StringVar(&config.OutputFormat, "format", config.OutputFormatTable,
 		fmt.Sprintf(
 			"Output format: \"%s\" or \"%s\"",
 			config.OutputFormatJson, config.OutputFormatTable,
