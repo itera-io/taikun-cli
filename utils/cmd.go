@@ -6,14 +6,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const ApiVersion = "1"
-
-var SortDirection = "asc"
-
-func ReverseSortDirection() {
-	SortDirection = "desc"
-}
-
 func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	if err := cmd.MarkFlagRequired(flag); err != nil {
 		log.Fatal(err)
