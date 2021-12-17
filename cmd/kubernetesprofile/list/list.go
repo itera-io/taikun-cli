@@ -1,11 +1,10 @@
 package list
 
 import (
-	"fmt"
-
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmderr"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/config"
 	"taikun-cli/utils/format"
 
@@ -42,7 +41,8 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
-	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
+
+	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.KubernetesProfilesListDto{})
 
 	return cmd
 }
@@ -83,7 +83,6 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	if opts.SortBy != "" {
 		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
-		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
 	var kubernetesProfiles = make([]*models.KubernetesProfilesListDto, 0)

@@ -13,6 +13,11 @@ const (
 	OutputFormatTable = "table"
 )
 
+var OutputFormats = []string{
+	OutputFormatJson,
+	OutputFormatTable,
+}
+
 func OutputFormatIsValid() bool {
 	return OutputFormat == OutputFormatJson ||
 		OutputFormat == OutputFormatTable

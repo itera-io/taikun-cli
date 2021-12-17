@@ -8,6 +8,7 @@ import (
 	"taikun-cli/cmd/backupcredential"
 	"taikun-cli/cmd/billingcredential"
 	"taikun-cli/cmd/cloudcredential"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/cmd/flavor"
 	"taikun-cli/cmd/kubernetesprofile"
 	"taikun-cli/cmd/organization"
@@ -26,12 +27,10 @@ func NewCmdRoot() *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	cmd.PersistentFlags().StringVar(&config.OutputFormat, "format", config.OutputFormatTable,
-		fmt.Sprintf(
-			"Output format for list-type commands: \"%s\" or \"%s\"",
-			config.OutputFormatJson, config.OutputFormatTable,
-		),
+	cmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "F", config.OutputFormatTable,
+		fmt.Sprintf("Output format for list-type commands: one of %v", config.OutputFormats),
 	)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "format", config.OutputFormats...)
 
 	cmd.PersistentFlags().BoolVar(&config.ShowLargeValues, "show-large-values", false,
 		"Prevent trimming of large cell values")

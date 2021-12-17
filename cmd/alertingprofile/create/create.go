@@ -1,7 +1,6 @@
 package create
 
 import (
-	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmdutils"
@@ -64,7 +63,6 @@ func createRun(opts *CreateOptions) (err error) {
 	}
 
 	if len(opts.Emails) != 0 {
-		fmt.Println(opts.Emails)
 		emails := make([]*models.AlertingEmailDto, len(opts.Emails))
 		for i, email := range opts.Emails {
 			emails[i] = &models.AlertingEmailDto{Email: email}
