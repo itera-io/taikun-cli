@@ -3,6 +3,7 @@ package cmdutils
 import (
 	"log"
 	"reflect"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -29,12 +30,42 @@ func getStructFieldJsonTag(structType reflect.Type, i int) string {
 	return structType.Field(i).Tag.Get("json")
 }
 
-func GetSortByOptions(s interface{}) []string {
+func extractNameFromJsonTag(tag string) (name string) {
+	if strings.Count(tag, ",") == 0 {
+		name = tag
+	} else {
+		tokens := strings.Split(tag, ",")
+		name = tokens[0]
+	}
+	return
+}
+
+func getStructJsonTags(s interface{}) []string {
 	structType := reflect.ValueOf(s).Type()
 	structFieldCount := structType.NumField()
 	structFieldJsonTags := make([]string, structFieldCount)
 	for i := 0; i < structFieldCount; i++ {
-		structFieldJsonTags[i] = getStructFieldJsonTag(structType, i)
+		tag := getStructFieldJsonTag(structType, i)
+		structFieldJsonTags[i] = extractNameFromJsonTag(tag)
 	}
 	return structFieldJsonTags
+}
+
+const (
+	sortByFlag            = "sort-by"
+	sortByFlagShorthand   = "s"
+	sortByFlagDefault     = ""
+	sortByFlagDescription = "Sort results by attribute value"
+)
+
+func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStruct interface{}) {
+	cmd.Flags().StringVarP(
+		optionStore,
+		sortByFlag,
+		sortByFlagShorthand,
+		sortByFlagDefault,
+		sortByFlagDescription,
+	)
+	resultStructJsonTags := getStructJsonTags(resultStruct)
+	RegisterStaticFlagCompletion(cmd, sortByFlag, resultStructJsonTags...)
 }

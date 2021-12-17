@@ -4,6 +4,7 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmderr"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/config"
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
@@ -50,7 +51,8 @@ func NewCmdAll() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
 	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
 	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results")
-	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
+
+	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.FlavorsListDto{})
 
 	return cmd
 }
