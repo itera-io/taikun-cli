@@ -27,7 +27,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "create <name>",
-		Short: "Create an azure cloud credential",
+		Short: "Create an Azure cloud credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
