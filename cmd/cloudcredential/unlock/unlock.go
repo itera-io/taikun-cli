@@ -37,7 +37,7 @@ func unlockRun(id int32) (err error) {
 
 	body := &models.CloudLockManagerCommand{
 		ID:   id,
-		Mode: "unlock",
+		Mode: types.UnlockedMode,
 	}
 	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(apiconfig.Version).WithBody(body)
 	_, err = apiClient.Client.CloudCredentials.CloudCredentialsLockManager(params, apiClient)
