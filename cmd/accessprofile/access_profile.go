@@ -4,7 +4,9 @@ import (
 	"taikun-cli/cmd/accessprofile/create"
 	"taikun-cli/cmd/accessprofile/delete"
 	"taikun-cli/cmd/accessprofile/list"
+	"taikun-cli/cmd/accessprofile/lock"
 	"taikun-cli/cmd/accessprofile/sshuser"
+	"taikun-cli/cmd/accessprofile/unlock"
 
 	"github.com/spf13/cobra"
 )
@@ -18,8 +20,10 @@ func NewCmdAccessProfile() *cobra.Command {
 
 	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(lock.NewCmdLock())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(sshuser.NewCmdSshUser())
+	cmd.AddCommand(unlock.NewCmdUnlock())
 
 	return cmd
 }
