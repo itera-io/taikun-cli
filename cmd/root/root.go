@@ -2,6 +2,7 @@ package root
 
 import (
 	"fmt"
+
 	"taikun-cli/cmd/accessprofile"
 	"taikun-cli/cmd/alertingprofile"
 	"taikun-cli/cmd/backupcredential"
@@ -10,6 +11,7 @@ import (
 	"taikun-cli/cmd/flavor"
 	"taikun-cli/cmd/kubernetesprofile"
 	"taikun-cli/cmd/organization"
+	"taikun-cli/cmd/policyprofile"
 	"taikun-cli/cmd/user"
 	"taikun-cli/config"
 
@@ -42,6 +44,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(flavor.NewCmdFlavor())
 	cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile())
 	cmd.AddCommand(organization.NewCmdOrganization())
+	cmd.AddCommand(policyprofile.NewCmdPolicyProfile())
 	cmd.AddCommand(user.NewCmdUser())
 
 	return cmd
