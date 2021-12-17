@@ -96,8 +96,8 @@ func DeleteMultiple(ids []int32, deleteFunc DeleteFunc) error {
 			errorOccured = true
 		}
 	}
-	fmt.Println()
 	if errorOccured {
+		fmt.Println()
 		return errors.New("Failed to delete one or more resources")
 	}
 	return nil
