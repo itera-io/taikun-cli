@@ -1,6 +1,7 @@
 package project
 
 import (
+	"taikun-cli/cmd/project/list"
 	"taikun-cli/cmd/project/quotas"
 
 	"github.com/spf13/cobra"
@@ -12,6 +13,7 @@ func NewCmdProject() *cobra.Command {
 		Short: "Manage projects",
 	}
 
+	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(quotas.NewCmdQuotas())
 
 	return cmd
