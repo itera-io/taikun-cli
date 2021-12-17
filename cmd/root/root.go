@@ -13,6 +13,7 @@ import (
 	"taikun-cli/cmd/kubernetesprofile"
 	"taikun-cli/cmd/organization"
 	"taikun-cli/cmd/policyprofile"
+	"taikun-cli/cmd/project"
 	"taikun-cli/cmd/user"
 	"taikun-cli/config"
 
@@ -44,6 +45,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile())
 	cmd.AddCommand(organization.NewCmdOrganization())
 	cmd.AddCommand(policyprofile.NewCmdPolicyProfile())
+	cmd.AddCommand(project.NewCmdProject())
 	cmd.AddCommand(user.NewCmdUser())
 
 	return cmd
