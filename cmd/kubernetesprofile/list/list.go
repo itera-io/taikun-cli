@@ -1,8 +1,6 @@
 package list
 
 import (
-	"fmt"
-
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmderr"
@@ -85,7 +83,6 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	if opts.SortBy != "" {
 		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
-		fmt.Printf("sorting by %s\n", opts.SortBy)
 	}
 
 	var kubernetesProfiles = make([]*models.KubernetesProfilesListDto, 0)
