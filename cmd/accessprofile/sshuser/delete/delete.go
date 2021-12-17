@@ -4,8 +4,8 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmderr"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils/format"
-	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
@@ -14,15 +14,15 @@ import (
 
 func NewCmdDelete() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete <ssh-user-id>",
-		Short: "Delete SSH user",
-		Args:  cobra.ExactArgs(1),
+		Use:   "delete <ssh-user-id>...",
+		Short: "Delete one or more SSH users",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			sshUserID, err := types.Atoi32(args[0])
+			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.WrongIDArgumentFormatError
 			}
-			return deleteRun(sshUserID)
+			return cmdutils.DeleteMultiple(ids, deleteRun)
 		},
 	}
 	return cmd
