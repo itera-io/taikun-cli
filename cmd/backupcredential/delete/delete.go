@@ -4,8 +4,8 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmderr"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils/format"
-	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/spf13/cobra"
@@ -13,15 +13,15 @@ import (
 
 func NewCmdDelete() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete <backup-credential-id>",
-		Short: "Delete a backup credential",
-		Args:  cobra.ExactArgs(1),
+		Use:   "delete <backup-credential-id>...",
+		Short: "Delete one or more backup credentials",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			backupCredentialID, err := types.Atoi32(args[0])
+			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.WrongIDArgumentFormatError
 			}
-			return deleteRun(backupCredentialID)
+			return cmdutils.DeleteMultiple(ids, deleteRun)
 		},
 	}
 

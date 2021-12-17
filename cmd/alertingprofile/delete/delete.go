@@ -4,8 +4,8 @@ import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmderr"
+	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils/format"
-	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -14,15 +14,15 @@ import (
 
 func NewCmdDelete() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete <alerting-profile-id>",
-		Short: "Delete an alerting profile",
-		Args:  cobra.ExactArgs(1),
+		Use:   "delete <alerting-profile-id>...",
+		Short: "Delete one or more alerting profiles",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := types.Atoi32(args[0])
+			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.WrongIDArgumentFormatError
 			}
-			return deleteRun(id)
+			return cmdutils.DeleteMultiple(ids, deleteRun)
 		},
 	}
 
