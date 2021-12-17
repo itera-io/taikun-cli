@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+
 	"taikun-cli/config"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -121,13 +122,13 @@ func PrettyPrintTable(resources interface{}, fields ...string) {
 	for _, resourceMap := range resourceMaps {
 		row := make([]interface{}, len(fields))
 		for i, field := range fields {
-			if value, found := resourceMap[field]; found {
+			if value, found := resourceMap[field]; found && value != nil {
 				row[i] = trimCellValue(value)
 			} else {
 				row[i] = ""
 			}
 		}
-		t.AppendRow(table.Row(row))
+		t.AppendRow(row)
 	}
 
 	t.Render()
