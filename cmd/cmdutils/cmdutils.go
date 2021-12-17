@@ -102,3 +102,20 @@ func DeleteMultiple(ids []int32, deleteFunc DeleteFunc) error {
 	}
 	return nil
 }
+
+type DeleteFuncStringID func(string) error
+
+func DeleteMultipleStringID(ids []string, deleteFunc DeleteFuncStringID) error {
+	errorOccured := false
+	for _, id := range ids {
+		if err := deleteFunc(id); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			errorOccured = true
+		}
+	}
+	if errorOccured {
+		fmt.Println()
+		return errors.New("Failed to delete one or more resources")
+	}
+	return nil
+}
