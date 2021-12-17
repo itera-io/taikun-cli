@@ -43,7 +43,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().Int32VarP(&opts.SlackConfigurationID, "slack-configuration-id", "s", 0, "Slack configuration ID")
 	cmd.Flags().StringSliceVarP(&opts.Emails, "emails", "e", []string{}, "Emails")
-	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "None", "Reminder")
+	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "none", "Reminder")
 	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", types.MapKeys(types.AlertingReminders)...)
 
 	return cmd
