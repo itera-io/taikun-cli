@@ -1,6 +1,7 @@
 package openstack
 
 import (
+	"taikun-cli/cmd/cloudcredential/openstack/check"
 	"taikun-cli/cmd/cloudcredential/openstack/create"
 	"taikun-cli/cmd/cloudcredential/openstack/list"
 
@@ -13,6 +14,7 @@ func NewCmdOpenstack() *cobra.Command {
 		Short: "Manage OpenStack Cloud Credentials",
 	}
 
+	cmd.AddCommand(check.NewCmdCheck())
 	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(list.NewCmdList())
 

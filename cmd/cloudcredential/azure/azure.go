@@ -1,6 +1,7 @@
 package azure
 
 import (
+	"taikun-cli/cmd/cloudcredential/azure/check"
 	"taikun-cli/cmd/cloudcredential/azure/create"
 	"taikun-cli/cmd/cloudcredential/azure/list"
 
@@ -13,6 +14,7 @@ func NewCmdAzure() *cobra.Command {
 		Short: "Manage Azure Cloud Credentials",
 	}
 
+	cmd.AddCommand(check.NewCmdCheck())
 	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(list.NewCmdList())
 

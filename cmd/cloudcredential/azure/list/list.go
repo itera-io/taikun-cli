@@ -25,7 +25,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "List azure cloud credentials",
+		Short: "List Azure cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
 				return cmderr.NegativeLimitFlagError

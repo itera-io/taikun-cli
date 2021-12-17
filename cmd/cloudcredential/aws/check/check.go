@@ -1,35 +1,33 @@
-package create
+package check
 
 import (
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/aws"
+	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
-	Name                string
-	AWSSecretAccessKey  string
-	AWSAccessKeyID      string
-	AWSRegion           string
-	AWSAvailabilityZone string
-	OrganizationID      int32
+type CheckOptions struct {
+	AWSSecretAccessKey string
+	AWSAccessKeyID     string
+	AWSRegion          string
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdCheck() *cobra.Command {
+	var opts CheckOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <name>",
-		Short: "Create an AWS cloud credential",
-		Args:  cobra.ExactArgs(1),
+		Use:   "check <name>",
+		Short: "Check the validity of an AWS cloud credential",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.Name = args[0]
-			return createRun(&opts)
+			return checkRun(&opts)
 		},
 	}
 
@@ -61,33 +59,27 @@ func NewCmdCreate() *cobra.Command {
 		return regionNames, cobra.ShellCompDirectiveDefault
 	})
 
-	cmd.Flags().StringVarP(&opts.AWSAvailabilityZone, "availability-zone", "z", "", "AWS Availability Zone")
-	cmdutils.MarkFlagRequired(cmd, "availability-zone")
-
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
-
 	return cmd
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func checkRun(opts *CheckOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := &models.CreateAwsCloudCommand{
-		Name:                opts.Name,
-		AwsSecretAccessKey:  opts.AWSSecretAccessKey,
-		AwsAccessKeyID:      opts.AWSAccessKeyID,
-		AwsRegion:           opts.AWSRegion,
-		AwsAvailabilityZone: opts.AWSAvailabilityZone,
-		OrganizationID:      opts.OrganizationID,
+	body := models.CheckAwsCommand{
+		AwsSecretAccessKey: opts.AWSSecretAccessKey,
+		AwsAccessKeyID:     opts.AWSAccessKeyID,
+		Region:             opts.AWSRegion,
 	}
 
-	params := aws.NewAwsCreateParams().WithV(apiconfig.Version).WithBody(body)
-	response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
+	params := checker.NewCheckerAwsParams().WithV(apiconfig.Version).WithBody(&body)
+	_, err = apiClient.Client.Checker.CheckerAws(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		format.PrintCheckSuccess("AWS cloud credential")
+	} else if _, isValidationProblem := err.(*checker.CheckerAwsBadRequest); isValidationProblem {
+		return cmderr.CheckFailureError("AWS cloud credential")
 	}
 
 	return

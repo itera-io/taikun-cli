@@ -143,3 +143,7 @@ func PrintDeleteSuccess(resourceName string, id interface{}) {
 func PrintStandardSuccess() {
 	fmt.Println("Operation was successful.")
 }
+
+func PrintCheckSuccess(name string) {
+	fmt.Printf("%s is valid.\n", name)
+}

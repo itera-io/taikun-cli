@@ -16,7 +16,7 @@ func NewCmdBillingCredential() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "cloud-credential <command>",
 		Short:   "Manage Cloud Credentials",
-		Aliases: []string{"cloud"},
+		Aliases: []string{"cloud", "cc"},
 	}
 
 	cmd.AddCommand(aws.NewCmdAWS())
