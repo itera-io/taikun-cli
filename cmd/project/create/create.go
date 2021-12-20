@@ -1,10 +1,13 @@
 package create
 
 import (
+	"fmt"
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
+	"taikun-cli/cmd/cmderr"
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils/format"
+	"taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -41,6 +44,13 @@ func NewCmdCreate() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
+
+			if opts.ExpirationDate != "" {
+				if !types.StrIsValidDate(opts.ExpirationDate) {
+					return cmderr.InvalidDateFormatError
+				}
+			}
+
 			return createRun(&opts)
 		},
 	}
@@ -69,6 +79,14 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(
 		&opts.BackupCredentialID, "backup-credential-id", "b", 0,
 		"Backup credential ID",
+	)
+
+	cmd.Flags().StringVarP(
+		&opts.ExpirationDate, "expiration-date", "e", "",
+		fmt.Sprintf(
+			"Expiration date in the format: %s",
+			types.ExpectedDateFormat,
+		),
 	)
 
 	cmd.Flags().Int32VarP(
@@ -116,6 +134,11 @@ func createRun(opts *CreateOptions) (err error) {
 	if opts.BackupCredentialID != 0 {
 		body.IsBackupEnabled = true
 		body.S3CredentialID = opts.BackupCredentialID
+	}
+
+	if opts.ExpirationDate != "" {
+		expiredAt := types.StrToDateTime(opts.ExpirationDate)
+		body.ExpiredAt = &expiredAt
 	}
 
 	params := projects.NewProjectsCreateParams().WithV(apiconfig.Version)
