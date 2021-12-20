@@ -17,7 +17,7 @@ var OutputFormatInvalidError = errors.New(
 	"Unknown output format.",
 )
 
-var WrongIDArgumentFormatError = errors.New(
+var IDArgumentNotANumberError = errors.New(
 	"The ID argument must be a number.",
 )
 

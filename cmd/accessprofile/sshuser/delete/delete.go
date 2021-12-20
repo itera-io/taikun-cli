@@ -20,7 +20,7 @@ func NewCmdDelete() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
-				return cmderr.WrongIDArgumentFormatError
+				return cmderr.IDArgumentNotANumberError
 			}
 			return cmdutils.DeleteMultiple(ids, deleteRun)
 		},
