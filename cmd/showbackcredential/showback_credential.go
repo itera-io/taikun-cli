@@ -1,6 +1,10 @@
 package showbackcredential
 
-import "github.com/spf13/cobra"
+import (
+	"taikun-cli/cmd/showbackcredential/list"
+
+	"github.com/spf13/cobra"
+)
 
 func NewCmdShowbackCredential() *cobra.Command {
 	cmd := cobra.Command{
@@ -9,7 +13,7 @@ func NewCmdShowbackCredential() *cobra.Command {
 		Aliases: []string{"sbc"},
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(list.NewCmdList())
 
 	return &cmd
 }
