@@ -1,6 +1,6 @@
 package types
 
-const (
+var (
 	UnlockedMode = "unlock"
 	LockedMode   = "lock"
 )
