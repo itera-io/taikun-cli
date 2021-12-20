@@ -11,6 +11,7 @@ import (
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
+	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
@@ -95,6 +96,11 @@ func NewCmdCreate() *cobra.Command {
 	)
 
 	cmd.Flags().Int32VarP(
+		&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0,
+		"Kubernetes profile ID",
+	)
+
+	cmd.Flags().Int32VarP(
 		&opts.OrganizationID, "organization-id", "o", 0,
 		"Organization ID",
 	)
@@ -126,15 +132,22 @@ func createRun(opts *CreateOptions) (err error) {
 			return
 		}
 	}
+	if opts.KubernetesProfileID == 0 {
+		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(opts.OrganizationID)
+		if err != nil {
+			return
+		}
+	}
 
 	body := models.CreateProjectCommand{
-		AccessProfileID:   opts.AccessProfileID,
-		AlertingProfileID: opts.AlertingProfileID,
-		CloudCredentialID: opts.CloudCredentialID,
-		Flavors:           opts.Flavors,
-		IsAutoUpgrade:     opts.AutoUpgrade,
-		Name:              opts.Name,
-		OrganizationID:    opts.OrganizationID,
+		AccessProfileID:     opts.AccessProfileID,
+		AlertingProfileID:   opts.AlertingProfileID,
+		CloudCredentialID:   opts.CloudCredentialID,
+		Flavors:             opts.Flavors,
+		IsAutoUpgrade:       opts.AutoUpgrade,
+		KubernetesProfileID: opts.KubernetesProfileID,
+		Name:                opts.Name,
+		OrganizationID:      opts.OrganizationID,
 	}
 
 	if opts.BackupCredentialID != 0 {
@@ -208,6 +221,28 @@ func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
 
 	for _, profile := range response.Payload {
 		if profile.Name == apiconfig.DefaultAlertingProfileName {
+			id = profile.ID
+			return
+		}
+	}
+	return
+}
+
+func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := kubernetes_profiles.NewKubernetesProfilesKubernetesProfilesForOrganizationListParams()
+	params = params.WithV(apiconfig.Version).WithOrganizationID(&organizationID)
+	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesKubernetesProfilesForOrganizationList(params, apiClient)
+	if err != nil {
+		return
+	}
+
+	for _, profile := range response.Payload {
+		if profile.Name == apiconfig.DefaultKubernetesProfileName {
 			id = profile.ID
 			return
 		}
