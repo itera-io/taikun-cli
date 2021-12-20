@@ -1,6 +1,7 @@
 package project
 
 import (
+	"taikun-cli/cmd/project/create"
 	"taikun-cli/cmd/project/list"
 	"taikun-cli/cmd/project/quotas"
 
@@ -13,6 +14,7 @@ func NewCmdProject() *cobra.Command {
 		Short: "Manage projects",
 	}
 
+	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(quotas.NewCmdQuotas())
 
