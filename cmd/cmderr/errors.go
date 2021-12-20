@@ -24,3 +24,7 @@ var WrongIDArgumentFormatError = errors.New(
 var InvalidDateFormatError = errors.New(
 	"Please enter a valid date in the format dd/mm/yyyy",
 )
+
+var RouterIDRangeError = errors.New(
+	"Please specify a positive number between 1 and 255 included",
+)

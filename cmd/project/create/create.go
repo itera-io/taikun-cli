@@ -52,6 +52,18 @@ func NewCmdCreate() *cobra.Command {
 				}
 			}
 
+			if opts.RouterIDStartRange != -1 {
+				if !types.IsInRouterIDRange(opts.RouterIDStartRange) {
+					return cmderr.RouterIDRangeError
+				}
+			}
+
+			if opts.RouterIDEndRange != -1 {
+				if !types.IsInRouterIDRange(opts.RouterIDEndRange) {
+					return cmderr.RouterIDRangeError
+				}
+			}
+
 			return createRun(&opts)
 		},
 	}
@@ -115,6 +127,21 @@ func NewCmdCreate() *cobra.Command {
 		"Policy profile ID",
 	)
 
+	cmd.Flags().Int32Var(
+		&opts.RouterIDStartRange, "router-id-start-range", -1,
+		"Router ID start range (required with OpenStack and Taikun load balancer",
+	)
+
+	cmd.Flags().Int32Var(
+		&opts.RouterIDEndRange, "router-id-end-range", -1,
+		"Router ID end range (required with OpenStack and Taikun load balancer",
+	)
+
+	cmd.Flags().StringVar(
+		&opts.TaikunLBFlavor, "taikun-lb-flavor", "",
+		"Taikun load balancer flavor(required with OpenStack and Taikun load balancer",
+	)
+
 	return cmd
 }
 
@@ -173,6 +200,16 @@ func createRun(opts *CreateOptions) (err error) {
 
 	if opts.PolicyProfileID != 0 {
 		body.OpaProfileID = opts.PolicyProfileID
+	}
+
+	if opts.RouterIDStartRange != -1 {
+		body.RouterIDStartRange = opts.RouterIDStartRange
+	}
+	if opts.RouterIDEndRange != -1 {
+		body.RouterIDEndRange = opts.RouterIDEndRange
+	}
+	if opts.TaikunLBFlavor != "" {
+		body.TaikunLBFlavor = opts.TaikunLBFlavor
 	}
 
 	params := projects.NewProjectsCreateParams().WithV(apiconfig.Version)
