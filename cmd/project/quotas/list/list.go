@@ -25,7 +25,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "List project quotas",
+		Short: "List projects quotas",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
 				return cmderr.NegativeLimitFlagError

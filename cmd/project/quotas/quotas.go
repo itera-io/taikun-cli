@@ -10,7 +10,7 @@ import (
 func NewCmdQuotas() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "quotas <command>",
-		Short: "Manage project quotas",
+		Short: "Manage projects quotas",
 	}
 
 	cmd.AddCommand(list.NewCmdList())

@@ -23,8 +23,8 @@ func NewCmdUpdate() *cobra.Command {
 	var opts UpdateOptions
 
 	cmd := &cobra.Command{
-		Use:   "update <project-id>",
-		Short: "Update a project quota",
+		Use:   "update <quota-id>",
+		Short: "Update a project quotas",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
@@ -36,7 +36,7 @@ func NewCmdUpdate() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int64VarP(&opts.CPU, "cpu", "c", -1, "Maximum CPU usage (unlimited by default)")
+	cmd.Flags().Int64VarP(&opts.CPU, "cpu", "c", -1, "Maximum CPU (unlimited by default)")
 	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", -1, "Maximum Disk Size in GBs (unlimited by default)")
 	cmd.Flags().IntVarP(&opts.RAM, "ram", "r", -1, "Maximum RAM in GBs (unlimited by default)")
 
