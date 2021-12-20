@@ -89,6 +89,11 @@ func NewCmdCreate() *cobra.Command {
 		),
 	)
 
+	cmd.Flags().StringSliceVarP(
+		&opts.Flavors, "flavors", "f", []string{},
+		"Bind flavors to the project",
+	)
+
 	cmd.Flags().Int32VarP(
 		&opts.OrganizationID, "organization-id", "o", 0,
 		"Organization ID",
@@ -126,6 +131,7 @@ func createRun(opts *CreateOptions) (err error) {
 		AccessProfileID:   opts.AccessProfileID,
 		AlertingProfileID: opts.AlertingProfileID,
 		CloudCredentialID: opts.CloudCredentialID,
+		Flavors:           opts.Flavors,
 		IsAutoUpgrade:     opts.AutoUpgrade,
 		Name:              opts.Name,
 		OrganizationID:    opts.OrganizationID,
