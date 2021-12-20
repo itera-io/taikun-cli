@@ -67,6 +67,11 @@ func NewCmdCreate() *cobra.Command {
 	)
 
 	cmd.Flags().Int32VarP(
+		&opts.BackupCredentialID, "backup-credential-id", "b", 0,
+		"Backup credential ID",
+	)
+
+	cmd.Flags().Int32VarP(
 		&opts.OrganizationID, "organization-id", "o", 0,
 		"Organization ID",
 	)
@@ -106,6 +111,11 @@ func createRun(opts *CreateOptions) (err error) {
 		IsAutoUpgrade:     opts.AutoUpgrade,
 		Name:              opts.Name,
 		OrganizationID:    opts.OrganizationID,
+	}
+
+	if opts.BackupCredentialID != 0 {
+		body.IsBackupEnabled = true
+		body.S3CredentialID = opts.BackupCredentialID
 	}
 
 	params := projects.NewProjectsCreateParams().WithV(apiconfig.Version)
