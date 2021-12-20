@@ -110,6 +110,11 @@ func NewCmdCreate() *cobra.Command {
 		"Organization ID",
 	)
 
+	cmd.Flags().Int32VarP(
+		&opts.PolicyProfileID, "policy-profile-id", "p", 0,
+		"Policy profile ID",
+	)
+
 	return cmd
 }
 
@@ -164,6 +169,10 @@ func createRun(opts *CreateOptions) (err error) {
 	if opts.ExpirationDate != "" {
 		expiredAt := types.StrToDateTime(opts.ExpirationDate)
 		body.ExpiredAt = &expiredAt
+	}
+
+	if opts.PolicyProfileID != 0 {
+		body.OpaProfileID = opts.PolicyProfileID
 	}
 
 	params := projects.NewProjectsCreateParams().WithV(apiconfig.Version)
