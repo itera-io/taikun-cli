@@ -13,3 +13,7 @@ func Atoi32(str string) (int32, error) {
 func GiBToMiB(gibiBytes float64) int32 {
 	return int32(gibiBytes * 1024)
 }
+
+func GiBToB(gibiBytes int) int64 {
+	return int64(gibiBytes * 1073741824)
+}
