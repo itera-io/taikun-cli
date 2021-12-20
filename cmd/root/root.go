@@ -14,6 +14,7 @@ import (
 	"taikun-cli/cmd/organization"
 	"taikun-cli/cmd/policyprofile"
 	"taikun-cli/cmd/project"
+	"taikun-cli/cmd/showbackcredential"
 	"taikun-cli/cmd/user"
 	"taikun-cli/config"
 
@@ -46,6 +47,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(organization.NewCmdOrganization())
 	cmd.AddCommand(policyprofile.NewCmdPolicyProfile())
 	cmd.AddCommand(project.NewCmdProject())
+	cmd.AddCommand(showbackcredential.NewCmdShowbackCredential())
 	cmd.AddCommand(user.NewCmdUser())
 
 	return cmd
