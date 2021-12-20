@@ -100,6 +100,11 @@ func NewCmdCreate() *cobra.Command {
 		"Kubernetes profile ID",
 	)
 
+	cmd.Flags().BoolVarP(
+		&opts.Monitoring, "monitoring", "m", false,
+		"Enable monitoring",
+	)
+
 	cmd.Flags().Int32VarP(
 		&opts.OrganizationID, "organization-id", "o", 0,
 		"Organization ID",
@@ -146,6 +151,7 @@ func createRun(opts *CreateOptions) (err error) {
 		Flavors:             opts.Flavors,
 		IsAutoUpgrade:       opts.AutoUpgrade,
 		KubernetesProfileID: opts.KubernetesProfileID,
+		IsMonitoringEnabled: opts.Monitoring,
 		Name:                opts.Name,
 		OrganizationID:      opts.OrganizationID,
 	}
