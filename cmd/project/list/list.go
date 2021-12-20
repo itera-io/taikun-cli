@@ -37,6 +37,7 @@ func printResults(projects []*models.ProjectListForUIDto) {
 			"kubernetesCurrentVersion",
 			"cloudType",
 			"hasKubeConfigFile",
+			"quotaId",
 			"expiredAt",
 			"isLocked",
 		)
