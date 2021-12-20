@@ -7,14 +7,15 @@ import (
 	"taikun-cli/cmd/cmdutils"
 	"taikun-cli/utils/format"
 
-	"github.com/itera-io/taikungoclient/client/organizations"
+	"github.com/itera-io/taikungoclient/client/showback"
+	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
 func NewCmdDelete() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete <organization-id>...",
-		Short: "Delete one or more organizations",
+	cmd := cobra.Command{
+		Use:   "delete <showback-credential-id>...",
+		Short: "Delete one or more showback credentials",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
@@ -25,7 +26,7 @@ func NewCmdDelete() *cobra.Command {
 		},
 	}
 
-	return cmd
+	return &cmd
 }
 
 func deleteRun(id int32) (err error) {
@@ -34,11 +35,13 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := organizations.NewOrganizationsDeleteParams().WithV(apiconfig.Version)
-	params = params.WithOrganizationID(id)
-	_, _, err = apiClient.Client.Organizations.OrganizationsDelete(params, apiClient)
+	body := models.DeleteShowbackCredentialCommand{ID: id}
+	params := showback.NewShowbackDeleteShowbackCredentialParams().WithV(apiconfig.Version)
+	params = params.WithBody(&body)
+
+	_, err = apiClient.Client.Showback.ShowbackDeleteShowbackCredential(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Organization", id)
+		format.PrintDeleteSuccess("Showback credential", id)
 	}
 
 	return

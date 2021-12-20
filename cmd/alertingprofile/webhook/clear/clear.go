@@ -20,7 +20,7 @@ func NewCmdClear() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.WrongIDArgumentFormatError
+				return cmderr.IDArgumentNotANumberError
 			}
 			return clearRun(id)
 		},

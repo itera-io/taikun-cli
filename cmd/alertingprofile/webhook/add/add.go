@@ -32,7 +32,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.WrongIDArgumentFormatError
+				return cmderr.IDArgumentNotANumberError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return addRun(&opts)

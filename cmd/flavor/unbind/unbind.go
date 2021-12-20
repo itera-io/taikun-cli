@@ -21,7 +21,7 @@ func NewCmdUnbind() *cobra.Command {
 			for i, arg := range args {
 				binding, err := types.Atoi32(arg)
 				if err != nil {
-					return cmderr.WrongIDArgumentFormatError
+					return cmderr.IDArgumentNotANumberError
 				}
 				bindings[i] = binding
 			}

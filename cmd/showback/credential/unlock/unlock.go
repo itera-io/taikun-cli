@@ -7,26 +7,26 @@ import (
 	"taikun-cli/utils/format"
 	"taikun-cli/utils/types"
 
-	"github.com/itera-io/taikungoclient/client/ops_credentials"
+	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
 func NewCmdUnlock() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "unlock <billing-credential-id>",
-		Short: "Unlock a billing credential",
+	cmd := cobra.Command{
+		Use:   "unlock <showback-credential-id",
+		Short: "Unlock a showback credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id, err := types.Atoi32(args[0])
+			showbackCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
 				return cmderr.IDArgumentNotANumberError
 			}
-			return unlockRun(id)
+			return unlockRun(showbackCredentialID)
 		},
 	}
 
-	return cmd
+	return &cmd
 }
 
 func unlockRun(id int32) (err error) {
@@ -35,12 +35,11 @@ func unlockRun(id int32) (err error) {
 		return
 	}
 
-	body := models.OperationCredentialLockManagerCommand{
-		ID:   id,
-		Mode: types.UnlockedMode,
-	}
-	params := ops_credentials.NewOpsCredentialsLockManagerParams().WithV(apiconfig.Version).WithBody(&body)
-	_, err = apiClient.Client.OpsCredentials.OpsCredentialsLockManager(params, apiClient)
+	body := models.ShowbackCredentialLockCommand{ID: id, Mode: types.UnlockedMode}
+	params := showback.NewShowbackLockManagerParams().WithV(apiconfig.Version)
+	params = params.WithBody(&body)
+
+	_, err = apiClient.Client.Showback.ShowbackLockManager(params, apiClient)
 	if err == nil {
 		format.PrintStandardSuccess()
 	}

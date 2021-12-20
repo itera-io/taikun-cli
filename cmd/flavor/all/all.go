@@ -35,7 +35,7 @@ func NewCmdAll() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cloudCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.WrongIDArgumentFormatError
+				return cmderr.IDArgumentNotANumberError
 			}
 			if !config.OutputFormatIsValid() {
 				return cmderr.OutputFormatInvalidError

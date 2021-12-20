@@ -35,7 +35,7 @@ func NewCmdList() *cobra.Command {
 			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.WrongIDArgumentFormatError
+				return cmderr.IDArgumentNotANumberError
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)
