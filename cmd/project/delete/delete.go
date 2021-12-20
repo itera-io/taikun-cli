@@ -1,6 +1,9 @@
 package delete
 
 import (
+	"errors"
+	"fmt"
+	"os"
 	"taikun-cli/api"
 	"taikun-cli/apiconfig"
 	"taikun-cli/cmd/cmderr"
@@ -18,25 +21,46 @@ type DeleteOptions struct {
 }
 
 func NewCmdDelete() *cobra.Command {
-	var opts DeleteOptions
+	var force bool
 
 	cmd := &cobra.Command{
-		Use:   "delete <project-id>",
-		Short: "Delete a project",
-		Args:  cobra.ExactArgs(1),
+		Use:   "delete <project-id>...",
+		Short: "Delete one or more projects",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			projectID, err := types.Atoi32(args[0])
-			if err != nil {
-				return cmderr.WrongIDArgumentFormatError
+			optsList := make([]*DeleteOptions, len(args))
+			for i, arg := range args {
+				projectID, err := types.Atoi32(arg)
+				if err != nil {
+					return cmderr.WrongIDArgumentFormatError
+				}
+				optsList[i] = &DeleteOptions{
+					Force:     force,
+					ProjectID: projectID,
+				}
 			}
-			opts.ProjectID = projectID
-			return deleteRun(&opts)
+			return deleteMultiple(optsList)
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.Force, "force", "f", false, "Force delete")
+	cmd.Flags().BoolVarP(&force, "force", "f", false, "Force delete")
 
 	return cmd
+}
+
+func deleteMultiple(optsList []*DeleteOptions) error {
+	errorOccured := false
+	for _, opts := range optsList {
+		if err := deleteRun(opts); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			errorOccured = true
+		}
+	}
+	if errorOccured {
+		fmt.Println()
+		return errors.New("Failed to delete one or more projects")
+	}
+	return nil
 }
 
 func deleteRun(opts *DeleteOptions) (err error) {
