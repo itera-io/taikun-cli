@@ -61,6 +61,11 @@ func NewCmdCreate() *cobra.Command {
 		"Alerting profile ID",
 	)
 
+	cmd.Flags().BoolVarP(
+		&opts.AutoUpgrade, "auto-upgrade", "u", false,
+		"Enable auto upgrade",
+	)
+
 	cmd.Flags().Int32VarP(
 		&opts.OrganizationID, "organization-id", "o", 0,
 		"Organization ID",
@@ -98,6 +103,7 @@ func createRun(opts *CreateOptions) (err error) {
 		AccessProfileID:   opts.AccessProfileID,
 		AlertingProfileID: opts.AlertingProfileID,
 		CloudCredentialID: opts.CloudCredentialID,
+		IsAutoUpgrade:     opts.AutoUpgrade,
 		Name:              opts.Name,
 		OrganizationID:    opts.OrganizationID,
 	}
