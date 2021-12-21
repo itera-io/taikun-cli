@@ -3,6 +3,8 @@ package create
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
@@ -17,6 +19,7 @@ type CreateOptions struct {
 	OctaviaEnabled          bool
 	OrganizationID          int32
 	TaikunLBEnabled         bool
+	IDOnly                  bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -38,7 +41,26 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
+}
+
+func printResult(resource interface{}) {
+	if config.OutputFormat == config.OutputFormatJson {
+		format.PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		format.PrettyPrintApiResponseTable(resource,
+			"id",
+			"name",
+			"organizationName",
+			"taikunLBEnabled",
+			"octaviaEnabled",
+			"exposeNodePortOnBastion",
+			"cni",
+			"allowSchedulingOnMaster",
+		)
+	}
 }
 
 func createRun(opts *CreateOptions) (err error) {
@@ -59,7 +81,11 @@ func createRun(opts *CreateOptions) (err error) {
 	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			printResult(response.Payload)
+		}
 	}
 
 	return
