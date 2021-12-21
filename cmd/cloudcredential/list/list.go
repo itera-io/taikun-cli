@@ -7,7 +7,6 @@ import (
 	azure "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
 	openstack "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/config"
 
 	"github.com/spf13/cobra"
 )
@@ -28,9 +27,6 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
 				return cmderr.NegativeLimitFlagError
-			}
-			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
 			}
 			return listRun(&opts)
 		},

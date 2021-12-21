@@ -29,9 +29,6 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return cmderr.NegativeLimitFlagError
 			}
-			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
-			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
 				return cmderr.IDArgumentNotANumberError

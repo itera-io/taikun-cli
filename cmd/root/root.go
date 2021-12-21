@@ -8,6 +8,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
 	"github.com/itera-io/taikun-cli/cmd/billingcredential"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/flavor"
 	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile"
@@ -27,6 +28,12 @@ func NewCmdRoot() *cobra.Command {
 		Short:        "Taikun CLI",
 		Long:         `Manage Taikun resources from the command line.`,
 		SilenceUsage: true,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if !config.OutputFormatIsValid() {
+				return cmderr.OutputFormatInvalidError
+			}
+			return nil
+		},
 	}
 
 	cmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "F", config.OutputFormatTable,

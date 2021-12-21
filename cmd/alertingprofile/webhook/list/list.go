@@ -2,6 +2,7 @@ package list
 
 import (
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -29,9 +30,6 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if opts.Limit < 0 {
 				return cmderr.NegativeLimitFlagError
-			}
-			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
 			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {

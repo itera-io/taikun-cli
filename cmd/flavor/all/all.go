@@ -37,9 +37,6 @@ func NewCmdAll() *cobra.Command {
 			if err != nil {
 				return cmderr.IDArgumentNotANumberError
 			}
-			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
-			}
 			opts.CloudCredentialID = cloudCredentialID
 			return allRun(&opts)
 		},
