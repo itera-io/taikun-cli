@@ -1,43 +1,36 @@
-name: lint
+name: Tests
 on:
   pull_request:
   push:
     branches:
       - 'main'
       - 'dev'
-    paths-ignore:
-      - 'README.md'
 
 jobs:
   build:
-    name: build
+    name: Build
     runs-on: self-hosted
     timeout-minutes: 5
     steps:
-
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
 
-      - name: Check out code into the Go module directory
+      - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Get dependencies
-        run: |
-          go mod download
 
       - name: Build
         run: |
           go build -v .
 
   golangci:
-    name: lint
+    name: Lint
     runs-on: self-hosted
     needs: build
     timeout-minutes: 5
     steps:
-      - name: Check out code into the Go module directory
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Lint (golangci-lint)
