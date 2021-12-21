@@ -2,9 +2,11 @@ package create
 
 import (
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/checker"
@@ -20,6 +22,7 @@ type CreateOptions struct {
 	S3SecretKey    string
 	S3Endpoint     string
 	S3Region       string
+	IDOnly         bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -56,6 +59,8 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
 }
 
@@ -73,6 +78,23 @@ func backupCredentialIsValid(opts *CreateOptions) (bool, error) {
 	params := checker.NewCheckerS3Params().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
 	return err == nil, nil
+}
+
+func printResult(resource interface{}) {
+	if config.OutputFormat == config.OutputFormatJson {
+		format.PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		format.PrettyPrintApiResponseTable(resource,
+			"id",
+			"organizationName",
+			"s3Name",
+			"s3AccessKeyId",
+			"s3Endpoint",
+			"s3Region",
+			"isDefault",
+			"isLocked",
+		)
+	}
 }
 
 func createRun(opts *CreateOptions) (err error) {
@@ -95,7 +117,11 @@ func createRun(opts *CreateOptions) (err error) {
 	params := s3_credentials.NewS3CredentialsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			printResult(response.Payload)
+		}
 	}
 
 	return
