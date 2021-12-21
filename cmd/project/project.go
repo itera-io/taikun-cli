@@ -1,12 +1,12 @@
 package project
 
 import (
-	"taikun-cli/cmd/project/create"
-	"taikun-cli/cmd/project/delete"
-	"taikun-cli/cmd/project/list"
-	"taikun-cli/cmd/project/lock"
-	"taikun-cli/cmd/project/quotas"
-	"taikun-cli/cmd/project/unlock"
+	"github.com/itera-io/taikun-cli/cmd/project/create"
+	"github.com/itera-io/taikun-cli/cmd/project/delete"
+	"github.com/itera-io/taikun-cli/cmd/project/list"
+	"github.com/itera-io/taikun-cli/cmd/project/lock"
+	"github.com/itera-io/taikun-cli/cmd/project/quotas"
+	"github.com/itera-io/taikun-cli/cmd/project/unlock"
 
 	"github.com/spf13/cobra"
 )

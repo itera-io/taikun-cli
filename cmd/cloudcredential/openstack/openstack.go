@@ -1,9 +1,9 @@
 package openstack
 
 import (
-	"taikun-cli/cmd/cloudcredential/openstack/check"
-	"taikun-cli/cmd/cloudcredential/openstack/create"
-	"taikun-cli/cmd/cloudcredential/openstack/list"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/check"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/create"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
 
 	"github.com/spf13/cobra"
 )

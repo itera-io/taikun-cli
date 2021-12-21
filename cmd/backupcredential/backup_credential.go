@@ -1,11 +1,11 @@
 package backupcredential
 
 import (
-	"taikun-cli/cmd/backupcredential/create"
-	"taikun-cli/cmd/backupcredential/delete"
-	"taikun-cli/cmd/backupcredential/list"
-	"taikun-cli/cmd/backupcredential/lock"
-	"taikun-cli/cmd/backupcredential/unlock"
+	"github.com/itera-io/taikun-cli/cmd/backupcredential/create"
+	"github.com/itera-io/taikun-cli/cmd/backupcredential/delete"
+	"github.com/itera-io/taikun-cli/cmd/backupcredential/list"
+	"github.com/itera-io/taikun-cli/cmd/backupcredential/lock"
+	"github.com/itera-io/taikun-cli/cmd/backupcredential/unlock"
 
 	"github.com/spf13/cobra"
 )

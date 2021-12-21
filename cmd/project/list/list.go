@@ -1,11 +1,11 @@
 package list
 
 import (
-	"taikun-cli/api"
-	"taikun-cli/apiconfig"
-	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/config"
-	"taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"

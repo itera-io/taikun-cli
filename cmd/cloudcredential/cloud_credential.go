@@ -1,13 +1,13 @@
 package cloudcredential
 
 import (
-	"taikun-cli/cmd/cloudcredential/aws"
-	"taikun-cli/cmd/cloudcredential/azure"
-	"taikun-cli/cmd/cloudcredential/delete"
-	"taikun-cli/cmd/cloudcredential/list"
-	"taikun-cli/cmd/cloudcredential/lock"
-	"taikun-cli/cmd/cloudcredential/openstack"
-	"taikun-cli/cmd/cloudcredential/unlock"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/delete"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/list"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/lock"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/unlock"
 
 	"github.com/spf13/cobra"
 )

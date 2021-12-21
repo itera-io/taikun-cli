@@ -1,11 +1,11 @@
 package policyprofile
 
 import (
-	"taikun-cli/cmd/policyprofile/create"
-	"taikun-cli/cmd/policyprofile/delete"
-	"taikun-cli/cmd/policyprofile/list"
-	"taikun-cli/cmd/policyprofile/lock"
-	"taikun-cli/cmd/policyprofile/unlock"
+	"github.com/itera-io/taikun-cli/cmd/policyprofile/create"
+	"github.com/itera-io/taikun-cli/cmd/policyprofile/delete"
+	"github.com/itera-io/taikun-cli/cmd/policyprofile/list"
+	"github.com/itera-io/taikun-cli/cmd/policyprofile/lock"
+	"github.com/itera-io/taikun-cli/cmd/policyprofile/unlock"
 
 	"github.com/spf13/cobra"
 )

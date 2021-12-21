@@ -1,8 +1,8 @@
 package quotas
 
 import (
-	"taikun-cli/cmd/project/quotas/list"
-	"taikun-cli/cmd/project/quotas/update"
+	"github.com/itera-io/taikun-cli/cmd/project/quotas/list"
+	"github.com/itera-io/taikun-cli/cmd/project/quotas/update"
 
 	"github.com/spf13/cobra"
 )

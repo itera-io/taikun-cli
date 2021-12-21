@@ -1,10 +1,10 @@
 package flavor
 
 import (
-	"taikun-cli/cmd/flavor/all"
-	"taikun-cli/cmd/flavor/bind"
-	"taikun-cli/cmd/flavor/list"
-	"taikun-cli/cmd/flavor/unbind"
+	"github.com/itera-io/taikun-cli/cmd/flavor/all"
+	"github.com/itera-io/taikun-cli/cmd/flavor/bind"
+	"github.com/itera-io/taikun-cli/cmd/flavor/list"
+	"github.com/itera-io/taikun-cli/cmd/flavor/unbind"
 
 	"github.com/spf13/cobra"
 )

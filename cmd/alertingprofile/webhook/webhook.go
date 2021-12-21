@@ -1,9 +1,9 @@
 package webhook
 
 import (
-	"taikun-cli/cmd/alertingprofile/webhook/add"
-	"taikun-cli/cmd/alertingprofile/webhook/clear"
-	"taikun-cli/cmd/alertingprofile/webhook/list"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook/add"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook/clear"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook/list"
 
 	"github.com/spf13/cobra"
 )

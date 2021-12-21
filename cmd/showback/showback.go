@@ -1,7 +1,7 @@
 package showback
 
 import (
-	"taikun-cli/cmd/showback/credential"
+	"github.com/itera-io/taikun-cli/cmd/showback/credential"
 
 	"github.com/spf13/cobra"
 )
