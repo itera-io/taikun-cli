@@ -5,6 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 	"github.com/itera-io/taikun-cli/utils/types"
 
@@ -18,6 +19,7 @@ type CreateOptions struct {
 	URL               string
 	Type              string
 	Token             string
+	IDOnly            bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -53,7 +55,23 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVar(&opts.Token, "token", "", "Token")
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
+}
+
+func printResult(resource interface{}) {
+	if config.OutputFormat == config.OutputFormatJson {
+		format.PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		format.PrettyPrintApiResponseTable(resource,
+			"id",
+			"alertingProfileName",
+			"url",
+			"token",
+			"alertingIntegrationType",
+		)
+	}
 }
 
 func createRun(opts *CreateOptions) (err error) {
@@ -72,8 +90,12 @@ func createRun(opts *CreateOptions) (err error) {
 	}
 
 	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
-	if _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-		format.PrintStandardSuccess()
+	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			printResult(response.Payload)
+		}
 	}
 
 	return
