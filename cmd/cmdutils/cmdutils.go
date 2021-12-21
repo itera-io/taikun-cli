@@ -7,6 +7,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
+
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/spf13/cobra"
@@ -118,4 +119,14 @@ func DeleteMultipleStringID(ids []string, deleteFunc DeleteFuncStringID) error {
 		return errors.New("Failed to delete one or more resources")
 	}
 	return nil
+}
+
+func AddIdOnlyFlag(cmd *cobra.Command, idOnlyFlagValue *bool) {
+	cmd.Flags().BoolVarP(
+		idOnlyFlagValue,
+		"id-only",
+		"I",
+		false,
+		"Output only the ID of the newly created resource (takes priority over the --format flag)",
+	)
 }
