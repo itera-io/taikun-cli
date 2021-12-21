@@ -175,7 +175,9 @@ func trimID(id string) string {
 
 func PrintResourceID(resource interface{}) {
 	resourceMap := structToMap(resource)
-	id := resourceMap["id"].(string)
-	id = trimID(id)
-	fmt.Println(id)
+	if id, found := resourceMap["id"]; found {
+		fmt.Println(trimID(id.(string)))
+	} else {
+		fmt.Fprintln(os.Stderr, "ID not found")
+	}
 }
