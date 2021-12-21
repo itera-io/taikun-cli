@@ -181,3 +181,11 @@ func PrintResourceID(resource interface{}) {
 		fmt.Fprintln(os.Stderr, "ID not found")
 	}
 }
+
+func PrintResult(resource interface{}, fields ...string) {
+	if config.OutputFormat == config.OutputFormatJson {
+		PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		PrettyPrintApiResponseTable(resource, fields...)
+	}
+}

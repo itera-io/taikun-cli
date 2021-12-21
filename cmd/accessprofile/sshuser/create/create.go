@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/checker"
@@ -70,18 +69,6 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	return err == nil, nil
 }
 
-func printResult(resource interface{}) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(resource)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		format.PrettyPrintApiResponseTable(resource,
-			"id",
-			"name",
-			"sshPublicKey",
-		)
-	}
-}
-
 func createRun(opts *CreateOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
@@ -100,7 +87,11 @@ func createRun(opts *CreateOptions) (err error) {
 		if opts.IDOnly {
 			format.PrintResourceID(response)
 		} else {
-			printResult(response)
+			format.PrintResult(response,
+				"id",
+				"name",
+				"sshPublicKey",
+			)
 		}
 	}
 
