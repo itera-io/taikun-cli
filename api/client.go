@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"time"
+
+	"github.com/itera-io/taikun-cli/apiconfig"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
@@ -55,10 +56,10 @@ To authenticate with Keycloak, set the following environment variables:
 %s
 
 To override the default API host, set %s.`,
-			TaikunKeycloakEmailEnvVar,
-			TaikunKeycloakPasswordEnvVar,
 			TaikunEmailEnvVar,
 			TaikunPasswordEnvVar,
+			TaikunKeycloakEmailEnvVar,
+			TaikunKeycloakPasswordEnvVar,
 			TaikunApiHostEnvVar,
 		)
 	}
