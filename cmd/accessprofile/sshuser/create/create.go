@@ -85,9 +85,9 @@ func createRun(opts *CreateOptions) (err error) {
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
 		if opts.IDOnly {
-			format.PrintResourceID(response)
+			format.PrintResourceID(response.Payload)
 		} else {
-			format.PrintResult(response,
+			format.PrintResult(response.Payload,
 				"id",
 				"name",
 				"sshPublicKey",
