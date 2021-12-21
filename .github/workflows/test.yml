@@ -37,3 +37,17 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: latest
+
+  test:
+    name: Test
+    runs-on: self-hosted
+    needs: golangci
+    timeout-minutes: 60
+    steps:
+      - name: Install shellspec
+        run: |
+          curl -fsSL https://git.io/shellspec | sh -s 0.28.1
+
+      - name: Run shellspec
+        run: |
+          shellspec
