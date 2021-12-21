@@ -4,6 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/showback"
@@ -11,8 +12,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type CreateOptions struct {
+	Name           string
+	OrganizationID int32
+	Password       string
+	URL            string
+	Username       string
+	IDOnly         bool
+}
+
 func NewCmdCreate() *cobra.Command {
-	var opts models.CreateShowbackCredentialCommand
+	var opts CreateOptions
 
 	cmd := cobra.Command{
 		Use:   "create <name>",
@@ -35,21 +45,50 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
+	cmdutils.AddIdOnlyFlag(&cmd, &opts.IDOnly)
+
 	return &cmd
 }
 
-func createRun(opts *models.CreateShowbackCredentialCommand) (err error) {
+func printResult(resource interface{}) {
+	if config.OutputFormat == config.OutputFormatJson {
+		format.PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		format.PrettyPrintApiResponseTable(resource,
+			"id",
+			"name",
+			"organizationName",
+			"url",
+			"createdAt",
+			"isLocked",
+		)
+	}
+}
+
+func createRun(opts *CreateOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
+	body := models.CreateShowbackCredentialCommand{
+		Name:           opts.Name,
+		OrganizationID: opts.OrganizationID,
+		Password:       opts.Password,
+		URL:            opts.URL,
+		Username:       opts.Username,
+	}
+
 	params := showback.NewShowbackCreateCredentialParams().WithV(apiconfig.Version)
-	params = params.WithBody(opts)
+	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Showback.ShowbackCreateCredential(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			printResult(response.Payload)
+		}
 	}
 
 	return
