@@ -3,6 +3,7 @@ package create
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
@@ -17,6 +18,7 @@ type CreateOptions struct {
 	OrganizationID int32
 	DNSServers     []string
 	NTPServers     []string
+	IDOnly         bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -36,6 +38,8 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().StringSliceVar(&opts.DNSServers, "dns-servers", []string{}, "DNS Servers")
 	cmd.Flags().StringSliceVar(&opts.NTPServers, "ntp-servers", []string{}, "NTP Servers")
+
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
 
 	return cmd
 }
@@ -83,7 +87,11 @@ func createRun(opts *CreateOptions) (err error) {
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
-		printResult(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			printResult(response.Payload)
+		}
 	}
 
 	return
