@@ -3,6 +3,8 @@ package create
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
@@ -21,6 +23,7 @@ type CreateOptions struct {
 	RequireProbe          bool
 	UniqueIngresses       bool
 	UniqueServiceSelector bool
+	IDOnly                bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -47,7 +50,29 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&opts.ForbidSpecificTags, "forbidden-tags", []string{}, "Container images must have an image tag different from the ones in the list")
 	cmd.Flags().StringSliceVar(&opts.IngressWhitelist, "ingress-whitelist", []string{}, "Requires Ingress to be allowed")
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
+}
+
+func printResult(resource interface{}) {
+	if config.OutputFormat == config.OutputFormatJson {
+		format.PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		format.PrettyPrintApiResponseTable(resource,
+			"id",
+			"name",
+			"organizationName",
+			"forbidHttpIngress",
+			"allowedRepo",
+			"forbidNodePort",
+			"forbidSpecificTags",
+			"ingressWhitelist",
+			"requireProbe",
+			"uniqueIngresses",
+			"uniqueServiceSelector",
+		)
+	}
 }
 
 func createRun(opts *CreateOptions) (err error) {
@@ -72,7 +97,11 @@ func createRun(opts *CreateOptions) (err error) {
 	params := opa_profiles.NewOpaProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.OpaProfiles.OpaProfilesCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			printResult(response.Payload)
+		}
 	}
 
 	return
