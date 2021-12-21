@@ -164,3 +164,14 @@ func PrintStandardSuccess() {
 func PrintCheckSuccess(name string) {
 	fmt.Printf("%s is valid.\n", name)
 }
+
+func trimID(id string) string {
+	return strings.ReplaceAll(id, "\"", "")
+}
+
+func PrintResourceID(resource interface{}) {
+	resourceMap := structToMap(resource)
+	id := resourceMap["id"].(string)
+	id = trimID(id)
+	fmt.Println(id)
+}
