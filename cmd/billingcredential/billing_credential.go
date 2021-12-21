@@ -1,11 +1,11 @@
 package billingcredential
 
 import (
-	"taikun-cli/cmd/billingcredential/create"
-	"taikun-cli/cmd/billingcredential/delete"
-	"taikun-cli/cmd/billingcredential/list"
-	"taikun-cli/cmd/billingcredential/lock"
-	"taikun-cli/cmd/billingcredential/unlock"
+	"github.com/itera-io/taikun-cli/cmd/billingcredential/create"
+	"github.com/itera-io/taikun-cli/cmd/billingcredential/delete"
+	"github.com/itera-io/taikun-cli/cmd/billingcredential/list"
+	"github.com/itera-io/taikun-cli/cmd/billingcredential/lock"
+	"github.com/itera-io/taikun-cli/cmd/billingcredential/unlock"
 
 	"github.com/spf13/cobra"
 )

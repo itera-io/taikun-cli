@@ -3,11 +3,11 @@ package list
 import (
 	"fmt"
 
-	aws "taikun-cli/cmd/cloudcredential/aws/list"
-	azure "taikun-cli/cmd/cloudcredential/azure/list"
-	openstack "taikun-cli/cmd/cloudcredential/openstack/list"
-	"taikun-cli/cmd/cmderr"
-	"taikun-cli/config"
+	aws "github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
+	azure "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
+	openstack "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/config"
 
 	"github.com/spf13/cobra"
 )

@@ -1,11 +1,11 @@
 package lock
 
 import (
-	"taikun-cli/api"
-	"taikun-cli/apiconfig"
-	"taikun-cli/cmd/cmderr"
-	"taikun-cli/utils/format"
-	"taikun-cli/utils/types"
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/apiconfig"
 	"time"
 
 	"github.com/go-openapi/runtime"

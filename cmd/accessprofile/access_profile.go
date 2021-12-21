@@ -1,12 +1,12 @@
 package accessprofile
 
 import (
-	"taikun-cli/cmd/accessprofile/create"
-	"taikun-cli/cmd/accessprofile/delete"
-	"taikun-cli/cmd/accessprofile/list"
-	"taikun-cli/cmd/accessprofile/lock"
-	"taikun-cli/cmd/accessprofile/sshuser"
-	"taikun-cli/cmd/accessprofile/unlock"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/create"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/delete"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/list"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/lock"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/unlock"
 
 	"github.com/spf13/cobra"
 )

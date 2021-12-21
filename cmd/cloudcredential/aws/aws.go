@@ -1,9 +1,9 @@
 package aws
 
 import (
-	"taikun-cli/cmd/cloudcredential/aws/check"
-	"taikun-cli/cmd/cloudcredential/aws/create"
-	"taikun-cli/cmd/cloudcredential/aws/list"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/check"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/create"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
 
 	"github.com/spf13/cobra"
 )

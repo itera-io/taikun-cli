@@ -1,11 +1,11 @@
 package delete
 
 import (
-	"taikun-cli/api"
-	"taikun-cli/apiconfig"
-	"taikun-cli/cmd/cmderr"
-	"taikun-cli/cmd/cmdutils"
-	"taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"

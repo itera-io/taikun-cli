@@ -1,4 +1,4 @@
-module taikun-cli
+module github.com/itera-io/taikun-cli
 
 go 1.17
 

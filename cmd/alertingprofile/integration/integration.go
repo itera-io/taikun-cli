@@ -1,9 +1,9 @@
 package integration
 
 import (
-	"taikun-cli/cmd/alertingprofile/integration/create"
-	"taikun-cli/cmd/alertingprofile/integration/delete"
-	"taikun-cli/cmd/alertingprofile/integration/list"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/create"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/delete"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/list"
 
 	"github.com/spf13/cobra"
 )

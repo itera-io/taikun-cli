@@ -1,13 +1,13 @@
 package alertingprofile
 
 import (
-	"taikun-cli/cmd/alertingprofile/create"
-	"taikun-cli/cmd/alertingprofile/delete"
-	"taikun-cli/cmd/alertingprofile/integration"
-	"taikun-cli/cmd/alertingprofile/list"
-	"taikun-cli/cmd/alertingprofile/lock"
-	"taikun-cli/cmd/alertingprofile/unlock"
-	"taikun-cli/cmd/alertingprofile/webhook"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/create"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/delete"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/list"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/lock"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/unlock"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook"
 
 	"github.com/spf13/cobra"
 )

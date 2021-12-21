@@ -1,9 +1,9 @@
 package organization
 
 import (
-	"taikun-cli/cmd/organization/create"
-	"taikun-cli/cmd/organization/delete"
-	"taikun-cli/cmd/organization/list"
+	"github.com/itera-io/taikun-cli/cmd/organization/create"
+	"github.com/itera-io/taikun-cli/cmd/organization/delete"
+	"github.com/itera-io/taikun-cli/cmd/organization/list"
 
 	"github.com/spf13/cobra"
 )

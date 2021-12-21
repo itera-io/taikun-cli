@@ -1,11 +1,11 @@
 package kubernetesprofile
 
 import (
-	"taikun-cli/cmd/kubernetesprofile/create"
-	"taikun-cli/cmd/kubernetesprofile/delete"
-	"taikun-cli/cmd/kubernetesprofile/list"
-	"taikun-cli/cmd/kubernetesprofile/lock"
-	"taikun-cli/cmd/kubernetesprofile/unlock"
+	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/create"
+	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/delete"
+	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/list"
+	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/lock"
+	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/unlock"
 
 	"github.com/spf13/cobra"
 )

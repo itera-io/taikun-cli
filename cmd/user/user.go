@@ -1,11 +1,11 @@
 package user
 
 import (
-	"taikun-cli/cmd/user/bind"
-	"taikun-cli/cmd/user/create"
-	"taikun-cli/cmd/user/delete"
-	"taikun-cli/cmd/user/list"
-	"taikun-cli/cmd/user/unbind"
+	"github.com/itera-io/taikun-cli/cmd/user/bind"
+	"github.com/itera-io/taikun-cli/cmd/user/create"
+	"github.com/itera-io/taikun-cli/cmd/user/delete"
+	"github.com/itera-io/taikun-cli/cmd/user/list"
+	"github.com/itera-io/taikun-cli/cmd/user/unbind"
 
 	"github.com/spf13/cobra"
 )

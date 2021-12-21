@@ -1,9 +1,9 @@
 package sshuser
 
 import (
-	"taikun-cli/cmd/accessprofile/sshuser/create"
-	"taikun-cli/cmd/accessprofile/sshuser/delete"
-	"taikun-cli/cmd/accessprofile/sshuser/list"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/create"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/delete"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/list"
 
 	"github.com/spf13/cobra"
 )

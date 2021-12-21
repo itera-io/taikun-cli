@@ -7,7 +7,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
-	"taikun-cli/utils/types"
+	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/spf13/cobra"
 )

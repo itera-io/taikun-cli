@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"taikun-cli/config"
+	"github.com/itera-io/taikun-cli/config"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
