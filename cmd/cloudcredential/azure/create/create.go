@@ -4,6 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/azure"
@@ -20,6 +21,7 @@ type CreateOptions struct {
 	AzureLocation         string
 	AzureAvailabilityZone string
 	OrganizationID        int32
+	IDOnly                bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -55,7 +57,23 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
+}
+
+func printResult(resource interface{}) {
+	if config.OutputFormat == config.OutputFormatJson {
+		format.PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		format.PrettyPrintApiResponseTable(resource,
+			"id",
+			"cloudCredentialName",
+			"organizationName",
+			"azureLocation",
+			"azureAvailabilityZone",
+		)
+	}
 }
 
 func createRun(opts *CreateOptions) (err error) {
@@ -78,7 +96,11 @@ func createRun(opts *CreateOptions) (err error) {
 	params := azure.NewAzureCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			printResult(response.Payload)
+		}
 	}
 
 	return
