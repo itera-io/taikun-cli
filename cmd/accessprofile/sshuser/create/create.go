@@ -2,9 +2,11 @@ package create
 
 import (
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/checker"
@@ -17,6 +19,7 @@ type CreateOptions struct {
 	AccessProfileID int32
 	Name            string
 	PublicKey       string
+	IDOnly          bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -47,6 +50,8 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.PublicKey, "public-key", "p", "", "Public key (required)")
 	cmdutils.MarkFlagRequired(cmd, "public-key")
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
 }
 
@@ -65,6 +70,18 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	return err == nil, nil
 }
 
+func printResult(resource interface{}) {
+	if config.OutputFormat == config.OutputFormatJson {
+		format.PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		format.PrettyPrintApiResponseTable(resource,
+			"id",
+			"name",
+			"sshPublicKey",
+		)
+	}
+}
+
 func createRun(opts *CreateOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
@@ -80,7 +97,11 @@ func createRun(opts *CreateOptions) (err error) {
 	params := ssh_users.NewSSHUsersCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response)
+		if opts.IDOnly {
+			format.PrintResourceID(response)
+		} else {
+			printResult(response)
+		}
 	}
 
 	return
