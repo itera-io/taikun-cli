@@ -34,14 +34,14 @@ func NewCmdCreate() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.PrometheusUsername, "prometheus-username", "u", "", "Prometheus Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "prometheus-username")
+	cmd.Flags().StringVarP(&opts.PrometheusUsername, "username", "l", "", "Prometheus Username (required)")
+	cmdutils.MarkFlagRequired(cmd, "username")
 
-	cmd.Flags().StringVarP(&opts.PrometheusPassword, "prometheus-password", "p", "", "Prometheus Password (required)")
-	cmdutils.MarkFlagRequired(cmd, "prometheus-password")
+	cmd.Flags().StringVarP(&opts.PrometheusPassword, "password", "p", "", "Prometheus Password (required)")
+	cmdutils.MarkFlagRequired(cmd, "password")
 
-	cmd.Flags().StringVar(&opts.PrometheusURL, "prometheus-url", "", "Prometheus URL (required)")
-	cmdutils.MarkFlagRequired(cmd, "prometheus-url")
+	cmd.Flags().StringVarP(&opts.PrometheusURL, "url", "u", "", "Prometheus URL (required)")
+	cmdutils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
