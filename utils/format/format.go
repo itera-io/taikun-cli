@@ -112,6 +112,31 @@ func trimCellValue(value interface{}) interface{} {
 	return value
 }
 
+func resourceMapToRow(resourceMap map[string]interface{}, fields []string) []interface{} {
+	row := make([]interface{}, len(fields))
+	for i, field := range fields {
+		if value, found := resourceMap[field]; found && value != nil {
+			row[i] = trimCellValue(value)
+		} else {
+			row[i] = ""
+		}
+	}
+	return row
+}
+
+func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
+	t := newTable()
+
+	t.AppendHeader(fieldsToHeaderRow(fields))
+	t.AppendSeparator()
+
+	resourceMap := structToMap(resource)["result"].(map[string]interface{})
+	row := resourceMapToRow(resourceMap, fields)
+	t.AppendRow(row)
+
+	t.Render()
+}
+
 func PrettyPrintTable(resources interface{}, fields ...string) {
 	t := newTable()
 
@@ -120,15 +145,7 @@ func PrettyPrintTable(resources interface{}, fields ...string) {
 
 	resourceMaps := structsToMaps(resources.([]interface{}))
 	for _, resourceMap := range resourceMaps {
-		row := make([]interface{}, len(fields))
-		for i, field := range fields {
-			if value, found := resourceMap[field]; found && value != nil {
-				row[i] = trimCellValue(value)
-			} else {
-				row[i] = ""
-			}
-		}
-		t.AppendRow(row)
+		t.AppendRow(resourceMapToRow(resourceMap, fields))
 	}
 
 	t.Render()
