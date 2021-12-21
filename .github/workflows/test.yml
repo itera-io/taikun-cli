@@ -44,10 +44,28 @@ jobs:
     needs: golangci
     timeout-minutes: 60
     steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
       - name: Install shellspec
         run: |
-          curl -fsSL https://git.io/shellspec | sh -s 0.28.1
+          curl -fsSL https://git.io/shellspec | sh -s 0.28.1 -y
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          export GOPATH=$(go env GOPATH)
+          export PATH=$PATH:$GOPATH/bin
+          make install
 
       - name: Run shellspec
+        env:
+          TAIKUN_EMAIL: ${{ secrets.TAIKUN_EMAIL }}
+          TAIKUN_PASSWORD: ${{ secrets.TAIKUN_PASSWORD }}
+          TAIKUN_API_HOST: ${{ secrets.TAIKUN_API_HOST }}
         run: |
           shellspec
