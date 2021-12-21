@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/config"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -130,7 +131,10 @@ func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 	t.AppendHeader(fieldsToHeaderRow(fields))
 	t.AppendSeparator()
 
-	resourceMap := structToMap(resource)["result"].(map[string]interface{})
+	resourceMap := structToMap(resource)
+	if resourceMap[apiconfig.ResultField] != nil {
+		resourceMap = resourceMap[apiconfig.ResultField].(map[string]interface{})
+	}
 	row := resourceMapToRow(resourceMap, fields)
 	t.AppendRow(row)
 
