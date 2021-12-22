@@ -3,9 +3,9 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -13,7 +13,6 @@ import (
 )
 
 type ListOptions struct {
-	Limit                int32
 	ReverseSortDirection bool
 	SortBy               string
 }
@@ -25,18 +24,15 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if opts.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.OrganizationDetailsDto{})
+	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
 }
@@ -63,7 +59,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		organizations = append(organizations, response.Payload.Data...)
 		organizationsCount := int32(len(organizations))
-		if opts.Limit != 0 && organizationsCount >= opts.Limit {
+		if list.Limit != 0 && organizationsCount >= list.Limit {
 			break
 		}
 		if organizationsCount == response.Payload.TotalCount {
@@ -72,8 +68,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&organizationsCount)
 	}
 
-	if opts.Limit != 0 && int32(len(organizations)) > opts.Limit {
-		organizations = organizations[:opts.Limit]
+	if list.Limit != 0 && int32(len(organizations)) > list.Limit {
+		organizations = organizations[:list.Limit]
 	}
 
 	format.PrintResults(organizations,

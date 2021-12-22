@@ -3,9 +3,9 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -13,7 +13,6 @@ import (
 )
 
 type ListOptions struct {
-	Limit                int32
 	OrganizationID       int32
 	ReverseSortDirection bool
 	SortBy               string
@@ -27,17 +26,14 @@ func NewCmdList() *cobra.Command {
 		Short: "List alerting profiles",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if opts.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			return listRun(&opts)
 		},
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
+	cmdutils.AddLimitFlag(cmd)
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.AlertingProfilesListDto{})
 
 	return cmd
@@ -68,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		alertingProfiles = append(alertingProfiles, response.Payload.Data...)
 		alertingProfilesCount := int32(len(alertingProfiles))
-		if opts.Limit != 0 && alertingProfilesCount >= opts.Limit {
+		if list.Limit != 0 && alertingProfilesCount >= list.Limit {
 			break
 		}
 		if alertingProfilesCount == response.Payload.TotalCount {
@@ -77,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&alertingProfilesCount)
 	}
 
-	if opts.Limit != 0 && int32(len(alertingProfiles)) > opts.Limit {
-		alertingProfiles = alertingProfiles[:opts.Limit]
+	if list.Limit != 0 && int32(len(alertingProfiles)) > list.Limit {
+		alertingProfiles = alertingProfiles[:list.Limit]
 	}
 
 	format.PrintResults(alertingProfiles,

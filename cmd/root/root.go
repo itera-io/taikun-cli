@@ -18,6 +18,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/showback"
 	"github.com/itera-io/taikun-cli/cmd/user"
 	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/spf13/cobra"
 )
@@ -31,6 +32,9 @@ func NewCmdRoot() *cobra.Command {
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			if !config.OutputFormatIsValid() {
 				return cmderr.OutputFormatInvalidError
+			}
+			if list.Limit < 0 {
+				return cmderr.NegativeLimitFlagError
 			}
 			return nil
 		},

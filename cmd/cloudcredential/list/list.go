@@ -6,13 +6,12 @@ import (
 	aws "github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
 	azure "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
 	openstack "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 
 	"github.com/spf13/cobra"
 )
 
 type ListOptions struct {
-	Limit                int32
 	OrganizationID       int32
 	ReverseSortDirection bool
 	SortBy               string
@@ -25,18 +24,15 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if opts.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
+	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
 }

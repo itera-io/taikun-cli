@@ -4,7 +4,9 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -13,7 +15,6 @@ import (
 
 type ListOptions struct {
 	AccessProfileID int32
-	Limit           int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -28,15 +29,12 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return cmderr.IDArgumentNotANumberError
 			}
-			if opts.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			opts.AccessProfileID = accessProfileID
 			return listRun(&opts)
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
+	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
 }
@@ -54,8 +52,8 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	sshUsers := response.Payload
 
-	if opts.Limit != 0 && int32(len(sshUsers)) > opts.Limit {
-		sshUsers = sshUsers[:opts.Limit]
+	if list.Limit != 0 && int32(len(sshUsers)) > list.Limit {
+		sshUsers = sshUsers[:list.Limit]
 	}
 
 	format.PrintResults(sshUsers,
