@@ -1,8 +1,7 @@
 # shellcheck shell=sh
 
-RSC_PREFIX="tf-acc-test-"
-
 _rnd_name() {
+  echo -n "tf-acc-test-"
   cat /dev/urandom | tr -dc 'a-z' | head -c 8
 }
 

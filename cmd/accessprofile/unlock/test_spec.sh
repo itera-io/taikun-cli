@@ -9,7 +9,7 @@ Context 'accessprofile/unlock'
   Context 'unlocked access profile'
     setup() {
       name=_rnd_name
-      id=$(taikun access-profile create $RSC_PREFIX-$name -I)
+      id=$(taikun access-profile create $name -I)
     }
 
     Example 'unlock an unlocked access profile'
@@ -22,7 +22,7 @@ Context 'accessprofile/unlock'
   Context 'locked access profile'
     setup() {
       name=_rnd_name
-      id=$(taikun access-profile create $RSC_PREFIX-$name -I)
+      id=$(taikun access-profile create $name -I)
       taikun access-profile lock $id
     }
 
