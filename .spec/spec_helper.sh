@@ -2,6 +2,10 @@
 
 RSC_PREFIX="tf-acc-test-"
 
+_rnd_name() {
+  cat /dev/urandom | tr -dc 'a-z' | head -c 8
+}
+
 spec_helper_precheck() {
   : minimum_version "0.28.1"
 }
