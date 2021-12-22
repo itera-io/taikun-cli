@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 	"github.com/itera-io/taikun-cli/utils/types"
 
@@ -54,22 +53,6 @@ func NewCmdAll() *cobra.Command {
 	return cmd
 }
 
-func printResults(flavors []*models.FlavorsListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(flavors)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(flavors))
-		for i, flavor := range flavors {
-			data[i] = flavor
-		}
-		format.PrettyPrintTable(data,
-			"name",
-			"cpu",
-			"ram",
-		)
-	}
-}
-
 func allRun(opts *AllOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
@@ -110,6 +93,10 @@ func allRun(opts *AllOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	printResults(flavors)
+	format.PrintResults(flavors,
+		"name",
+		"cpu",
+		"ram",
+	)
 	return
 }

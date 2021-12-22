@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -42,26 +41,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.AzureCredentialsListDto{})
 
 	return cmd
-}
-
-func printResults(credentials []*models.AzureCredentialsListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(credentials)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(credentials))
-		for i, credential := range credentials {
-			data[i] = credential
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"location",
-			"availabilityZone",
-			"isDefault",
-			"isLocked",
-		)
-	}
 }
 
 func ListRun(opts *ListOptions) (err error) {
@@ -102,6 +81,14 @@ func ListRun(opts *ListOptions) (err error) {
 		azureCloudCredentials = azureCloudCredentials[:opts.Limit]
 	}
 
-	printResults(azureCloudCredentials)
+	format.PrintResults(azureCloudCredentials,
+		"id",
+		"name",
+		"organizationName",
+		"location",
+		"availabilityZone",
+		"isDefault",
+		"isLocked",
+	)
 	return
 }

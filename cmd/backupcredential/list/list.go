@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
@@ -36,27 +35,6 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	return cmd
-}
-
-func printResults(backupCredentials []*models.BackupCredentialsListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(backupCredentials)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(backupCredentials))
-		for i, backupCredential := range backupCredentials {
-			data[i] = backupCredential
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"organizationName",
-			"s3Name",
-			"s3AccessKeyId",
-			"s3Endpoint",
-			"s3Region",
-			"isDefault",
-			"isLocked",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -91,6 +69,15 @@ func listRun(opts *ListOptions) (err error) {
 		backupCredentials = backupCredentials[:opts.Limit]
 	}
 
-	printResults(backupCredentials)
+	format.PrintResults(backupCredentials,
+		"id",
+		"organizationName",
+		"s3Name",
+		"s3AccessKeyId",
+		"s3Endpoint",
+		"s3Region",
+		"isDefault",
+		"isLocked",
+	)
 	return
 }

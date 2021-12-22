@@ -4,12 +4,10 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -43,22 +41,6 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func printResults(sshUsers []*models.SSHUsersListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(sshUsers)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(sshUsers))
-		for i, sshUser := range sshUsers {
-			data[i] = sshUser
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"sshPublicKey",
-		)
-	}
-}
-
 func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
@@ -76,6 +58,10 @@ func listRun(opts *ListOptions) (err error) {
 		sshUsers = sshUsers[:opts.Limit]
 	}
 
-	printResults(sshUsers)
+	format.PrintResults(sshUsers,
+		"id",
+		"name",
+		"sshPublicKey",
+	)
 	return
 }

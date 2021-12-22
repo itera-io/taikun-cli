@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
@@ -36,26 +35,6 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	return cmd
-}
-
-func printResults(billingCredentials []*models.OperationCredentialsListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(billingCredentials)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(billingCredentials))
-		for i, billingCredential := range billingCredentials {
-			data[i] = billingCredential
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"prometheusUsername",
-			"prometheusUrl",
-			"isDefault",
-			"isLocked",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -90,6 +69,14 @@ func listRun(opts *ListOptions) (err error) {
 		billingCredentials = billingCredentials[:opts.Limit]
 	}
 
-	printResults(billingCredentials)
+	format.PrintResults(billingCredentials,
+		"id",
+		"name",
+		"organizationName",
+		"prometheusUsername",
+		"prometheusUrl",
+		"isDefault",
+		"isLocked",
+	)
 	return
 }

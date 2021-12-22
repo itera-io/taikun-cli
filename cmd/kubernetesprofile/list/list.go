@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
@@ -42,27 +41,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.KubernetesProfilesListDto{})
 
 	return cmd
-}
-
-func printResults(kubernetesProfiles []*models.KubernetesProfilesListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(kubernetesProfiles)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(kubernetesProfiles))
-		for i, kubernetesProfile := range kubernetesProfiles {
-			data[i] = kubernetesProfile
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"taikunLBEnabled",
-			"octaviaEnabled",
-			"exposeNodePortOnBastion",
-			"cni",
-			"allowSchedulingOnMaster",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -103,6 +81,15 @@ func listRun(opts *ListOptions) (err error) {
 		kubernetesProfiles = kubernetesProfiles[:opts.Limit]
 	}
 
-	printResults(kubernetesProfiles)
+	format.PrintResults(kubernetesProfiles,
+		"id",
+		"name",
+		"organizationName",
+		"taikunLBEnabled",
+		"octaviaEnabled",
+		"exposeNodePortOnBastion",
+		"cni",
+		"allowSchedulingOnMaster",
+	)
 	return
 }

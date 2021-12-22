@@ -6,12 +6,10 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -45,20 +43,6 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func printResults(alertingWebhooks []*models.AlertingWebhookDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(alertingWebhooks)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(alertingWebhooks))
-		for i, alertingWebhook := range alertingWebhooks {
-			data[i] = alertingWebhook
-		}
-		format.PrettyPrintTable(data,
-			"url",
-		)
-	}
-}
-
 func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
@@ -81,6 +65,8 @@ func listRun(opts *ListOptions) (err error) {
 		alertingWebhooks = alertingWebhooks[:opts.Limit]
 	}
 
-	printResults(alertingWebhooks)
+	format.PrintResults(alertingWebhooks,
+		"url",
+	)
 	return
 }

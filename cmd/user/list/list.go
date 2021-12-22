@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/users"
@@ -42,26 +41,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.UserForListDto{})
 
 	return cmd
-}
-
-func printResults(users []*models.UserForListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(users)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(users))
-		for i, user := range users {
-			data[i] = user
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"username",
-			"role",
-			"organizationName",
-			"email",
-			"isEmailConfirmed",
-			"isEmailNotificationEnabled",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -102,6 +81,14 @@ func listRun(opts *ListOptions) (err error) {
 		users = users[:opts.Limit]
 	}
 
-	printResults(users)
+	format.PrintResults(users,
+		"id",
+		"username",
+		"role",
+		"organizationName",
+		"email",
+		"isEmailConfirmed",
+		"isEmailNotificationEnabled",
+	)
 	return
 }

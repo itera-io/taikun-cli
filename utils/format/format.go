@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/apiconfig"
@@ -141,13 +142,13 @@ func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 	t.Render()
 }
 
-func PrettyPrintTable(resources interface{}, fields ...string) {
+func prettyPrintTable(resources []interface{}, fields ...string) {
 	t := newTable()
 
 	t.AppendHeader(fieldsToHeaderRow(fields))
 	t.AppendSeparator()
 
-	resourceMaps := structsToMaps(resources.([]interface{}))
+	resourceMaps := structsToMaps(resources)
 	for _, resourceMap := range resourceMaps {
 		t.AppendRow(resourceMapToRow(resourceMap, fields))
 	}
@@ -187,5 +188,33 @@ func PrintResult(resource interface{}, fields ...string) {
 		PrettyPrintJson(resource)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		PrettyPrintApiResponseTable(resource, fields...)
+	}
+}
+
+func interfaceSlice(slice interface{}) []interface{} {
+	s := reflect.ValueOf(slice)
+	if s.Kind() != reflect.Slice {
+		panic("InterfaceSlice() given a non-slice type")
+	}
+
+	// Keep the distinction between nil and empty slice input
+	if s.IsNil() {
+		return nil
+	}
+
+	ret := make([]interface{}, s.Len())
+
+	for i := 0; i < s.Len(); i++ {
+		ret[i] = s.Index(i).Interface()
+	}
+
+	return ret
+}
+
+func PrintResults(slice interface{}, fields ...string) {
+	if config.OutputFormat == config.OutputFormatJson {
+		PrettyPrintJson(slice)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		prettyPrintTable(interfaceSlice(slice), fields...)
 	}
 }
