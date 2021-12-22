@@ -6,6 +6,8 @@ const DefaultAccessProfileName = "default"
 const DefaultAlertingProfileName = "default"
 const DefaultKubernetesProfileName = "default"
 
+const ResultField = "result"
+
 var SortDirection = "asc"
 
 func ReverseSortDirection() {

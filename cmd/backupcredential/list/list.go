@@ -28,9 +28,6 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return cmderr.NegativeLimitFlagError
 			}
-			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
-			}
 			return listRun(&opts)
 		},
 	}

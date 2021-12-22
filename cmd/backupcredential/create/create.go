@@ -2,6 +2,7 @@ package create
 
 import (
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -20,6 +21,7 @@ type CreateOptions struct {
 	S3SecretKey    string
 	S3Endpoint     string
 	S3Region       string
+	IDOnly         bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -55,6 +57,8 @@ func NewCmdCreate() *cobra.Command {
 	cmdutils.MarkFlagRequired(cmd, "s3-region")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
 
 	return cmd
 }
@@ -95,7 +99,20 @@ func createRun(opts *CreateOptions) (err error) {
 	params := s3_credentials.NewS3CredentialsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			format.PrintResult(response.Payload,
+				"id",
+				"organizationName",
+				"s3Name",
+				"s3AccessKeyId",
+				"s3Endpoint",
+				"s3Region",
+				"isDefault",
+				"isLocked",
+			)
+		}
 	}
 
 	return

@@ -2,6 +2,7 @@ package create
 
 import (
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -34,6 +35,7 @@ type CreateOptions struct {
 	RouterIDEndRange    int32
 	RouterIDStartRange  int32
 	TaikunLBFlavor      string
+	IDOnly              bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -142,6 +144,8 @@ func NewCmdCreate() *cobra.Command {
 		"Taikun load balancer flavor(required with OpenStack and Taikun load balancer",
 	)
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
 }
 
@@ -217,7 +221,24 @@ func createRun(opts *CreateOptions) (err error) {
 
 	response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			format.PrintResult(response.Payload,
+				"id",
+				"name",
+				"organizationName",
+				"status",
+				"health",
+				"createdAt",
+				"kubernetesCurrentVersion",
+				"cloudType",
+				"hasKubeConfigFile",
+				"quotaId",
+				"expiredAt",
+				"isLocked",
+			)
+		}
 	}
 
 	return

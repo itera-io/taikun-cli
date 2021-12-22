@@ -18,6 +18,7 @@ type CreateOptions struct {
 	AWSRegion           string
 	AWSAvailabilityZone string
 	OrganizationID      int32
+	IDOnly              bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -66,6 +67,8 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
 }
 
@@ -87,7 +90,17 @@ func createRun(opts *CreateOptions) (err error) {
 	params := aws.NewAwsCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			format.PrintResult(response.Payload,
+				"id",
+				"cloudCredentialName",
+				"organizationName",
+				"awsRegion",
+				"awsAvailabilityZone",
+			)
+		}
 	}
 
 	return

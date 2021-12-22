@@ -12,8 +12,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type CreateOptions struct {
+	Address                      string
+	BillingEmail                 string
+	City                         string
+	Country                      string
+	DiscountRate                 float64
+	Email                        string
+	FullName                     string
+	IsEligibleUpdateSubscription bool
+	Name                         string
+	Phone                        string
+	VatNumber                    string
+	IDOnly                       bool
+}
+
 func NewCmdCreate() *cobra.Command {
-	var opts models.OrganizationCreateCommand
+	var opts CreateOptions
 
 	cmd := &cobra.Command{
 		Use:   "create <name>",
@@ -58,19 +73,52 @@ func NewCmdCreate() *cobra.Command {
 		return countryNames, cobra.ShellCompDirectiveDefault
 	})
 
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+
 	return cmd
 }
 
-func createRun(opts *models.OrganizationCreateCommand) (err error) {
+func createRun(opts *CreateOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := organizations.NewOrganizationsCreateParams().WithV(apiconfig.Version).WithBody(opts)
-	_, err = apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
+	body := models.OrganizationCreateCommand{
+		Address:                      opts.Address,
+		BillingEmail:                 opts.BillingEmail,
+		City:                         opts.City,
+		Country:                      opts.Country,
+		DiscountRate:                 opts.DiscountRate,
+		Email:                        opts.Email,
+		FullName:                     opts.FullName,
+		IsEligibleUpdateSubscription: opts.IsEligibleUpdateSubscription,
+		Name:                         opts.Name,
+		Phone:                        opts.Phone,
+		VatNumber:                    opts.VatNumber,
+	}
+
+	params := organizations.NewOrganizationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
+	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		format.PrintStandardSuccess()
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			format.PrintResult(response.Payload,
+				"id",
+				"name",
+				"fullName",
+				"discountRate",
+				"partnerName",
+				"isEligibleUpdateSubscription",
+				"isLocked",
+				"isReadOnly",
+				"users",
+				"cloudCredentials",
+				"projects",
+				"servers",
+			)
+		}
 	}
 
 	return

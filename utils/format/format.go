@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/config"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -112,6 +113,34 @@ func trimCellValue(value interface{}) interface{} {
 	return value
 }
 
+func resourceMapToRow(resourceMap map[string]interface{}, fields []string) []interface{} {
+	row := make([]interface{}, len(fields))
+	for i, field := range fields {
+		if value, found := resourceMap[field]; found && value != nil {
+			row[i] = trimCellValue(value)
+		} else {
+			row[i] = ""
+		}
+	}
+	return row
+}
+
+func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
+	t := newTable()
+
+	t.AppendHeader(fieldsToHeaderRow(fields))
+	t.AppendSeparator()
+
+	resourceMap := structToMap(resource)
+	if resourceMap[apiconfig.ResultField] != nil {
+		resourceMap = resourceMap[apiconfig.ResultField].(map[string]interface{})
+	}
+	row := resourceMapToRow(resourceMap, fields)
+	t.AppendRow(row)
+
+	t.Render()
+}
+
 func PrettyPrintTable(resources interface{}, fields ...string) {
 	t := newTable()
 
@@ -120,15 +149,7 @@ func PrettyPrintTable(resources interface{}, fields ...string) {
 
 	resourceMaps := structsToMaps(resources.([]interface{}))
 	for _, resourceMap := range resourceMaps {
-		row := make([]interface{}, len(fields))
-		for i, field := range fields {
-			if value, found := resourceMap[field]; found && value != nil {
-				row[i] = trimCellValue(value)
-			} else {
-				row[i] = ""
-			}
-		}
-		t.AppendRow(row)
+		t.AppendRow(resourceMapToRow(resourceMap, fields))
 	}
 
 	t.Render()
@@ -146,4 +167,25 @@ func PrintStandardSuccess() {
 
 func PrintCheckSuccess(name string) {
 	fmt.Printf("%s is valid.\n", name)
+}
+
+func trimID(id string) string {
+	return strings.ReplaceAll(id, "\"", "")
+}
+
+func PrintResourceID(resource interface{}) {
+	resourceMap := structToMap(resource)
+	if id, found := resourceMap["id"]; found {
+		fmt.Println(trimID(id.(string)))
+	} else {
+		fmt.Fprintln(os.Stderr, "ID not found")
+	}
+}
+
+func PrintResult(resource interface{}, fields ...string) {
+	if config.OutputFormat == config.OutputFormatJson {
+		PrettyPrintJson(resource)
+	} else if config.OutputFormat == config.OutputFormatTable {
+		PrettyPrintApiResponseTable(resource, fields...)
+	}
 }

@@ -17,6 +17,7 @@ type CreateOptions struct {
 	PrometheusPassword string
 	PrometheusURL      string
 	OrganizationID     int32
+	IDOnly             bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -32,16 +33,18 @@ func NewCmdCreate() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.PrometheusUsername, "prometheus-username", "u", "", "Prometheus Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "prometheus-username")
+	cmd.Flags().StringVarP(&opts.PrometheusUsername, "username", "l", "", "Prometheus Username (required)")
+	cmdutils.MarkFlagRequired(cmd, "username")
 
-	cmd.Flags().StringVarP(&opts.PrometheusPassword, "prometheus-password", "p", "", "Prometheus Password (required)")
-	cmdutils.MarkFlagRequired(cmd, "prometheus-password")
+	cmd.Flags().StringVarP(&opts.PrometheusPassword, "password", "p", "", "Prometheus Password (required)")
+	cmdutils.MarkFlagRequired(cmd, "password")
 
-	cmd.Flags().StringVar(&opts.PrometheusURL, "prometheus-url", "", "Prometheus URL (required)")
-	cmdutils.MarkFlagRequired(cmd, "prometheus-url")
+	cmd.Flags().StringVarP(&opts.PrometheusURL, "url", "u", "", "Prometheus URL (required)")
+	cmdutils.MarkFlagRequired(cmd, "url")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+
+	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
 
 	return cmd
 }
@@ -63,7 +66,19 @@ func createRun(opts *CreateOptions) (err error) {
 	params := ops_credentials.NewOpsCredentialsCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.OpsCredentials.OpsCredentialsCreate(params, apiClient)
 	if err == nil {
-		format.PrettyPrintJson(response.Payload)
+		if opts.IDOnly {
+			format.PrintResourceID(response.Payload)
+		} else {
+			format.PrintResult(response.Payload,
+				"id",
+				"name",
+				"organizationName",
+				"prometheusUsername",
+				"prometheusUrl",
+				"isDefault",
+				"isLocked",
+			)
+		}
 	}
 
 	return

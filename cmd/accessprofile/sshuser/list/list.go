@@ -33,9 +33,6 @@ func NewCmdList() *cobra.Command {
 			if opts.Limit < 0 {
 				return cmderr.NegativeLimitFlagError
 			}
-			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
-			}
 			opts.AccessProfileID = accessProfileID
 			return listRun(&opts)
 		},
