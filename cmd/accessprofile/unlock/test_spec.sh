@@ -1,6 +1,6 @@
 Context 'accessprofile/unlock'
   cleanup() {
-    taikun access-profile delete $id
+    taikun access-profile delete $id -q
   }
 
   BeforeEach 'setup'
@@ -23,7 +23,7 @@ Context 'accessprofile/unlock'
     setup() {
       name=_rnd_name
       id=$(taikun access-profile create $name -I)
-      taikun access-profile lock $id
+      taikun access-profile lock $id -q
     }
 
     Example 'unlock a locked access profile'

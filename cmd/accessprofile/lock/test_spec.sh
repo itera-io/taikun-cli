@@ -1,7 +1,7 @@
 Context 'accessprofile/lock'
   cleanup() {
-    taikun access-profile unlock $id
-    taikun access-profile delete $id
+    taikun access-profile unlock $id -q
+    taikun access-profile delete $id -q
   }
 
   create_profile() {
@@ -27,7 +27,7 @@ Context 'accessprofile/lock'
   Context 'locked access profile'
     setup() {
       create_profile
-      taikun access-profile lock $id
+      taikun access-profile lock $id -q
     }
 
     Example 'lock a locked access profile'
