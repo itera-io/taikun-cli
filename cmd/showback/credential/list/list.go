@@ -5,6 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
@@ -12,7 +13,6 @@ import (
 )
 
 type ListOptions struct {
-	Limit                int32
 	OrganizationID       int32
 	ReverseSortDirection bool
 	SortBy               string
@@ -31,9 +31,9 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
+	cmdutils.AddLimitFlag(&cmd)
 	cmdutils.AddSortByFlag(&cmd, &opts.SortBy, models.ShowbackCredentialsListDto{})
 
 	return &cmd
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		showbackCredentials = append(showbackCredentials, response.Payload.Data...)
 		showbackCredentialsCount := int32(len(showbackCredentials))
-		if opts.Limit != 0 && showbackCredentialsCount >= opts.Limit {
+		if list.Limit != 0 && showbackCredentialsCount >= list.Limit {
 			break
 		}
 		if showbackCredentialsCount == response.Payload.TotalCount {
@@ -73,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&showbackCredentialsCount)
 	}
 
-	if opts.Limit != 0 && int32(len(showbackCredentials)) > opts.Limit {
-		showbackCredentials = showbackCredentials[:opts.Limit]
+	if list.Limit != 0 && int32(len(showbackCredentials)) > list.Limit {
+		showbackCredentials = showbackCredentials[:list.Limit]
 	}
 
 	format.PrintResults(showbackCredentials,

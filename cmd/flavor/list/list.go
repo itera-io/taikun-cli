@@ -6,6 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
@@ -14,7 +15,6 @@ import (
 )
 
 type ListOptions struct {
-	Limit                int32
 	ProjectID            int32
 	ReverseSortDirection bool
 	SortBy               string
@@ -32,17 +32,14 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return cmderr.IDArgumentNotANumberError
 			}
-			if opts.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			opts.ProjectID = projectID
 			return listRun(&opts)
 		},
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results")
 
+	cmdutils.AddLimitFlag(cmd)
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.BoundFlavorsForProjectsListDto{})
 
 	return cmd
@@ -72,7 +69,7 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
 
-		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+		if list.Limit != 0 && flavorsCount >= list.Limit {
 			break
 		}
 		if flavorsCount == response.Payload.TotalCount {
@@ -81,8 +78,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&flavorsCount)
 	}
 
-	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
-		flavors = flavors[:opts.Limit]
+	if list.Limit != 0 && int32(len(flavors)) > list.Limit {
+		flavors = flavors[:list.Limit]
 	}
 
 	format.PrintResults(flavors,

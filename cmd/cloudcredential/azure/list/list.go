@@ -3,9 +3,9 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -13,7 +13,6 @@ import (
 )
 
 type ListOptions struct {
-	Limit                int32
 	OrganizationID       int32
 	ReverseSortDirection bool
 	SortBy               string
@@ -26,18 +25,15 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List Azure cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if opts.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			return ListRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
+	cmdutils.AddLimitFlag(cmd)
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.AzureCredentialsListDto{})
 
 	return cmd
@@ -68,7 +64,7 @@ func ListRun(opts *ListOptions) (err error) {
 		}
 		azureCloudCredentials = append(azureCloudCredentials, response.Payload.Azure...)
 		count := int32(len(azureCloudCredentials))
-		if opts.Limit != 0 && count >= opts.Limit {
+		if list.Limit != 0 && count >= list.Limit {
 			break
 		}
 		if count == response.Payload.TotalCountAzure {
@@ -77,8 +73,8 @@ func ListRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if opts.Limit != 0 && int32(len(azureCloudCredentials)) > opts.Limit {
-		azureCloudCredentials = azureCloudCredentials[:opts.Limit]
+	if list.Limit != 0 && int32(len(azureCloudCredentials)) > list.Limit {
+		azureCloudCredentials = azureCloudCredentials[:list.Limit]
 	}
 
 	format.PrintResults(azureCloudCredentials,

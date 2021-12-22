@@ -5,6 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"
@@ -12,7 +13,6 @@ import (
 )
 
 type ListOptions struct {
-	Limit                int32
 	OrganizationID       int32
 	ReverseSortDirection bool
 	SortBy               string
@@ -31,10 +31,10 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.ProjectListForUIDto{})
+	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
 }
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		projects = append(projects, response.Payload.Data...)
 		projectsCount := int32(len(projects))
-		if opts.Limit != 0 && projectsCount >= opts.Limit {
+		if list.Limit != 0 && projectsCount >= list.Limit {
 			break
 		}
 		if projectsCount == response.Payload.TotalCount {
@@ -73,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&projectsCount)
 	}
 
-	if opts.Limit != 0 && int32(len(projects)) > opts.Limit {
-		projects = projects[:opts.Limit]
+	if list.Limit != 0 && int32(len(projects)) > list.Limit {
+		projects = projects[:list.Limit]
 	}
 
 	format.PrintResults(projects,

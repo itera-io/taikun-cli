@@ -3,8 +3,9 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -12,7 +13,6 @@ import (
 )
 
 type ListOptions struct {
-	Limit          int32
 	OrganizationID int32
 }
 
@@ -23,16 +23,13 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List billing credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if opts.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().Int32VarP(&opts.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
 }
@@ -56,7 +53,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		billingCredentials = append(billingCredentials, response.Payload.Data...)
 		count := int32(len(billingCredentials))
-		if opts.Limit != 0 && count >= opts.Limit {
+		if list.Limit != 0 && count >= list.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -65,8 +62,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if opts.Limit != 0 && int32(len(billingCredentials)) > opts.Limit {
-		billingCredentials = billingCredentials[:opts.Limit]
+	if list.Limit != 0 && int32(len(billingCredentials)) > list.Limit {
+		billingCredentials = billingCredentials[:list.Limit]
 	}
 
 	format.PrintResults(billingCredentials,
