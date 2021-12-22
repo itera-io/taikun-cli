@@ -51,6 +51,7 @@ jobs:
 
       - name: Install shellspec
         run: |
+          set -o pipefail
           curl -fsSL https://git.io/shellspec | sh -s 0.28.1 -y
 
       - name: Checkout
