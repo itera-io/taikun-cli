@@ -1,8 +1,7 @@
 # shellcheck shell=sh
 
 _rnd_name() {
-  echo -n "tf-acc-test-"
-  cat /dev/urandom | tr -dc 'a-z' | head -c 8
+  echo "tf-acc-test-$(tr -dc 'a-z' </dev/urandom | head -c 8)"
 }
 
 spec_helper_precheck() {
