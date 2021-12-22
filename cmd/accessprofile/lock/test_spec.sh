@@ -9,7 +9,7 @@ Context 'accessprofile/lock'
 
   Context 'unlocked access profile'
     setup() {
-      id=$(taikun access-profile create $RSC_PREFIX-unlocked | jq ".id" | tr -d '"')
+      id=$(taikun access-profile create $RSC_PREFIX-unlocked -I)
     }
 
     Example 'lock an unlocked access profile'
@@ -21,7 +21,7 @@ Context 'accessprofile/lock'
 
   Context 'locked access profile'
     setup() {
-      id=$(taikun access-profile create $RSC_PREFIX-unlocked | jq ".id" | tr -d '"')
+      id=$(taikun access-profile create $RSC_PREFIX-unlocked -I)
       taikun access-profile lock $id
     }
 
