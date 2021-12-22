@@ -1,12 +1,11 @@
 package list
 
 import (
-	"fmt"
-
 	aws "github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
 	azure "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
 	openstack "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/spf13/cobra"
 )
@@ -42,12 +41,12 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return
 	}
-	fmt.Println()
+	format.Println()
 	err = azure.ListRun((*azure.ListOptions)(opts))
 	if err != nil {
 		return
 	}
-	fmt.Println()
+	format.Println()
 	err = aws.ListRun((*aws.ListOptions)(opts))
 	return
 }
