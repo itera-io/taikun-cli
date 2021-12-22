@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
@@ -40,31 +39,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.OrganizationDetailsDto{})
 
 	return cmd
-}
-
-func printResults(organizations []*models.OrganizationDetailsDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(organizations)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(organizations))
-		for i, organization := range organizations {
-			data[i] = organization
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"fullName",
-			"discountRate",
-			"partnerName",
-			"isEligibleUpdateSubscription",
-			"isLocked",
-			"isReadOnly",
-			"users",
-			"cloudCredentials",
-			"projects",
-			"servers",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -102,6 +76,19 @@ func listRun(opts *ListOptions) (err error) {
 		organizations = organizations[:opts.Limit]
 	}
 
-	printResults(organizations)
+	format.PrintResults(organizations,
+		"id",
+		"name",
+		"fullName",
+		"discountRate",
+		"partnerName",
+		"isEligibleUpdateSubscription",
+		"isLocked",
+		"isReadOnly",
+		"users",
+		"cloudCredentials",
+		"projects",
+		"servers",
+	)
 	return
 }

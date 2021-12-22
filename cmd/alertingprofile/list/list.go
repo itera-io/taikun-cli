@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -42,25 +41,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.AlertingProfilesListDto{})
 
 	return cmd
-}
-
-func printResults(alertingProfiles []*models.AlertingProfilesListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(alertingProfiles)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(alertingProfiles))
-		for i, alertingProfile := range alertingProfiles {
-			data[i] = alertingProfile
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"slackConfigurationName",
-			"reminder",
-			"isLocked",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -101,6 +81,13 @@ func listRun(opts *ListOptions) (err error) {
 		alertingProfiles = alertingProfiles[:opts.Limit]
 	}
 
-	printResults(alertingProfiles)
+	format.PrintResults(alertingProfiles,
+		"id",
+		"name",
+		"organizationName",
+		"slackConfigurationName",
+		"reminder",
+		"isLocked",
+	)
 	return
 }

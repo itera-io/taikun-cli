@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
@@ -42,30 +41,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.OpaProfileListDto{})
 
 	return cmd
-}
-
-func printResults(policyProfiles []*models.OpaProfileListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(policyProfiles)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(policyProfiles))
-		for i, policyProfile := range policyProfiles {
-			data[i] = policyProfile
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"forbidHttpIngress",
-			"allowedRepo",
-			"forbidNodePort",
-			"forbidSpecificTags",
-			"ingressWhitelist",
-			"requireProbe",
-			"uniqueIngresses",
-			"uniqueServiceSelector",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -106,6 +81,18 @@ func listRun(opts *ListOptions) (err error) {
 		policyProfiles = policyProfiles[:opts.Limit]
 	}
 
-	printResults(policyProfiles)
+	format.PrintResults(policyProfiles,
+		"id",
+		"name",
+		"organizationName",
+		"forbidHttpIngress",
+		"allowedRepo",
+		"forbidNodePort",
+		"forbidSpecificTags",
+		"ingressWhitelist",
+		"requireProbe",
+		"uniqueIngresses",
+		"uniqueServiceSelector",
+	)
 	return
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
@@ -42,23 +41,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.AccessProfilesListDto{})
 
 	return cmd
-}
-
-func printResults(accessProfiles []*models.AccessProfilesListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(accessProfiles)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(accessProfiles))
-		for i, accessProfile := range accessProfiles {
-			data[i] = accessProfile
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"isLocked",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -99,6 +81,11 @@ func listRun(opts *ListOptions) (err error) {
 		accessProfiles = accessProfiles[:opts.Limit]
 	}
 
-	printResults(accessProfiles)
+	format.PrintResults(accessProfiles,
+		"id",
+		"name",
+		"organizationName",
+		"isLocked",
+	)
 	return
 }

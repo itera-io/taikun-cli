@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/projects"
@@ -17,31 +16,6 @@ type ListOptions struct {
 	OrganizationID       int32
 	ReverseSortDirection bool
 	SortBy               string
-}
-
-func printResults(projects []*models.ProjectListForUIDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(projects)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(projects))
-		for i, project := range projects {
-			data[i] = project
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"status",
-			"health",
-			"createdAt",
-			"kubernetesCurrentVersion",
-			"cloudType",
-			"hasKubeConfigFile",
-			"quotaId",
-			"expiredAt",
-			"isLocked",
-		)
-	}
 }
 
 func NewCmdList() *cobra.Command {
@@ -103,6 +77,19 @@ func listRun(opts *ListOptions) (err error) {
 		projects = projects[:opts.Limit]
 	}
 
-	printResults(projects)
+	format.PrintResults(projects,
+		"id",
+		"name",
+		"organizationName",
+		"status",
+		"health",
+		"createdAt",
+		"kubernetesCurrentVersion",
+		"cloudType",
+		"hasKubeConfigFile",
+		"quotaId",
+		"expiredAt",
+		"isLocked",
+	)
 	return
 }

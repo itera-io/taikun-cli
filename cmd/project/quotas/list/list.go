@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/project_quotas"
@@ -42,26 +41,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.KubernetesProfilesListDto{})
 
 	return cmd
-}
-
-func printResults(projectQuotas []*models.ProjectQuotaListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(projectQuotas)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(projectQuotas))
-		for i, projectQuota := range projectQuotas {
-			data[i] = projectQuota
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"cpu",
-			"isCpuUnlimited",
-			"diskSize",
-			"isDiskSizeUnlimited",
-			"ram",
-			"isRamUnlimited",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -102,6 +81,14 @@ func listRun(opts *ListOptions) (err error) {
 		projectQuotas = projectQuotas[:opts.Limit]
 	}
 
-	printResults(projectQuotas)
+	format.PrintResults(projectQuotas,
+		"id",
+		"cpu",
+		"isCpuUnlimited",
+		"diskSize",
+		"isDiskSizeUnlimited",
+		"ram",
+		"isRamUnlimited",
+	)
 	return
 }

@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 
 	"github.com/itera-io/taikungoclient/client/showback"
@@ -38,25 +37,6 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByFlag(&cmd, &opts.SortBy, models.ShowbackCredentialsListDto{})
 
 	return &cmd
-}
-
-func printResults(showbackCredentials []*models.ShowbackCredentialsListDto) {
-	if config.OutputFormat == config.OutputFormatJson {
-		format.PrettyPrintJson(showbackCredentials)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		data := make([]interface{}, len(showbackCredentials))
-		for i, showbackCredential := range showbackCredentials {
-			data[i] = showbackCredential
-		}
-		format.PrettyPrintTable(data,
-			"id",
-			"name",
-			"organizationName",
-			"url",
-			"createdAt",
-			"isLocked",
-		)
-	}
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -97,6 +77,13 @@ func listRun(opts *ListOptions) (err error) {
 		showbackCredentials = showbackCredentials[:opts.Limit]
 	}
 
-	printResults(showbackCredentials)
+	format.PrintResults(showbackCredentials,
+		"id",
+		"name",
+		"organizationName",
+		"url",
+		"createdAt",
+		"isLocked",
+	)
 	return
 }
