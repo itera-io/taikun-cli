@@ -139,7 +139,7 @@ func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 	row := resourceMapToRow(resourceMap, fields)
 	t.AppendRow(row)
 
-	t.Render()
+	RenderTable(t)
 }
 
 func prettyPrintTable(resources []interface{}, fields ...string) {
@@ -153,7 +153,7 @@ func prettyPrintTable(resources []interface{}, fields ...string) {
 		t.AppendRow(resourceMapToRow(resourceMap, fields))
 	}
 
-	t.Render()
+	RenderTable(t)
 }
 
 func PrintDeleteSuccess(resourceName string, id interface{}) {
