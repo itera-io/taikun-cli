@@ -31,7 +31,7 @@ func DeleteMultiple(ids []int32, deleteFunc DeleteFunc) error {
 		}
 	}
 	if errorOccured {
-		fmt.Println()
+		fmt.Fprintln(os.Stderr)
 		return errors.New("Failed to delete one or more resources")
 	}
 	return nil
@@ -48,7 +48,7 @@ func DeleteMultipleStringID(ids []string, deleteFunc DeleteFuncStringID) error {
 		}
 	}
 	if errorOccured {
-		fmt.Println()
+		fmt.Fprintln(os.Stderr)
 		return errors.New("Failed to delete one or more resources")
 	}
 	return nil

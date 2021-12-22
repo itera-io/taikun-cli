@@ -40,13 +40,7 @@ func NewCmdRoot() *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVarP(&config.OutputFormat, "format", "F", config.OutputFormatTable,
-		fmt.Sprintf("Output format for list-type commands: one of %v", config.OutputFormats),
-	)
-	cmdutils.RegisterStaticFlagCompletion(cmd, "format", config.OutputFormats...)
-
-	cmd.PersistentFlags().BoolVar(&config.ShowLargeValues, "show-large-values", false,
-		"Prevent trimming of large cell values")
+	setPersistentFlags(cmd)
 
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
 	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
@@ -62,4 +56,28 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(user.NewCmdUser())
 
 	return cmd
+}
+
+func setPersistentFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVarP(
+		&config.OutputFormat,
+		"format", "F",
+		config.OutputFormatTable,
+		fmt.Sprintf("Output format for list-type commands: one of %v", config.OutputFormats),
+	)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "format", config.OutputFormats...)
+
+	cmd.PersistentFlags().BoolVar(
+		&config.ShowLargeValues,
+		"show-large-values",
+		false,
+		"Prevent trimming of large cell values",
+	)
+
+	cmd.PersistentFlags().BoolVarP(
+		&config.Quiet,
+		"quiet", "q",
+		false,
+		"Turn off output (does not disable output to stderr)",
+	)
 }

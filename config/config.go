@@ -4,9 +4,12 @@ func init() {
 	OutputFormat = OutputFormatTable
 }
 
-var OutputFormat string
-
-var ShowLargeValues bool
+// root command's persistent flags
+var (
+	OutputFormat    string // --format, -F
+	Quiet           bool   // --quiet, -q
+	ShowLargeValues bool   // --show-large-values
+)
 
 const (
 	OutputFormatJson  = "json"

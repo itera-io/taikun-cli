@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -57,7 +58,7 @@ func deleteMultiple(optsList []*DeleteOptions) error {
 		}
 	}
 	if errorOccured {
-		fmt.Println()
+		fmt.Fprintln(os.Stderr)
 		return errors.New("Failed to delete one or more projects")
 	}
 	return nil

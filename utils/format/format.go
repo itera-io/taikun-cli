@@ -32,7 +32,7 @@ func marshalJsonData(data interface{}) []byte {
 }
 
 func PrettyPrintJson(data interface{}) {
-	fmt.Println(string(marshalJsonData(data)))
+	Println(string(marshalJsonData(data)))
 }
 
 func structToMap(data interface{}) map[string]interface{} {
@@ -139,7 +139,7 @@ func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 	row := resourceMapToRow(resourceMap, fields)
 	t.AppendRow(row)
 
-	t.Render()
+	RenderTable(t)
 }
 
 func prettyPrintTable(resources []interface{}, fields ...string) {
@@ -153,21 +153,21 @@ func prettyPrintTable(resources []interface{}, fields ...string) {
 		t.AppendRow(resourceMapToRow(resourceMap, fields))
 	}
 
-	t.Render()
+	RenderTable(t)
 }
 
 func PrintDeleteSuccess(resourceName string, id interface{}) {
-	fmt.Printf("%s with ID ", resourceName)
-	fmt.Print(id)
-	fmt.Println(" was deleted successfully.")
+	Printf("%s with ID ", resourceName)
+	Print(id)
+	Println(" was deleted successfully.")
 }
 
 func PrintStandardSuccess() {
-	fmt.Println("Operation was successful.")
+	Println("Operation was successful.")
 }
 
 func PrintCheckSuccess(name string) {
-	fmt.Printf("%s is valid.\n", name)
+	Printf("%s is valid.\n", name)
 }
 
 func trimID(id string) string {
@@ -177,7 +177,7 @@ func trimID(id string) string {
 func PrintResourceID(resource interface{}) {
 	resourceMap := structToMap(resource)
 	if id, found := resourceMap["id"]; found {
-		fmt.Println(trimID(id.(string)))
+		Println(trimID(id.(string)))
 	} else {
 		fmt.Fprintln(os.Stderr, "ID not found")
 	}
