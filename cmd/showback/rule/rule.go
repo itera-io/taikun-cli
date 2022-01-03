@@ -1,6 +1,9 @@
 package rule
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/itera-io/taikun-cli/cmd/showback/rule/create"
+	"github.com/spf13/cobra"
+)
 
 func NewCmdRule() *cobra.Command {
 	cmd := cobra.Command{
@@ -9,7 +12,7 @@ func NewCmdRule() *cobra.Command {
 		Aliases: []string{"r"},
 	}
 
-	// TODO add subcommands
+	cmd.AddCommand(create.NewCmdCreate())
 
 	return &cmd
 }
