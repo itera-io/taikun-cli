@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 
 _rnd_name() {
-  echo "tf-acc-test-$(tr -dc 'a-z' </dev/urandom | head -c 8)"
+  echo $(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')
 }
 
 spec_helper_precheck() {
