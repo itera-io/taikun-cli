@@ -22,4 +22,18 @@ Context 'accessprofile/create'
     The output should include "$name"
     The status should equal 0
   End
+
+  Context
+    create_access_profile() {
+      id=$(taikun access-profile create $name -I)
+    }
+    Before 'create_access_profile'
+
+    Example 'duplicate names'
+      When call taikun access-profile create $name
+      The stderr should include '400'
+      The stderr should include 'already exists'
+      The status should equal 1
+    End
+  End
 End
