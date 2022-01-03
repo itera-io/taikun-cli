@@ -12,25 +12,25 @@ Context 'accessprofile/lock'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Context 'unlocked access profile'
+  Context
     setup() {
       create_profile
     }
 
-    Example 'lock an unlocked access profile'
+    Example 'unlocked access profile'
       When call taikun access-profile lock $id
       The output should equal 'Operation was successful.'
       The status should equal 0
     End
   End
 
-  Context 'locked access profile'
+  Context
     setup() {
       create_profile
       taikun access-profile lock $id -q
     }
 
-    Example 'lock a locked access profile'
+    Example 'locked access profile'
       When call taikun access-profile lock $id
       The stderr should include '400'
       The status should equal 1

@@ -12,8 +12,7 @@ Context 'accessprofile/create'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Example 'create basic access profile'
-
+  Example 'basic access profile'
     run() {
       id=$(taikun access-profile create $name -I)
       taikun access-profile list | grep $id
@@ -23,5 +22,4 @@ Context 'accessprofile/create'
     The output should include "$name"
     The status should equal 0
   End
-
 End
