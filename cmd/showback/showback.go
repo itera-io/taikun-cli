@@ -2,6 +2,7 @@ package showback
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/showback/credential"
+	"github.com/itera-io/taikun-cli/cmd/showback/rule"
 
 	"github.com/spf13/cobra"
 )
@@ -14,7 +15,7 @@ func NewCmdShowback() *cobra.Command {
 	}
 
 	cmd.AddCommand(credential.NewCmdCredential())
-	// TODO add Rule command
+	cmd.AddCommand(rule.NewCmdRule())
 
 	return &cmd
 }
