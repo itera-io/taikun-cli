@@ -91,10 +91,17 @@ func fieldsToHeaderRow(fields []string) table.Row {
 
 func newTable() table.Writer {
 	t := table.NewWriter()
+
 	t.SetOutputMirror(os.Stdout)
 	t.SetStyle(table.StyleDefault)
-	t.Style().Options = table.OptionsNoBorders
 	t.Style().Format.Header = text.FormatDefault
+	t.Style().Options = table.OptionsNoBorders
+
+	if config.NoDecorate {
+		t.Style().Options = table.OptionsNoBordersAndSeparators
+		t.Style().Box.PaddingLeft = ""
+	}
+
 	return t
 }
 
@@ -126,11 +133,16 @@ func resourceMapToRow(resourceMap map[string]interface{}, fields []string) []int
 	return row
 }
 
+func printTableHeader(t table.Writer, fields []string) {
+	if !config.NoDecorate {
+		t.AppendHeader(fieldsToHeaderRow(fields))
+	}
+}
+
 func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 	t := newTable()
 
-	t.AppendHeader(fieldsToHeaderRow(fields))
-	t.AppendSeparator()
+	printTableHeader(t, fields)
 
 	resourceMap := structToMap(resource)
 	if resourceMap[apiconfig.ResultField] != nil {
@@ -145,8 +157,7 @@ func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 func prettyPrintTable(resources []interface{}, fields ...string) {
 	t := newTable()
 
-	t.AppendHeader(fieldsToHeaderRow(fields))
-	t.AppendSeparator()
+	printTableHeader(t, fields)
 
 	resourceMaps := structsToMaps(resources)
 	for _, resourceMap := range resourceMaps {
