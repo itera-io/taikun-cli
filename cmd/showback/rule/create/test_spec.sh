@@ -16,16 +16,17 @@ Context 'showback/rule/create'
     The status should equal 1
   End
 
+
   Example 'basic showback rule'
     run() {
       id=$(taikun showback rule create $name -t sum -k general -m node --global-alert-limit 10 --price 1 -I)
-      # TODO check list output
-      # taikun showback rule list | grep $id
+      taikun showback rule list | grep $id
     }
 
     When call run
-    # The output should include "$name"
     The status should equal 0
+    The word 1 of output should equal $id
+    The output should include "$name"
   End
 
   Context
