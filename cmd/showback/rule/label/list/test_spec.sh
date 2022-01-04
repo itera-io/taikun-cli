@@ -21,11 +21,12 @@ Context 'showback/rule/label/list'
   Context
 
     add_labels() {
-      : # TODO add 3 labels
+      taikun showback rule label add $id --label foo --value bar --quiet
+      taikun showback rule label add $id --label foo --value bar --quiet
+      taikun showback rule label add $id --label foo --value bar --quiet
     }
 
     BeforeEach 'add_labels'
-
 
     Example 'list only one label'
       When call taikun showback rule label list $id --no-decorate --limit 1
