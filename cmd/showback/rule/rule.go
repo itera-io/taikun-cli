@@ -3,6 +3,7 @@ package rule
 import (
 	"github.com/itera-io/taikun-cli/cmd/showback/rule/create"
 	"github.com/itera-io/taikun-cli/cmd/showback/rule/delete"
+	"github.com/itera-io/taikun-cli/cmd/showback/rule/label"
 	"github.com/itera-io/taikun-cli/cmd/showback/rule/list"
 	"github.com/spf13/cobra"
 )
@@ -16,6 +17,7 @@ func NewCmdRule() *cobra.Command {
 
 	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(delete.NewCmdDelete())
+	cmd.AddCommand(label.NewCmdLabel())
 	cmd.AddCommand(list.NewCmdList())
 
 	return &cmd
