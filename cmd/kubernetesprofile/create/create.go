@@ -18,7 +18,6 @@ type CreateOptions struct {
 	OctaviaEnabled          bool
 	OrganizationID          int32
 	TaikunLBEnabled         bool
-	IDOnly                  bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -40,7 +39,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -63,20 +62,16 @@ func createRun(opts *CreateOptions) (err error) {
 	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"name",
-				"organizationName",
-				"taikunLBEnabled",
-				"octaviaEnabled",
-				"exposeNodePortOnBastion",
-				"cni",
-				"allowSchedulingOnMaster",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"organizationName",
+			"taikunLBEnabled",
+			"octaviaEnabled",
+			"exposeNodePortOnBastion",
+			"cni",
+			"allowSchedulingOnMaster",
+		)
 	}
 
 	return

@@ -18,7 +18,6 @@ type CreateOptions struct {
 	OrganizationID       int32
 	Reminder             string
 	SlackConfigurationID int32
-	IDOnly               bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -47,7 +46,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "none", "Reminder")
 	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", types.MapKeys(types.AlertingReminders)...)
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -76,18 +75,14 @@ func createRun(opts *CreateOptions) (err error) {
 	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"name",
-				"organizationName",
-				"slackConfigurationName",
-				"reminder",
-				"isLocked",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"organizationName",
+			"slackConfigurationName",
+			"reminder",
+			"isLocked",
+		)
 	}
 
 	return

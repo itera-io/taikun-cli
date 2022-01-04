@@ -10,6 +10,7 @@ import (
 
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/create"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -185,7 +186,7 @@ func trimID(id string) string {
 	return strings.ReplaceAll(id, "\"", "")
 }
 
-func PrintResourceID(resource interface{}) {
+func printResourceID(resource interface{}) {
 	resourceMap := structToMap(resource)
 	if id, found := resourceMap["id"]; found {
 		Println(trimID(id.(string)))
@@ -195,10 +196,14 @@ func PrintResourceID(resource interface{}) {
 }
 
 func PrintResult(resource interface{}, fields ...string) {
-	if config.OutputFormat == config.OutputFormatJson {
-		PrettyPrintJson(resource)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		PrettyPrintApiResponseTable(resource, fields...)
+	if create.OutputOnlyID {
+		printResourceID(resource)
+	} else {
+		if config.OutputFormat == config.OutputFormatJson {
+			PrettyPrintJson(resource)
+		} else if config.OutputFormat == config.OutputFormatTable {
+			PrettyPrintApiResponseTable(resource, fields...)
+		}
 	}
 }
 

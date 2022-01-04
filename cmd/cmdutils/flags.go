@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/itera-io/taikun-cli/utils/create"
 	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/spf13/cobra"
 )
@@ -71,9 +72,9 @@ func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStruct interfa
 	RegisterStaticFlagCompletion(cmd, sortByFlag, resultStructJsonTags...)
 }
 
-func AddIdOnlyFlag(cmd *cobra.Command, idOnlyFlagValue *bool) {
+func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 	cmd.Flags().BoolVarP(
-		idOnlyFlagValue,
+		&create.OutputOnlyID,
 		"id-only",
 		"I",
 		false,

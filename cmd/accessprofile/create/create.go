@@ -17,7 +17,6 @@ type CreateOptions struct {
 	OrganizationID int32
 	DNSServers     []string
 	NTPServers     []string
-	IDOnly         bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -38,7 +37,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringSliceVar(&opts.DNSServers, "dns-servers", []string{}, "DNS Servers")
 	cmd.Flags().StringSliceVar(&opts.NTPServers, "ntp-servers", []string{}, "NTP Servers")
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -73,16 +72,12 @@ func createRun(opts *CreateOptions) (err error) {
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"name",
-				"organizationName",
-				"isLocked",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"organizationName",
+			"isLocked",
+		)
 	}
 
 	return

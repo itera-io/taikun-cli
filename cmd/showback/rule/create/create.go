@@ -21,7 +21,6 @@ type CreateOptions struct {
 	ProjectAlertLimit    int32
 	Type                 string
 	ShowbackCredentialID int32
-	IDOnly               bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -76,7 +75,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.ShowbackCredentialID, "showback-credential-id", "s", 0, "Showback credential ID")
 
-	cmdutils.AddIdOnlyFlag(&cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
 
 	return &cmd
 }
@@ -113,23 +112,19 @@ func createRun(opts *CreateOptions) (err error) {
 
 	response, err := apiClient.Client.Showback.ShowbackCreateRule(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"name",
-				"metricName",
-				"organizationName",
-				"kind",
-				"type",
-				"globalAlertLimit",
-				"projectAlertLimit",
-				"price",
-				"showbackCredentialName",
-				"createdAt",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"metricName",
+			"organizationName",
+			"kind",
+			"type",
+			"globalAlertLimit",
+			"projectAlertLimit",
+			"price",
+			"showbackCredentialName",
+			"createdAt",
+		)
 	}
 
 	return

@@ -21,7 +21,6 @@ type CreateOptions struct {
 	S3SecretKey    string
 	S3Endpoint     string
 	S3Region       string
-	IDOnly         bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -58,7 +57,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -99,20 +98,16 @@ func createRun(opts *CreateOptions) (err error) {
 	params := s3_credentials.NewS3CredentialsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"organizationName",
-				"s3Name",
-				"s3AccessKeyId",
-				"s3Endpoint",
-				"s3Region",
-				"isDefault",
-				"isLocked",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"organizationName",
+			"s3Name",
+			"s3AccessKeyId",
+			"s3Endpoint",
+			"s3Region",
+			"isDefault",
+			"isLocked",
+		)
 	}
 
 	return

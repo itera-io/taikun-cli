@@ -18,7 +18,6 @@ type CreateOptions struct {
 	AccessProfileID int32
 	Name            string
 	PublicKey       string
-	IDOnly          bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -49,7 +48,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.PublicKey, "public-key", "p", "", "Public key (required)")
 	cmdutils.MarkFlagRequired(cmd, "public-key")
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -84,15 +83,11 @@ func createRun(opts *CreateOptions) (err error) {
 	params := ssh_users.NewSSHUsersCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"name",
-				"sshPublicKey",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"sshPublicKey",
+		)
 	}
 
 	return
