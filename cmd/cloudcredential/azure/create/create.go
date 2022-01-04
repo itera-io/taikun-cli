@@ -20,7 +20,6 @@ type CreateOptions struct {
 	AzureLocation         string
 	AzureAvailabilityZone string
 	OrganizationID        int32
-	IDOnly                bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -56,7 +55,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -81,17 +80,13 @@ func createRun(opts *CreateOptions) (err error) {
 	params := azure.NewAzureCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"cloudCredentialName",
-				"organizationName",
-				"azureLocation",
-				"azureAvailabilityZone",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"cloudCredentialName",
+			"organizationName",
+			"azureLocation",
+			"azureAvailabilityZone",
+		)
 	}
 
 	return

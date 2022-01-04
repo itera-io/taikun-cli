@@ -17,7 +17,6 @@ type CreateOptions struct {
 	Password       string
 	URL            string
 	Username       string
-	IDOnly         bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -44,7 +43,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddIdOnlyFlag(&cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
 
 	return &cmd
 }
@@ -68,18 +67,14 @@ func createRun(opts *CreateOptions) (err error) {
 
 	response, err := apiClient.Client.Showback.ShowbackCreateCredential(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"name",
-				"organizationName",
-				"url",
-				"createdAt",
-				"isLocked",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"organizationName",
+			"url",
+			"createdAt",
+			"isLocked",
+		)
 	}
 
 	return

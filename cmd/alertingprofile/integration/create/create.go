@@ -18,7 +18,6 @@ type CreateOptions struct {
 	URL               string
 	Type              string
 	Token             string
-	IDOnly            bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -54,7 +53,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVar(&opts.Token, "token", "", "Token")
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -76,17 +75,13 @@ func createRun(opts *CreateOptions) (err error) {
 
 	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"alertingProfileName",
-				"url",
-				"token",
-				"alertingIntegrationType",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"alertingProfileName",
+			"url",
+			"token",
+			"alertingIntegrationType",
+		)
 	}
 
 	return

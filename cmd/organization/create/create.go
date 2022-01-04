@@ -24,7 +24,6 @@ type CreateOptions struct {
 	Name                         string
 	Phone                        string
 	VatNumber                    string
-	IDOnly                       bool
 }
 
 func NewCmdCreate() *cobra.Command {
@@ -73,7 +72,7 @@ func NewCmdCreate() *cobra.Command {
 		return countryNames, cobra.ShellCompDirectiveDefault
 	})
 
-	cmdutils.AddIdOnlyFlag(cmd, &opts.IDOnly)
+	cmdutils.AddOutputOnlyIDFlag(cmd)
 
 	return cmd
 }
@@ -101,24 +100,20 @@ func createRun(opts *CreateOptions) (err error) {
 	params := organizations.NewOrganizationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		if opts.IDOnly {
-			format.PrintResourceID(response.Payload)
-		} else {
-			format.PrintResult(response.Payload,
-				"id",
-				"name",
-				"fullName",
-				"discountRate",
-				"partnerName",
-				"isEligibleUpdateSubscription",
-				"isLocked",
-				"isReadOnly",
-				"users",
-				"cloudCredentials",
-				"projects",
-				"servers",
-			)
-		}
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"fullName",
+			"discountRate",
+			"partnerName",
+			"isEligibleUpdateSubscription",
+			"isLocked",
+			"isReadOnly",
+			"users",
+			"cloudCredentials",
+			"projects",
+			"servers",
+		)
 	}
 
 	return
