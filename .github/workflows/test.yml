@@ -38,10 +38,30 @@ jobs:
         with:
           version: latest
 
+  flag_conflicts:
+    name: Check for flag conflicts
+    runs-on: self-hosted
+    needs: golangci
+    timeout-minutes: 5
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check for flag conflicts
+        run: |
+          # generating the docs using Cobra
+          # will fail if any flags are in conflict
+          ./scripts/docs/gen_markdown.sh
+
   test:
     name: Test
     runs-on: self-hosted
-    needs: golangci
+    needs: flag_conflicts
     timeout-minutes: 60
     steps:
       - name: Set up Go
