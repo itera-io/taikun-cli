@@ -5,7 +5,7 @@ Context 'showback/rule/create'
 
   cleanup() {
     if [[ -n $id ]]; then
-      taikun showback rule delete $id -q || true
+      taikun showback rule delete $id -q 2>/dev/null || true
     fi
   }
 
@@ -26,7 +26,7 @@ Context 'showback/rule/create'
     }
 
     When call run
-    #The output should include "$name"
+    # The output should include "$name"
     The status should equal 0
   End
 
