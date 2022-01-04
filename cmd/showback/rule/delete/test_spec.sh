@@ -17,9 +17,7 @@ Context 'showback/rule/delete'
     }
 
     cleanup() {
-      if [[ -n $id ]]; then
-        taikun showback rule delete $id -q 2>/dev/null || true
-      fi
+      taikun showback rule delete $id -q 2>/dev/null || true
     }
 
     BeforeEach 'setup'
