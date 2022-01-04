@@ -1,7 +1,5 @@
 Context 'showback/rule/list'
 
-  # TODO add --no-decorate flag where needed
-
   setup() {
     ids=""
     for i in {1..5}; do
@@ -20,23 +18,29 @@ Context 'showback/rule/list'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Example 'list one showback rule'
-    When call taikun showback rule list --limit 1
+  Example 'negative limit causes error'
+    When call taikun showback rule list --limit -42
+    The status should equal 1
+    The stderr should equal 'Error: The --limit flag must be positive.'
+  End
+
+  Example 'list two showback rules'
+    When call taikun showback rule list --limit 2 --no-decorate
     The status should equal 0
-    The lines of output should equal 1
+    The lines of output should equal 2
   End
 
   Example 'list five showback rules'
-    When call taikun showback rule list --limit 5
+    When call taikun showback rule list --limit 5 --no-decorate
     The status should equal 0
     The lines of output should equal 5
   End
 
   Example 'list cheapest showback rule'
-    When call taikun showback rule list --limit 1 --sort-by price
+    When call taikun showback rule list --limit 1 --sort-by price --no-decorate
     The status should equal 0
     The lines of output should equal 1
-    The word 9 of output should equal 1
+    The word 8 of output should equal 1
   End
 
 End
