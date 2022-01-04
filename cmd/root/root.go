@@ -59,6 +59,13 @@ func NewCmdRoot() *cobra.Command {
 }
 
 func setPersistentFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().BoolVar(
+		&config.NoDecorate,
+		"no-decorate",
+		false,
+		"Display tables without field names and separators",
+	)
+
 	cmd.PersistentFlags().StringVarP(
 		&config.OutputFormat,
 		"format", "F",
