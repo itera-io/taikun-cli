@@ -1,8 +1,8 @@
 package rule
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/showback/credential/delete"
 	"github.com/itera-io/taikun-cli/cmd/showback/rule/create"
+	"github.com/itera-io/taikun-cli/cmd/showback/rule/delete"
 	"github.com/spf13/cobra"
 )
 
