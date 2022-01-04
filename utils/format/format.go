@@ -143,6 +143,10 @@ func printTableHeader(t table.Writer, fields []string) {
 func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 	t := newTable()
 
+	if len(config.Columns) != 0 {
+		fields = config.Columns
+	}
+
 	printTableHeader(t, fields)
 
 	resourceMap := structToMap(resource)
@@ -157,6 +161,10 @@ func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 
 func prettyPrintTable(resources []interface{}, fields ...string) {
 	t := newTable()
+
+	if len(config.Columns) != 0 {
+		fields = config.Columns
+	}
 
 	printTableHeader(t, fields)
 
