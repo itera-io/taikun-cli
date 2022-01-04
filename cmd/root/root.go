@@ -59,6 +59,13 @@ func NewCmdRoot() *cobra.Command {
 }
 
 func setPersistentFlags(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringSliceVarP(
+		&config.Columns,
+		"columns", "C",
+		[]string{},
+		"Specify which output columns to print (only valid for table format)",
+	)
+
 	cmd.PersistentFlags().BoolVar(
 		&config.NoDecorate,
 		"no-decorate",
