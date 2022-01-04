@@ -1,6 +1,7 @@
 package delete
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/spf13/cobra"
 )
@@ -11,6 +12,10 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more showback rules",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ids, err := cmdutils.ArgsToNumericalIDs(args)
+			if err != nil {
+				return cmderr.IDArgumentNotANumberError
+			}
 			return cmdutils.DeleteMultiple(args, deleteRun)
 		},
 	}
