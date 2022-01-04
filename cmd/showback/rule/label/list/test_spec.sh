@@ -9,8 +9,11 @@ Context 'showback/rule/label/list'
     taikun showback rule delete $id -q 2>/dev/null || true
   }
 
+  BeforeEach 'setup'
+  AfterEach 'cleanup'
+
   Example 'empty list'
-    When call taikun showback rule label list --no-decorate
+    When call taikun showback rule label list $id --no-decorate
     The status should equal 0
     The lines of output should equal 0
   End
@@ -25,13 +28,13 @@ Context 'showback/rule/label/list'
 
 
     Example 'list only one label'
-      When call taikun showback rule label list --no-decorate --limit 1
+      When call taikun showback rule label list $id --no-decorate --limit 1
       The status should equal 0
       The lines of output should equal 1
     End
 
     Example 'list all label'
-      When call taikun showback rule label list --no-decorate
+      When call taikun showback rule label list $id --no-decorate
       The status should equal 0
       The lines of output should equal 3
     End
