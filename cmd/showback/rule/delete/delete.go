@@ -1,8 +1,13 @@
 package delete
 
 import (
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikungoclient/client/showback"
+	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +21,7 @@ func NewCmdDelete() *cobra.Command {
 			if err != nil {
 				return cmderr.IDArgumentNotANumberError
 			}
-			return cmdutils.DeleteMultiple(args, deleteRun)
+			return cmdutils.DeleteMultiple(ids, deleteRun)
 		},
 	}
 
@@ -24,6 +29,19 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(id int32) (err error) {
-	// FIXME
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	body := models.DeleteShowbackRuleCommand{ID: id}
+	params := showback.NewShowbackDeleteRuleParams().WithV(apiconfig.Version)
+	params = params.WithBody(&body)
+
+	_, err = apiClient.Client.Showback.ShowbackDeleteRule(params, apiClient)
+	if err == nil {
+		format.PrintDeleteSuccess("Showback rule", id)
+	}
+
 	return
 }
