@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/go-openapi/runtime v0.21.0
 	github.com/go-openapi/strfmt v0.21.1
-	github.com/itera-io/taikungoclient v0.0.0-20211221165044-d796b858bb15
+	github.com/itera-io/taikungoclient v0.0.0-20220104003129-b6b306951f4b
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/spf13/cobra v1.3.0
 )
