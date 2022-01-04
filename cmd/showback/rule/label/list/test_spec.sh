@@ -21,9 +21,9 @@ Context 'showback/rule/label/list'
   Context
 
     add_labels() {
-      taikun showback rule label add $id --label foo --value bar --quiet
-      taikun showback rule label add $id --label foo --value bar --quiet
-      taikun showback rule label add $id --label foo --value bar --quiet
+      taikun showback rule label add $id --label foo0 --value bar0 --quiet
+      taikun showback rule label add $id --label foo1 --value bar1 --quiet
+      taikun showback rule label add $id --label foo2 --value bar2 --quiet
     }
 
     BeforeEach 'add_labels'

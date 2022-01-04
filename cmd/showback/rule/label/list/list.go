@@ -39,10 +39,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	labels, err := GetShowbackRuleLabelsByID(opts.ShowbackRuleID)
+	showbackRule, err := GetShowbackRuleByID(opts.ShowbackRuleID)
 	if err != nil {
 		return
 	}
+
+	labels := showbackRule.Labels
 
 	if list.Limit != 0 && int32(len(labels)) > list.Limit {
 		labels = labels[:list.Limit]
@@ -53,7 +55,7 @@ func listRun(opts *ListOptions) (err error) {
 	return
 }
 
-func GetShowbackRuleLabelsByID(id int32) (labels []*models.ShowbackLabelCreateDto, err error) {
+func GetShowbackRuleByID(id int32) (showbackRule *models.ShowbackRulesListDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -70,6 +72,6 @@ func GetShowbackRuleLabelsByID(id int32) (labels []*models.ShowbackLabelCreateDt
 		return nil, cmderr.ResourceNotFoundError("Showback rule", id)
 	}
 
-	labels = response.Payload.Data[0].Labels
+	showbackRule = response.Payload.Data[0]
 	return
 }

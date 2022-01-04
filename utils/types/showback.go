@@ -1,6 +1,10 @@
 package types
 
-import "github.com/itera-io/taikungoclient/models"
+import (
+	"strings"
+
+	"github.com/itera-io/taikungoclient/models"
+)
 
 var ShowbackTypes = map[string]interface{}{
 	"count": models.PrometheusType(100),
@@ -8,7 +12,7 @@ var ShowbackTypes = map[string]interface{}{
 }
 
 func GetShowbackType(showbackType string) models.PrometheusType {
-	return ShowbackTypes[showbackType].(models.PrometheusType)
+	return ShowbackTypes[strings.ToLower(showbackType)].(models.PrometheusType)
 }
 
 var ShowbackKinds = map[string]interface{}{
@@ -17,5 +21,5 @@ var ShowbackKinds = map[string]interface{}{
 }
 
 func GetShowbackKind(showbackKind string) models.ShowbackType {
-	return ShowbackKinds[showbackKind].(models.ShowbackType)
+	return ShowbackKinds[strings.ToLower(showbackKind)].(models.ShowbackType)
 }

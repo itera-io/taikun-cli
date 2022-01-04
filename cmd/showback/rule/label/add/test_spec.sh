@@ -16,9 +16,7 @@ Context 'showback/rule/label/add'
 
     When call taikun showback rule label add $id --label foo --value bar --no-decorate
     The status should equal 0
-    The output should include foo
-    The output should include bar
-    The lines of output should equal 1
+    The output should equal 'Operation was successful.'
 
   End
 
