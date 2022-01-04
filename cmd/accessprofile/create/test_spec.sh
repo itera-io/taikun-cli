@@ -4,9 +4,7 @@ Context 'accessprofile/create'
   }
 
   cleanup() {
-    if [[ -n $id ]]; then
-      taikun access-profile delete $id -q || true
-    fi
+    taikun access-profile delete $id -q 2>/dev/null || true
   }
 
   BeforeEach 'setup'
