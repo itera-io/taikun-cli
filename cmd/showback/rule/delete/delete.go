@@ -13,7 +13,7 @@ import (
 
 func NewCmdDelete() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "delete <id>...",
+		Use:   "delete <showback-rule-id>...",
 		Short: "Delete one or more showback rules",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
