@@ -19,7 +19,6 @@ type CreateOptions struct {
 	BillingCredentialID int32
 	Labels              []string
 	MetricName          string
-	OrganizationID      int32
 	Name                string
 	Price               float64
 	PriceRate           int32
@@ -55,8 +54,6 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.MetricName, "metric-name", "m", "", "Metric name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "metric-name")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization", "o", 0, "Organization ID")
-
 	cmd.Flags().Float64Var(&opts.Price, "price", 0, "Price (required)")
 	cmdutils.MarkFlagRequired(&cmd, "price")
 
@@ -90,10 +87,6 @@ func createRun(opts *CreateOptions) (err error) {
 	body.Labels, err = parseLabelsFlag(opts.Labels)
 	if err != nil {
 		return
-	}
-
-	if opts.OrganizationID != 0 {
-		body.OrganizationID = []int32{opts.OrganizationID}
 	}
 
 	params := prometheus.NewPrometheusCreateParams().WithV(apiconfig.Version)
