@@ -75,7 +75,6 @@ func listRun(opts *ListOptions) (err error) {
 		"id",
 		"name",
 		"metricName",
-		"operationCredential",
 		"price",
 		"createdAt",
 		"type",
