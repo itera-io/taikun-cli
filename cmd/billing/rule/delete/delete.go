@@ -1,29 +1,45 @@
 package delete
 
-import "github.com/spf13/cobra"
-
-type DeleteOptions struct {
-	// TODO add options
-}
+import (
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikungoclient/client/prometheus"
+	"github.com/spf13/cobra"
+)
 
 func NewCmdDelete() *cobra.Command {
-	var opts DeleteOptions
-
 	cmd := cobra.Command{
-		Use:   "delete <id>...",
+		Use:   "delete <billing-rule-id>...",
 		Short: "Delete one or more billing rules",
-		// TODO define Args
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return deleteRun(&opts)
+			ids, err := cmdutils.ArgsToNumericalIDs(args)
+			if err != nil {
+				return cmderr.IDArgumentNotANumberError
+			}
+			return cmdutils.DeleteMultiple(ids, deleteRun)
 		},
 	}
-
-	// TODO set flags
 
 	return &cmd
 }
 
-func deleteRun(opts *DeleteOptions) (err error) {
-	// FIXME
+func deleteRun(id int32) (err error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := prometheus.NewPrometheusDeleteParams().WithV(apiconfig.Version)
+	params = params.WithID(id)
+
+	_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)
+	if err == nil {
+		format.PrintDeleteSuccess("Billing rule", id)
+	}
+
 	return
 }
