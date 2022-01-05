@@ -1,9 +1,19 @@
 package list
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/list"
+	"github.com/itera-io/taikungoclient/client/prometheus"
+	"github.com/itera-io/taikungoclient/models"
+	"github.com/spf13/cobra"
+)
 
 type ListOptions struct {
-	// TODO add options
+	ReverseSortDirection bool
+	SortBy               string
 }
 
 func NewCmdList() *cobra.Command {
@@ -12,18 +22,64 @@ func NewCmdList() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List billing rules",
-		// TODO define Args
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun(&opts)
 		},
 	}
 
-	// TODO set flags
+	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddSortByFlag(&cmd, &opts.SortBy, models.AccessProfilesListDto{})
 
 	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
-	// FIXME
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := prometheus.NewPrometheusListOfRulesParams().WithV(apiconfig.Version)
+	if opts.ReverseSortDirection {
+		apiconfig.ReverseSortDirection()
+	}
+	if opts.SortBy != "" {
+		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	}
+
+	var billingRules = make([]*models.PrometheusRuleListDto, 0)
+	for {
+		response, err := apiClient.Client.Prometheus.PrometheusListOfRules(params, apiClient)
+		if err != nil {
+			return err
+		}
+		billingRules = append(billingRules, response.Payload.Data...)
+		count := int32(len(billingRules))
+		if list.Limit != 0 && count >= list.Limit {
+			break
+		}
+		if count == response.Payload.TotalCount {
+			break
+		}
+		params = params.WithOffset(&count)
+	}
+
+	if list.Limit != 0 && int32(len(billingRules)) > list.Limit {
+		billingRules = billingRules[:list.Limit]
+	}
+
+	format.PrintResults(billingRules,
+		"id",
+		"name",
+		"metricName",
+		"operationCredential",
+		"price",
+		"createdAt",
+		"type",
+	)
+
 	return
 }
