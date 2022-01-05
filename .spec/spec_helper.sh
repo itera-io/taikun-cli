@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 
 _rnd_name() {
-  echo $(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')
+  echo tf-acc-test-$(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')
 }
 
 spec_helper_precheck() {
