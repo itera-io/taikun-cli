@@ -242,3 +242,17 @@ func PrintResults(slice interface{}, fields ...string) {
 		prettyPrintTable(interfaceSlice(slice), fields...)
 	}
 }
+
+func PrintMultipleResults(slices []interface{}, fields ...string) {
+	if config.OutputFormat == config.OutputFormatJson {
+		for _, slice := range slices {
+			PrettyPrintJson(slice)
+		}
+	} else if config.OutputFormat == config.OutputFormatTable {
+		aggregateSlice := make([]interface{}, 0)
+		for _, slice := range slices {
+			aggregateSlice = append(aggregateSlice, interfaceSlice(slice)...)
+		}
+		prettyPrintTable(aggregateSlice, fields...)
+	}
+}
