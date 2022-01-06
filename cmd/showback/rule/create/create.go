@@ -40,11 +40,11 @@ func NewCmdCreate() *cobra.Command {
 					types.MapKeys(types.ShowbackKinds),
 				)
 			}
-			if !types.MapContains(types.ShowbackTypes, opts.Type) {
+			if !types.MapContains(types.PrometheusTypes, opts.Type) {
 				return types.UnknownFlagValueError(
 					"type",
 					opts.Type,
-					types.MapKeys(types.ShowbackTypes),
+					types.MapKeys(types.PrometheusTypes),
 				)
 			}
 
@@ -69,7 +69,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "type", types.MapKeys(types.ShowbackTypes)...)
+	cmdutils.RegisterStaticFlagCompletion(&cmd, "type", types.MapKeys(types.PrometheusTypes)...)
 
 	cmd.Flags().Int32Var(&opts.ProjectAlertLimit, "project-alert-limit", 0, "Project alert limit")
 
@@ -92,7 +92,7 @@ func createRun(opts *CreateOptions) (err error) {
 		MetricName:       opts.MetricName,
 		Name:             opts.Name,
 		Price:            opts.Price,
-		Type:             types.GetShowbackType(opts.Type),
+		Type:             types.GetPrometheusType(opts.Type),
 	}
 
 	if opts.OrganizationID != 0 {

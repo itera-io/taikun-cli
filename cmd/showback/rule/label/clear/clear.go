@@ -55,7 +55,7 @@ func clearRun(opts *ClearOptions) (err error) {
 		Name:              showbackRule.Name,
 		Price:             showbackRule.Price,
 		ProjectAlertLimit: showbackRule.ProjectAlertLimit,
-		Type:              types.GetShowbackType(showbackRule.Type),
+		Type:              types.GetPrometheusType(showbackRule.Type),
 	}
 
 	params := showback.NewShowbackUpdateRuleParams().WithV(apiconfig.Version)

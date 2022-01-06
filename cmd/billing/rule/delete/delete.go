@@ -6,15 +6,14 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikungoclient/client/showback"
-	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/spf13/cobra"
 )
 
 func NewCmdDelete() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "delete <showback-rule-id>...",
-		Short: "Delete one or more showback rules",
+		Use:   "delete <billing-rule-id>...",
+		Short: "Delete one or more billing rules",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
@@ -34,13 +33,12 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	body := models.DeleteShowbackRuleCommand{ID: id}
-	params := showback.NewShowbackDeleteRuleParams().WithV(apiconfig.Version)
-	params = params.WithBody(&body)
+	params := prometheus.NewPrometheusDeleteParams().WithV(apiconfig.Version)
+	params = params.WithID(id)
 
-	_, err = apiClient.Client.Showback.ShowbackDeleteRule(params, apiClient)
+	_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Showback rule", id)
+		format.PrintDeleteSuccess("Billing rule", id)
 	}
 
 	return

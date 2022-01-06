@@ -53,3 +53,20 @@ func DeleteMultipleStringID(ids []string, deleteFunc DeleteFuncStringID) error {
 	}
 	return nil
 }
+
+type DeleteFuncChildResource func(int32, int32) error
+
+func DeleteMultipleChildResources(parentID int32, ids []int32, deleteFunc DeleteFuncChildResource) error {
+	errorOccured := false
+	for _, id := range ids {
+		if err := deleteFunc(parentID, id); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			errorOccured = true
+		}
+	}
+	if errorOccured {
+		fmt.Fprintln(os.Stderr)
+		return errors.New("Failed to delete one or more resources")
+	}
+	return nil
+}
