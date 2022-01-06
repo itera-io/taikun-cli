@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func ListRun(opts *ListOptions) (err error) {
 		}
 		openstackCloudCredentials = append(openstackCloudCredentials, response.Payload.Openstack...)
 		count := int32(len(openstackCloudCredentials))
-		if list.Limit != 0 && count >= list.Limit {
+		if config.Limit != 0 && count >= config.Limit {
 			break
 		}
 		if count == response.Payload.TotalCountOpenstack {
@@ -73,8 +73,8 @@ func ListRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if list.Limit != 0 && int32(len(openstackCloudCredentials)) > list.Limit {
-		openstackCloudCredentials = openstackCloudCredentials[:list.Limit]
+	if config.Limit != 0 && int32(len(openstackCloudCredentials)) > config.Limit {
+		openstackCloudCredentials = openstackCloudCredentials[:config.Limit]
 	}
 
 	format.PrintResults(openstackCloudCredentials,

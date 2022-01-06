@@ -10,7 +10,6 @@ import (
 
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/create"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -204,7 +203,7 @@ func printResourceID(resource interface{}) {
 }
 
 func PrintResult(resource interface{}, fields ...string) {
-	if create.OutputOnlyID {
+	if config.OutputOnlyID {
 		printResourceID(resource)
 	} else {
 		if config.OutputFormat == config.OutputFormatJson {

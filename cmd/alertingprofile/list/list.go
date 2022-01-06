@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		alertingProfiles = append(alertingProfiles, response.Payload.Data...)
 		alertingProfilesCount := int32(len(alertingProfiles))
-		if list.Limit != 0 && alertingProfilesCount >= list.Limit {
+		if config.Limit != 0 && alertingProfilesCount >= config.Limit {
 			break
 		}
 		if alertingProfilesCount == response.Payload.TotalCount {
@@ -73,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&alertingProfilesCount)
 	}
 
-	if list.Limit != 0 && int32(len(alertingProfiles)) > list.Limit {
-		alertingProfiles = alertingProfiles[:list.Limit]
+	if config.Limit != 0 && int32(len(alertingProfiles)) > config.Limit {
+		alertingProfiles = alertingProfiles[:config.Limit]
 	}
 
 	format.PrintResults(alertingProfiles,

@@ -5,8 +5,8 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -52,8 +52,8 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	sshUsers := response.Payload
 
-	if list.Limit != 0 && int32(len(sshUsers)) > list.Limit {
-		sshUsers = sshUsers[:list.Limit]
+	if config.Limit != 0 && int32(len(sshUsers)) > config.Limit {
+		sshUsers = sshUsers[:config.Limit]
 	}
 
 	format.PrintResults(sshUsers,

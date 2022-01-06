@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		projects = append(projects, response.Payload.Data...)
 		projectsCount := int32(len(projects))
-		if list.Limit != 0 && projectsCount >= list.Limit {
+		if config.Limit != 0 && projectsCount >= config.Limit {
 			break
 		}
 		if projectsCount == response.Payload.TotalCount {
@@ -73,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&projectsCount)
 	}
 
-	if list.Limit != 0 && int32(len(projects)) > list.Limit {
-		projects = projects[:list.Limit]
+	if config.Limit != 0 && int32(len(projects)) > config.Limit {
+		projects = projects[:config.Limit]
 	}
 
 	format.PrintResults(projects,

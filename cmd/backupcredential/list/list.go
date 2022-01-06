@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -53,7 +53,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		backupCredentials = append(backupCredentials, response.Payload.Data...)
 		backupCredentialsCount := int32(len(backupCredentials))
-		if list.Limit != 0 && backupCredentialsCount >= list.Limit {
+		if config.Limit != 0 && backupCredentialsCount >= config.Limit {
 			break
 		}
 		if backupCredentialsCount == response.Payload.TotalCount {
@@ -62,8 +62,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&backupCredentialsCount)
 	}
 
-	if list.Limit != 0 && int32(len(backupCredentials)) > list.Limit {
-		backupCredentials = backupCredentials[:list.Limit]
+	if config.Limit != 0 && int32(len(backupCredentials)) > config.Limit {
+		backupCredentials = backupCredentials[:config.Limit]
 	}
 
 	format.PrintResults(backupCredentials,

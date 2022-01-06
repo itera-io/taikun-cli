@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		showbackCredentials = append(showbackCredentials, response.Payload.Data...)
 		showbackCredentialsCount := int32(len(showbackCredentials))
-		if list.Limit != 0 && showbackCredentialsCount >= list.Limit {
+		if config.Limit != 0 && showbackCredentialsCount >= config.Limit {
 			break
 		}
 		if showbackCredentialsCount == response.Payload.TotalCount {
@@ -73,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&showbackCredentialsCount)
 	}
 
-	if list.Limit != 0 && int32(len(showbackCredentials)) > list.Limit {
-		showbackCredentials = showbackCredentials[:list.Limit]
+	if config.Limit != 0 && int32(len(showbackCredentials)) > config.Limit {
+		showbackCredentials = showbackCredentials[:config.Limit]
 	}
 
 	format.PrintResults(showbackCredentials,

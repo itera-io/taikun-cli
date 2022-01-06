@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -58,7 +58,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		billingRules = append(billingRules, response.Payload.Data...)
 		count := int32(len(billingRules))
-		if list.Limit != 0 && count >= list.Limit {
+		if config.Limit != 0 && count >= config.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -67,8 +67,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if list.Limit != 0 && int32(len(billingRules)) > list.Limit {
-		billingRules = billingRules[:list.Limit]
+	if config.Limit != 0 && int32(len(billingRules)) > config.Limit {
+		billingRules = billingRules[:config.Limit]
 	}
 
 	format.PrintResults(billingRules,

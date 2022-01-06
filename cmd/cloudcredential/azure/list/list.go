@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func ListRun(opts *ListOptions) (err error) {
 		}
 		azureCloudCredentials = append(azureCloudCredentials, response.Payload.Azure...)
 		count := int32(len(azureCloudCredentials))
-		if list.Limit != 0 && count >= list.Limit {
+		if config.Limit != 0 && count >= config.Limit {
 			break
 		}
 		if count == response.Payload.TotalCountAzure {
@@ -73,8 +73,8 @@ func ListRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if list.Limit != 0 && int32(len(azureCloudCredentials)) > list.Limit {
-		azureCloudCredentials = azureCloudCredentials[:list.Limit]
+	if config.Limit != 0 && int32(len(azureCloudCredentials)) > config.Limit {
+		azureCloudCredentials = azureCloudCredentials[:config.Limit]
 	}
 
 	format.PrintResults(azureCloudCredentials,

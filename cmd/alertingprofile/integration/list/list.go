@@ -5,8 +5,8 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
@@ -54,8 +54,8 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	alertingIntegrations := response.Payload
 
-	if list.Limit != 0 && int32(len(alertingIntegrations)) > list.Limit {
-		alertingIntegrations = alertingIntegrations[:list.Limit]
+	if config.Limit != 0 && int32(len(alertingIntegrations)) > config.Limit {
+		alertingIntegrations = alertingIntegrations[:config.Limit]
 	}
 
 	format.PrintResults(alertingIntegrations,

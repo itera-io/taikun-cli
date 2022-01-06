@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		accessProfiles = append(accessProfiles, response.Payload.Data...)
 		count := int32(len(accessProfiles))
-		if list.Limit != 0 && count >= list.Limit {
+		if config.Limit != 0 && count >= config.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -73,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if list.Limit != 0 && int32(len(accessProfiles)) > list.Limit {
-		accessProfiles = accessProfiles[:list.Limit]
+	if config.Limit != 0 && int32(len(accessProfiles)) > config.Limit {
+		accessProfiles = accessProfiles[:config.Limit]
 	}
 
 	format.PrintResults(accessProfiles,

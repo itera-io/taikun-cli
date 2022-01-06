@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -59,7 +59,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		organizations = append(organizations, response.Payload.Data...)
 		organizationsCount := int32(len(organizations))
-		if list.Limit != 0 && organizationsCount >= list.Limit {
+		if config.Limit != 0 && organizationsCount >= config.Limit {
 			break
 		}
 		if organizationsCount == response.Payload.TotalCount {
@@ -68,8 +68,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&organizationsCount)
 	}
 
-	if list.Limit != 0 && int32(len(organizations)) > list.Limit {
-		organizations = organizations[:list.Limit]
+	if config.Limit != 0 && int32(len(organizations)) > config.Limit {
+		organizations = organizations[:config.Limit]
 	}
 
 	format.PrintResults(organizations,

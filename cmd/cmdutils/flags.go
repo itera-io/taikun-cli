@@ -5,8 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/utils/create"
-	"github.com/itera-io/taikun-cli/utils/list"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/spf13/cobra"
 )
 
@@ -104,7 +103,7 @@ func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStructs ...int
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 	cmd.Flags().BoolVarP(
-		&create.OutputOnlyID,
+		&config.OutputOnlyID,
 		"id-only",
 		"I",
 		false,
@@ -113,5 +112,5 @@ func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 }
 
 func AddLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().Int32VarP(&list.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
+	cmd.Flags().Int32VarP(&config.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 }

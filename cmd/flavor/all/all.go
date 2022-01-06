@@ -5,8 +5,8 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -80,7 +80,7 @@ func allRun(opts *AllOptions) (err error) {
 		}
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
-		if list.Limit != 0 && flavorsCount >= list.Limit {
+		if config.Limit != 0 && flavorsCount >= config.Limit {
 			break
 		}
 		if flavorsCount == response.Payload.TotalCount {
@@ -89,8 +89,8 @@ func allRun(opts *AllOptions) (err error) {
 		params = params.WithOffset(&flavorsCount)
 	}
 
-	if list.Limit != 0 && int32(len(flavors)) > list.Limit {
-		flavors = flavors[:list.Limit]
+	if config.Limit != 0 && int32(len(flavors)) > config.Limit {
+		flavors = flavors[:config.Limit]
 	}
 
 	format.PrintResults(flavors,

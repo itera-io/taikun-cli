@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		kubernetesProfiles = append(kubernetesProfiles, response.Payload.Data...)
 		count := int32(len(kubernetesProfiles))
-		if list.Limit != 0 && count >= list.Limit {
+		if config.Limit != 0 && count >= config.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -73,8 +73,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if list.Limit != 0 && int32(len(kubernetesProfiles)) > list.Limit {
-		kubernetesProfiles = kubernetesProfiles[:list.Limit]
+	if config.Limit != 0 && int32(len(kubernetesProfiles)) > config.Limit {
+		kubernetesProfiles = kubernetesProfiles[:config.Limit]
 	}
 
 	format.PrintResults(kubernetesProfiles,
