@@ -28,11 +28,10 @@ func NewCmdList() *cobra.Command {
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, models.KubernetesProfilesListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, models.KubernetesProfilesListDto{})
 
 	return cmd
 }

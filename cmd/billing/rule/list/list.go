@@ -21,10 +21,8 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-
 	cmdutils.AddLimitFlag(&cmd)
-	cmdutils.AddSortByFlag(&cmd, models.AccessProfilesListDto{})
+	cmdutils.AddSortByAndReverseFlags(&cmd, models.AccessProfilesListDto{})
 
 	return &cmd
 }

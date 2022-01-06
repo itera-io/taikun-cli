@@ -52,13 +52,6 @@ func getStructJsonTags(s interface{}) []string {
 	return structFieldJsonTags
 }
 
-const (
-	sortByFlag            = "sort-by"
-	sortByFlagShorthand   = "s"
-	sortByFlagDefault     = ""
-	sortByFlagDescription = "Sort results by attribute value"
-)
-
 func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
 	freqMap := map[string]int{}
 	for _, str := range stringSlice {
@@ -87,18 +80,26 @@ func GetCommonJsonTagsInStructs(structs []interface{}) []string {
 	return commonJsonTags
 }
 
-func AddSortByFlag(cmd *cobra.Command, resultStructs ...interface{}) {
+func AddSortByAndReverseFlags(cmd *cobra.Command, resultStructs ...interface{}) {
 	cmd.Flags().StringVarP(
 		&config.SortBy,
-		sortByFlag,
-		sortByFlagShorthand,
-		sortByFlagDefault,
-		sortByFlagDescription,
+		"sort-by",
+		"s",
+		"",
+		"Sort results by attribute value",
+	)
+
+	cmd.Flags().BoolVarP(
+		&config.ReverseSortDirection,
+		"reverse",
+		"r",
+		false,
+		"Reverse order of results",
 	)
 
 	commonTags := GetCommonJsonTagsInStructs(resultStructs)
 
-	RegisterStaticFlagCompletion(cmd, sortByFlag, commonTags...)
+	RegisterStaticFlagCompletion(cmd, "sort-by", commonTags...)
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {
