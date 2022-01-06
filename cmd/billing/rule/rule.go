@@ -5,6 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/billing/rule/delete"
 	"github.com/itera-io/taikun-cli/cmd/billing/rule/label"
 	"github.com/itera-io/taikun-cli/cmd/billing/rule/list"
+	"github.com/itera-io/taikun-cli/cmd/billing/rule/organization"
 	"github.com/spf13/cobra"
 )
 
@@ -19,6 +20,7 @@ func NewCmdRule() *cobra.Command {
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(label.NewCmdLabel())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(organization.NewCmdOrganization())
 
 	return &cmd
 }
