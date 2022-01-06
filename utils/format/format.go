@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/apiconfig"
-	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/create"
 
@@ -254,6 +253,7 @@ func PrintResults(slice interface{}, fields ...string) {
 func PrintMultipleResults(
 	resourceSlices []interface{},
 	resourceTypes []string,
+	fields ...string,
 ) {
 	if config.OutputFormat == config.OutputFormatJson {
 		for _, slice := range resourceSlices {
@@ -264,31 +264,21 @@ func PrintMultipleResults(
 			log.Fatal("PrintMultipleResults: resourcesSlices and resourceTypes must have the same length")
 		}
 
-		resourceSamples := make([]interface{}, 0)
-		for _, resourcesData := range resourceSlices {
-			resources := resourcesData.([]interface{})
-			if len(resources) > 0 {
-				resourceSamples = append(resourceSamples, resources[0])
-			}
-		}
-
-		commonFields := cmdutils.GetCommonJsonTagsInStructs(resourceSamples)
-
 		t := newTable()
 
 		if len(config.Columns) != 0 {
-			commonFields = config.Columns
+			fields = config.Columns
 		}
 
-		commonFieldsAndType := append(commonFields, "type")
+		fieldsPlusType := append(fields, "type")
 
-		printTableHeader(t, commonFieldsAndType)
+		printTableHeader(t, fieldsPlusType)
 
 		for resourceIndex, resourcesData := range resourceSlices {
 			resources := resourcesData.([]interface{})
 			resourceMaps := structsToMaps(resources)
 			for _, resourceMap := range resourceMaps {
-				row := resourceMapToRow(resourceMap, commonFields)
+				row := resourceMapToRow(resourceMap, fields)
 				row = append(row, resourceTypes[resourceIndex])
 				t.AppendRow(row)
 			}

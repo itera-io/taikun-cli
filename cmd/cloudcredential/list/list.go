@@ -121,6 +121,12 @@ func listRun(opts *ListOptions) (err error) {
 			credentialsOpenstackGeneric,
 		},
 		[]string{"AWS", "Azure", "OpenStack"},
+		"id",
+		"name",
+		"organizationName",
+		"createdBy",
+		"isDefault",
+		"isLocked",
 	)
 
 	return
