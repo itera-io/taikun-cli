@@ -60,7 +60,35 @@ const (
 	sortByFlagDescription = "Sort results by attribute value"
 )
 
-func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStruct interface{}) {
+func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
+	freqMap := map[string]int{}
+	for _, str := range stringSlice {
+		freqMap[str] += 1
+	}
+	return freqMap
+}
+
+func GetCommonJsonTagsInStructs(structs []interface{}) []string {
+	jsonTags := make([]string, 0)
+
+	for _, s := range structs {
+		jsonTags = append(jsonTags, getStructJsonTags(s)...)
+	}
+
+	jsonTagsFreqMap := frequencyMapFromStringSlice(jsonTags)
+
+	structsCount := len(structs)
+	commonJsonTags := make([]string, 0)
+	for jsonTag, jsonTagFreq := range jsonTagsFreqMap {
+		if jsonTagFreq == structsCount {
+			commonJsonTags = append(commonJsonTags, jsonTag)
+		}
+	}
+
+	return commonJsonTags
+}
+
+func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStructs ...interface{}) {
 	cmd.Flags().StringVarP(
 		optionStore,
 		sortByFlag,
@@ -68,8 +96,10 @@ func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStruct interfa
 		sortByFlagDefault,
 		sortByFlagDescription,
 	)
-	resultStructJsonTags := getStructJsonTags(resultStruct)
-	RegisterStaticFlagCompletion(cmd, sortByFlag, resultStructJsonTags...)
+
+	commonTags := GetCommonJsonTagsInStructs(resultStructs)
+
+	RegisterStaticFlagCompletion(cmd, sortByFlag, commonTags...)
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {
