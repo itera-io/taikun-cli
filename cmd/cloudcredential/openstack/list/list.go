@@ -23,7 +23,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List OpenStack cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return ListRun(&opts)
+			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
@@ -36,7 +36,26 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func ListRun(opts *ListOptions) (err error) {
+func listRun(opts *ListOptions) error {
+	openstackCloudCredentials, err := ListCloudCredentialsOpenStack(opts)
+	if err != nil {
+		return err
+	}
+
+	format.PrintResults(openstackCloudCredentials,
+		"id",
+		"name",
+		"organizationName",
+		"project",
+		"user",
+		"isDefault",
+		"isLocked",
+	)
+
+	return nil
+}
+
+func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -57,7 +76,7 @@ func ListRun(opts *ListOptions) (err error) {
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		openstackCloudCredentials = append(openstackCloudCredentials, response.Payload.Openstack...)
 		count := int32(len(openstackCloudCredentials))
@@ -74,14 +93,10 @@ func ListRun(opts *ListOptions) (err error) {
 		openstackCloudCredentials = openstackCloudCredentials[:config.Limit]
 	}
 
-	format.PrintResults(openstackCloudCredentials,
-		"id",
-		"name",
-		"organizationName",
-		"project",
-		"user",
-		"isDefault",
-		"isLocked",
-	)
+	credentials = make([]interface{}, len(openstackCloudCredentials))
+	for i, credential := range openstackCloudCredentials {
+		credentials[i] = *credential
+	}
+
 	return
 }

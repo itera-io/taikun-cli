@@ -23,7 +23,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List AWS cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return ListRun(&opts)
+			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
@@ -36,7 +36,26 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func ListRun(opts *ListOptions) (err error) {
+func listRun(opts *ListOptions) error {
+	amazonCloudCredentials, err := ListCloudCredentialsAws(opts)
+	if err != nil {
+		return err
+	}
+
+	format.PrintResults(amazonCloudCredentials,
+		"id",
+		"name",
+		"organizationName",
+		"region",
+		"availabilityZone",
+		"isDefault",
+		"isLocked",
+	)
+
+	return nil
+}
+
+func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -57,7 +76,7 @@ func ListRun(opts *ListOptions) (err error) {
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		amazonCloudCredentials = append(amazonCloudCredentials, response.Payload.Amazon...)
 		count := int32(len(amazonCloudCredentials))
@@ -74,14 +93,10 @@ func ListRun(opts *ListOptions) (err error) {
 		amazonCloudCredentials = amazonCloudCredentials[:config.Limit]
 	}
 
-	format.PrintResults(amazonCloudCredentials,
-		"id",
-		"name",
-		"organizationName",
-		"region",
-		"availabilityZone",
-		"isDefault",
-		"isLocked",
-	)
+	credentials = make([]interface{}, len(amazonCloudCredentials))
+	for i, credential := range amazonCloudCredentials {
+		credentials[i] = *credential
+	}
+
 	return
 }
