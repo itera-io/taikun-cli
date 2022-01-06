@@ -31,7 +31,7 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByFlag(cmd, &config.SortBy, models.UserForListDto{})
+	cmdutils.AddSortByFlag(cmd, models.UserForListDto{})
 	cmdutils.AddLimitFlag(cmd)
 
 	return cmd

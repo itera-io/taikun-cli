@@ -46,7 +46,7 @@ func NewCmdAll() *cobra.Command {
 	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &config.SortBy, models.FlavorsListDto{})
+	cmdutils.AddSortByFlag(cmd, models.FlavorsListDto{})
 
 	return cmd
 }

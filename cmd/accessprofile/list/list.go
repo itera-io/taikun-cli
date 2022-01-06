@@ -32,7 +32,7 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &config.SortBy, models.AccessProfilesListDto{})
+	cmdutils.AddSortByFlag(cmd, models.AccessProfilesListDto{})
 
 	return cmd
 }
