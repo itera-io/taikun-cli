@@ -11,43 +11,36 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type ListOptions struct {
-	ReverseSortDirection bool
-	SortBy               string
-}
-
 func NewCmdList() *cobra.Command {
-	var opts ListOptions
-
 	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List billing rules",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun()
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 
 	cmdutils.AddLimitFlag(&cmd)
-	cmdutils.AddSortByFlag(&cmd, &opts.SortBy, models.AccessProfilesListDto{})
+	cmdutils.AddSortByFlag(&cmd, &config.SortBy, models.AccessProfilesListDto{})
 
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun() (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := prometheus.NewPrometheusListOfRulesParams().WithV(apiconfig.Version)
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var billingRules = make([]*models.PrometheusRuleListDto, 0)

@@ -13,9 +13,7 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -30,10 +28,10 @@ func NewCmdList() *cobra.Command {
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.UserForListDto{})
+	cmdutils.AddSortByFlag(cmd, &config.SortBy, models.UserForListDto{})
 	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
@@ -49,11 +47,11 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var users = make([]*models.UserForListDto, 0)

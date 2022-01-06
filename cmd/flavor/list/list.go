@@ -15,9 +15,7 @@ import (
 )
 
 type ListOptions struct {
-	ProjectID            int32
-	ReverseSortDirection bool
-	SortBy               string
+	ProjectID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -37,10 +35,10 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.BoundFlavorsForProjectsListDto{})
+	cmdutils.AddSortByFlag(cmd, &config.SortBy, models.BoundFlavorsForProjectsListDto{})
 
 	return cmd
 }
@@ -53,11 +51,11 @@ func listRun(opts *ListOptions) (err error) {
 
 	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(apiconfig.Version)
 	params = params.WithProjectID(&opts.ProjectID)
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}

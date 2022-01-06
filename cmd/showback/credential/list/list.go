@@ -13,9 +13,7 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -30,11 +28,11 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddLimitFlag(&cmd)
-	cmdutils.AddSortByFlag(&cmd, &opts.SortBy, models.ShowbackCredentialsListDto{})
+	cmdutils.AddSortByFlag(&cmd, &config.SortBy, models.ShowbackCredentialsListDto{})
 
 	return &cmd
 }
@@ -49,11 +47,11 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var showbackCredentials = make([]*models.ShowbackCredentialsListDto, 0)

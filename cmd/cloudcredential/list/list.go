@@ -4,6 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -12,9 +13,7 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -29,10 +28,10 @@ func NewCmdList() *cobra.Command {
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy,
+	cmdutils.AddSortByFlag(cmd, &config.SortBy,
 		models.AmazonCredentialsListDto{},
 		models.OpenstackCredentialsListDto{},
 		models.AzureCredentialsListDto{},
@@ -52,11 +51,11 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)

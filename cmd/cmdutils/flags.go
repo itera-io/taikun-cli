@@ -87,9 +87,9 @@ func GetCommonJsonTagsInStructs(structs []interface{}) []string {
 	return commonJsonTags
 }
 
-func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStructs ...interface{}) {
+func AddSortByFlag(cmd *cobra.Command, resultStructs ...interface{}) {
 	cmd.Flags().StringVarP(
-		optionStore,
+		&config.SortBy,
 		sortByFlag,
 		sortByFlagShorthand,
 		sortByFlagDefault,

@@ -15,13 +15,11 @@ import (
 )
 
 type AllOptions struct {
-	CloudCredentialID    int32
-	MaxCPU               int32
-	MaxRAM               float64
-	MinCPU               int32
-	MinRAM               float64
-	ReverseSortDirection bool
-	SortBy               string
+	CloudCredentialID int32
+	MaxCPU            int32
+	MaxRAM            float64
+	MinCPU            int32
+	MinRAM            float64
 }
 
 func NewCmdAll() *cobra.Command {
@@ -41,14 +39,14 @@ func NewCmdAll() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32Var(&opts.MaxCPU, "max-cpu", 36, "Maximal CPU count")
 	cmd.Flags().Float64Var(&opts.MaxRAM, "max-ram", 500, "Maximal RAM size in GiB")
 	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
 	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.FlavorsListDto{})
+	cmdutils.AddSortByFlag(cmd, &config.SortBy, models.FlavorsListDto{})
 
 	return cmd
 }
@@ -65,11 +63,11 @@ func allRun(opts *AllOptions) (err error) {
 	minRAM := types.GiBToMiB(opts.MinRAM)
 	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.FlavorsListDto{}

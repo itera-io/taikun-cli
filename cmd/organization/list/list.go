@@ -12,43 +12,36 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type ListOptions struct {
-	ReverseSortDirection bool
-	SortBy               string
-}
-
 func NewCmdList() *cobra.Command {
-	var opts ListOptions
-
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun()
 		},
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
+	cmd.Flags().BoolVarP(&config.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.OrganizationDetailsDto{})
+	cmdutils.AddSortByFlag(cmd, &config.SortBy, models.OrganizationDetailsDto{})
 	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun() (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := organizations.NewOrganizationsListParams().WithV(apiconfig.Version)
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
