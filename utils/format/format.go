@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/create"
 
@@ -243,16 +244,56 @@ func PrintResults(slice interface{}, fields ...string) {
 	}
 }
 
-func PrintMultipleResults(slices []interface{}, fields ...string) {
+// Allows printing of resources of different types in a common table.
+// If *resourceTypes* is not an empty slice,
+// a 'type' column will be added to the table,
+// the value of the 'type' cell for the resources
+// contained in the slice at index *i* of *resourceSlices*
+// will be the type at index *i* of *resourceTypes*.
+// Thus, *resourceSlices* and *resourceTypes* MUST have the same length.
+func PrintMultipleResults(
+	resourceSlices []interface{},
+	resourceTypes []string,
+) {
 	if config.OutputFormat == config.OutputFormatJson {
-		for _, slice := range slices {
+		for _, slice := range resourceSlices {
 			PrettyPrintJson(slice)
 		}
 	} else if config.OutputFormat == config.OutputFormatTable {
-		aggregateSlice := make([]interface{}, 0)
-		for _, slice := range slices {
-			aggregateSlice = append(aggregateSlice, interfaceSlice(slice)...)
+		if len(resourceSlices) != len(resourceTypes) {
+			log.Fatal("PrintMultipleResults: resourcesSlices and resourceTypes must have the same length")
 		}
-		prettyPrintTable(aggregateSlice, fields...)
+
+		resourceSamples := make([]interface{}, 0)
+		for _, resourcesData := range resourceSlices {
+			resources := resourcesData.([]interface{})
+			if len(resources) > 0 {
+				resourceSamples = append(resourceSamples, resources[0])
+			}
+		}
+
+		commonFields := cmdutils.GetCommonJsonTagsInStructs(resourceSamples)
+
+		t := newTable()
+
+		if len(config.Columns) != 0 {
+			commonFields = config.Columns
+		}
+
+		commonFieldsAndType := append(commonFields, "type")
+
+		printTableHeader(t, commonFieldsAndType)
+
+		for resourceIndex, resourcesData := range resourceSlices {
+			resources := resourcesData.([]interface{})
+			resourceMaps := structsToMaps(resources)
+			for _, resourceMap := range resourceMaps {
+				row := resourceMapToRow(resourceMap, commonFields)
+				row = append(row, resourceTypes[resourceIndex])
+				t.AppendRow(row)
+			}
+		}
+
+		RenderTable(t)
 	}
 }

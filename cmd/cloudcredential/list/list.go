@@ -1,8 +1,6 @@
 package list
 
 import (
-	"log"
-
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -49,6 +47,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
+	// TODO refactor by calling the respective methods of aws, azure, os
 	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(apiconfig.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
@@ -59,8 +58,6 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.SortBy != "" {
 		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
-
-	log.Println("before first request")
 
 	response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
 	if err != nil {
@@ -75,8 +72,6 @@ func listRun(opts *ListOptions) (err error) {
 	credentialsOpenstack := response.Payload.Openstack
 	credentialsOpenstackCount := int32(len(credentialsOpenstack))
 
-	log.Println("after first request")
-
 	for credentialsAmazonCount < response.Payload.TotalCountAws {
 		params = params.WithOffset(&credentialsAmazonCount)
 		response, err = apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
@@ -85,6 +80,10 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		credentialsAmazon = append(credentialsAmazon, response.Payload.Amazon...)
 		credentialsAmazonCount = int32(len(credentialsAmazon))
+	}
+	credentialsAmazonGeneric := make([]interface{}, len(credentialsAmazon))
+	for i, credential := range credentialsAmazon {
+		credentialsAmazonGeneric[i] = *credential
 	}
 
 	for credentialsAzureCount < response.Payload.TotalCountAzure {
@@ -96,6 +95,10 @@ func listRun(opts *ListOptions) (err error) {
 		credentialsAzure = append(credentialsAzure, response.Payload.Azure...)
 		credentialsAzureCount = int32(len(credentialsAzure))
 	}
+	credentialsAzureGeneric := make([]interface{}, len(credentialsAzure))
+	for i, credential := range credentialsAzure {
+		credentialsAzureGeneric[i] = *credential
+	}
 
 	for credentialsOpenstackCount < response.Payload.TotalCountOpenstack {
 		params = params.WithOffset(&credentialsOpenstackCount)
@@ -106,21 +109,18 @@ func listRun(opts *ListOptions) (err error) {
 		credentialsOpenstack = append(credentialsOpenstack, response.Payload.Openstack...)
 		credentialsOpenstackCount = int32(len(credentialsOpenstack))
 	}
+	credentialsOpenstackGeneric := make([]interface{}, len(credentialsOpenstack))
+	for i, credential := range credentialsOpenstack {
+		credentialsOpenstackGeneric[i] = *credential
+	}
 
-	log.Println("printing multiple results")
 	format.PrintMultipleResults(
 		[]interface{}{
-			credentialsAmazon,
-			credentialsAzure,
-			credentialsOpenstack,
+			credentialsAmazonGeneric,
+			credentialsAzureGeneric,
+			credentialsOpenstackGeneric,
 		},
-		cmdutils.GetCommonJsonTagsInStructs(
-			[]interface{}{
-				models.AmazonCredentialsListDto{},
-				models.OpenstackCredentialsListDto{},
-				models.AzureCredentialsListDto{},
-			},
-		)...,
+		[]string{"AWS", "Azure", "OpenStack"},
 	)
 
 	return
