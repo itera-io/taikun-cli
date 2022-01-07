@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/project/server/create"
+	"github.com/itera-io/taikun-cli/cmd/project/server/add"
 	"github.com/itera-io/taikun-cli/cmd/project/server/delete"
 	"github.com/itera-io/taikun-cli/cmd/project/server/list"
 	"github.com/itera-io/taikun-cli/cmd/project/server/reboot"
@@ -15,7 +15,7 @@ func NewCmdServer() *cobra.Command {
 		Short: "Manage servers",
 	}
 
-	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(reboot.NewCmdReboot())
