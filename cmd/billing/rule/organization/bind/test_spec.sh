@@ -7,7 +7,7 @@ Context 'billing/rule/organization/bind'
     user=$PROMETHEUS_USERNAME
 
     oid=$(taikun organization create $name --full-name $name -I)
-    cid=$(taikun billing cred create $name -p $pass -u $url -l $user -I)
+    cid=$(taikun billing credential create $name -p $pass -u $url -l $user -I)
     id=$(taikun billing rule create $name -b $cid -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
   }
 
@@ -23,13 +23,13 @@ Context 'billing/rule/organization/bind'
 
   Context
     bind_org() {
-      taikun billing rule org bind $id -o $oid -d 42 -q
+      taikun billing rule organization bind $id -o $oid -d 42 -q
     }
 
     Before 'bind_org'
 
     Example 'bind an organization'
-      When call taikun billing rule org list $id --no-decorate
+      When call taikun billing rule organization list $id --no-decorate
       The status should equal 0
       The lines of output should equal 1
       The output should include $name
@@ -38,7 +38,7 @@ Context 'billing/rule/organization/bind'
   End
 
   Example 'bind a nonexistent organization'
-    When call taikun billing rule org bind $id -o 0 -d 42 -q
+    When call taikun billing rule organization bind $id -o 0 -d 42 -q
     The status should equal 1
     The stderr should include 'Can not find organization'
     The stderr should include '400'

@@ -11,7 +11,7 @@ Context 'billing/rule/organization/list'
     org_name2=$(_rnd_name)
     oid2=$(taikun organization create $org_name2 --full-name $org_name2 -I)
 
-    cid=$(taikun billing cred create $name -p $pass -u $url -l $user -I)
+    cid=$(taikun billing credential create $name -p $pass -u $url -l $user -I)
     id=$(taikun billing rule create $name -b $cid -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
   }
 
@@ -27,7 +27,7 @@ Context 'billing/rule/organization/list'
   AfterEach 'cleanup'
 
   Example 'no bindings'
-    When call taikun billing rule org list $id --no-decorate
+    When call taikun billing rule organization list $id --no-decorate
     The status should equal 0
     The lines of output should equal 0
   End
@@ -35,14 +35,14 @@ Context 'billing/rule/organization/list'
   Context
 
     bind_org() {
-      taikun billing rule org bind $id -o $oid1 -d 42 -q
-      taikun billing rule org bind $id -o $oid2 -d 42 -q
+      taikun billing rule organization bind $id -o $oid1 -d 42 -q
+      taikun billing rule organization bind $id -o $oid2 -d 42 -q
     }
 
     BeforeEach 'bind_org'
 
     Example 'list all bindings'
-      When call taikun billing rule org list $id --no-decorate
+      When call taikun billing rule organization list $id --no-decorate
       The status should equal 0
       The lines of output should equal 2
       The output should include $org_name1
@@ -50,7 +50,7 @@ Context 'billing/rule/organization/list'
     End
 
     Example 'list only one binding'
-      When call taikun billing rule org list $id --no-decorate --limit 1
+      When call taikun billing rule organization list $id --no-decorate --limit 1
       The status should equal 0
       The lines of output should equal 1
     End

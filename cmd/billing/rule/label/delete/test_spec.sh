@@ -6,7 +6,7 @@ Context 'billing/rule/label/delete'
     url=$PROMETHEUS_URL
     user=$PROMETHEUS_USERNAME
 
-    cid=$(taikun billing cred create $name -p $pass -u $url -l $user -I)
+    cid=$(taikun billing credential create $name -p $pass -u $url -l $user -I)
     id=$(taikun billing rule create $name -b $cid -l edit=vim,lang=rust -m abc --price 1 --price-rate 1 --type count -I)
 
     edit_lid=$(taikun billing rule label list $id --no-decorate -C id,label | grep edit | cut -d ' ' -f 1)
