@@ -11,7 +11,7 @@ func NewCmdOrganization() *cobra.Command {
 	cmd := cobra.Command{
 		Use:     "organization <command>",
 		Short:   "Manage a billing rule's organization bindings",
-		Aliases: []string{"org", "o"},
+		Aliases: []string{"org"},
 	}
 
 	cmd.AddCommand(bind.NewCmdBind())

@@ -32,6 +32,7 @@ func NewCmdList() *cobra.Command {
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)
 		},
+		Aliases: cmdutils.ListAliases,
 	}
 
 	cmdutils.AddLimitFlag(cmd)

@@ -31,6 +31,7 @@ func NewCmdList() *cobra.Command {
 			}
 			return listRun(&opts)
 		},
+		Aliases: cmdutils.ListAliases,
 	}
 
 	cmdutils.AddLimitFlag(&cmd)

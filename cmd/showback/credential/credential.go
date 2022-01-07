@@ -14,7 +14,7 @@ func NewCmdCredential() *cobra.Command {
 	cmd := cobra.Command{
 		Use:     "credential <command>",
 		Short:   "Manage showback credentials",
-		Aliases: []string{"c", "cred"},
+		Aliases: []string{"c"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())

@@ -16,7 +16,7 @@ func NewCmdAlertingProfile() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "alerting-profile <command>",
 		Short:   "Manage alerting profiles",
-		Aliases: []string{"alert"},
+		Aliases: []string{"alp"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())

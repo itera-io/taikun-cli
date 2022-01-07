@@ -15,7 +15,7 @@ func NewCmdAccessProfile() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "access-profile <command>",
 		Short:   "Manage access profiles",
-		Aliases: []string{"access"},
+		Aliases: []string{"acp"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())

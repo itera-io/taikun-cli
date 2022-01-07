@@ -14,7 +14,7 @@ func NewCmdCredential() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "credential <command>",
 		Short:   "Manage billing credentials",
-		Aliases: []string{"cred", "c"},
+		Aliases: []string{"c"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())

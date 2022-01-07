@@ -25,7 +25,8 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun(&opts)
 		},
-		Args: cobra.NoArgs,
+		Args:    cobra.NoArgs,
+		Aliases: cmdutils.ListAliases,
 	}
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
