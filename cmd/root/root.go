@@ -45,7 +45,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
 	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
 	cmd.AddCommand(billing.NewCmdBilling())
-	cmd.AddCommand(cloudcredential.NewCmdBillingCredential())
+	cmd.AddCommand(cloudcredential.NewCmdCloudCredential())
 	cmd.AddCommand(flavor.NewCmdFlavor())
 	cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile())
 	cmd.AddCommand(organization.NewCmdOrganization())
