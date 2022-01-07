@@ -1,4 +1,4 @@
-package all
+package flavors
 
 import (
 	"github.com/itera-io/taikun-cli/api"
@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type AllOptions struct {
+type FlavorsOptions struct {
 	CloudCredentialID int32
 	MaxCPU            int32
 	MaxRAM            float64
@@ -22,12 +22,12 @@ type AllOptions struct {
 	MinRAM            float64
 }
 
-func NewCmdAll() *cobra.Command {
-	var opts AllOptions
+func NewCmdFlavors() *cobra.Command {
+	var opts FlavorsOptions
 
 	cmd := &cobra.Command{
-		Use:   "all <cloud-credential-id>",
-		Short: "List all flavors by cloud credential",
+		Use:   "flavors <cloud-credential-id>",
+		Short: "List a cloud credential's flavors",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cloudCredentialID, err := types.Atoi32(args[0])
@@ -35,7 +35,7 @@ func NewCmdAll() *cobra.Command {
 				return cmderr.IDArgumentNotANumberError
 			}
 			opts.CloudCredentialID = cloudCredentialID
-			return allRun(&opts)
+			return flavorRun(&opts)
 		},
 	}
 
@@ -50,7 +50,7 @@ func NewCmdAll() *cobra.Command {
 	return cmd
 }
 
-func allRun(opts *AllOptions) (err error) {
+func flavorRun(opts *FlavorsOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
