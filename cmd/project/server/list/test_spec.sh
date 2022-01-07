@@ -33,7 +33,7 @@ Context 'project/server/list'
     Before 'add_servers'
 
     remove_servers() {
-      taikun project server delete $bsid $msid $wsid -q 2>/dev/null || true
+      taikun project server delete -p $pid $bsid $msid $wsid -q 2>/dev/null || true
     }
 
     After 'remove_servers'

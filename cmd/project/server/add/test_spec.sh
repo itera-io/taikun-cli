@@ -25,7 +25,7 @@ Context 'project/server/add'
     BeforeEach 'add_master'
 
     remove_master() {
-      taikun project server delete $msid -q 2>/dev/null || true
+      taikun project server delete -p $pid $msid -q 2>/dev/null || true
     }
 
     AfterEach 'remove_master'
