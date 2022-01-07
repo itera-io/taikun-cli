@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -13,9 +13,7 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -25,56 +23,23 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List AWS cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return ListRun(&opts)
+			return listRun(&opts)
 		},
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.AmazonCredentialsListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, models.AmazonCredentialsListDto{})
 
 	return cmd
 }
 
-func ListRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+func listRun(opts *ListOptions) error {
+	amazonCloudCredentials, err := ListCloudCredentialsAws(opts)
 	if err != nil {
-		return
-	}
-
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(apiconfig.Version)
-	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
-	}
-	if opts.ReverseSortDirection {
-		apiconfig.ReverseSortDirection()
-	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
-	}
-
-	var amazonCloudCredentials = make([]*models.AmazonCredentialsListDto, 0)
-	for {
-		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
-		if err != nil {
-			return err
-		}
-		amazonCloudCredentials = append(amazonCloudCredentials, response.Payload.Amazon...)
-		count := int32(len(amazonCloudCredentials))
-		if list.Limit != 0 && count >= list.Limit {
-			break
-		}
-		if count == response.Payload.TotalCountAws {
-			break
-		}
-		params = params.WithOffset(&count)
-	}
-
-	if list.Limit != 0 && int32(len(amazonCloudCredentials)) > list.Limit {
-		amazonCloudCredentials = amazonCloudCredentials[:list.Limit]
+		return err
 	}
 
 	format.PrintResults(amazonCloudCredentials,
@@ -86,5 +51,52 @@ func ListRun(opts *ListOptions) (err error) {
 		"isDefault",
 		"isLocked",
 	)
+
+	return nil
+}
+
+func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(apiconfig.Version)
+	if opts.OrganizationID != 0 {
+		params = params.WithOrganizationID(&opts.OrganizationID)
+	}
+	if config.ReverseSortDirection {
+		apiconfig.ReverseSortDirection()
+	}
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	}
+
+	var amazonCloudCredentials = make([]*models.AmazonCredentialsListDto, 0)
+	for {
+		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
+		if err != nil {
+			return nil, err
+		}
+		amazonCloudCredentials = append(amazonCloudCredentials, response.Payload.Amazon...)
+		count := int32(len(amazonCloudCredentials))
+		if config.Limit != 0 && count >= config.Limit {
+			break
+		}
+		if count == response.Payload.TotalCountAws {
+			break
+		}
+		params = params.WithOffset(&count)
+	}
+
+	if config.Limit != 0 && int32(len(amazonCloudCredentials)) > config.Limit {
+		amazonCloudCredentials = amazonCloudCredentials[:config.Limit]
+	}
+
+	credentials = make([]interface{}, len(amazonCloudCredentials))
+	for i, credential := range amazonCloudCredentials {
+		credentials[i] = *credential
+	}
+
 	return
 }

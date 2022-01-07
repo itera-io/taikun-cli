@@ -5,8 +5,8 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
@@ -15,9 +15,7 @@ import (
 )
 
 type ListOptions struct {
-	ProjectID            int32
-	ReverseSortDirection bool
-	SortBy               string
+	ProjectID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -37,10 +35,8 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
-
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.BoundFlavorsForProjectsListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, models.BoundFlavorsForProjectsListDto{})
 
 	return cmd
 }
@@ -53,11 +49,11 @@ func listRun(opts *ListOptions) (err error) {
 
 	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(apiconfig.Version)
 	params = params.WithProjectID(&opts.ProjectID)
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}
@@ -69,7 +65,7 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
 
-		if list.Limit != 0 && flavorsCount >= list.Limit {
+		if config.Limit != 0 && flavorsCount >= config.Limit {
 			break
 		}
 		if flavorsCount == response.Payload.TotalCount {
@@ -78,8 +74,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&flavorsCount)
 	}
 
-	if list.Limit != 0 && int32(len(flavors)) > list.Limit {
-		flavors = flavors[:list.Limit]
+	if config.Limit != 0 && int32(len(flavors)) > config.Limit {
+		flavors = flavors[:config.Limit]
 	}
 
 	format.PrintResults(flavors,

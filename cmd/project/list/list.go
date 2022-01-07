@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"
@@ -13,9 +13,7 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -30,10 +28,9 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.ProjectListForUIDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, models.ProjectListForUIDto{})
 	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
@@ -49,11 +46,11 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var projects = make([]*models.ProjectListForUIDto, 0)
@@ -64,7 +61,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		projects = append(projects, response.Payload.Data...)
 		projectsCount := int32(len(projects))
-		if list.Limit != 0 && projectsCount >= list.Limit {
+		if config.Limit != 0 && projectsCount >= config.Limit {
 			break
 		}
 		if projectsCount == response.Payload.TotalCount {
@@ -73,8 +70,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&projectsCount)
 	}
 
-	if list.Limit != 0 && int32(len(projects)) > list.Limit {
-		projects = projects[:list.Limit]
+	if config.Limit != 0 && int32(len(projects)) > config.Limit {
+		projects = projects[:config.Limit]
 	}
 
 	format.PrintResults(projects,

@@ -5,8 +5,8 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/spf13/cobra"
@@ -56,8 +56,8 @@ func listRun(opts *ListOptions) (err error) {
 
 	boundOrganizations := response.Payload.Data[0].BoundOrganizations
 
-	if list.Limit != 0 && int32(len(boundOrganizations)) > list.Limit {
-		boundOrganizations = boundOrganizations[:list.Limit]
+	if config.Limit != 0 && int32(len(boundOrganizations)) > config.Limit {
+		boundOrganizations = boundOrganizations[:config.Limit]
 	}
 
 	format.PrintResults(boundOrganizations,

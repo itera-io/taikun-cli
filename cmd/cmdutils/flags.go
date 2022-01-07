@@ -5,8 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/utils/create"
-	"github.com/itera-io/taikun-cli/utils/list"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/spf13/cobra"
 )
 
@@ -53,28 +52,59 @@ func getStructJsonTags(s interface{}) []string {
 	return structFieldJsonTags
 }
 
-const (
-	sortByFlag            = "sort-by"
-	sortByFlagShorthand   = "s"
-	sortByFlagDefault     = ""
-	sortByFlagDescription = "Sort results by attribute value"
-)
+func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
+	freqMap := map[string]int{}
+	for _, str := range stringSlice {
+		freqMap[str] += 1
+	}
+	return freqMap
+}
 
-func AddSortByFlag(cmd *cobra.Command, optionStore *string, resultStruct interface{}) {
+func GetCommonJsonTagsInStructs(structs []interface{}) []string {
+	jsonTags := make([]string, 0)
+
+	for _, s := range structs {
+		jsonTags = append(jsonTags, getStructJsonTags(s)...)
+	}
+
+	jsonTagsFreqMap := frequencyMapFromStringSlice(jsonTags)
+
+	structsCount := len(structs)
+	commonJsonTags := make([]string, 0)
+	for jsonTag, jsonTagFreq := range jsonTagsFreqMap {
+		if jsonTagFreq == structsCount {
+			commonJsonTags = append(commonJsonTags, jsonTag)
+		}
+	}
+
+	return commonJsonTags
+}
+
+func AddSortByAndReverseFlags(cmd *cobra.Command, resultStructs ...interface{}) {
 	cmd.Flags().StringVarP(
-		optionStore,
-		sortByFlag,
-		sortByFlagShorthand,
-		sortByFlagDefault,
-		sortByFlagDescription,
+		&config.SortBy,
+		"sort-by",
+		"s",
+		"",
+		"Sort results by attribute value",
 	)
-	resultStructJsonTags := getStructJsonTags(resultStruct)
-	RegisterStaticFlagCompletion(cmd, sortByFlag, resultStructJsonTags...)
+
+	cmd.Flags().BoolVarP(
+		&config.ReverseSortDirection,
+		"reverse",
+		"r",
+		false,
+		"Reverse order of results",
+	)
+
+	commonTags := GetCommonJsonTagsInStructs(resultStructs)
+
+	RegisterStaticFlagCompletion(cmd, "sort-by", commonTags...)
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 	cmd.Flags().BoolVarP(
-		&create.OutputOnlyID,
+		&config.OutputOnlyID,
 		"id-only",
 		"I",
 		false,
@@ -83,5 +113,5 @@ func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 }
 
 func AddLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().Int32VarP(&list.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
+	cmd.Flags().Int32VarP(&config.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
@@ -13,9 +13,7 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -30,10 +28,9 @@ func NewCmdList() *cobra.Command {
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.UserForListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, models.UserForListDto{})
 	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
@@ -49,11 +46,11 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var users = make([]*models.UserForListDto, 0)
@@ -64,7 +61,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		users = append(users, response.Payload.Data...)
 		usersCount := int32(len(users))
-		if list.Limit != 0 && usersCount >= list.Limit {
+		if config.Limit != 0 && usersCount >= config.Limit {
 			break
 		}
 		if usersCount == response.Payload.TotalCount {
@@ -73,8 +70,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&usersCount)
 	}
 
-	if list.Limit != 0 && int32(len(users)) > list.Limit {
-		users = users[:list.Limit]
+	if config.Limit != 0 && int32(len(users)) > config.Limit {
+		users = users[:config.Limit]
 	}
 
 	format.PrintResults(users,

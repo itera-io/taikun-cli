@@ -5,8 +5,8 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -15,13 +15,11 @@ import (
 )
 
 type AllOptions struct {
-	CloudCredentialID    int32
-	MaxCPU               int32
-	MaxRAM               float64
-	MinCPU               int32
-	MinRAM               float64
-	ReverseSortDirection bool
-	SortBy               string
+	CloudCredentialID int32
+	MaxCPU            int32
+	MaxRAM            float64
+	MinCPU            int32
+	MinRAM            float64
 }
 
 func NewCmdAll() *cobra.Command {
@@ -41,14 +39,13 @@ func NewCmdAll() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32Var(&opts.MaxCPU, "max-cpu", 36, "Maximal CPU count")
 	cmd.Flags().Float64Var(&opts.MaxRAM, "max-ram", 500, "Maximal RAM size in GiB")
 	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
 	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.FlavorsListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, models.FlavorsListDto{})
 
 	return cmd
 }
@@ -65,11 +62,11 @@ func allRun(opts *AllOptions) (err error) {
 	minRAM := types.GiBToMiB(opts.MinRAM)
 	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	flavors := []*models.FlavorsListDto{}
@@ -80,7 +77,7 @@ func allRun(opts *AllOptions) (err error) {
 		}
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
-		if list.Limit != 0 && flavorsCount >= list.Limit {
+		if config.Limit != 0 && flavorsCount >= config.Limit {
 			break
 		}
 		if flavorsCount == response.Payload.TotalCount {
@@ -89,8 +86,8 @@ func allRun(opts *AllOptions) (err error) {
 		params = params.WithOffset(&flavorsCount)
 	}
 
-	if list.Limit != 0 && int32(len(flavors)) > list.Limit {
-		flavors = flavors[:list.Limit]
+	if config.Limit != 0 && int32(len(flavors)) > config.Limit {
+		flavors = flavors[:config.Limit]
 	}
 
 	format.PrintResults(flavors,

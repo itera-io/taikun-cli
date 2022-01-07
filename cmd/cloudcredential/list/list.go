@@ -1,19 +1,18 @@
 package list
 
 import (
-	aws "github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
-	azure "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
-	openstack "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
+	awslist "github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
+	azlist "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
+	oslist "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikungoclient/models"
 
 	"github.com/spf13/cobra"
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -28,25 +27,60 @@ func NewCmdList() *cobra.Command {
 		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
-	cmd.Flags().StringVarP(&opts.SortBy, "sort-by", "s", "", "Sort results by attribute value")
-	cmdutils.AddLimitFlag(cmd)
+
+	cmdutils.AddSortByAndReverseFlags(cmd,
+		models.AmazonCredentialsListDto{},
+		models.OpenstackCredentialsListDto{},
+		models.AzureCredentialsListDto{},
+	)
 
 	return cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
-	err = openstack.ListRun((*openstack.ListOptions)(opts))
+	amazonOpts := awslist.ListOptions{
+		OrganizationID: opts.OrganizationID,
+	}
+	credentialsAmazon, err := awslist.ListCloudCredentialsAws(&amazonOpts)
 	if err != nil {
 		return
 	}
-	format.Println()
-	err = azure.ListRun((*azure.ListOptions)(opts))
+
+	azureOpts := azlist.ListOptions{
+		OrganizationID: opts.OrganizationID,
+	}
+	credentialsAzure, err := azlist.ListCloudCredentialsAzure(&azureOpts)
 	if err != nil {
 		return
 	}
-	format.Println()
-	err = aws.ListRun((*aws.ListOptions)(opts))
+
+	openstackOpts := oslist.ListOptions{
+		OrganizationID: opts.OrganizationID,
+	}
+	credentialsOpenStack, err := oslist.ListCloudCredentialsOpenStack(&openstackOpts)
+	if err != nil {
+		return
+	}
+
+	format.PrintMultipleResults(
+		[]interface{}{
+			credentialsAmazon,
+			credentialsAzure,
+			credentialsOpenStack,
+		},
+		[]string{
+			"AWS",
+			"Azure",
+			"OpenStack",
+		},
+		"id",
+		"name",
+		"organizationName",
+		"createdBy",
+		"isDefault",
+		"isLocked",
+	)
+
 	return
 }

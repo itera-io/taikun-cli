@@ -7,8 +7,8 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -59,8 +59,8 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	alertingWebhooks := response.Payload.Data[0].Webhooks
 
-	if list.Limit != 0 && int32(len(alertingWebhooks)) > list.Limit {
-		alertingWebhooks = alertingWebhooks[:list.Limit]
+	if config.Limit != 0 && int32(len(alertingWebhooks)) > config.Limit {
+		alertingWebhooks = alertingWebhooks[:config.Limit]
 	}
 
 	format.PrintResults(alertingWebhooks,

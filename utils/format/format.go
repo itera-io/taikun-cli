@@ -10,7 +10,6 @@ import (
 
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/create"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -204,7 +203,7 @@ func printResourceID(resource interface{}) {
 }
 
 func PrintResult(resource interface{}, fields ...string) {
-	if create.OutputOnlyID {
+	if config.OutputOnlyID {
 		printResourceID(resource)
 	} else {
 		if config.OutputFormat == config.OutputFormatJson {
@@ -240,5 +239,50 @@ func PrintResults(slice interface{}, fields ...string) {
 		PrettyPrintJson(slice)
 	} else if config.OutputFormat == config.OutputFormatTable {
 		prettyPrintTable(interfaceSlice(slice), fields...)
+	}
+}
+
+// Allows printing of resources of different types in a common table.
+// If *resourceTypes* is not an empty slice,
+// a 'type' column will be added to the table,
+// the value of the 'type' cell for the resources
+// contained in the slice at index *i* of *resourceSlices*
+// will be the type at index *i* of *resourceTypes*.
+// Thus, *resourceSlices* and *resourceTypes* MUST have the same length.
+func PrintMultipleResults(
+	resourceSlices []interface{},
+	resourceTypes []string,
+	fields ...string,
+) {
+	if config.OutputFormat == config.OutputFormatJson {
+		for _, slice := range resourceSlices {
+			PrettyPrintJson(slice)
+		}
+	} else if config.OutputFormat == config.OutputFormatTable {
+		if len(resourceSlices) != len(resourceTypes) {
+			log.Fatal("PrintMultipleResults: resourcesSlices and resourceTypes must have the same length")
+		}
+
+		t := newTable()
+
+		if len(config.Columns) != 0 {
+			fields = config.Columns
+		}
+
+		fieldsPlusType := append(fields, "type")
+
+		printTableHeader(t, fieldsPlusType)
+
+		for resourceIndex, resourcesData := range resourceSlices {
+			resources := resourcesData.([]interface{})
+			resourceMaps := structsToMaps(resources)
+			for _, resourceMap := range resourceMaps {
+				row := resourceMapToRow(resourceMap, fields)
+				row = append(row, resourceTypes[resourceIndex])
+				t.AppendRow(row)
+			}
+		}
+
+		RenderTable(t)
 	}
 }

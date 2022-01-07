@@ -4,8 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/format"
-	"github.com/itera-io/taikun-cli/utils/list"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -13,9 +13,7 @@ import (
 )
 
 type ListOptions struct {
-	OrganizationID       int32
-	ReverseSortDirection bool
-	SortBy               string
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -30,11 +28,10 @@ func NewCmdList() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.ReverseSortDirection, "reverse", "r", false, "Reverse order of results")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByFlag(cmd, &opts.SortBy, models.AlertingProfilesListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, models.AlertingProfilesListDto{})
 
 	return cmd
 }
@@ -49,11 +46,11 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if opts.ReverseSortDirection {
+	if config.ReverseSortDirection {
 		apiconfig.ReverseSortDirection()
 	}
-	if opts.SortBy != "" {
-		params = params.WithSortBy(&opts.SortBy).WithSortDirection(&apiconfig.SortDirection)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
 	}
 
 	var alertingProfiles = make([]*models.AlertingProfilesListDto, 0)
@@ -64,7 +61,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		alertingProfiles = append(alertingProfiles, response.Payload.Data...)
 		alertingProfilesCount := int32(len(alertingProfiles))
-		if list.Limit != 0 && alertingProfilesCount >= list.Limit {
+		if config.Limit != 0 && alertingProfilesCount >= config.Limit {
 			break
 		}
 		if alertingProfilesCount == response.Payload.TotalCount {
@@ -73,8 +70,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&alertingProfilesCount)
 	}
 
-	if list.Limit != 0 && int32(len(alertingProfiles)) > list.Limit {
-		alertingProfiles = alertingProfiles[:list.Limit]
+	if config.Limit != 0 && int32(len(alertingProfiles)) > config.Limit {
+		alertingProfiles = alertingProfiles[:config.Limit]
 	}
 
 	format.PrintResults(alertingProfiles,
