@@ -23,6 +23,28 @@ Context 'project/server/list'
     The lines of output should equal 0
   End
 
-  Todo 'project with 3 servers'
+  Context
+    add_servers() {
+      bsid=$(taikun project server add -p $pid bastion -r bastion -f $flavor -I)
+      msid=$(taikun project server add -p $pid master -r kubemaster -f $flavor -I)
+      wsid=$(taikun project server add -p $pid worker -r kubeworker -f $flavor -I)
+    }
 
+    Before 'add_servers'
+
+    remove_servers() {
+      taikun project server delete $bsid $msid $wsid -q 2>/dev/null || true
+    }
+
+    After 'remove_servers'
+
+    Example 'project with 3 servers'
+      When call taikun project server list $pid --no-decorate
+      The status should equal 0
+      The lines of output should equal 3
+      The output should include 'bastion'
+      The output should include 'master'
+      The output should include 'worker'
+    End
+  End
 End
