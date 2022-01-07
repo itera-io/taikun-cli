@@ -32,3 +32,7 @@ var RouterIDRangeError = errors.New(
 func ResourceNotFoundError(resourceName string, id int32) error {
 	return fmt.Errorf("%s with ID %d not found", resourceName, id)
 }
+
+var ServerHasNoFlavorError = errors.New(
+	"Server has no listed flavor",
+)
