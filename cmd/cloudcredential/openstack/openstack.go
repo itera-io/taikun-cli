@@ -10,8 +10,9 @@ import (
 
 func NewCmdOpenstack() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "openstack <command>",
-		Short: "Manage OpenStack Cloud Credentials",
+		Use:     "openstack <command>",
+		Short:   "Manage OpenStack Cloud Credentials",
+		Aliases: []string{"os"},
 	}
 
 	cmd.AddCommand(check.NewCmdCheck())

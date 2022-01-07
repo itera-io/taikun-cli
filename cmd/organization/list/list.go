@@ -19,7 +19,8 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun()
 		},
-		Args: cobra.NoArgs,
+		Args:    cobra.NoArgs,
+		Aliases: cmdutils.ListAliases,
 	}
 
 	cmdutils.AddSortByAndReverseFlags(cmd, models.OrganizationDetailsDto{})

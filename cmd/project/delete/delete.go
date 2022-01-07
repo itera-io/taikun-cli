@@ -8,6 +8,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/format"
 	"github.com/itera-io/taikun-cli/utils/types"
 
@@ -42,6 +43,7 @@ func NewCmdDelete() *cobra.Command {
 			}
 			return deleteMultiple(optsList)
 		},
+		Aliases: cmdutils.DeleteAliases,
 	}
 
 	cmd.Flags().BoolVarP(&force, "force", "f", false, "Force delete")

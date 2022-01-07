@@ -10,8 +10,9 @@ import (
 
 func NewCmdIntegration() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "integration <command>",
-		Short: "Manage alerting integrations",
+		Use:     "integration <command>",
+		Short:   "Manage alerting integrations",
+		Aliases: []string{"int"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())

@@ -19,6 +19,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun()
 		},
+		Aliases: cmdutils.ListAliases,
 	}
 
 	cmdutils.AddLimitFlag(&cmd)

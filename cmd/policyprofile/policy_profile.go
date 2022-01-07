@@ -12,8 +12,9 @@ import (
 
 func NewCmdPolicyProfile() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "policy-profile <command>",
-		Short: "Manage policy profiles",
+		Use:     "policy-profile <command>",
+		Short:   "Manage policy profiles",
+		Aliases: []string{"pp"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())

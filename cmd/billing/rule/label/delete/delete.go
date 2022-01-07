@@ -28,6 +28,7 @@ func NewCmdDelete() *cobra.Command {
 			}
 			return cmdutils.DeleteMultipleChildResources(opts.BillingRuleID, ids, deleteRun)
 		},
+		Aliases: cmdutils.DeleteAliases,
 	}
 
 	cmd.Flags().Int32VarP(&opts.BillingRuleID, "billing-rule-id", "b", 0, "Billing rule ID (required)")

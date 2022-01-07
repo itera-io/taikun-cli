@@ -18,6 +18,7 @@ func NewCmdDelete() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return cmdutils.DeleteMultipleStringID(args, deleteRun)
 		},
+		Aliases: cmdutils.DeleteAliases,
 	}
 
 	return cmd

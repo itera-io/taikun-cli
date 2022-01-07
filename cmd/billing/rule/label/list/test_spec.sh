@@ -6,7 +6,7 @@ Context 'billing/rule/label/list'
     url=$PROMETHEUS_URL
     user=$PROMETHEUS_USERNAME
 
-    cid=$(taikun billing cred create $name -p $pass -u $url -l $user -I)
+    cid=$(taikun billing credential create $name -p $pass -u $url -l $user -I)
     id=$(taikun billing rule create $name -b $cid -l ed=vim,lang=rust -m abc --price 1 --price-rate 1 --type count -I)
   }
 
@@ -19,7 +19,7 @@ Context 'billing/rule/label/list'
 
   AfterEach 'cleanup'
 
-  Example 'List all labels'
+  Example 'list all labels'
     When call taikun billing rule label list $id --no-decorate
     The status should equal 0
     The lines of output should equal 2
@@ -29,7 +29,7 @@ Context 'billing/rule/label/list'
     The output should include lang
   End
 
-  Example 'List only one label'
+  Example 'list only one label'
     When call taikun billing rule label list $id --no-decorate -l 1
     The status should equal 0
     The lines of output should equal 1

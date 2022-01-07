@@ -14,7 +14,7 @@ func NewCmdKubernetesProfile() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "kubernetes-profile <command>",
 		Short:   "Manage kubernetes profiles",
-		Aliases: []string{"k8s-profile"},
+		Aliases: []string{"kp"},
 	}
 
 	cmd.AddCommand(create.NewCmdCreate())

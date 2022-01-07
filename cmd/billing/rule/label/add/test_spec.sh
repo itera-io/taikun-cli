@@ -6,7 +6,7 @@ Context 'billing/rule/label/add'
     url=$PROMETHEUS_URL
     user=$PROMETHEUS_USERNAME
 
-    cid=$(taikun billing cred create $name -p $pass -u $url -l $user -I)
+    cid=$(taikun billing credential create $name -p $pass -u $url -l $user -I)
     id=$(taikun billing rule create $name -b $cid -l ed=vim -m abc --price 1 --price-rate 1 --type count -I)
   }
 
@@ -25,7 +25,7 @@ Context 'billing/rule/label/add'
 
   Before 'add_label'
 
-  Example 'Add a label'
+  Example 'add a label'
     When call taikun billing rule label list $id --no-decorate
     The status should equal 0
     The lines of output should equal 2

@@ -12,11 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewCmdBillingCredential() *cobra.Command {
+func NewCmdCloudCredential() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "cloud-credential <command>",
 		Short:   "Manage Cloud Credentials",
-		Aliases: []string{"cloud", "cc"},
+		Aliases: []string{"cc"},
 	}
 
 	cmd.AddCommand(aws.NewCmdAWS())
