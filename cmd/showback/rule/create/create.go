@@ -32,22 +32,12 @@ func NewCmdCreate() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-
-			if !types.MapContains(types.ShowbackKinds, opts.Kind) {
-				return types.UnknownFlagValueError(
-					"kind",
-					opts.Kind,
-					types.MapKeys(types.ShowbackKinds),
-				)
+			if err := cmdutils.CheckFlagValue("kind", opts.Kind, types.ShowbackKinds); err != nil {
+				return err
 			}
-			if !types.MapContains(types.PrometheusTypes, opts.Type) {
-				return types.UnknownFlagValueError(
-					"type",
-					opts.Type,
-					types.MapKeys(types.PrometheusTypes),
-				)
+			if err := cmdutils.CheckFlagValue("type", opts.Type, types.PrometheusTypes); err != nil {
+				return err
 			}
-
 			return createRun(&opts)
 		},
 	}
@@ -57,7 +47,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Kind, "kind", "k", "", "Kind (required)")
 	cmdutils.MarkFlagRequired(&cmd, "kind")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "kind", types.MapKeys(types.ShowbackKinds)...)
+	cmdutils.RegisterStaticFlagCompletion(&cmd, "kind", types.ShowbackKinds.Keys()...)
 
 	cmd.Flags().StringVarP(&opts.MetricName, "metric-name", "m", "", "Metric name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "metric-name")
@@ -69,7 +59,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "type", types.MapKeys(types.PrometheusTypes)...)
+	cmdutils.RegisterStaticFlagCompletion(&cmd, "type", types.PrometheusTypes.Keys()...)
 
 	cmd.Flags().Int32Var(&opts.ProjectAlertLimit, "project-alert-limit", 0, "Project alert limit")
 

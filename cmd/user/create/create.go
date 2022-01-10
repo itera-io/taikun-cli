@@ -28,12 +28,8 @@ func NewCmdCreate() *cobra.Command {
 		Short: "Create user",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Username = args[0]
-			if !types.MapContains(types.UserRoles, opts.Role) {
-				return types.UnknownFlagValueError(
-					"role",
-					opts.Role,
-					types.MapKeys(types.UserRoles),
-				)
+			if err := cmdutils.CheckFlagValue("role", opts.Role, types.UserRoles); err != nil {
+				return err
 			}
 			return createRun(&opts)
 		},
@@ -45,7 +41,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(cmd, "role")
-	cmdutils.RegisterStaticFlagCompletion(cmd, "role", types.MapKeys(types.UserRoles)...)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "role", types.UserRoles.Keys()...)
 
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")

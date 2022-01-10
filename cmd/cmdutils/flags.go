@@ -5,7 +5,9 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/spf13/cobra"
 )
 
@@ -114,4 +116,11 @@ func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 
 func AddLimitFlag(cmd *cobra.Command) {
 	cmd.Flags().Int32VarP(&config.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
+}
+
+func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) error {
+	if !valid.Contains(flagValue) {
+		return cmderr.UnknownFlagValueError(flagName, flagValue, valid.Keys())
+	}
+	return nil
 }

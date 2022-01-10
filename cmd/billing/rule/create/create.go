@@ -34,12 +34,8 @@ func NewCmdCreate() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-			if !types.MapContains(types.PrometheusTypes, opts.Type) {
-				return types.UnknownFlagValueError(
-					"type",
-					opts.Type,
-					types.MapKeys(types.PrometheusTypes),
-				)
+			if err := cmdutils.CheckFlagValue("type", opts.Type, types.PrometheusTypes); err != nil {
+				return err
 			}
 			return createRun(&opts)
 		},
@@ -62,7 +58,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "type", types.MapKeys(types.PrometheusTypes)...)
+	cmdutils.RegisterStaticFlagCompletion(&cmd, "type", types.PrometheusTypes.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 
