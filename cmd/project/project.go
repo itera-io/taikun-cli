@@ -4,6 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/create"
 	"github.com/itera-io/taikun-cli/cmd/project/delete"
 	"github.com/itera-io/taikun-cli/cmd/project/flavor"
+	"github.com/itera-io/taikun-cli/cmd/project/info"
 	"github.com/itera-io/taikun-cli/cmd/project/list"
 	"github.com/itera-io/taikun-cli/cmd/project/lock"
 	"github.com/itera-io/taikun-cli/cmd/project/quotas"
@@ -22,6 +23,7 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(flavor.NewCmdFlavor())
+	cmd.AddCommand(info.NewCmdInfo())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
 	cmd.AddCommand(quotas.NewCmdQuotas())
