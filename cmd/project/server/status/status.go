@@ -1,0 +1,50 @@
+package status
+
+import (
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient/client/servers"
+	"github.com/spf13/cobra"
+)
+
+type StatusOptions struct {
+	ServerID int32
+}
+
+func NewCmdStatus() *cobra.Command {
+	var opts StatusOptions
+
+	cmd := cobra.Command{
+		Use:   "status <server-id>",
+		Short: "Display a server's status",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.ServerID, err = types.Atoi32(args[0])
+			if err != nil {
+				return
+			}
+			return statusRun(&opts)
+		},
+	}
+
+	return &cmd
+}
+
+func statusRun(opts *StatusOptions) (err error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := servers.NewServersShowServerStatusParams().WithV(apiconfig.Version)
+	params = params.WithServerID(opts.ServerID)
+
+	response, err := apiClient.Client.Servers.ServersShowServerStatus(params, apiClient)
+	if err == nil {
+		format.Println(response.Payload)
+	}
+
+	return
+}
