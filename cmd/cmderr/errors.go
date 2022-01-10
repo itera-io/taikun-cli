@@ -40,3 +40,7 @@ var ServerHasNoFlavorError = errors.New(
 func UnknownFlagValueError(flag string, received string, expected []string) error {
 	return fmt.Errorf("unknown %s: %s, expected one of %v.", flag, received, expected)
 }
+
+var ProjectBackupAlreadyDisabledError = errors.New(
+	"Project backup already disabled",
+)
