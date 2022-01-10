@@ -33,12 +33,8 @@ func NewCmdAdd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-			if !types.MapContains(types.ServerRoles, opts.Role) {
-				return types.UnknownFlagValueError(
-					"role",
-					opts.Role,
-					types.MapKeys(types.ServerRoles),
-				)
+			if err := cmdutils.CheckFlagValue("role", opts.Role, types.ServerRoles); err != nil {
+				return err
 			}
 			return addRun(&opts)
 		},

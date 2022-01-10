@@ -28,12 +28,8 @@ func NewCmdCreate() *cobra.Command {
 		Short: "Create an alerting integration",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if !types.MapContains(types.AlertingIntegrationTypes, opts.Type) {
-				return types.UnknownFlagValueError(
-					"type",
-					opts.Type,
-					types.MapKeys(types.AlertingIntegrationTypes),
-				)
+			if err := cmdutils.CheckFlagValue("type", opts.Type, types.AlertingIntegrationTypes); err != nil {
+				return err
 			}
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
@@ -49,7 +45,7 @@ func NewCmdCreate() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(cmd, "type")
-	cmdutils.RegisterStaticFlagCompletion(cmd, "type", types.MapKeys(types.AlertingIntegrationTypes)...)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "type", types.AlertingIntegrationTypes.Keys()...)
 
 	cmd.Flags().StringVar(&opts.Token, "token", "", "Token")
 

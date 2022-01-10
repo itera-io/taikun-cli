@@ -29,12 +29,8 @@ func NewCmdCreate() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-			if !types.MapContains(types.AlertingReminders, opts.Reminder) {
-				return types.UnknownFlagValueError(
-					"reminder",
-					opts.Reminder,
-					types.MapKeys(types.AlertingReminders),
-				)
+			if err := cmdutils.CheckFlagValue("reminder", opts.Reminder, types.AlertingReminders); err != nil {
+				return err
 			}
 			return createRun(&opts)
 		},
@@ -44,7 +40,7 @@ func NewCmdCreate() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.SlackConfigurationID, "slack-configuration-id", "s", 0, "Slack configuration ID")
 	cmd.Flags().StringSliceVarP(&opts.Emails, "emails", "e", []string{}, "Emails")
 	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "none", "Reminder")
-	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", types.MapKeys(types.AlertingReminders)...)
+	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", types.AlertingReminders.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
 
