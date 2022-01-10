@@ -158,6 +158,29 @@ func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
 	RenderTable(t)
 }
 
+func PrettyPrintApiResponseVerticalTable(resource interface{}, fields ...string) {
+	t := newTable()
+
+	t.AppendHeader([]interface{}{"field", "value"})
+
+	resourceMap := structToMap(resource)
+	if resourceMap[apiconfig.ResultField] != nil {
+		resourceMap = resourceMap[apiconfig.ResultField].(map[string]interface{})
+	}
+
+	if len(config.Columns) != 0 {
+		fields = config.Columns
+	}
+
+	for _, field := range fields {
+		if resourceMap[field] != nil && resourceMap[field] != "" {
+			t.AppendRow([]interface{}{formatFieldName(field), resourceMap[field]})
+		}
+	}
+
+	RenderTable(t)
+}
+
 func prettyPrintTable(resources []interface{}, fields ...string) {
 	t := newTable()
 
@@ -210,6 +233,18 @@ func PrintResult(resource interface{}, fields ...string) {
 			PrettyPrintJson(resource)
 		} else if config.OutputFormat == config.OutputFormatTable {
 			PrettyPrintApiResponseTable(resource, fields...)
+		}
+	}
+}
+
+func PrintResultVertical(resource interface{}, fields ...string) {
+	if config.OutputOnlyID {
+		printResourceID(resource)
+	} else {
+		if config.OutputFormat == config.OutputFormatJson {
+			PrettyPrintJson(resource)
+		} else if config.OutputFormat == config.OutputFormatTable {
+			PrettyPrintApiResponseVerticalTable(resource, fields...)
 		}
 	}
 }
