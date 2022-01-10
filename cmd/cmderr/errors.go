@@ -36,3 +36,7 @@ func ResourceNotFoundError(resourceName string, id int32) error {
 var ServerHasNoFlavorError = errors.New(
 	"Server has no listed flavor",
 )
+
+func UnknownFlagValueError(flag string, received string, expected []string) error {
+	return fmt.Errorf("unknown %s: %s, expected one of %v.", flag, received, expected)
+}
