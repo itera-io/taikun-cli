@@ -21,7 +21,7 @@ func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
 	cmd := cobra.Command{
-		Use:   "list <command>",
+		Use:   "list <project-id>",
 		Short: "List a project's servers",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
