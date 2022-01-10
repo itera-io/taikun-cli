@@ -6,7 +6,7 @@ Context 'project/backup'
     pid=$(taikun project create $(_rnd_name) --cloud-credential-id $ccid -I)
   }
 
-  BeforeEach 'setup'
+  BeforeAll 'setup'
 
   cleanup() {
     if ! taikun project delete $pid -q 2>/dev/null; then
@@ -16,10 +16,16 @@ Context 'project/backup'
     taikun backup-credential delete $bid -q 2>/dev/null || true
   }
 
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
+
+  disable_backup() {
+      taikun project backup disable $pid -q 2>/dev/null || true
+  }
+
+  BeforeEach 'disable_backup'
 
   get_backup_status() {
-    taikun project info $1 --no-decorate | grep -i backup | tr -d ' ' -f 2
+    taikun project info $1 --no-decorate | grep -i backup
   }
 
   Context
@@ -31,20 +37,27 @@ Context 'project/backup'
     Example 'enable backup'
       When call get_backup_status $pid
       The status should equal 0
-      The output should equal true
+      The output should include true
     End
   End
 
   Context
-    disable_backup() {
+    enable_and_disable_backup() {
+      taikun project backup enable $pid -b $bid -q
       taikun project backup disable $pid -q
     }
-    Before 'disable_backup'
+    Before 'enable_and_disable_backup'
 
     Example 'disable backup'
       When call get_backup_status $pid
       The status should equal 0
-      The output should equal false
+      The output should include false
     End
+  End
+
+  Example 'disable backup for project with backup already disabled'
+    When call taikun project backup disable $pid
+    The status should equal 1
+    The stderr should equal 'Error: Project backup already disabled'
   End
 End
