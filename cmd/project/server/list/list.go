@@ -65,7 +65,7 @@ func listRun(opts *ListOptions) (err error) {
 		format.PrintResults(response.Payload.Data,
 			"id",
 			"name",
-			"ipAdress",
+			"ipAddress",
 			flavorNameField,
 			"cpu",
 			"ram",
