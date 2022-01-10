@@ -1,0 +1,53 @@
+name: Update command tree
+on:
+  push:
+    branches:
+      - 'main'
+      - 'dev'
+      - 'build-command-tree' # TODO delete this line
+    paths-ignore:
+      - 'README.md'
+      - 'Dockerfile'
+      - 'GNUmakefile'
+      - 'go.mod'
+      - 'go.sum'
+      - 'api/**'
+      - 'apiconfig/**'
+      - 'config/**'
+      - 'utils/**'
+
+jobs:
+  update_command_tree:
+    name: Update command tree
+    runs-on: self-hosted
+    timeout-minutes: 5
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build command tree
+        id: check
+        run: |
+          ./scripts/docs/build_command_tree.sh
+        continue-on-error: true
+
+      - name: Setup Git
+        if: steps.check.outcome == 'success'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Commit
+        if: steps.check.outcome == 'success'
+        run: |
+          git add .
+          git commit -m "docs: update command tree"
+
+      - name: Push
+        if: steps.check.outcome == 'success'
+        run: git push
