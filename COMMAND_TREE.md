@@ -89,6 +89,7 @@
         * bind (Bind one or multiple flavors to a project)
         * list (List a project's bound flavors)
         * unbind (Unbind one or multiple flavors from a project)
+      * info (Get detailed information on a project)
       * list (List projects)
       * lock (Lock a project)
       * quotas (Manage projects quotas)
