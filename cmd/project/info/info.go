@@ -47,6 +47,7 @@ func infoRun(opts *InfoOptions) (err error) {
 		format.PrintResultVertical(response.Payload.Project,
 			"projectName",
 			"projectStatus",
+			"projectHealth",
 			"cloudType",
 			"kubernetesCurrentVersion",
 			"accessProfileName",
