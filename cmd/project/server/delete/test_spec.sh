@@ -21,7 +21,7 @@ Context 'project/server/delete'
 
     add_and_remove_master() {
       msid=$(taikun project server add -p $pid master -r kubemaster -f $flavor -I)
-      taikun project server delete $msid -p $pid -q
+      taikun project server delete $pid --server-ids $msid -q
     }
 
     BeforeEach 'add_and_remove_master'
@@ -33,10 +33,27 @@ Context 'project/server/delete'
     End
 
     Example 'delete the same server twice'
-      When call taikun project server delete -p $pid $msid
+      When call taikun project server delete $pid --server-ids $msid
       The status should equal 1
       The stderr should include '404'
     End
   End
 
+  Context
+
+    add_servers_then_remove_all() {
+      msid=$(taikun project server add -p $pid m -r kubemaster -f $flavor -I)
+      wsid=$(taikun project server add -p $pid w -r kubeworker -f $flavor -I)
+      bsid=$(taikun project server add -p $pid b -r bastion -f $flavor -I)
+      taikun project server delete $pid --all -q
+    }
+
+    Before 'add_servers_then_remove_all'
+
+    Example 'delete all servers'
+      When call taikun project server list $pid --no-decorate
+      The status should equal 0
+      The lines of output should equal 0
+    End
+  End
 End
