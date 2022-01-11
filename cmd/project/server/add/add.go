@@ -84,7 +84,15 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
 	if err == nil {
-		format.PrintResult(response.Payload)
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"cpu",
+			"ram",
+			"diskSize",
+			"role",
+			"status",
+		)
 	}
 
 	return
