@@ -1,6 +1,7 @@
 package project
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/project/alert"
 	"github.com/itera-io/taikun-cli/cmd/project/backup"
 	"github.com/itera-io/taikun-cli/cmd/project/commit"
 	"github.com/itera-io/taikun-cli/cmd/project/create"
@@ -24,6 +25,7 @@ func NewCmdProject() *cobra.Command {
 		Short: "Manage projects",
 	}
 
+	cmd.AddCommand(alert.NewCmdAlert())
 	cmd.AddCommand(backup.NewCmdBackup())
 	cmd.AddCommand(commit.NewCmdCommit())
 	cmd.AddCommand(create.NewCmdCreate())
