@@ -49,6 +49,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(&cmd, "role")
+	cmdutils.RegisterStaticFlagCompletion(&cmd, "role", types.ServerRoles.Keys()...)
 
 	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
 	cmdutils.MarkFlagRequired(&cmd, "project-id")
@@ -84,7 +85,15 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
 	if err == nil {
-		format.PrintResult(response.Payload)
+		format.PrintResult(response.Payload,
+			"id",
+			"name",
+			"cpu",
+			"ram",
+			"diskSize",
+			"role",
+			"status",
+		)
 	}
 
 	return
