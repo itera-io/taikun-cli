@@ -139,39 +139,40 @@ func printTableHeader(t table.Writer, fields []string) {
 	}
 }
 
-func PrettyPrintApiResponseTable(resource interface{}, fields ...string) {
+func PrettyPrintApiResponseTable(response interface{}, fields ...string) {
 	t := newTable()
 
 	if len(config.Columns) != 0 {
 		fields = config.Columns
 	}
 
-	printTableHeader(t, fields)
-
-	resourceMap := structToMap(resource)
-	if resourceMap[apiconfig.ResultField] != nil {
-		resourceMap = resourceMap[apiconfig.ResultField].(map[string]interface{})
+	resourceMap := getApiResponseResourceMap(response)
+	nonEmptyFields := make([]string, 0)
+	for _, field := range fields {
+		if _, fieldExists := resourceMap[field]; fieldExists {
+			nonEmptyFields = append(nonEmptyFields, field)
+		}
 	}
-	row := resourceMapToRow(resourceMap, fields)
-	t.AppendRow(row)
 
-	RenderTable(t)
+	if len(nonEmptyFields) == 0 {
+		Println("No data")
+	} else {
+		printTableHeader(t, nonEmptyFields)
+		row := resourceMapToRow(resourceMap, nonEmptyFields)
+		t.AppendRow(row)
+		RenderTable(t)
+	}
 }
 
-func PrettyPrintApiResponseVerticalTable(resource interface{}, fields ...string) {
+func PrettyPrintApiResponseVerticalTable(response interface{}, fields ...string) {
 	t := newTable()
-
-	t.AppendHeader([]interface{}{"field", "value"})
-
-	resourceMap := structToMap(resource)
-	if resourceMap[apiconfig.ResultField] != nil {
-		resourceMap = resourceMap[apiconfig.ResultField].(map[string]interface{})
-	}
+	printTableHeader(t, []string{"field", "value"})
 
 	if len(config.Columns) != 0 {
 		fields = config.Columns
 	}
 
+	resourceMap := getApiResponseResourceMap(response)
 	for _, field := range fields {
 		if resourceMap[field] != nil && resourceMap[field] != "" {
 			t.AppendRow([]interface{}{formatFieldName(field), resourceMap[field]})
@@ -179,6 +180,16 @@ func PrettyPrintApiResponseVerticalTable(resource interface{}, fields ...string)
 	}
 
 	RenderTable(t)
+}
+
+func getApiResponseResourceMap(response interface{}) map[string]interface{} {
+	resourceMap := structToMap(response)
+	if resourceMap[apiconfig.ResultField] != nil {
+		resourceMap = resourceMap[apiconfig.ResultField].(map[string]interface{})
+	} else if resourceMap[apiconfig.PayloadField] != nil {
+		resourceMap = resourceMap[apiconfig.PayloadField].(map[string]interface{})
+	}
+	return resourceMap
 }
 
 func prettyPrintTable(resources []interface{}, fields ...string) {
