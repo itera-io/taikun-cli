@@ -1,8 +1,8 @@
 package user
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/user/add"
 	"github.com/itera-io/taikun-cli/cmd/user/bind"
-	"github.com/itera-io/taikun-cli/cmd/user/create"
 	"github.com/itera-io/taikun-cli/cmd/user/delete"
 	"github.com/itera-io/taikun-cli/cmd/user/info"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
@@ -17,8 +17,8 @@ func NewCmdUser() *cobra.Command {
 		Short: "Manage users",
 	}
 
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(bind.NewCmdBind())
-	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(info.NewCmdInfo())
 	cmd.AddCommand(list.NewCmdList())
