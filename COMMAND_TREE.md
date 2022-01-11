@@ -124,5 +124,7 @@
       * bind (Bind a user to a project)
       * create (Create user)
       * delete (Delete one or more users)
+      * info (Retrieve your information)
       * list (List users)
       * unbind (Unbind a user from a project)
+    * whoami (Print username)
