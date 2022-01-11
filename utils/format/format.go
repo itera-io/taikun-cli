@@ -105,7 +105,7 @@ func newTable() table.Writer {
 	return t
 }
 
-const maxColumnWidth = 40
+const maxColumnWidth = 50
 const trimmedValueSuffix = "..."
 
 func trimCellValue(value interface{}) interface{} {
