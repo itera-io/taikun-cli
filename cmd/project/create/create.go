@@ -185,6 +185,7 @@ func createRun(opts *CreateOptions) (err error) {
 		CloudCredentialID:   opts.CloudCredentialID,
 		Flavors:             opts.Flavors,
 		IsAutoUpgrade:       opts.AutoUpgrade,
+		IsKubernetes:        true,
 		KubernetesProfileID: opts.KubernetesProfileID,
 		IsMonitoringEnabled: opts.Monitoring,
 		Name:                opts.Name,
