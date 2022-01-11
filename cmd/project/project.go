@@ -2,6 +2,7 @@ package project
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/backup"
+	"github.com/itera-io/taikun-cli/cmd/project/commit"
 	"github.com/itera-io/taikun-cli/cmd/project/create"
 	"github.com/itera-io/taikun-cli/cmd/project/delete"
 	"github.com/itera-io/taikun-cli/cmd/project/flavor"
@@ -22,6 +23,7 @@ func NewCmdProject() *cobra.Command {
 	}
 
 	cmd.AddCommand(backup.NewCmdBackup())
+	cmd.AddCommand(commit.NewCmdCommit())
 	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(flavor.NewCmdFlavor())
