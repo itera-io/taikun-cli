@@ -50,6 +50,7 @@ func infoRun(opts *InfoOptions) (err error) {
 			"projectHealth",
 			"cloudType",
 			"kubernetesCurrentVersion",
+			"hasKubeConfigFile",
 			"accessProfileName",
 			"cloudName",
 			"kubernetesProfileName",

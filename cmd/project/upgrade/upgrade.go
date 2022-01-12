@@ -1,0 +1,50 @@
+package upgrade
+
+import (
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient/client/projects"
+	"github.com/spf13/cobra"
+)
+
+type UpgradeOptions struct {
+	ProjectID int32
+}
+
+func NewCmdUpgrade() *cobra.Command {
+	var opts UpgradeOptions
+
+	cmd := cobra.Command{
+		Use:   "upgrade <project-id>",
+		Short: "Upgrade the project's version of Kubespray to the latest one",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.ProjectID, err = types.Atoi32(args[0])
+			if err != nil {
+				return
+			}
+			return upgradeRun(&opts)
+		},
+	}
+
+	return &cmd
+}
+
+func upgradeRun(opts *UpgradeOptions) (err error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := projects.NewProjectsUpgradeParams().WithV(apiconfig.Version)
+	params = params.WithProjectID(opts.ProjectID)
+
+	_, err = apiClient.Client.Projects.ProjectsUpgrade(params, apiClient)
+	if err == nil {
+		format.PrintStandardSuccess()
+	}
+
+	return
+}
