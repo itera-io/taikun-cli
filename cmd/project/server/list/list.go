@@ -40,6 +40,31 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
+	projectServers, err := ListServers(opts)
+	if err == nil {
+		flavorNameField, err := getFlavorNameField(projectServers)
+		if err != nil {
+			return err
+		}
+
+		format.PrintResults(projectServers,
+			"id",
+			"name",
+			"ipAddress",
+			flavorNameField,
+			"cpu",
+			"ram",
+			"diskSize",
+			"role",
+			"status",
+			"createdAt",
+		)
+	}
+
+	return
+}
+
+func ListServers(opts *ListOptions) (projectServers []*models.ServerListDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -57,23 +82,7 @@ func listRun(opts *ListOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
 	if err == nil {
-		flavorNameField, err := getFlavorNameField(response.Payload.Data)
-		if err != nil {
-			return err
-		}
-
-		format.PrintResults(response.Payload.Data,
-			"id",
-			"name",
-			"ipAddress",
-			flavorNameField,
-			"cpu",
-			"ram",
-			"diskSize",
-			"role",
-			"status",
-			"createdAt",
-		)
+		projectServers = response.Payload.Data
 	}
 
 	return
