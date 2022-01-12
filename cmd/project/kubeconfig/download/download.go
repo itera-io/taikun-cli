@@ -73,7 +73,7 @@ func downloadRun(opts *DownloadOptions) (err error) {
 	response, err := apiClient.Client.KubeConfig.KubeConfigDownload(params, apiClient)
 	if err == nil {
 		content := []byte(response.Payload.(string))
-		os.WriteFile(opts.OutputFile, content, 0644)
+		err = os.WriteFile(opts.OutputFile, content, 0644)
 	}
 
 	return
