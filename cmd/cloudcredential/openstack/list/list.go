@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -43,7 +43,7 @@ func listRun(opts *ListOptions) error {
 		return err
 	}
 
-	format.PrintResults(openstackCloudCredentials,
+	out.PrintResults(openstackCloudCredentials,
 		"id",
 		"name",
 		"organizationName",

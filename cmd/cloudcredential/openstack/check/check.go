@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/models"
@@ -62,7 +62,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	params := checker.NewCheckerOpenstackParams().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerOpenstack(params, apiClient)
 	if err == nil {
-		format.PrintCheckSuccess("OpenStack cloud credential")
+		out.PrintCheckSuccess("OpenStack cloud credential")
 	} else if _, isValidationProblem := err.(*checker.CheckerOpenstackBadRequest); isValidationProblem {
 		return cmderr.CheckFailureError("OpenStack cloud credential")
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,7 +64,7 @@ func listRun() (err error) {
 		organizations = organizations[:config.Limit]
 	}
 
-	format.PrintResults(organizations,
+	out.PrintResults(organizations,
 		"id",
 		"name",
 		"fullName",

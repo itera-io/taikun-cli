@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func deleteRun(id int32) (err error) {
 	params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(apiconfig.Version).WithID(id)
 	_, _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Alerting integration", id)
+		out.PrintDeleteSuccess("Alerting integration", id)
 	}
 
 	return

@@ -6,7 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -57,7 +57,7 @@ func listRun(opts *ListOptions) (err error) {
 		sshUsers = sshUsers[:config.Limit]
 	}
 
-	format.PrintResults(sshUsers,
+	out.PrintResults(sshUsers,
 		"id",
 		"name",
 		"sshPublicKey",

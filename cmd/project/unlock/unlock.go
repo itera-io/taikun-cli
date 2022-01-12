@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/projects"
@@ -39,7 +39,7 @@ func unlockRun(projectID int32) (err error) {
 
 	_, err = apiClient.Client.Projects.ProjectsLockManager(params, apiClient)
 	if err == nil {
-		format.PrintStandardSuccess()
+		out.PrintStandardSuccess()
 	}
 
 	return

@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
@@ -42,7 +42,7 @@ func lockRun(id int32) (err error) {
 	params := access_profiles.NewAccessProfilesLockManagerParams().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.AccessProfiles.AccessProfilesLockManager(params, apiClient)
 	if err == nil {
-		format.PrintStandardSuccess()
+		out.PrintStandardSuccess()
 	}
 
 	return

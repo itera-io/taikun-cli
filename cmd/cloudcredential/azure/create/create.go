@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/azure"
 	"github.com/itera-io/taikungoclient/models"
@@ -80,7 +80,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := azure.NewAzureCreateParams().WithV(apiconfig.Version).WithBody(body)
 	response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
 	if err == nil {
-		format.PrintResult(response.Payload,
+		out.PrintResult(response.Payload,
 			"id",
 			"cloudCredentialName",
 			"organizationName",

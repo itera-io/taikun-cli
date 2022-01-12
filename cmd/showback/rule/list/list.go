@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -74,7 +74,7 @@ func listRun(opts *ListOptions) (err error) {
 		showbackRules = showbackRules[:config.Limit]
 	}
 
-	format.PrintResults(showbackRules,
+	out.PrintResults(showbackRules,
 		"id",
 		"name",
 		"metricName",

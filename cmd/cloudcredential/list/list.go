@@ -5,7 +5,7 @@ import (
 	azlist "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
 	oslist "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient/models"
 
 	"github.com/spf13/cobra"
@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	format.PrintMultipleResults(
+	out.PrintMultipleResults(
 		[]interface{}{
 			credentialsAmazon,
 			credentialsAzure,

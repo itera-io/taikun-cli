@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/user_projects"
 	"github.com/itera-io/taikungoclient/models"
@@ -56,7 +56,7 @@ func bindRun(opts *BindOptions) (err error) {
 	params := user_projects.NewUserProjectsBindProjectsParams().WithV(apiconfig.Version).WithBody(body)
 	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
-		format.PrintStandardSuccess()
+		out.PrintStandardSuccess()
 	}
 
 	return

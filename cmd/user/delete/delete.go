@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
@@ -33,7 +33,7 @@ func deleteRun(id string) (err error) {
 	params := users.NewUsersDeleteParams().WithV(apiconfig.Version).WithID(id)
 	_, _, err = apiClient.Client.Users.UsersDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("User", id)
+		out.PrintDeleteSuccess("User", id)
 	}
 
 	return

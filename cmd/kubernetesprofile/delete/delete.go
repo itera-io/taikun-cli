@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func deleteRun(id int32) (err error) {
 	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(apiconfig.Version).WithID(id)
 	_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Kubernetes profile", id)
+		out.PrintDeleteSuccess("Kubernetes profile", id)
 	}
 
 	return

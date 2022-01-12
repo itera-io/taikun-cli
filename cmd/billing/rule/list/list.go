@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -63,7 +63,7 @@ func listRun() (err error) {
 		billingRules = billingRules[:config.Limit]
 	}
 
-	format.PrintResults(billingRules,
+	out.PrintResults(billingRules,
 		"id",
 		"name",
 		"metricName",

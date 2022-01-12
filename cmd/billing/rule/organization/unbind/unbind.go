@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/itera-io/taikungoclient/models"
@@ -59,7 +59,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 
 	_, err = apiClient.Client.Prometheus.PrometheusBindOrganizations(params, apiClient)
 	if err == nil {
-		format.PrintStandardSuccess()
+		out.PrintStandardSuccess()
 	}
 
 	return

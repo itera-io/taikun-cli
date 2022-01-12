@@ -3,7 +3,7 @@ package status
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/spf13/cobra"
@@ -43,7 +43,7 @@ func statusRun(opts *StatusOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersShowServerStatus(params, apiClient)
 	if err == nil {
-		format.Println(response.Payload)
+		out.Println(response.Payload)
 	}
 
 	return

@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/kube_config"
 	"github.com/itera-io/taikungoclient/models"
@@ -48,7 +48,7 @@ func listRun(opts *ListOptions) (err error) {
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)
 	if err == nil {
-		format.PrintResults(response.Payload.Data,
+		out.PrintResults(response.Payload.Data,
 			"id",
 			"serviceAccountName",
 			"userName",

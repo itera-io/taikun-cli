@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
@@ -42,7 +42,7 @@ func unlockRun(id int32) (err error) {
 	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(apiconfig.Version).WithBody(body)
 	_, err = apiClient.Client.CloudCredentials.CloudCredentialsLockManager(params, apiClient)
 	if err == nil {
-		format.PrintStandardSuccess()
+		out.PrintStandardSuccess()
 	}
 
 	return
