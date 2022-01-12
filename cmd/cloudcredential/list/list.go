@@ -64,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	out.PrintMultipleResults(
+	out.PrintResultsOfDifferentTypes(
 		[]interface{}{
 			credentialsAmazon,
 			credentialsAzure,
