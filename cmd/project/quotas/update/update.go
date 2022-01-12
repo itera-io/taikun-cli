@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/project_quotas"
@@ -71,7 +71,7 @@ func updateRun(opts *UpdateOptions) (err error) {
 	params := project_quotas.NewProjectQuotasEditParams().WithV(apiconfig.Version).WithBody(body).WithQuotaID(opts.QuotaID)
 	_, err = apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient)
 	if err == nil {
-		format.PrintStandardSuccess()
+		out.PrintStandardSuccess()
 	}
 
 	return

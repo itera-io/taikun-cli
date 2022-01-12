@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -40,7 +40,7 @@ func deleteRun(id int32) (err error) {
 	params := opa_profiles.NewOpaProfilesDeleteParams().WithV(apiconfig.Version).WithBody(body)
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Policy profile", id)
+		out.PrintDeleteSuccess("Policy profile", id)
 	}
 
 	return

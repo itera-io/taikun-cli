@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
@@ -41,7 +41,7 @@ func deleteRun(id int32) (err error) {
 	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(apiconfig.Version).WithBody(&body)
 	_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Alerting profile", id)
+		out.PrintDeleteSuccess("Alerting profile", id)
 	}
 
 	return

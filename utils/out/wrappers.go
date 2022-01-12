@@ -1,4 +1,4 @@
-package format
+package out
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func Print(a ...interface{}) {
 	}
 }
 
-func RenderTable(t table.Writer) {
+func renderTable(t table.Writer) {
 	if !config.Quiet {
 		t.Render()
 	}

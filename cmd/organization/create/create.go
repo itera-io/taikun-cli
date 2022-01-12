@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/itera-io/taikungoclient/client/organizations"
@@ -100,7 +100,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := organizations.NewOrganizationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		format.PrintResult(response.Payload,
+		out.PrintResult(response.Payload,
 			"id",
 			"name",
 			"fullName",

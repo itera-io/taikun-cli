@@ -3,7 +3,7 @@ package etc
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/notifications"
 	"github.com/itera-io/taikungoclient/models"
@@ -48,7 +48,7 @@ func etcRun(opts *EtcOptions) (err error) {
 
 	response, err := apiClient.Client.Notifications.NotificationsGetProjectOperationMessages(params, apiClient)
 	if err == nil {
-		format.PrintResult(response, "operation", "estimatedTime")
+		out.PrintResult(response, "operation", "estimatedTime")
 	}
 
 	return

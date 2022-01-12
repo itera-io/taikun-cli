@@ -7,7 +7,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/server/list"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
@@ -82,7 +82,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	_, _, err = apiClient.Client.Servers.ServersDelete(params, apiClient)
 	if err == nil {
 		for _, id := range body.ServerIds {
-			format.PrintDeleteSuccess("Server", id)
+			out.PrintDeleteSuccess("Server", id)
 		}
 	}
 

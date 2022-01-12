@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
@@ -42,7 +42,7 @@ func deleteRun(id int32) (err error) {
 	_, err = apiClient.Client.SSHUsers.SSHUsersDelete(params, apiClient)
 
 	if err == nil {
-		format.PrintDeleteSuccess("SSH user", id)
+		out.PrintDeleteSuccess("SSH user", id)
 	}
 
 	return

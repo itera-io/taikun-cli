@@ -14,7 +14,7 @@ var NegativeLimitFlagError = errors.New(
 )
 
 var OutputFormatInvalidError = errors.New(
-	"Unknown output format.",
+	"Unknown output out.",
 )
 
 var IDArgumentNotANumberError = errors.New(

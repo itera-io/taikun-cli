@@ -9,7 +9,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/projects"
@@ -82,7 +82,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 
 	_, _, err = apiClient.Client.Projects.ProjectsDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Project", opts.ProjectID)
+		out.PrintDeleteSuccess("Project", opts.ProjectID)
 	}
 
 	return

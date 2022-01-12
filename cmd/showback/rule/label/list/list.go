@@ -6,7 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
@@ -51,7 +51,7 @@ func listRun(opts *ListOptions) (err error) {
 		labels = labels[:config.Limit]
 	}
 
-	format.PrintResults(labels, "label", "value")
+	out.PrintResults(labels, "label", "value")
 
 	return
 }

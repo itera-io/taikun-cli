@@ -6,7 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -83,7 +83,7 @@ func createRun(opts *CreateOptions) (err error) {
 	params := ssh_users.NewSSHUsersCreateParams().WithV(apiconfig.Version).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
-		format.PrintResult(response.Payload,
+		out.PrintResult(response.Payload,
 			"id",
 			"name",
 			"sshPublicKey",

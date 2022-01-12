@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/spf13/cobra"
 )
@@ -39,7 +39,7 @@ func deleteRun(id int32) (err error) {
 
 	_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)
 	if err == nil {
-		format.PrintDeleteSuccess("Billing rule", id)
+		out.PrintDeleteSuccess("Billing rule", id)
 	}
 
 	return

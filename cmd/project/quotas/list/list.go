@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/project_quotas"
 	"github.com/itera-io/taikungoclient/models"
@@ -75,7 +75,7 @@ func listRun(opts *ListOptions) (err error) {
 		projectQuotas = projectQuotas[:config.Limit]
 	}
 
-	format.PrintResults(projectQuotas,
+	out.PrintResults(projectQuotas,
 		"id",
 		"cpu",
 		"isCpuUnlimited",

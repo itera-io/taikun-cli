@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/models"
@@ -57,7 +57,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	params := checker.NewCheckerAzureParams().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerAzure(params, apiClient)
 	if err == nil {
-		format.PrintCheckSuccess("Azure cloud credential")
+		out.PrintCheckSuccess("Azure cloud credential")
 	} else if _, isValidationProblem := err.(*checker.CheckerAzureBadRequest); isValidationProblem {
 		return cmderr.CheckFailureError("Azure cloud credential")
 	}

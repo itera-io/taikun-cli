@@ -6,7 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
@@ -59,7 +59,7 @@ func listRun(opts *ListOptions) (err error) {
 		alertingIntegrations = alertingIntegrations[:config.Limit]
 	}
 
-	format.PrintResults(alertingIntegrations,
+	out.PrintResults(alertingIntegrations,
 		"id",
 		"alertingProfileName",
 		"url",

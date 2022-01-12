@@ -5,7 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/aws"
 	"github.com/itera-io/taikungoclient/client/checker"
@@ -77,7 +77,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	params := checker.NewCheckerAwsParams().WithV(apiconfig.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerAws(params, apiClient)
 	if err == nil {
-		format.PrintCheckSuccess("AWS cloud credential")
+		out.PrintCheckSuccess("AWS cloud credential")
 	} else if _, isValidationProblem := err.(*checker.CheckerAwsBadRequest); isValidationProblem {
 		return cmderr.CheckFailureError("AWS cloud credential")
 	}

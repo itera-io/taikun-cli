@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/spf13/cobra"
@@ -44,7 +44,7 @@ func infoRun(opts *InfoOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
 	if err == nil {
-		format.PrintResultVertical(response.Payload.Project,
+		out.PrintResult(response.Payload.Project,
 			"projectName",
 			"projectStatus",
 			"projectHealth",

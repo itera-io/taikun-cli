@@ -6,7 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
-	"github.com/itera-io/taikun-cli/utils/format"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
@@ -79,7 +79,7 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = flavors[:config.Limit]
 	}
 
-	format.PrintResults(flavors,
+	out.PrintResults(flavors,
 		"id",
 		"name",
 		"cpu",
