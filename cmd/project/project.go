@@ -16,6 +16,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/repair"
 	"github.com/itera-io/taikun-cli/cmd/project/server"
 	"github.com/itera-io/taikun-cli/cmd/project/unlock"
+	"github.com/itera-io/taikun-cli/cmd/project/upgrade"
 
 	"github.com/spf13/cobra"
 )
@@ -41,6 +42,7 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(repair.NewCmdRepair())
 	cmd.AddCommand(server.NewCmdServer())
 	cmd.AddCommand(unlock.NewCmdUnlock())
+	cmd.AddCommand(upgrade.NewCmdUpgrade())
 
 	return cmd
 }
