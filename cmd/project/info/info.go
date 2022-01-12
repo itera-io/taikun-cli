@@ -44,7 +44,7 @@ func infoRun(opts *InfoOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
 	if err == nil {
-		out.PrintResultVertical(response.Payload.Project,
+		out.PrintResult(response.Payload.Project,
 			"projectName",
 			"projectStatus",
 			"projectHealth",

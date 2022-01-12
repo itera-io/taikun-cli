@@ -15,19 +15,7 @@ func PrintResult(resource interface{}, fields ...string) {
 		if config.OutputFormat == config.OutputFormatJson {
 			prettyPrintJson(resource)
 		} else if config.OutputFormat == config.OutputFormatTable {
-			PrettyPrintApiResponseTable(resource, fields...)
-		}
-	}
-}
-
-func PrintResultVertical(resource interface{}, fields ...string) {
-	if config.OutputOnlyID {
-		printResourceID(resource)
-	} else {
-		if config.OutputFormat == config.OutputFormatJson {
-			prettyPrintJson(resource)
-		} else if config.OutputFormat == config.OutputFormatTable {
-			PrettyPrintApiResponseVerticalTable(resource, fields...)
+			printApiResponseTable(resource, fields...)
 		}
 	}
 }
@@ -41,32 +29,7 @@ func printResourceID(resource interface{}) {
 	}
 }
 
-func PrettyPrintApiResponseTable(response interface{}, fields ...string) {
-	t := newTable()
-
-	if len(config.Columns) != 0 {
-		fields = config.Columns
-	}
-
-	resourceMap := getApiResponseResourceMap(response)
-	nonEmptyFields := make([]string, 0)
-	for _, field := range fields {
-		if _, fieldExists := resourceMap[field]; fieldExists {
-			nonEmptyFields = append(nonEmptyFields, field)
-		}
-	}
-
-	if len(nonEmptyFields) == 0 {
-		Println("No data")
-	} else {
-		appendHeader(t, nonEmptyFields)
-		row := resourceMapToRow(resourceMap, nonEmptyFields)
-		t.AppendRow(row)
-		renderTable(t)
-	}
-}
-
-func PrettyPrintApiResponseVerticalTable(response interface{}, fields ...string) {
+func printApiResponseTable(response interface{}, fields ...string) {
 	t := newTable()
 	appendHeader(t, []string{"field", "value"})
 

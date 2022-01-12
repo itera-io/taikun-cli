@@ -8,6 +8,6 @@ func PrintResults(slice interface{}, fields ...string) {
 	if config.OutputFormat == config.OutputFormatJson {
 		prettyPrintJson(slice)
 	} else if config.OutputFormat == config.OutputFormatTable {
-		prettyPrintTable(slice, fields...)
+		printTable(slice, fields...)
 	}
 }

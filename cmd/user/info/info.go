@@ -31,7 +31,7 @@ func infoRun() (err error) {
 
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
-		out.PrintResultVertical(response.Payload.Data,
+		out.PrintResult(response.Payload.Data,
 			"id",
 			"username",
 			"role",

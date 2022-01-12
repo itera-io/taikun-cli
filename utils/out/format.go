@@ -6,6 +6,20 @@ import (
 	"github.com/itera-io/taikun-cli/config"
 )
 
+func formatFieldName(fieldName string) string {
+	var stringBuilder strings.Builder
+	previous := fieldName[0]
+	stringBuilder.WriteByte(toUpper(fieldName[0]))
+	for i := 1; i < len(fieldName); i++ {
+		if isLowerCase(previous) && isUpperCase(fieldName[i]) {
+			stringBuilder.WriteByte(' ')
+		}
+		stringBuilder.WriteByte(fieldName[i])
+		previous = fieldName[i]
+	}
+	return stringBuilder.String()
+}
+
 func isUpperCase(c byte) bool {
 	return c >= 'A' && c <= 'Z'
 }
@@ -20,20 +34,6 @@ func toUpper(c byte) byte {
 		c += 'A'
 	}
 	return c
-}
-
-func formatFieldName(fieldName string) string {
-	var stringBuilder strings.Builder
-	previous := fieldName[0]
-	stringBuilder.WriteByte(toUpper(fieldName[0]))
-	for i := 1; i < len(fieldName); i++ {
-		if isLowerCase(previous) && isUpperCase(fieldName[i]) {
-			stringBuilder.WriteByte(' ')
-		}
-		stringBuilder.WriteByte(fieldName[i])
-		previous = fieldName[i]
-	}
-	return stringBuilder.String()
 }
 
 const maxColumnWidth = 50
