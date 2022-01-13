@@ -20,7 +20,7 @@ func NewCmdDisable() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "disable <project-id>",
-		Short: "Disable backup",
+		Short: "Disable backup for a project",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
