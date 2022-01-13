@@ -2,7 +2,6 @@ package enforce
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -49,7 +48,7 @@ func enforceRun(opts *EnforceOptions) (err error) {
 		ProjectID:    opts.ProjectID,
 	}
 
-	params := opa_profiles.NewOpaProfilesEnableGatekeeperParams().WithV(apiconfig.Version)
+	params := opa_profiles.NewOpaProfilesEnableGatekeeperParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesEnableGatekeeper(params, apiClient)

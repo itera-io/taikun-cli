@@ -2,7 +2,6 @@ package disable
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
@@ -43,7 +42,7 @@ func disableRun(opts *DisableOptions) (err error) {
 		ProjectID: opts.ProjectID,
 	}
 
-	params := opa_profiles.NewOpaProfilesDisableGatekeeperParams().WithV(apiconfig.Version)
+	params := opa_profiles.NewOpaProfilesDisableGatekeeperParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesDisableGatekeeper(params, apiClient)

@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -35,7 +34,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(apiconfig.Version)
+	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(api.Version)
 	params = params.WithID(id)
 	_, _, err = apiClient.Client.S3Credentials.S3CredentialsDelete(params, apiClient)
 	if err == nil {

@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -62,15 +61,12 @@ func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, er
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(apiconfig.Version)
+	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(api.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if config.ReverseSortDirection {
-		apiconfig.ReverseSortDirection()
-	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var azureCloudCredentials = make([]*models.AzureCredentialsListDto, 0)

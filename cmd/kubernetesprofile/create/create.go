@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -59,7 +58,7 @@ func createRun(opts *CreateOptions) (err error) {
 		TaikunLBEnabled:         opts.TaikunLBEnabled,
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
+	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

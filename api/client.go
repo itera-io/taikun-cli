@@ -8,8 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itera-io/taikun-cli/apiconfig"
-
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/itera-io/taikungoclient/client"
@@ -93,7 +91,7 @@ func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.R
 
 		if !apiClient.useKeycloakEndpoint {
 			loginResult, err := apiClient.Client.Auth.AuthLogin(
-				auth.NewAuthLoginParams().WithV(apiconfig.Version).WithBody(
+				auth.NewAuthLoginParams().WithV(Version).WithBody(
 					&models.LoginCommand{Email: apiClient.email, Password: apiClient.password},
 				), nil,
 			)
@@ -104,7 +102,7 @@ func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.R
 			apiClient.refreshToken = loginResult.Payload.RefreshToken
 		} else {
 			loginResult, err := apiClient.Client.Keycloak.KeycloakLogin(
-				keycloak.NewKeycloakLoginParams().WithV(apiconfig.Version).WithBody(
+				keycloak.NewKeycloakLoginParams().WithV(Version).WithBody(
 					&models.LoginWithKeycloakCommand{Email: apiClient.email, Password: apiClient.password},
 				), nil,
 			)
@@ -120,7 +118,7 @@ func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.R
 	if apiClient.hasTokenExpired() {
 
 		refreshResult, err := apiClient.Client.Auth.AuthRefreshToken(
-			auth.NewAuthRefreshTokenParams().WithV(apiconfig.Version).WithBody(
+			auth.NewAuthRefreshTokenParams().WithV(Version).WithBody(
 				&models.RefreshTokenCommand{
 					RefreshToken: apiClient.refreshToken,
 					Token:        apiClient.token,

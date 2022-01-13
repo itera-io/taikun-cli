@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -34,12 +33,9 @@ func listRun() (err error) {
 		return
 	}
 
-	params := prometheus.NewPrometheusListOfRulesParams().WithV(apiconfig.Version)
-	if config.ReverseSortDirection {
-		apiconfig.ReverseSortDirection()
-	}
+	params := prometheus.NewPrometheusListOfRulesParams().WithV(api.Version)
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var billingRules = make([]*models.PrometheusRuleListDto, 0)

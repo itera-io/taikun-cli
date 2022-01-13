@@ -2,7 +2,6 @@ package unlock
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -34,7 +33,7 @@ func unlockRun(projectID int32) (err error) {
 		return
 	}
 
-	params := projects.NewProjectsLockManagerParams().WithV(apiconfig.Version)
+	params := projects.NewProjectsLockManagerParams().WithV(api.Version)
 	params = params.WithMode(&types.UnlockedMode).WithID(&projectID)
 
 	_, err = apiClient.Client.Projects.ProjectsLockManager(params, apiClient)

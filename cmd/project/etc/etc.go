@@ -2,7 +2,6 @@ package etc
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/notifications"
@@ -43,7 +42,7 @@ func etcRun(opts *EtcOptions) (err error) {
 		ProjectID: opts.ProjectID,
 	}
 
-	params := notifications.NewNotificationsGetProjectOperationMessagesParams().WithV(apiconfig.Version)
+	params := notifications.NewNotificationsGetProjectOperationMessagesParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Notifications.NotificationsGetProjectOperationMessages(params, apiClient)

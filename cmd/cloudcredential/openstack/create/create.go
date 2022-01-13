@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -95,7 +94,7 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:            opts.OrganizationID,
 	}
 
-	params := openstack.NewOpenstackCreateParams().WithV(apiconfig.Version).WithBody(body)
+	params := openstack.NewOpenstackCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.Openstack.OpenstackCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

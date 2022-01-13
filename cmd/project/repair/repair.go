@@ -2,7 +2,6 @@ package repair
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/projects"
@@ -38,7 +37,7 @@ func repairRun(opts *RepairOptions) (err error) {
 		return
 	}
 
-	params := projects.NewProjectsRepairParams().WithV(apiconfig.Version)
+	params := projects.NewProjectsRepairParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	_, err = apiClient.Client.Projects.ProjectsRepair(params, apiClient)

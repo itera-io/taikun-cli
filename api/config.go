@@ -1,4 +1,6 @@
-package apiconfig
+package api
+
+import "github.com/itera-io/taikun-cli/config"
 
 // API version
 const Version = "1"
@@ -15,9 +17,10 @@ const ResultField = "result"
 const PayloadField = "Payload"
 
 // Sort direction to use when listing resources
-var SortDirection = "asc"
-
-// Reverse the sort direction used when listing resources
-func ReverseSortDirection() {
-	SortDirection = "desc"
+func GetSortDirection() *string {
+	var sortDirection string = "asc"
+	if config.ReverseSortDirection {
+		sortDirection = "desc"
+	}
+	return &sortDirection
 }

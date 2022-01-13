@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -62,7 +61,7 @@ func createRun(opts *CreateOptions) (err error) {
 		Username:       opts.Username,
 	}
 
-	params := showback.NewShowbackCreateCredentialParams().WithV(apiconfig.Version)
+	params := showback.NewShowbackCreateCredentialParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Showback.ShowbackCreateCredential(params, apiClient)

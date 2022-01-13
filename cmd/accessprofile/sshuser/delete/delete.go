@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -38,7 +37,7 @@ func deleteRun(id int32) (err error) {
 	body := models.DeleteSSHUserCommand{
 		ID: id,
 	}
-	params := ssh_users.NewSSHUsersDeleteParams().WithV(apiconfig.Version).WithBody(&body)
+	params := ssh_users.NewSSHUsersDeleteParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.SSHUsers.SSHUsersDelete(params, apiClient)
 
 	if err == nil {

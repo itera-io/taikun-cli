@@ -2,7 +2,6 @@ package bind
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -45,7 +44,7 @@ func bindRun(opts *BindOptions) (err error) {
 		ProjectID: opts.ProjectID,
 		Flavors:   opts.Flavors,
 	}
-	params := flavors.NewFlavorsBindToProjectParams().WithV(apiconfig.Version).WithBody(&body)
+	params := flavors.NewFlavorsBindToProjectParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

@@ -2,7 +2,6 @@ package unbind
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -42,7 +41,7 @@ func unbindRun(bindings []int32) (err error) {
 	body := models.UnbindFlavorFromProjectCommand{
 		Ids: bindings,
 	}
-	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(apiconfig.Version).WithBody(&body)
+	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

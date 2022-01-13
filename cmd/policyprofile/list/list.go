@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -43,15 +42,12 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := opa_profiles.NewOpaProfilesListParams().WithV(apiconfig.Version)
+	params := opa_profiles.NewOpaProfilesListParams().WithV(api.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if config.ReverseSortDirection {
-		apiconfig.ReverseSortDirection()
-	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var policyProfiles = make([]*models.OpaProfileListDto, 0)

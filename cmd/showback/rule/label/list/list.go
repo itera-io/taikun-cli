@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -62,7 +61,7 @@ func GetShowbackRuleByID(id int32) (showbackRule *models.ShowbackRulesListDto, e
 		return
 	}
 
-	params := showback.NewShowbackRulesListParams().WithV(apiconfig.Version)
+	params := showback.NewShowbackRulesListParams().WithV(api.Version)
 	params = params.WithID(&id)
 
 	response, err := apiClient.Client.Showback.ShowbackRulesList(params, apiClient)

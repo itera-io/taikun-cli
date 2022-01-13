@@ -2,7 +2,6 @@ package check
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -45,7 +44,7 @@ func NewCmdCheck() *cobra.Command {
 			return []string{}, cobra.ShellCompDirectiveDefault
 		}
 
-		params := aws.NewAwsRegionListParams().WithV(apiconfig.Version)
+		params := aws.NewAwsRegionListParams().WithV(api.Version)
 		result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
@@ -74,7 +73,7 @@ func checkRun(opts *CheckOptions) (err error) {
 		Region:             opts.AWSRegion,
 	}
 
-	params := checker.NewCheckerAwsParams().WithV(apiconfig.Version).WithBody(&body)
+	params := checker.NewCheckerAwsParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerAws(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("AWS cloud credential")

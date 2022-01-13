@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -35,7 +34,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(apiconfig.Version).WithCloudID(id)
+	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(api.Version).WithCloudID(id)
 	_, _, err = apiClient.Client.CloudCredentials.CloudCredentialsDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Cloud credential", id)

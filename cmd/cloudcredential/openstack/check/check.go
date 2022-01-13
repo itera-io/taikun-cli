@@ -2,7 +2,6 @@ package check
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -59,7 +58,7 @@ func checkRun(opts *CheckOptions) (err error) {
 		OpenStackUser:     opts.Username,
 	}
 
-	params := checker.NewCheckerOpenstackParams().WithV(apiconfig.Version).WithBody(&body)
+	params := checker.NewCheckerOpenstackParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerOpenstack(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("OpenStack cloud credential")

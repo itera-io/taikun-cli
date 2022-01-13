@@ -2,7 +2,6 @@ package commit
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/projects"
@@ -38,7 +37,7 @@ func commitRun(opts *CommitOptions) (err error) {
 		return
 	}
 
-	params := projects.NewProjectsCommitParams().WithV(apiconfig.Version)
+	params := projects.NewProjectsCommitParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	_, err = apiClient.Client.Projects.ProjectsCommit(params, apiClient)

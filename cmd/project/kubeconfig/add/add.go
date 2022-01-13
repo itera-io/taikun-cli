@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -74,7 +73,7 @@ func addRun(opts *AddOptions) (err error) {
 		ProjectID:              opts.ProjectID,
 	}
 
-	params := kube_config.NewKubeConfigCreateParams().WithV(apiconfig.Version)
+	params := kube_config.NewKubeConfigCreateParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigCreate(params, apiClient)

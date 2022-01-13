@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -36,7 +35,7 @@ func deleteRun(id int32) (err error) {
 	}
 
 	body := models.DeleteKubeConfigCommand{ID: id}
-	params := kube_config.NewKubeConfigDeleteParams().WithV(apiconfig.Version)
+	params := kube_config.NewKubeConfigDeleteParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.KubeConfig.KubeConfigDelete(params, apiClient)

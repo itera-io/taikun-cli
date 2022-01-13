@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -72,7 +71,7 @@ func createRun(opts *CreateOptions) (err error) {
 		UniqueServiceSelector: opts.UniqueServiceSelector,
 	}
 
-	params := opa_profiles.NewOpaProfilesCreateParams().WithV(apiconfig.Version).WithBody(body)
+	params := opa_profiles.NewOpaProfilesCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.OpaProfiles.OpaProfilesCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

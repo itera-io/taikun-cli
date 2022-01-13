@@ -2,7 +2,6 @@ package lock
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -36,7 +35,7 @@ func lockRun(id int32) (err error) {
 	}
 
 	body := models.ShowbackCredentialLockCommand{ID: id, Mode: types.LockedMode}
-	params := showback.NewShowbackLockManagerParams().WithV(apiconfig.Version)
+	params := showback.NewShowbackLockManagerParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Showback.ShowbackLockManager(params, apiClient)

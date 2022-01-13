@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -34,7 +33,7 @@ func deleteRun(id int32) (err error) {
 		return
 	}
 
-	params := prometheus.NewPrometheusDeleteParams().WithV(apiconfig.Version)
+	params := prometheus.NewPrometheusDeleteParams().WithV(api.Version)
 	params = params.WithID(id)
 
 	_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)

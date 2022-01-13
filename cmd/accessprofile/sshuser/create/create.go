@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -62,7 +61,7 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	body := models.SSHKeyCommand{
 		SSHPublicKey: sshPublicKey,
 	}
-	params := checker.NewCheckerSSHParams().WithV(apiconfig.Version).WithBody(&body)
+	params := checker.NewCheckerSSHParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerSSH(params, apiClient)
 
 	return err == nil, nil
@@ -80,7 +79,7 @@ func createRun(opts *CreateOptions) (err error) {
 		SSHPublicKey:    opts.PublicKey,
 	}
 
-	params := ssh_users.NewSSHUsersCreateParams().WithV(apiconfig.Version).WithBody(&body)
+	params := ssh_users.NewSSHUsersCreateParams().WithV(api.Version).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

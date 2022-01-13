@@ -2,7 +2,6 @@ package unbind
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -53,7 +52,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 		},
 	}
 
-	params := user_projects.NewUserProjectsBindProjectsParams().WithV(apiconfig.Version).WithBody(body)
+	params := user_projects.NewUserProjectsBindProjectsParams().WithV(api.Version).WithBody(body)
 	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

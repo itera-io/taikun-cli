@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -43,7 +42,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := kube_config.NewKubeConfigListParams().WithV(apiconfig.Version)
+	params := kube_config.NewKubeConfigListParams().WithV(api.Version)
 	params = params.WithProjectID(&opts.ProjectID)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)

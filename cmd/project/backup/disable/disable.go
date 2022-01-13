@@ -2,7 +2,6 @@ package disable
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -51,7 +50,7 @@ func disableRun(opts *DisableOptions) (err error) {
 		S3CredentialID: backupCredentialID,
 	}
 
-	params := backup.NewBackupDisableBackupParams().WithV(apiconfig.Version)
+	params := backup.NewBackupDisableBackupParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Backup.BackupDisableBackup(params, apiClient)
@@ -68,7 +67,7 @@ func getBackupCredentialID(projectID int32) (id int32, err error) {
 		return
 	}
 
-	params := servers.NewServersDetailsParams().WithV(apiconfig.Version)
+	params := servers.NewServersDetailsParams().WithV(api.Version)
 	params = params.WithProjectID(projectID)
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
