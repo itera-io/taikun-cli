@@ -9,7 +9,7 @@ Context 'accessprofile/unlock'
   Context
     setup() {
       name=$(_rnd_name)
-      id=$(taikun access-profile create $name -I)
+      id=$(taikun access-profile add $name -I)
     }
 
     Example 'unlocked access profile'
@@ -22,7 +22,7 @@ Context 'accessprofile/unlock'
   Context
     setup() {
       name=$(_rnd_name)
-      id=$(taikun access-profile create $name -I)
+      id=$(taikun access-profile add $name -I)
       taikun access-profile lock $id -q
     }
 

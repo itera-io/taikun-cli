@@ -4,9 +4,9 @@ Context 'accessprofile/lock'
     taikun access-profile delete $id -q
   }
 
-  create_profile() {
+  add_profile() {
     name=$(_rnd_name)
-    id=$(taikun access-profile create $name -I)
+    id=$(taikun access-profile add $name -I)
   }
 
   BeforeEach 'setup'
@@ -14,7 +14,7 @@ Context 'accessprofile/lock'
 
   Context
     setup() {
-      create_profile
+      add_profile
     }
 
     Example 'unlocked access profile'
@@ -26,7 +26,7 @@ Context 'accessprofile/lock'
 
   Context
     setup() {
-      create_profile
+      add_profile
       taikun access-profile lock $id -q
     }
 

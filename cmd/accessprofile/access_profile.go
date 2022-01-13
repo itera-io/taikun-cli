@@ -1,7 +1,7 @@
 package accessprofile
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/accessprofile/create"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/add"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/delete"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/list"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/lock"
@@ -18,7 +18,7 @@ func NewCmdAccessProfile() *cobra.Command {
 		Aliases: []string{"acp"},
 	}
 
-	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
 	cmd.AddCommand(delete.NewCmdDelete())

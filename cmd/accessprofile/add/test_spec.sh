@@ -1,4 +1,4 @@
-Context 'accessprofile/create'
+Context 'accessprofile/add'
   setup() {
     name=$(_rnd_name)
   }
@@ -12,7 +12,7 @@ Context 'accessprofile/create'
 
   Example 'basic access profile'
     run() {
-      id=$(taikun access-profile create $name -I)
+      id=$(taikun access-profile add $name -I)
       taikun access-profile list | grep $id
     }
 
@@ -22,13 +22,13 @@ Context 'accessprofile/create'
   End
 
   Context
-    create_access_profile() {
-      id=$(taikun access-profile create $name -I)
+    add_access_profile() {
+      id=$(taikun access-profile add $name -I)
     }
-    Before 'create_access_profile'
+    Before 'add_access_profile'
 
     Example 'duplicate names'
-      When call taikun access-profile create $name
+      When call taikun access-profile add $name
       The stderr should include '400'
       The stderr should include 'already exists'
       The status should equal 1
