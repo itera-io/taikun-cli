@@ -11,7 +11,7 @@ import (
 func NewCmdWebhook() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "webhook <command>",
-		Short: "Manage alerting profile webhooks",
+		Short: "Manage an alerting profile's webhooks",
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
