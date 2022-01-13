@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -67,7 +66,7 @@ func downloadRun(opts *DownloadOptions) (err error) {
 		ProjectID: opts.ProjectID,
 	}
 
-	params := kube_config.NewKubeConfigDownloadParams().WithV(apiconfig.Version)
+	params := kube_config.NewKubeConfigDownloadParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigDownload(params, apiClient)
@@ -85,7 +84,7 @@ func getKubeconfigName(id int32) (name string, err error) {
 		return
 	}
 
-	params := kube_config.NewKubeConfigListParams().WithV(apiconfig.Version)
+	params := kube_config.NewKubeConfigListParams().WithV(api.Version)
 	params = params.WithID(&id)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)

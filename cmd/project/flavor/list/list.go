@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -48,13 +47,13 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(apiconfig.Version)
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
 	params = params.WithProjectID(&opts.ProjectID)
 	if config.ReverseSortDirection {
-		apiconfig.ReverseSortDirection()
+		api.ReverseSortDirection()
 	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&api.SortDirection)
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}

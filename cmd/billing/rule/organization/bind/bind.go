@@ -2,7 +2,6 @@ package bind
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -59,7 +58,7 @@ func bindRun(opts *BindOptions) (err error) {
 		},
 	}
 
-	params := prometheus.NewPrometheusBindOrganizationsParams().WithV(apiconfig.Version)
+	params := prometheus.NewPrometheusBindOrganizationsParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Prometheus.PrometheusBindOrganizations(params, apiClient)

@@ -2,7 +2,6 @@ package enable
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -54,7 +53,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		S3CredentialID: opts.BackupCredentialID,
 	}
 
-	params := backup.NewBackupEnableBackupParams().WithV(apiconfig.Version)
+	params := backup.NewBackupEnableBackupParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Backup.BackupEnableBackup(params, apiClient)

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -48,7 +47,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(apiconfig.Version)
+	params := alerting_profiles.NewAlertingProfilesListParams().WithV(api.Version)
 	params = params.WithID(&opts.AlertingProfileID)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)

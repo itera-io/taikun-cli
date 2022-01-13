@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/server/list"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -76,7 +75,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		body.ServerIds = opts.ServerIDs
 	}
 
-	params := servers.NewServersDeleteParams().WithV(apiconfig.Version)
+	params := servers.NewServersDeleteParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, _, err = apiClient.Client.Servers.ServersDelete(params, apiClient)

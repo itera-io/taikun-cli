@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -37,7 +36,7 @@ func deleteRun(id int32) (err error) {
 	}
 
 	body := &models.DeleteOpaProfileCommand{ID: id}
-	params := opa_profiles.NewOpaProfilesDeleteParams().WithV(apiconfig.Version).WithBody(body)
+	params := opa_profiles.NewOpaProfilesDeleteParams().WithV(api.Version).WithBody(body)
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Policy profile", id)

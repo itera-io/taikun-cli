@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -38,7 +37,7 @@ func deleteRun(id int32) (err error) {
 
 	body := models.DeleteAlertingProfilesCommand{ID: id}
 
-	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(apiconfig.Version).WithBody(&body)
+	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(api.Version).WithBody(&body)
 	_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Alerting profile", id)

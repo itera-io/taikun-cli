@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -46,7 +45,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := ssh_users.NewSSHUsersListParams().WithV(apiconfig.Version).WithAccessProfileID(opts.AccessProfileID)
+	params := ssh_users.NewSSHUsersListParams().WithV(api.Version).WithAccessProfileID(opts.AccessProfileID)
 	response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
 	if err != nil {
 		return err

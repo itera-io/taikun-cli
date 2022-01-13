@@ -2,7 +2,6 @@ package reboot
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
@@ -43,7 +42,7 @@ func rebootRun(opts *RebootOptions) (err error) {
 		ServerID: opts.ServerID,
 	}
 
-	params := servers.NewServersRebootParams().WithV(apiconfig.Version)
+	params := servers.NewServersRebootParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Servers.ServersReboot(params, apiClient)

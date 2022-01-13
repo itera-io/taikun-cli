@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -85,7 +84,7 @@ func createRun(opts *CreateOptions) (err error) {
 		return
 	}
 
-	params := prometheus.NewPrometheusCreateParams().WithV(apiconfig.Version)
+	params := prometheus.NewPrometheusCreateParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Prometheus.PrometheusCreate(params, apiClient)

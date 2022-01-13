@@ -2,7 +2,6 @@ package clear
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/showback/rule/label/list"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -58,7 +57,7 @@ func clearRun(opts *ClearOptions) (err error) {
 		Type:              types.GetPrometheusType(showbackRule.Type),
 	}
 
-	params := showback.NewShowbackUpdateRuleParams().WithV(apiconfig.Version)
+	params := showback.NewShowbackUpdateRuleParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient)

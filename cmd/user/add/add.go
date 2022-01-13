@@ -2,7 +2,6 @@ package add
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -65,7 +64,7 @@ func addRun(opts *AddOptions) (err error) {
 		Username:       opts.Username,
 	}
 
-	params := users.NewUsersCreateParams().WithV(apiconfig.Version).WithBody(body)
+	params := users.NewUsersCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.Users.UsersCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

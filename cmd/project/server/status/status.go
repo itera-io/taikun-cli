@@ -2,7 +2,6 @@ package status
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
@@ -38,7 +37,7 @@ func statusRun(opts *StatusOptions) (err error) {
 		return
 	}
 
-	params := servers.NewServersShowServerStatusParams().WithV(apiconfig.Version)
+	params := servers.NewServersShowServerStatusParams().WithV(api.Version)
 	params = params.WithServerID(opts.ServerID)
 
 	response, err := apiClient.Client.Servers.ServersShowServerStatus(params, apiClient)

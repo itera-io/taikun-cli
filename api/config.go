@@ -1,4 +1,4 @@
-package apiconfig
+package api
 
 // API version
 const Version = "1"

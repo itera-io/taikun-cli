@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -54,7 +53,7 @@ func getAlertingProfileWebhooks(id int32) ([]*models.AlertingWebhookDto, error) 
 		return nil, err
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(apiconfig.Version)
+	params := alerting_profiles.NewAlertingProfilesListParams().WithV(api.Version)
 	params = params.WithID(&id)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
@@ -106,7 +105,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	alertingWebhooks = append(alertingWebhooks, newAlertingWebhook)
-	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(apiconfig.Version)
+	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(api.Version)
 	params = params.WithID(opts.AlertingProfileID)
 	params = params.WithBody(alertingWebhooks)
 

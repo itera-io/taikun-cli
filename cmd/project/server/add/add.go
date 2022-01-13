@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -80,7 +79,7 @@ func addRun(opts *AddOptions) (err error) {
 		}
 	}
 
-	params := servers.NewServersCreateParams().WithV(apiconfig.Version)
+	params := servers.NewServersCreateParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)

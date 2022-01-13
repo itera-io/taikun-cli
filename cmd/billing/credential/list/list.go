@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -41,7 +40,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := ops_credentials.NewOpsCredentialsListParams().WithV(apiconfig.Version)
+	params := ops_credentials.NewOpsCredentialsListParams().WithV(api.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}

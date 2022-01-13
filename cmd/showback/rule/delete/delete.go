@@ -2,7 +2,6 @@ package delete
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -36,7 +35,7 @@ func deleteRun(id int32) (err error) {
 	}
 
 	body := models.DeleteShowbackRuleCommand{ID: id}
-	params := showback.NewShowbackDeleteRuleParams().WithV(apiconfig.Version)
+	params := showback.NewShowbackDeleteRuleParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Showback.ShowbackDeleteRule(params, apiClient)

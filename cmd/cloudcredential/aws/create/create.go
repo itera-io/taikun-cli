@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -47,7 +46,7 @@ func NewCmdCreate() *cobra.Command {
 			return []string{}, cobra.ShellCompDirectiveDefault
 		}
 
-		params := aws.NewAwsRegionListParams().WithV(apiconfig.Version)
+		params := aws.NewAwsRegionListParams().WithV(api.Version)
 		result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
@@ -86,7 +85,7 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:      opts.OrganizationID,
 	}
 
-	params := aws.NewAwsCreateParams().WithV(apiconfig.Version).WithBody(body)
+	params := aws.NewAwsCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

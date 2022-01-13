@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -70,14 +69,14 @@ func ListServers(opts *ListOptions) (projectServers []*models.ServerListDto, err
 		return
 	}
 
-	params := servers.NewServersDetailsParams().WithV(apiconfig.Version)
+	params := servers.NewServersDetailsParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
 	if config.SortBy != "" {
 		if config.ReverseSortDirection {
-			apiconfig.ReverseSortDirection()
+			api.ReverseSortDirection()
 		}
 		params = params.WithSortBy(&config.SortBy)
-		params = params.WithSortDirection(&apiconfig.SortDirection)
+		params = params.WithSortDirection(&api.SortDirection)
 	}
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)

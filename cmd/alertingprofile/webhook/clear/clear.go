@@ -2,7 +2,6 @@ package clear
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -36,7 +35,7 @@ func clearRun(id int32) (err error) {
 	}
 
 	emptyWebhookList := make([]*models.AlertingWebhookDto, 0)
-	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(apiconfig.Version)
+	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(api.Version)
 	params = params.WithID(id).WithBody(emptyWebhookList)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)

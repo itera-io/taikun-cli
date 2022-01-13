@@ -2,7 +2,6 @@ package detach
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
@@ -43,7 +42,7 @@ func detachRun(opts *DetachOptions) (err error) {
 		ProjectID: opts.ProjectID,
 	}
 
-	params := alerting_profiles.NewAlertingProfilesDetachParams().WithV(apiconfig.Version)
+	params := alerting_profiles.NewAlertingProfilesDetachParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesDetach(params, apiClient)

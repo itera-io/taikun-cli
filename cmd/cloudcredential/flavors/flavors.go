@@ -2,7 +2,6 @@ package flavors
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -56,17 +55,17 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(apiconfig.Version)
+	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(api.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
 	minRAM := types.GiBToMiB(opts.MinRAM)
 	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
 	if config.ReverseSortDirection {
-		apiconfig.ReverseSortDirection()
+		api.ReverseSortDirection()
 	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&apiconfig.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(&api.SortDirection)
 	}
 
 	flavors := []*models.FlavorsListDto{}

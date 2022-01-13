@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -69,7 +68,7 @@ func createRun(opts *CreateOptions) (err error) {
 		},
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
+	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(api.Version).WithBody(&body)
 	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
 		out.PrintResult(response.Payload,
 			"id",

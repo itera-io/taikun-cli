@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -77,7 +76,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		ProjectID:     opts.ProjectID,
 	}
 
-	params := projects.NewProjectsDeleteParams().WithV(apiconfig.Version)
+	params := projects.NewProjectsDeleteParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, _, err = apiClient.Client.Projects.ProjectsDelete(params, apiClient)

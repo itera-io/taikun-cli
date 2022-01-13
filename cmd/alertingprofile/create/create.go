@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -68,7 +67,7 @@ func createRun(opts *CreateOptions) (err error) {
 		body.Emails = emails
 	}
 
-	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(apiconfig.Version).WithBody(&body)
+	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(api.Version).WithBody(&body)
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

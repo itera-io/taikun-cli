@@ -2,7 +2,6 @@ package check
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -54,7 +53,7 @@ func checkRun(opts *CheckOptions) (err error) {
 		AzureTenantID:     opts.AzureTenantId,
 	}
 
-	params := checker.NewCheckerAzureParams().WithV(apiconfig.Version).WithBody(&body)
+	params := checker.NewCheckerAzureParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerAzure(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("Azure cloud credential")

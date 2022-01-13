@@ -2,7 +2,6 @@ package list
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -44,7 +43,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := prometheus.NewPrometheusListOfRulesParams().WithV(apiconfig.Version)
+	params := prometheus.NewPrometheusListOfRulesParams().WithV(api.Version)
 	params = params.WithID(&opts.BillingRuleID)
 
 	response, err := apiClient.Client.Prometheus.PrometheusListOfRules(params, apiClient)

@@ -2,7 +2,6 @@ package unlock
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -39,7 +38,7 @@ func unlockRun(id int32) (err error) {
 		ID:   id,
 		Mode: types.UnlockedMode,
 	}
-	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(apiconfig.Version).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

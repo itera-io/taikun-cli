@@ -2,7 +2,6 @@ package attach
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -49,7 +48,7 @@ func attachRun(opts *AttachOptions) (err error) {
 		ProjectID:         opts.ProjectID,
 	}
 
-	params := alerting_profiles.NewAlertingProfilesAttachParams().WithV(apiconfig.Version)
+	params := alerting_profiles.NewAlertingProfilesAttachParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAttach(params, apiClient)

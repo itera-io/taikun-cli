@@ -2,7 +2,6 @@ package info
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -39,7 +38,7 @@ func infoRun(opts *InfoOptions) (err error) {
 		return
 	}
 
-	params := servers.NewServersDetailsParams().WithV(apiconfig.Version)
+	params := servers.NewServersDetailsParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)

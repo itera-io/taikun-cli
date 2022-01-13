@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -58,7 +57,7 @@ func NewCmdCreate() *cobra.Command {
 			return []string{}, cobra.ShellCompDirectiveDefault
 		}
 
-		params := common.NewCommonGetCountryListParams().WithV(apiconfig.Version)
+		params := common.NewCommonGetCountryListParams().WithV(api.Version)
 		result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
 		if err != nil {
 			return []string{}, cobra.ShellCompDirectiveDefault
@@ -97,7 +96,7 @@ func createRun(opts *CreateOptions) (err error) {
 		VatNumber:                    opts.VatNumber,
 	}
 
-	params := organizations.NewOrganizationsCreateParams().WithV(apiconfig.Version).WithBody(&body)
+	params := organizations.NewOrganizationsCreateParams().WithV(api.Version).WithBody(&body)
 	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

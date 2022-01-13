@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
@@ -77,7 +76,7 @@ func createRun(opts *CreateOptions) (err error) {
 		OrganizationID:        opts.OrganizationID,
 	}
 
-	params := azure.NewAzureCreateParams().WithV(apiconfig.Version).WithBody(body)
+	params := azure.NewAzureCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
 	if err == nil {
 		out.PrintResult(response.Payload,

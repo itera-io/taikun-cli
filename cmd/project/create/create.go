@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -216,7 +215,7 @@ func createRun(opts *CreateOptions) (err error) {
 		body.TaikunLBFlavor = opts.TaikunLBFlavor
 	}
 
-	params := projects.NewProjectsCreateParams().WithV(apiconfig.Version)
+	params := projects.NewProjectsCreateParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
@@ -245,7 +244,7 @@ func getDefaultOrganizationID() (id int32, err error) {
 	if err != nil {
 		return
 	}
-	params := users.NewUsersDetailsParams().WithV(apiconfig.Version)
+	params := users.NewUsersDetailsParams().WithV(api.Version)
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
 		id = response.Payload.Data.OrganizationID
@@ -260,14 +259,14 @@ func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
 	}
 
 	params := access_profiles.NewAccessProfilesAccessProfilesForOrganizationListParams()
-	params = params.WithV(apiconfig.Version).WithOrganizationID(&organizationID)
+	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesAccessProfilesForOrganizationList(params, apiClient)
 	if err != nil {
 		return
 	}
 
 	for _, profile := range response.Payload {
-		if profile.Name == apiconfig.DefaultAccessProfileName {
+		if profile.Name == api.DefaultAccessProfileName {
 			id = profile.ID
 			return
 		}
@@ -282,14 +281,14 @@ func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
 	}
 
 	params := alerting_profiles.NewAlertingProfilesAlertingProfilesForOrganizationListParams()
-	params = params.WithV(apiconfig.Version).WithOrganizationID(&organizationID)
+	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesAlertingProfilesForOrganizationList(params, apiClient)
 	if err != nil {
 		return
 	}
 
 	for _, profile := range response.Payload {
-		if profile.Name == apiconfig.DefaultAlertingProfileName {
+		if profile.Name == api.DefaultAlertingProfileName {
 			id = profile.ID
 			return
 		}
@@ -304,14 +303,14 @@ func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
 	}
 
 	params := kubernetes_profiles.NewKubernetesProfilesKubernetesProfilesForOrganizationListParams()
-	params = params.WithV(apiconfig.Version).WithOrganizationID(&organizationID)
+	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesKubernetesProfilesForOrganizationList(params, apiClient)
 	if err != nil {
 		return
 	}
 
 	for _, profile := range response.Payload {
-		if profile.Name == apiconfig.DefaultKubernetesProfileName {
+		if profile.Name == api.DefaultKubernetesProfileName {
 			id = profile.ID
 			return
 		}

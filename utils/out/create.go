@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/itera-io/taikun-cli/apiconfig"
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/config"
 )
 
@@ -49,10 +49,10 @@ func printApiResponseTable(response interface{}, fields ...string) {
 
 func getApiResponseResourceMap(response interface{}) map[string]interface{} {
 	resourceMap := jsonObjectToMap(response)
-	if resourceMap[apiconfig.ResultField] != nil {
-		resourceMap = resourceMap[apiconfig.ResultField].(map[string]interface{})
-	} else if resourceMap[apiconfig.PayloadField] != nil {
-		resourceMap = resourceMap[apiconfig.PayloadField].(map[string]interface{})
+	if resourceMap[api.ResultField] != nil {
+		resourceMap = resourceMap[api.ResultField].(map[string]interface{})
+	} else if resourceMap[api.PayloadField] != nil {
+		resourceMap = resourceMap[api.PayloadField].(map[string]interface{})
 	}
 	return resourceMap
 }

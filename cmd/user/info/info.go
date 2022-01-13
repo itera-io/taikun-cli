@@ -2,7 +2,6 @@ package info
 
 import (
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/apiconfig"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
@@ -27,7 +26,7 @@ func infoRun() (err error) {
 		return
 	}
 
-	params := users.NewUsersDetailsParams().WithV(apiconfig.Version)
+	params := users.NewUsersDetailsParams().WithV(api.Version)
 
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
