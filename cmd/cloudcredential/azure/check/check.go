@@ -21,7 +21,7 @@ func NewCmdCheck() *cobra.Command {
 	var opts CheckOptions
 
 	cmd := &cobra.Command{
-		Use:   "check <name>",
+		Use:   "check",
 		Short: "Check the validity of an Azure cloud credential",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
