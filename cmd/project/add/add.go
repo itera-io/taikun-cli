@@ -1,4 +1,4 @@
-package create
+package add
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
+type AddOptions struct {
 	AccessProfileID     int32
 	AlertingProfileID   int32
 	AutoUpgrade         bool
@@ -36,12 +36,12 @@ type CreateOptions struct {
 	TaikunLBFlavor      string
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdAdd() *cobra.Command {
+	var opts AddOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <name>",
-		Short: "Create a project",
+		Use:   "add <name>",
+		Short: "Add a project",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
@@ -64,7 +64,7 @@ func NewCmdCreate() *cobra.Command {
 				}
 			}
 
-			return createRun(&opts)
+			return addRun(&opts)
 		},
 	}
 
@@ -147,7 +147,7 @@ func NewCmdCreate() *cobra.Command {
 	return cmd
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func addRun(opts *AddOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return

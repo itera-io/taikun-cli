@@ -3,7 +3,7 @@ Context 'project/backup'
   setup() {
     bid=$(taikun backup-credential add $(_rnd_name) -a $AWS_ACCESS_KEY_ID -e $S3_ENDPOINT -r $S3_REGION -s $AWS_SECRET_ACCESS_KEY -I)
     ccid=$(taikun cloud-credential openstack add $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
-    pid=$(taikun project create $(_rnd_name) --cloud-credential-id $ccid -I)
+    pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid -I)
   }
 
   BeforeAll 'setup'
