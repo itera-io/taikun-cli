@@ -1,7 +1,7 @@
 package policyprofile
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/policyprofile/create"
+	"github.com/itera-io/taikun-cli/cmd/policyprofile/add"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile/delete"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile/list"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile/lock"
@@ -17,7 +17,7 @@ func NewCmdPolicyProfile() *cobra.Command {
 		Aliases: []string{"pp"},
 	}
 
-	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
 	cmd.AddCommand(delete.NewCmdDelete())

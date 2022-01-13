@@ -1,4 +1,4 @@
-package create
+package add
 
 import (
 	"github.com/itera-io/taikun-cli/api"
@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
+type AddOptions struct {
 	AllowedRepo           []string
 	ForbidHTTPIngress     bool
 	ForbidNodePort        bool
@@ -23,16 +23,16 @@ type CreateOptions struct {
 	UniqueServiceSelector bool
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdAdd() *cobra.Command {
+	var opts AddOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <name>",
-		Short: "Create a policy profile",
+		Use:   "add <name>",
+		Short: "Add a policy profile",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-			return createRun(&opts)
+			return addRun(&opts)
 		},
 	}
 
@@ -52,7 +52,7 @@ func NewCmdCreate() *cobra.Command {
 	return cmd
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func addRun(opts *AddOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
