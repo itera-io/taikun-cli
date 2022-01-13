@@ -43,24 +43,7 @@ func infoRun(opts *InfoOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload.Project,
-			"projectName",
-			"projectStatus",
-			"projectHealth",
-			"cloudType",
-			"kubernetesCurrentVersion",
-			"hasKubeConfigFile",
-			"accessProfileName",
-			"cloudName",
-			"kubernetesProfileName",
-			"accessIp",
-			"projectHealth",
-			"isBackupEnabled",
-			"isOpaEnabled",
-			"isMonitoringEnabled",
-			"hasAlertingProfile",
-			"isLocked",
-		)
+		out.PrintResult(response.Payload.Project)
 	}
 
 	return
