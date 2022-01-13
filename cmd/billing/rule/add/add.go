@@ -57,7 +57,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "type", types.PrometheusTypes.Keys()...)
+	cmdutils.RegisterFlagCompletion(&cmd, "type", types.PrometheusTypes.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 

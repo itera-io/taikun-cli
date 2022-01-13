@@ -47,14 +47,14 @@ func NewCmdAdd() *cobra.Command {
 		),
 	)
 	cmdutils.MarkFlagRequired(&cmd, "access-scope")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "access-scope", types.KubeconfigAccessScopes.Keys()...)
+	cmdutils.RegisterFlagCompletion(&cmd, "access-scope", types.KubeconfigAccessScopes.Keys()...)
 
 	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
 	cmdutils.MarkFlagRequired(&cmd, "project-id")
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(&cmd, "role")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "role", types.KubeconfigRoles.Keys()...)
+	cmdutils.RegisterFlagCompletion(&cmd, "role", types.KubeconfigRoles.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 

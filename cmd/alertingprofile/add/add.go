@@ -40,7 +40,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringSliceVarP(&opts.Emails, "emails", "e", []string{}, "Emails")
 
 	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "none", "Reminder")
-	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", types.AlertingReminders.Keys()...)
+	cmdutils.RegisterFlagCompletion(cmd, "reminder", types.AlertingReminders.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
 
