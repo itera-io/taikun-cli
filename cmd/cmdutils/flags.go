@@ -96,7 +96,7 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, resultStructs ...interface{}) 
 		"reverse",
 		"r",
 		false,
-		"Reverse order of results",
+		"Reverse order of results when passed with the --sort-by flag",
 	)
 
 	commonTags := GetCommonJsonTagsInStructs(resultStructs)
