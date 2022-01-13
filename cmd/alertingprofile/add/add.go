@@ -1,4 +1,4 @@
-package create
+package add
 
 import (
 	"github.com/itera-io/taikun-cli/api"
@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
+type AddOptions struct {
 	Emails               []string
 	Name                 string
 	OrganizationID       int32
@@ -19,25 +19,26 @@ type CreateOptions struct {
 	SlackConfigurationID int32
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdAdd() *cobra.Command {
+	var opts AddOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <name>",
-		Short: "Create an alerting profile",
+		Use:   "add <name>",
+		Short: "Add an alerting profile",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
 			if err := cmdutils.CheckFlagValue("reminder", opts.Reminder, types.AlertingReminders); err != nil {
 				return err
 			}
-			return createRun(&opts)
+			return addRun(&opts)
 		},
 	}
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().Int32VarP(&opts.SlackConfigurationID, "slack-configuration-id", "s", 0, "Slack configuration ID")
 	cmd.Flags().StringSliceVarP(&opts.Emails, "emails", "e", []string{}, "Emails")
+
 	cmd.Flags().StringVarP(&opts.Reminder, "reminder", "r", "none", "Reminder")
 	cmdutils.RegisterStaticFlagCompletion(cmd, "reminder", types.AlertingReminders.Keys()...)
 
@@ -46,7 +47,7 @@ func NewCmdCreate() *cobra.Command {
 	return cmd
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func addRun(opts *AddOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
