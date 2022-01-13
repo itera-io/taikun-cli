@@ -56,6 +56,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "role")
 	cmdutils.RegisterStaticFlagCompletion(&cmd, "role", types.KubeconfigRoles.Keys()...)
 
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
+
 	return &cmd
 }
 
