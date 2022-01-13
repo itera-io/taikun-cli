@@ -10,7 +10,7 @@ import (
 func NewCmdLabel() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "label",
-		Short: "Manage labels",
+		Short: "Manage a billing rule's labels",
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
