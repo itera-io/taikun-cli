@@ -23,11 +23,14 @@ func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
 	cmd := cobra.Command{
-		Use:   "add <name>",
-		Short: "Add a kubeconfig",
+		Use:   "add <project-id>",
+		Short: "Add a kubeconfig to a project",
 		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.Name = args[0]
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.ProjectID, err = types.Atoi32(args[0])
+			if err != nil {
+				return
+			}
 			if err := cmdutils.CheckFlagValue("role", opts.Role, types.KubeconfigRoles); err != nil {
 				return err
 			}
@@ -49,8 +52,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "access-scope")
 	cmdutils.RegisterFlagCompletion(&cmd, "access-scope", types.KubeconfigAccessScopes.Keys()...)
 
-	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "project-id")
+	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
+	cmdutils.MarkFlagRequired(&cmd, "name")
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(&cmd, "role")
