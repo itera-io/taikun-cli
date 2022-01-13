@@ -1,4 +1,4 @@
-package create
+package add
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
@@ -13,36 +14,39 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
+type AddOptions struct {
 	AccessProfileID int32
 	Name            string
 	PublicKey       string
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdAdd() *cobra.Command {
+	var opts AddOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <name>",
-		Short: "Create SSH user",
+		Use:   "add <access-profile-id>",
+		Short: "Add an SSH user",
 		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.Name = args[0]
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.AccessProfileID, err = types.Atoi32(args[0])
+			if err != nil {
+				return
+			}
 
 			isValid, err := sshPublicKeyIsValid(opts.PublicKey)
 			if err != nil {
-				return err
+				return
 			}
 			if !isValid {
 				return fmt.Errorf("SSH public key must be valid")
 			}
 
-			return createRun(&opts)
+			return addRun(&opts)
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.AccessProfileID, "access-profile-id", "a", 0, "Access profile's ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "access-profile-id")
+	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
+	cmdutils.MarkFlagRequired(cmd, "name")
 
 	cmd.Flags().StringVarP(&opts.PublicKey, "public-key", "p", "", "Public key (required)")
 	cmdutils.MarkFlagRequired(cmd, "public-key")
@@ -67,7 +71,7 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	return err == nil, nil
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func addRun(opts *AddOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
