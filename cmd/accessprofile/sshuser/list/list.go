@@ -21,7 +21,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list <access-profile-id>",
-		Short: "List access profile's SSH users",
+		Short: "List an access profile's SSH users",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			accessProfileID, err := types.Atoi32(args[0])
