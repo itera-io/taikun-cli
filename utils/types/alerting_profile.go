@@ -5,12 +5,16 @@ import (
 	"github.com/itera-io/taikungoclient/models"
 )
 
+const (
+	AlertingIntegrationTypeTeams = "microsoftteams"
+)
+
 var AlertingIntegrationTypes = gmap.New(
 	map[string]interface{}{
-		"opsgenie":       models.AlertingIntegrationType(100),
-		"pagerduty":      models.AlertingIntegrationType(200),
-		"splunk":         models.AlertingIntegrationType(300),
-		"microsoftteams": models.AlertingIntegrationType(400),
+		"opsgenie":                   models.AlertingIntegrationType(100),
+		"pagerduty":                  models.AlertingIntegrationType(200),
+		"splunk":                     models.AlertingIntegrationType(300),
+		AlertingIntegrationTypeTeams: models.AlertingIntegrationType(400),
 	},
 )
 

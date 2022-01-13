@@ -1,6 +1,8 @@
-package create
+package add
 
 import (
+	"errors"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -12,30 +14,32 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
+type AddOptions struct {
 	AlertingProfileID int32
 	URL               string
 	Type              string
 	Token             string
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdAdd() *cobra.Command {
+	var opts AddOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <alerting-profile-id>",
-		Short: "Create an alerting integration",
+		Use:   "add <alerting-profile-id>",
+		Short: "Add an integration to an alerting profile",
 		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := cmdutils.CheckFlagValue("type", opts.Type, types.AlertingIntegrationTypes); err != nil {
-				return err
-			}
-			alertingProfileID, err := types.Atoi32(args[0])
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.AlertingProfileID, err = types.Atoi32(args[0])
 			if err != nil {
 				return cmderr.IDArgumentNotANumberError
 			}
-			opts.AlertingProfileID = alertingProfileID
-			return createRun(&opts)
+			if err := cmdutils.CheckFlagValue("type", opts.Type, types.AlertingIntegrationTypes); err != nil {
+				return err
+			}
+			if opts.Type != types.AlertingIntegrationTypeTeams && opts.Token == "" {
+				return errors.New("--token must be set with this integration type")
+			}
+			return addRun(&opts)
 		},
 	}
 
@@ -53,7 +57,7 @@ func NewCmdCreate() *cobra.Command {
 	return cmd
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func addRun(opts *AddOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
