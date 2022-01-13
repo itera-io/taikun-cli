@@ -1,4 +1,4 @@
-package create
+package add
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
+type AddOptions struct {
 	OrganizationID int32
 	S3Name         string
 	S3AccessKey    string
@@ -22,12 +22,12 @@ type CreateOptions struct {
 	S3Region       string
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdAdd() *cobra.Command {
+	var opts AddOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <name>",
-		Short: "Create a backup credential",
+		Use:   "add <name>",
+		Short: "Add a backup credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			isValid, err := backupCredentialIsValid(&opts)
@@ -38,7 +38,7 @@ func NewCmdCreate() *cobra.Command {
 				return fmt.Errorf("backup credential must be valid")
 			}
 			opts.S3Name = args[0]
-			return createRun(&opts)
+			return addRun(&opts)
 		},
 	}
 
@@ -61,7 +61,7 @@ func NewCmdCreate() *cobra.Command {
 	return cmd
 }
 
-func backupCredentialIsValid(opts *CreateOptions) (bool, error) {
+func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return false, err
@@ -77,7 +77,7 @@ func backupCredentialIsValid(opts *CreateOptions) (bool, error) {
 	return err == nil, nil
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func addRun(opts *AddOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
