@@ -2,7 +2,7 @@ Context 'project/alert'
 
   setup() {
     apid=$(taikun alerting-profile add $(_rnd_name) -I)
-    ccid=$(taikun cloud-credential openstack create $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
+    ccid=$(taikun cloud-credential openstack add $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
     pid=$(taikun project create $(_rnd_name) --cloud-credential-id $ccid -I)
     taikun project alert detach $pid -q
   }

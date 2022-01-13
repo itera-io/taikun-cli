@@ -1,8 +1,8 @@
 package azure
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/add"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/check"
-	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/create"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
 
 	"github.com/spf13/cobra"
@@ -14,8 +14,8 @@ func NewCmdAzure() *cobra.Command {
 		Short: "Manage Azure cloud credentials",
 	}
 
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(check.NewCmdCheck())
-	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(list.NewCmdList())
 
 	return cmd

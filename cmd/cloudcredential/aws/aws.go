@@ -1,8 +1,8 @@
 package aws
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/add"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/check"
-	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/create"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
 
 	"github.com/spf13/cobra"
@@ -14,8 +14,8 @@ func NewCmdAWS() *cobra.Command {
 		Short: "Manage AWS cloud credentials",
 	}
 
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(check.NewCmdCheck())
-	cmd.AddCommand(create.NewCmdCreate())
 	cmd.AddCommand(list.NewCmdList())
 
 	return cmd
