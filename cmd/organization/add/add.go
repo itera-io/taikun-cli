@@ -1,4 +1,4 @@
-package create
+package add
 
 import (
 	"github.com/itera-io/taikun-cli/api"
@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CreateOptions struct {
+type AddOptions struct {
 	Address                      string
 	BillingEmail                 string
 	City                         string
@@ -25,17 +25,17 @@ type CreateOptions struct {
 	VatNumber                    string
 }
 
-func NewCmdCreate() *cobra.Command {
-	var opts CreateOptions
+func NewCmdAdd() *cobra.Command {
+	var opts AddOptions
 
 	cmd := &cobra.Command{
-		Use:   "create <name>",
-		Short: "Create organization",
+		Use:   "add <name>",
+		Short: "Add an organization",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
 			opts.IsEligibleUpdateSubscription = true
-			return createRun(&opts)
+			return addRun(&opts)
 		},
 	}
 
@@ -76,7 +76,7 @@ func NewCmdCreate() *cobra.Command {
 	return cmd
 }
 
-func createRun(opts *CreateOptions) (err error) {
+func addRun(opts *AddOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return

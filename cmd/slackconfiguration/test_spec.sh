@@ -1,7 +1,7 @@
 Context 'slackconfiguration'
 
   setup() {
-    oid=$(taikun organization create $(_rnd_name) --full-name $(_rnd_name) -I)
+    oid=$(taikun organization add $(_rnd_name) --full-name $(_rnd_name) -I)
   }
 
   BeforeAll 'setup'
