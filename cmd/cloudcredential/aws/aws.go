@@ -11,7 +11,7 @@ import (
 func NewCmdAWS() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "aws <command>",
-		Short: "Manage AWS Cloud Credentials",
+		Short: "Manage AWS cloud credentials",
 	}
 
 	cmd.AddCommand(check.NewCmdCheck())

@@ -11,7 +11,7 @@ import (
 func NewCmdAzure() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "azure <command>",
-		Short: "Manage Azure Cloud Credentials",
+		Short: "Manage Azure cloud credentials",
 	}
 
 	cmd.AddCommand(check.NewCmdCheck())
