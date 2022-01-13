@@ -19,9 +19,8 @@ Context 'slackconfiguration'
   End
 
   Context 'add/delete'
-
     add_config() {
-      scid=$(taikun slack-configuration add (_rnd_name) -c foo -u 'http://foo.bar.test' -t alert -o $oid -I)
+      scid=$(taikun slack-configuration add $(_rnd_name) -c foo -u 'http://foo.bar.test' -t alert -o $oid -I)
     }
 
     Before 'add_config'
@@ -32,7 +31,8 @@ Context 'slackconfiguration'
 
     After 'delete_config'
 
-    When call taikun slack-configuration list -o $oid --no-decorate
+    Example 'add then delete slack config'
+      When call taikun slack-configuration list -o $oid --no-decorate
       The status should equal 0
       The lines of output should equal 1
       The output should include 'http://foo.bar.test'
