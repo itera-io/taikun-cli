@@ -72,11 +72,8 @@ func ListServers(opts *ListOptions) (projectServers []*models.ServerListDto, err
 	params := servers.NewServersDetailsParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
 	if config.SortBy != "" {
-		if config.ReverseSortDirection {
-			api.ReverseSortDirection()
-		}
 		params = params.WithSortBy(&config.SortBy)
-		params = params.WithSortDirection(&api.SortDirection)
+		params = params.WithSortDirection(api.GetSortDirection())
 	}
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)

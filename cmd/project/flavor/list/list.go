@@ -49,11 +49,8 @@ func listRun(opts *ListOptions) (err error) {
 
 	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
 	params = params.WithProjectID(&opts.ProjectID)
-	if config.ReverseSortDirection {
-		api.ReverseSortDirection()
-	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&api.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}

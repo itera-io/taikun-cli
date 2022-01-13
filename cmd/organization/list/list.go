@@ -35,11 +35,8 @@ func listRun() (err error) {
 	}
 
 	params := organizations.NewOrganizationsListParams().WithV(api.Version)
-	if config.ReverseSortDirection {
-		api.ReverseSortDirection()
-	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&api.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)

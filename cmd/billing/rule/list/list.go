@@ -34,11 +34,8 @@ func listRun() (err error) {
 	}
 
 	params := prometheus.NewPrometheusListOfRulesParams().WithV(api.Version)
-	if config.ReverseSortDirection {
-		api.ReverseSortDirection()
-	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&api.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var billingRules = make([]*models.PrometheusRuleListDto, 0)

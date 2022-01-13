@@ -65,11 +65,8 @@ func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if config.ReverseSortDirection {
-		api.ReverseSortDirection()
-	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(&api.SortDirection)
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var openstackCloudCredentials = make([]*models.OpenstackCredentialsListDto, 0)
