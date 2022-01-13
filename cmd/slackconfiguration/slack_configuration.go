@@ -1,6 +1,7 @@
 package slackconfiguration
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/slackconfiguration/add"
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration/list"
 	"github.com/spf13/cobra"
 )
@@ -12,6 +13,7 @@ func NewCmdSlackConfiguration() *cobra.Command {
 		Aliases: []string{"slack"},
 	}
 
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(list.NewCmdList())
 
 	return &cmd

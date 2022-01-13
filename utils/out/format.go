@@ -1,6 +1,7 @@
 package out
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/config"
@@ -53,5 +54,8 @@ func trimCellValue(value interface{}) interface{} {
 }
 
 func resourceIDToString(id interface{}) string {
-	return strings.ReplaceAll(id.(string), "\"", "")
+	if str, isString := id.(string); isString {
+		return strings.ReplaceAll(str, "\"", "")
+	}
+	return fmt.Sprint(id)
 }
