@@ -18,7 +18,7 @@ func NewCmdInfo() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "info <organization-id>",
-		Short: "Retrieve detailed information about an organization",
+		Short: "Get detailed information about an organization",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.OrganizationID, err = types.Atoi32(args[0])
