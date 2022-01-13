@@ -7,8 +7,8 @@ Context 'billing/rule/organization/bind'
     user=$PROMETHEUS_USERNAME
 
     oid=$(taikun organization create $name --full-name $name -I)
-    cid=$(taikun billing credential create $name -p $pass -u $url -l $user -I)
-    id=$(taikun billing rule create $name -b $cid -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
+    cid=$(taikun billing credential add $name -p $pass -u $url -l $user -I)
+    id=$(taikun billing rule add $name -b $cid -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
   }
 
   BeforeEach 'setup'

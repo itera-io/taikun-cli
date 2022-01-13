@@ -11,8 +11,8 @@ Context 'billing/rule/organization/list'
     org_name2=$(_rnd_name)
     oid2=$(taikun organization create $org_name2 --full-name $org_name2 -I)
 
-    cid=$(taikun billing credential create $name -p $pass -u $url -l $user -I)
-    id=$(taikun billing rule create $name -b $cid -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
+    cid=$(taikun billing credential add $name -p $pass -u $url -l $user -I)
+    id=$(taikun billing rule add $name -b $cid -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
   }
 
   BeforeEach 'setup'

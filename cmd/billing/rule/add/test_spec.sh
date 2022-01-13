@@ -1,11 +1,11 @@
-Context 'billing/rule/create'
+Context 'billing/rule/add'
 
   setup() {
     name=$(_rnd_name)
     cname=$(_rnd_name)
-    cid=$(taikun billing credential create -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
+    cid=$(taikun billing credential add -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
-    id=$(taikun billing rule create $name $flags -I)
+    id=$(taikun billing rule add $name $flags -I)
   }
 
   cleanup() {
@@ -16,14 +16,14 @@ Context 'billing/rule/create'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Example 'create single billing rule'
+  Example 'add single billing rule'
     When call taikun billing rule list --no-decorate
     The status should equal 0
     The output should include $name
   End
 
   Example 'duplicate name causes error'
-    When call taikun billing rule create $name $flags
+    When call taikun billing rule add $name $flags
     The status should equal 1
     The stderr should include '400'
     The stderr should include 'Duplicate rule occured'

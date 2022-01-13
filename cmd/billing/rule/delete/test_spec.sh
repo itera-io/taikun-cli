@@ -3,10 +3,10 @@ Context 'billing/rule/delete'
   setup() {
     name=$(_rnd_name)
     cname=$(_rnd_name)
-    cid=$(taikun billing credential create -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
+    cid=$(taikun billing credential add -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
 
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
-    id=$(taikun billing rule create $name $flags -I)
+    id=$(taikun billing rule add $name $flags -I)
   }
 
   cleanup() {
