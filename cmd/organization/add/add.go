@@ -108,10 +108,6 @@ func addRun(opts *AddOptions) (err error) {
 			"isEligibleUpdateSubscription",
 			"isLocked",
 			"isReadOnly",
-			"users",
-			"cloudCredentials",
-			"projects",
-			"servers",
 		)
 	}
 

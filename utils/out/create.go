@@ -3,6 +3,7 @@ package out
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/config"
@@ -30,14 +31,16 @@ func printResourceID(resource interface{}) {
 }
 
 func printApiResponseTable(response interface{}, fields ...string) {
-	t := newTable()
-	appendHeader(t, []string{"field", "value"})
-
 	if len(config.Columns) != 0 {
 		fields = config.Columns
 	}
 
 	resourceMap := getApiResponseResourceMap(response)
+	if len(fields) == 0 {
+		printDetailedApiResponseTable(resourceMap)
+	}
+
+	t := newTable()
 	for _, field := range fields {
 		if resourceMap[field] != nil && resourceMap[field] != "" {
 			t.AppendRow([]interface{}{formatFieldName(field), resourceMap[field]})
@@ -45,6 +48,38 @@ func printApiResponseTable(response interface{}, fields ...string) {
 	}
 
 	renderTable(t)
+}
+
+func printDetailedApiResponseTable(resourceMap map[string]interface{}) {
+	t := newTable()
+	keys := make([]string, 0)
+	for key, _ := range resourceMap {
+		keys = append(keys, key)
+	}
+	sortedKeys := sort.StringSlice(keys)
+	sort.Slice(sortedKeys, sortedKeys.Less)
+	for _, key := range sortedKeys {
+		if isSimpleApiType(resourceMap[key]) {
+			t.AppendRow([]interface{}{formatFieldName(key), resourceMap[key]})
+		}
+	}
+	renderTable(t)
+}
+
+func isSimpleApiType(v interface{}) bool {
+	if _, simple := v.(string); simple {
+		return true
+	}
+	if _, simple := v.(int32); simple {
+		return true
+	}
+	if _, simple := v.(float64); simple {
+		return true
+	}
+	if _, simple := v.(bool); simple {
+		return true
+	}
+	return false
 }
 
 func getApiResponseResourceMap(response interface{}) map[string]interface{} {
