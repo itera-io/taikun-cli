@@ -5,6 +5,11 @@ on:
     branches:
       - 'main'
       - 'dev'
+    paths-ignore:
+      - 'README.md'
+      - 'COMMAND_TREE.md'
+      - 'GNUmakefile'
+      - 'Dockerfile'
 
 jobs:
   build:
