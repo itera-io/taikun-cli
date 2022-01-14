@@ -1,4 +1,4 @@
-package update
+package edit
 
 import (
 	"github.com/itera-io/taikun-cli/api"
@@ -11,19 +11,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type UpdateOptions struct {
+type EditOptions struct {
 	QuotaID  int32
 	DiskSize int
 	RAM      int
 	CPU      int64
 }
 
-func NewCmdUpdate() *cobra.Command {
-	var opts UpdateOptions
+func NewCmdEdit() *cobra.Command {
+	var opts EditOptions
 
 	cmd := &cobra.Command{
-		Use:   "update <quota-id>",
-		Short: "Update a project quotas",
+		Use:   "edit <quota-id>",
+		Short: "Edit a project quota",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
@@ -31,7 +31,7 @@ func NewCmdUpdate() *cobra.Command {
 				return cmderr.IDArgumentNotANumberError
 			}
 			opts.QuotaID = id
-			return updateRun(&opts)
+			return editRun(&opts)
 		},
 	}
 
@@ -42,7 +42,7 @@ func NewCmdUpdate() *cobra.Command {
 	return cmd
 }
 
-func updateRun(opts *UpdateOptions) (err error) {
+func editRun(opts *EditOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return

@@ -1,8 +1,8 @@
 package quotas
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/project/quotas/edit"
 	"github.com/itera-io/taikun-cli/cmd/project/quotas/list"
-	"github.com/itera-io/taikun-cli/cmd/project/quotas/update"
 
 	"github.com/spf13/cobra"
 )
@@ -10,11 +10,11 @@ import (
 func NewCmdQuotas() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "quotas <command>",
-		Short: "Manage projects quotas",
+		Short: "Manage project quotas",
 	}
 
+	cmd.AddCommand(edit.NewCmdEdit())
 	cmd.AddCommand(list.NewCmdList())
-	cmd.AddCommand(update.NewCmdUpdate())
 
 	return cmd
 }
