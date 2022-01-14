@@ -1,5 +1,5 @@
 # Make sure to check the documentation at https://goreleaser.com
-project_name: taikun_cli
+project_name: taikun
 before:
   hooks:
     - go mod tidy
