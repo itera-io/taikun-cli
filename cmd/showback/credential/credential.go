@@ -1,7 +1,7 @@
 package credential
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/showback/credential/create"
+	"github.com/itera-io/taikun-cli/cmd/showback/credential/add"
 	"github.com/itera-io/taikun-cli/cmd/showback/credential/delete"
 	"github.com/itera-io/taikun-cli/cmd/showback/credential/list"
 	"github.com/itera-io/taikun-cli/cmd/showback/credential/lock"
@@ -17,7 +17,7 @@ func NewCmdCredential() *cobra.Command {
 		Aliases: []string{"c"},
 	}
 
-	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())

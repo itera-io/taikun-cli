@@ -4,7 +4,7 @@ Context 'showback/rule/list'
     ids=""
     for i in {1..5}; do
       name=$(_rnd_name)
-      id=$(taikun showback rule create $name -t count -k general -m idk --global-alert-limit $i --price $i -I)
+      id=$(taikun showback rule add $name -t count -k general -m idk --global-alert-limit $i --price $i -I)
       ids="$ids $id"
     done
   }

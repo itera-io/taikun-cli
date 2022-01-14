@@ -2,7 +2,7 @@ Context 'showback/rule/label/clear'
 
   setup() {
     name=$(_rnd_name)
-    id=$(taikun showback rule create $name -t count -k general -m any --global-alert-limit 3 --price 3 -I)
+    id=$(taikun showback rule add $name -t count -k general -m any --global-alert-limit 3 --price 3 -I)
   }
 
   cleanup() {
