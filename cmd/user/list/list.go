@@ -77,8 +77,6 @@ func listRun(opts *ListOptions) (err error) {
 		"role",
 		"organizationName",
 		"email",
-		"isEmailConfirmed",
-		"isEmailNotificationEnabled",
 	)
 	return
 }

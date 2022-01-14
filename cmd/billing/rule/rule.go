@@ -1,7 +1,7 @@
 package rule
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/billing/rule/create"
+	"github.com/itera-io/taikun-cli/cmd/billing/rule/add"
 	"github.com/itera-io/taikun-cli/cmd/billing/rule/delete"
 	"github.com/itera-io/taikun-cli/cmd/billing/rule/label"
 	"github.com/itera-io/taikun-cli/cmd/billing/rule/list"
@@ -16,7 +16,7 @@ func NewCmdRule() *cobra.Command {
 		Aliases: []string{"r"},
 	}
 
-	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(label.NewCmdLabel())
 	cmd.AddCommand(list.NewCmdList())

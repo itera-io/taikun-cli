@@ -1,9 +1,9 @@
 Context 'project/server/delete'
 
   setup() {
-    ccid=$(taikun cloud-credential openstack create $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
+    ccid=$(taikun cloud-credential openstack add $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
     flavor=$(taikun cloud-credential flavors $ccid --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1)
-    pid=$(taikun project create $(_rnd_name) --cloud-credential-id $ccid --flavors $flavor -I)
+    pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --flavors $flavor -I)
   }
 
   BeforeEach 'setup'
@@ -20,7 +20,7 @@ Context 'project/server/delete'
   Context
 
     add_and_remove_master() {
-      msid=$(taikun project server add -p $pid master -r kubemaster -f $flavor -I)
+      msid=$(taikun project server add $pid -n master -r kubemaster -f $flavor -I)
       taikun project server delete $pid --server-ids $msid -q
     }
 
@@ -42,9 +42,9 @@ Context 'project/server/delete'
   Context
 
     add_servers_then_remove_all() {
-      msid=$(taikun project server add -p $pid m -r kubemaster -f $flavor -I)
-      wsid=$(taikun project server add -p $pid w -r kubeworker -f $flavor -I)
-      bsid=$(taikun project server add -p $pid b -r bastion -f $flavor -I)
+      msid=$(taikun project server add $pid -n m -r kubemaster -f $flavor -I)
+      wsid=$(taikun project server add $pid -n w -r kubeworker -f $flavor -I)
+      bsid=$(taikun project server add $pid -n b -r bastion -f $flavor -I)
       taikun project server delete $pid --all -q
     }
 

@@ -1,7 +1,7 @@
 package alertingprofile
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/alertingprofile/create"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/add"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/delete"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/list"
@@ -19,7 +19,7 @@ func NewCmdAlertingProfile() *cobra.Command {
 		Aliases: []string{"alp"},
 	}
 
-	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(integration.NewCmdIntegration())
 	cmd.AddCommand(list.NewCmdList())

@@ -29,8 +29,8 @@ var RouterIDRangeError = errors.New(
 	"Please specify a positive number between 1 and 255 included",
 )
 
-func ResourceNotFoundError(resourceName string, id int32) error {
-	return fmt.Errorf("%s with ID %d not found", resourceName, id)
+func ResourceNotFoundError(resourceName string, id interface{}) error {
+	return fmt.Errorf("%s with ID %v not found", resourceName, id)
 }
 
 var ServerHasNoFlavorError = errors.New(

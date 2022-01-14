@@ -13,7 +13,7 @@ Context 'showback/rule/delete'
 
     setup() {
       name=$(_rnd_name)
-      id=$(taikun showback rule create $name -t sum -k general -m node --global-alert-limit 10 --price 1 -I)
+      id=$(taikun showback rule add $name -t sum -k general -m node --global-alert-limit 10 --price 1 -I)
     }
 
     cleanup() {

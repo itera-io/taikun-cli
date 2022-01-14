@@ -20,7 +20,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "List projects quotas",
+		Short: "List project quotas",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun(&opts)
 		},

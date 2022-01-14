@@ -27,11 +27,14 @@ func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
 	cmd := cobra.Command{
-		Use:   "add <name>",
-		Short: "Add a server",
+		Use:   "add <project-id>",
+		Short: "Add a server to a project",
 		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.Name = args[0]
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.ProjectID, err = types.Atoi32(args[0])
+			if err != nil {
+				return
+			}
 			if err := cmdutils.CheckFlagValue("role", opts.Role, types.ServerRoles); err != nil {
 				return err
 			}
@@ -40,18 +43,17 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")
+	cmd.Flags().StringSliceVarP(&opts.KubernetesNodeLabels, "kubernetes-node-labels", "k", []string{}, "Kubernetes node labels (format: \"key=value,key2=value2,...\")")
 
 	cmd.Flags().StringVarP(&opts.Flavor, "flavor", "f", "", "Flavor (required)")
 	cmdutils.MarkFlagRequired(&cmd, "flavor")
 
-	cmd.Flags().StringSliceVarP(&opts.KubernetesNodeLabels, "kubernetes-node-labels", "k", []string{}, "Kubernetes node labels (format: \"key=value,key2=value2,...\")")
+	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
+	cmdutils.MarkFlagRequired(&cmd, "name")
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(&cmd, "role")
-	cmdutils.RegisterStaticFlagCompletion(&cmd, "role", types.ServerRoles.Keys()...)
-
-	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "project-id")
+	cmdutils.RegisterFlagCompletion(&cmd, "role", types.ServerRoles.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 

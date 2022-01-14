@@ -21,7 +21,7 @@ func NewCmdEnable() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "enable <project-id>",
-		Short: "Enable backup",
+		Short: "Enable backup for a project",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])

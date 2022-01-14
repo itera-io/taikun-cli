@@ -19,8 +19,9 @@ func NewCmdClear() *cobra.Command {
 	var opts ClearOptions
 
 	cmd := cobra.Command{
-		Use:   "clear",
+		Use:   "clear <showback-rule-id>",
 		Short: "clear a showback rule's labels",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ShowbackRuleID, err = types.Atoi32(args[0])
 			if err != nil {

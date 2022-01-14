@@ -17,7 +17,7 @@ func NewCmdUpgrade() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "upgrade <project-id>",
-		Short: "Upgrade the project's version of Kubespray to the latest one",
+		Short: "Upgrade a project's version of Kubespray to the latest one",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])

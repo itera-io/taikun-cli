@@ -1,7 +1,7 @@
 package sshuser
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/create"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/add"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/delete"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/list"
 
@@ -11,11 +11,11 @@ import (
 func NewCmdSshUser() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "ssh-user <command>",
-		Short:   "Manage SSH users",
+		Short:   "Manage an access profile's SSH users",
 		Aliases: []string{"ssh"},
 	}
 
-	cmd.AddCommand(create.NewCmdCreate())
+	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
 

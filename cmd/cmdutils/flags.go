@@ -23,7 +23,7 @@ func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f func(cmd 
 	}
 }
 
-func RegisterStaticFlagCompletion(cmd *cobra.Command, flagName string, values ...string) {
+func RegisterFlagCompletion(cmd *cobra.Command, flagName string, values ...string) {
 	RegisterFlagCompletionFunc(cmd, flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return values, cobra.ShellCompDirectiveDefault
 	})
@@ -62,7 +62,7 @@ func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
 	return freqMap
 }
 
-func GetCommonJsonTagsInStructs(structs []interface{}) []string {
+func getCommonJsonTagsInStructs(structs []interface{}) []string {
 	jsonTags := make([]string, 0)
 
 	for _, s := range structs {
@@ -99,9 +99,9 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, resultStructs ...interface{}) 
 		"Reverse order of results when passed with the --sort-by flag",
 	)
 
-	commonTags := GetCommonJsonTagsInStructs(resultStructs)
+	commonTags := getCommonJsonTagsInStructs(resultStructs)
 
-	RegisterStaticFlagCompletion(cmd, "sort-by", commonTags...)
+	RegisterFlagCompletion(cmd, "sort-by", commonTags...)
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {

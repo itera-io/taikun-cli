@@ -23,11 +23,11 @@ func NewCmdDownload() *cobra.Command {
 	var opts DownloadOptions
 
 	cmd := cobra.Command{
-		Use:   "download <kubeconfig-id>",
+		Use:   "download <project-id>",
 		Short: "Download a kubeconfig",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			opts.KubeconfigID, err = types.Atoi32(args[0])
+			opts.ProjectID, err = types.Atoi32(args[0])
 			if err != nil {
 				return
 			}
@@ -35,8 +35,8 @@ func NewCmdDownload() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "project-id")
+	cmd.Flags().Int32VarP(&opts.KubeconfigID, "kubeconfig-id", "k", 0, "Kubeconfig ID (required)")
+	cmdutils.MarkFlagRequired(&cmd, "kubeconfig-id")
 
 	cmd.Flags().StringVarP(&opts.OutputFile, "output", "o", "", "Output filename")
 

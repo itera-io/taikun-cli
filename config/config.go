@@ -24,6 +24,10 @@ var OutputFormats = []string{
 }
 
 func OutputFormatIsValid() bool {
-	return OutputFormat == OutputFormatJson ||
-		OutputFormat == OutputFormatTable
+	for _, format := range OutputFormats {
+		if OutputFormat == format {
+			return true
+		}
+	}
+	return false
 }

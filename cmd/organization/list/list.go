@@ -66,13 +66,8 @@ func listRun() (err error) {
 		"fullName",
 		"discountRate",
 		"partnerName",
-		"isEligibleUpdateSubscription",
 		"isLocked",
 		"isReadOnly",
-		"users",
-		"cloudCredentials",
-		"projects",
-		"servers",
 	)
 	return
 }

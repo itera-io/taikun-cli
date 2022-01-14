@@ -2,7 +2,7 @@ Context 'showback/rule/label/add'
 
   setup() {
     name=$(_rnd_name)
-    id=$(taikun showback rule create $name -t sum -k general -m wat --global-alert-limit 4 --price 2 -I)
+    id=$(taikun showback rule add $name -t sum -k general -m wat --global-alert-limit 4 --price 2 -I)
   }
 
   cleanup() {

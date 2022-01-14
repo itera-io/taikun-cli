@@ -2,13 +2,13 @@ Context 'billing/rule/list'
 
   setup() {
     cname=$(_rnd_name)
-    cid=$(taikun billing credential create -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
+    cid=$(taikun billing credential add -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
 
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
     name1=$(_rnd_name)
     name2=$(_rnd_name)
-    id1=$(taikun billing rule create $name1 $flags -I)
-    id2=$(taikun billing rule create $name2 $flags -I)
+    id1=$(taikun billing rule add $name1 $flags -I)
+    id2=$(taikun billing rule add $name2 $flags -I)
   }
 
   cleanup() {
