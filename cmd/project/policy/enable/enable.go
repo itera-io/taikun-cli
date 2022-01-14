@@ -1,4 +1,4 @@
-package enforce
+package enable
 
 import (
 	"github.com/itera-io/taikun-cli/api"
@@ -10,24 +10,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type EnforceOptions struct {
+type EnableOptions struct {
 	ProjectID       int32
 	PolicyProfileID int32
 }
 
-func NewCmdEnforce() *cobra.Command {
-	var opts EnforceOptions
+func NewCmdEnable() *cobra.Command {
+	var opts EnableOptions
 
 	cmd := cobra.Command{
-		Use:   "enforce <project-id>",
-		Short: "Enforce policy for a project",
+		Use:   "enable <project-id>",
+		Short: "Enable policy for a project",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
 			if err != nil {
 				return
 			}
-			return enforceRun(&opts)
+			return enableRun(&opts)
 		},
 	}
 
@@ -37,7 +37,7 @@ func NewCmdEnforce() *cobra.Command {
 	return &cmd
 }
 
-func enforceRun(opts *EnforceOptions) (err error) {
+func enableRun(opts *EnableOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return

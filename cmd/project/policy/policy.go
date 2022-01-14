@@ -2,7 +2,7 @@ package policy
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/policy/disable"
-	"github.com/itera-io/taikun-cli/cmd/project/policy/enforce"
+	"github.com/itera-io/taikun-cli/cmd/project/policy/enable"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ func NewCmdPolicy() *cobra.Command {
 	}
 
 	cmd.AddCommand(disable.NewCmdDisable())
-	cmd.AddCommand(enforce.NewCmdEnforce())
+	cmd.AddCommand(enable.NewCmdEnable())
 
 	return &cmd
 }
