@@ -23,5 +23,6 @@ snapshot:
   name_template: "{{ incpatch .Version }}-next"
 release:
   name_template: "Taikun CLI {{.Version}}"
+  prerelease: auto
 changelog:
   use: github-native
