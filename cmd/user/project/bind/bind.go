@@ -11,7 +11,7 @@ import (
 )
 
 type BindOptions struct {
-	Username  string
+	UserID    string
 	ProjectID int
 }
 
@@ -19,16 +19,14 @@ func NewCmdBind() *cobra.Command {
 	var opts BindOptions
 
 	cmd := &cobra.Command{
-		Use:   "bind",
+		Use:   "bind <user-id>",
 		Short: "Bind a user to a project",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			opts.UserID = args[0]
 			return bindRun(&opts)
 		},
-		Args: cobra.NoArgs,
 	}
-
-	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "username")
 
 	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
 	cmdutils.MarkFlagRequired(cmd, "project-id")
@@ -43,7 +41,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	body := &models.BindProjectsCommand{
-		UserName: opts.Username,
+		UserID: opts.UserID,
 		Projects: []*models.UpdateUserProjectDto{
 			{
 				ProjectID: int32(opts.ProjectID),

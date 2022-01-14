@@ -11,26 +11,24 @@ import (
 )
 
 type UnbindOptions struct {
-	Username  string
-	ProjectID int
+	UserID    string
+	ProjectID int32
 }
 
 func NewCmdUnbind() *cobra.Command {
 	var opts UnbindOptions
 
 	cmd := &cobra.Command{
-		Use:   "unbind",
+		Use:   "unbind <user-id>",
 		Short: "Unbind a user from a project",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			opts.UserID = args[0]
 			return unbindRun(&opts)
 		},
-		Args: cobra.NoArgs,
 	}
 
-	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "username")
-
-	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
+	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
 	cmdutils.MarkFlagRequired(cmd, "project-id")
 
 	return cmd
@@ -43,10 +41,10 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	}
 
 	body := &models.BindProjectsCommand{
-		UserName: opts.Username,
+		UserID: opts.UserID,
 		Projects: []*models.UpdateUserProjectDto{
 			{
-				ProjectID: int32(opts.ProjectID),
+				ProjectID: opts.ProjectID,
 				IsBound:   false,
 			},
 		},
