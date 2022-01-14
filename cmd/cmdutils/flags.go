@@ -25,7 +25,7 @@ func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f func(cmd 
 
 func RegisterFlagCompletion(cmd *cobra.Command, flagName string, values ...string) {
 	RegisterFlagCompletionFunc(cmd, flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return values, cobra.ShellCompDirectiveDefault
+		return values, cobra.ShellCompDirectiveNoFileComp
 	})
 }
 
