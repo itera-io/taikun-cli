@@ -120,9 +120,8 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNod
 	return labels, nil
 }
 
-func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) (completions []string, dir cobra.ShellCompDirective) {
+func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
 	completions = make([]string, 0)
-	dir = cobra.ShellCompDirectiveNoFileComp
 
 	if len(args) == 0 {
 		return

@@ -51,24 +51,25 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.VatNumber, "vat-number", "v", "", "VAT number")
 
 	cmd.Flags().StringVar(&opts.Country, "country", "", "Country")
-	cmdutils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmdutils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
+		completions = make([]string, 0)
+
 		apiClient, err := api.NewClient()
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveDefault
+			return
 		}
 
 		params := common.NewCommonGetCountryListParams().WithV(api.Version)
 		result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveDefault
+			return
 		}
 
-		countryNames := make([]string, 0)
 		for _, countryListDto := range result.Payload {
-			countryNames = append(countryNames, countryListDto.Name)
+			completions = append(completions, countryListDto.Name)
 		}
 
-		return countryNames, cobra.ShellCompDirectiveDefault
+		return
 	})
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
