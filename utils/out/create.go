@@ -53,7 +53,7 @@ func printApiResponseTable(response interface{}, fields ...string) {
 func printDetailedApiResponseTable(resourceMap map[string]interface{}) {
 	t := newTable()
 	keys := make([]string, 0)
-	for key, _ := range resourceMap {
+	for key := range resourceMap {
 		keys = append(keys, key)
 	}
 	sortedKeys := sort.StringSlice(keys)
