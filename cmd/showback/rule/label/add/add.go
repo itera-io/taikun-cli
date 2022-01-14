@@ -22,7 +22,7 @@ func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
 	cmd := cobra.Command{
-		Use:   "add",
+		Use:   "add <showback-rule-id>",
 		Short: "Add a label to a showback rule",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
