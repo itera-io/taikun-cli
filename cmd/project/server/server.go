@@ -12,7 +12,7 @@ import (
 func NewCmdServer() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "server <command>",
-		Short: "Manage servers",
+		Short: "Manage a project's servers",
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
