@@ -9,6 +9,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -47,6 +48,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Flavor, "flavor", "f", "", "Flavor (required)")
 	cmdutils.MarkFlagRequired(&cmd, "flavor")
+	cmdutils.RegisterFlagCompletionFunc(&cmd, "flavor", flavorCompletionFunc)
 
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
@@ -116,4 +118,43 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNod
 		}
 	}
 	return labels, nil
+}
+
+func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) (completions []string, dir cobra.ShellCompDirective) {
+	completions = make([]string, 0)
+	dir = cobra.ShellCompDirectiveNoFileComp
+
+	if len(args) == 0 {
+		return
+	}
+	projectID, err := types.Atoi32(args[0])
+	if err != nil {
+		return
+	}
+
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
+	params = params.WithProjectID(&projectID)
+
+	for {
+		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
+		if err != nil {
+			return
+		}
+		for _, flavor := range response.Payload.Data {
+			completions = append(completions, flavor.Name)
+		}
+		count := int32(len(completions))
+
+		if count == response.Payload.TotalCount {
+			break
+		}
+		params = params.WithOffset(&count)
+	}
+
+	return
 }
