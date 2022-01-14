@@ -19,7 +19,7 @@ Context 'project/server/add'
 
   Context
     add_master() {
-      msid=$(taikun project server add -p $pid master -r kubemaster -k foo=bar,bar=foo -f $flavor -I)
+      msid=$(taikun project server add $pid --name master -r kubemaster -k foo=bar,bar=foo -f $flavor -I)
     }
 
     BeforeEach 'add_master'
@@ -38,7 +38,7 @@ Context 'project/server/add'
     End
 
     Example 'add two servers with the same name'
-      When call taikun project server add -p $pid master -r kubemaster -f $flavor
+      When call taikun project server add $pid --name master -r kubemaster -f $flavor
       The status should equal 1
       The stderr should include 'Duplicate name occured'
     End

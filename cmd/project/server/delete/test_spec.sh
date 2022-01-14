@@ -20,7 +20,7 @@ Context 'project/server/delete'
   Context
 
     add_and_remove_master() {
-      msid=$(taikun project server add -p $pid master -r kubemaster -f $flavor -I)
+      msid=$(taikun project server add $pid -n master -r kubemaster -f $flavor -I)
       taikun project server delete $pid --server-ids $msid -q
     }
 
@@ -42,9 +42,9 @@ Context 'project/server/delete'
   Context
 
     add_servers_then_remove_all() {
-      msid=$(taikun project server add -p $pid m -r kubemaster -f $flavor -I)
-      wsid=$(taikun project server add -p $pid w -r kubeworker -f $flavor -I)
-      bsid=$(taikun project server add -p $pid b -r bastion -f $flavor -I)
+      msid=$(taikun project server add $pid -n m -r kubemaster -f $flavor -I)
+      wsid=$(taikun project server add $pid -n w -r kubeworker -f $flavor -I)
+      bsid=$(taikun project server add $pid -n b -r bastion -f $flavor -I)
       taikun project server delete $pid --all -q
     }
 

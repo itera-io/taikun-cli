@@ -25,9 +25,9 @@ Context 'project/server/list'
 
   Context
     add_servers() {
-      bsid=$(taikun project server add -p $pid bastion -r bastion -f $flavor -I)
-      msid=$(taikun project server add -p $pid master -r kubemaster -f $flavor -I)
-      wsid=$(taikun project server add -p $pid worker -r kubeworker -f $flavor -I)
+      bsid=$(taikun project server add $pid -n bastion -r bastion -f $flavor -I)
+      msid=$(taikun project server add $pid -n master -r kubemaster -f $flavor -I)
+      wsid=$(taikun project server add $pid -n worker -r kubeworker -f $flavor -I)
     }
 
     Before 'add_servers'
