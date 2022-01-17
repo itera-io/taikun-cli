@@ -23,7 +23,7 @@ Context 'showback/rule/label/list'
       taikun showback rule label add $id --label foo1 --value bar1 --quiet
       taikun showback rule label add $id --label foo2 --value bar2 --quiet
     }
-    Before 'add_labels'
+    BeforeAll 'add_labels'
 
     Example 'list only one label'
       When call taikun showback rule label list $id --no-decorate --limit 1
