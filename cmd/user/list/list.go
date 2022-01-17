@@ -37,6 +37,22 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
+	users, err := ListUsers(opts)
+	if err != nil {
+		return err
+	}
+
+	out.PrintResults(users,
+		"id",
+		"username",
+		"role",
+		"organizationName",
+		"email",
+	)
+	return
+}
+
+func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -50,14 +66,14 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
-	var users = make([]*models.UserForListDto, 0)
+	userList = make([]*models.UserForListDto, 0)
 	for {
 		response, err := apiClient.Client.Users.UsersList(params, apiClient)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		users = append(users, response.Payload.Data...)
-		usersCount := int32(len(users))
+		userList = append(userList, response.Payload.Data...)
+		usersCount := int32(len(userList))
 		if config.Limit != 0 && usersCount >= config.Limit {
 			break
 		}
@@ -67,16 +83,9 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&usersCount)
 	}
 
-	if config.Limit != 0 && int32(len(users)) > config.Limit {
-		users = users[:config.Limit]
+	if config.Limit != 0 && int32(len(userList)) > config.Limit {
+		userList = userList[:config.Limit]
 	}
 
-	out.PrintResults(users,
-		"id",
-		"username",
-		"role",
-		"organizationName",
-		"email",
-	)
 	return
 }
