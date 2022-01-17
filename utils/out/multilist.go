@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 )
 
 // Allows printing of resources of different types into one table.
@@ -16,7 +17,7 @@ import (
 func PrintResultsOfDifferentTypes(
 	resourceSlices []interface{},
 	resourceTypes []string,
-	fields ...string,
+	fields fields.Fields,
 ) {
 	if config.OutputFormat == config.OutputFormatJson {
 		for _, slice := range resourceSlices {
@@ -30,7 +31,7 @@ func PrintResultsOfDifferentTypes(
 func printTableWithDifferentTypes(
 	resourceSlices []interface{},
 	resourceTypes []string,
-	fields []string,
+	fields fields.Fields,
 ) {
 	addTypeColumn := true
 	if len(resourceTypes) == 0 {
@@ -42,13 +43,13 @@ func printTableWithDifferentTypes(
 	t := newTable()
 
 	if len(config.Columns) != 0 {
-		fields = config.Columns
+		fields.SetVisible(config.Columns)
 		addTypeColumn = false
 	}
 
-	header := fields
+	header := fields.VisibleNames()
 	if addTypeColumn {
-		header = append(fields, "type")
+		header = append(header, "TYPE")
 	}
 	appendHeader(t, header)
 

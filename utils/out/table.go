@@ -6,18 +6,19 @@ import (
 	"reflect"
 
 	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
 
-func printTable(data interface{}, fields ...string) {
+func printTable(data interface{}, fields fields.Fields) {
 	t := newTable()
 
 	if len(config.Columns) != 0 {
-		fields = config.Columns
+		fields.SetVisible(config.Columns)
 	}
 
-	appendHeader(t, fields)
+	appendHeader(t, fields.VisibleNames())
 
 	resources := interfaceToInterfaceSlice(data)
 
@@ -45,14 +46,15 @@ func newTable() table.Writer {
 	return t
 }
 
-func resourceMapToRow(resourceMap map[string]interface{}, fields []string) []interface{} {
-	row := make([]interface{}, len(fields))
-	for i, field := range fields {
-		if value, found := resourceMap[field]; found && value != nil {
-			row[i] = trimCellValue(value)
+func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
+	row := make([]interface{}, fields.VisibleSize())
+	for i, field := range fields.VisibleFields() {
+		if value, found := resourceMap[field.JsonTag()]; found && value != nil {
+			row[i] = field.Format(value)
 		} else {
 			row[i] = ""
 		}
+		row[i] = trimCellValue(row[i])
 	}
 	return row
 }
@@ -80,7 +82,7 @@ func interfaceToInterfaceSlice(slice interface{}) []interface{} {
 func stringSliceToRow(fields []string) table.Row {
 	row := make([]interface{}, len(fields))
 	for i, field := range fields {
-		row[i] = formatFieldName(field)
+		row[i] = field
 	}
 	return row
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/gmap"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/spf13/cobra"
 )
 
@@ -17,47 +18,57 @@ func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	}
 }
 
-func AddOutputOnlyIDFlag(cmd *cobra.Command) {
-	cmd.Flags().BoolVarP(
-		&config.OutputOnlyID,
-		"id-only",
-		"I",
-		false,
-		"Output only the ID of the newly created resource (takes priority over the --format flag)",
-	)
-}
+type FlagCompCoreFunc func(cmd *cobra.Command, args []string, toComplete string) []string
 
-func AddLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().Int32VarP(&config.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
-}
-
-func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) error {
-	if !valid.Contains(flagValue) {
-		return cmderr.UnknownFlagValueError(flagName, flagValue, valid.Keys())
+func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f FlagCompCoreFunc) {
+	if err := cmd.RegisterFlagCompletionFunc(flagName, makeFlagCompFunc(f)); err != nil {
+		log.Fatal(err)
 	}
-	return nil
 }
 
-func AddSortByAndReverseFlags(cmd *cobra.Command, resultStructs ...interface{}) {
-	cmd.Flags().StringVarP(
-		&config.SortBy,
-		"sort-by",
-		"s",
-		"",
-		"Sort results by attribute value",
-	)
+func makeFlagCompFunc(f FlagCompCoreFunc) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return f(cmd, args, toComplete), cobra.ShellCompDirectiveNoFileComp
+	}
+}
 
-	cmd.Flags().BoolVarP(
-		&config.ReverseSortDirection,
-		"reverse",
-		"r",
-		false,
-		"Reverse order of results when passed with the --sort-by flag",
-	)
+func RegisterFlagCompletion(cmd *cobra.Command, flagName string, values ...string) {
+	RegisterFlagCompletionFunc(cmd, flagName, func(cmd *cobra.Command, args []string, toComplete string) []string {
+		return values
+	})
+}
 
-	commonTags := getCommonJsonTagsInStructs(resultStructs)
+func getStructFieldJsonTag(structType reflect.Type, i int) string {
+	return structType.Field(i).Tag.Get("json")
+}
 
-	SetFlagCompletionValues(cmd, "sort-by", commonTags...)
+func extractNameFromJsonTag(tag string) (name string) {
+	if strings.Count(tag, ",") == 0 {
+		name = tag
+	} else {
+		tokens := strings.Split(tag, ",")
+		name = tokens[0]
+	}
+	return
+}
+
+func getStructJsonTags(s interface{}) []string {
+	structType := reflect.ValueOf(s).Type()
+	structFieldCount := structType.NumField()
+	structFieldJsonTags := make([]string, structFieldCount)
+	for i := 0; i < structFieldCount; i++ {
+		tag := getStructFieldJsonTag(structType, i)
+		structFieldJsonTags[i] = extractNameFromJsonTag(tag)
+	}
+	return structFieldJsonTags
+}
+
+func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
+	freqMap := map[string]int{}
+	for _, str := range stringSlice {
+		freqMap[str] += 1
+	}
+	return freqMap
 }
 
 func getCommonJsonTagsInStructs(structs []interface{}) []string {
@@ -80,35 +91,54 @@ func getCommonJsonTagsInStructs(structs []interface{}) []string {
 	return commonJsonTags
 }
 
-func getStructJsonTags(s interface{}) []string {
-	structType := reflect.ValueOf(s).Type()
-	structFieldCount := structType.NumField()
-	structFieldJsonTags := make([]string, structFieldCount)
-	for i := 0; i < structFieldCount; i++ {
-		tag := getStructFieldJsonTag(structType, i)
-		structFieldJsonTags[i] = extractNameFromJsonTag(tag)
-	}
-	return structFieldJsonTags
+func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
+	cmd.Flags().StringVarP(
+		&config.SortBy,
+		"sort-by",
+		"S",
+		"",
+		"Sort results by attribute value",
+	)
+
+	cmd.Flags().BoolVarP(
+		&config.ReverseSortDirection,
+		"reverse",
+		"R",
+		false,
+		"Reverse order of results when passed with the --sort-by flag",
+	)
+
+	RegisterFlagCompletion(cmd, "sort-by", fields.AllNames()...)
 }
 
-func getStructFieldJsonTag(structType reflect.Type, i int) string {
-	return structType.Field(i).Tag.Get("json")
+func AddOutputOnlyIDFlag(cmd *cobra.Command) {
+	cmd.Flags().BoolVarP(
+		&config.OutputOnlyID,
+		"id-only",
+		"I",
+		false,
+		"Output only the ID of the newly created resource (takes priority over the --format flag)",
+	)
 }
 
-func extractNameFromJsonTag(tag string) (name string) {
-	if strings.Count(tag, ",") == 0 {
-		name = tag
-	} else {
-		tokens := strings.Split(tag, ",")
-		name = tokens[0]
-	}
-	return
+func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
+	cmd.Flags().StringSliceVarP(
+		&config.Columns,
+		"columns",
+		"C",
+		[]string{},
+		"Specify which columns to display in the output table",
+	)
+	RegisterFlagCompletion(cmd, "columns", fields.AllNames()...)
 }
 
-func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
-	freqMap := map[string]int{}
-	for _, str := range stringSlice {
-		freqMap[str] += 1
+func AddLimitFlag(cmd *cobra.Command) {
+	cmd.Flags().Int32VarP(&config.Limit, "limit", "L", 0, "Limit number of results (limitless by default)")
+}
+
+func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) error {
+	if !valid.Contains(flagValue) {
+		return cmderr.UnknownFlagValueError(flagName, flagValue, valid.Keys())
 	}
-	return freqMap
+	return nil
 }
