@@ -9,20 +9,17 @@ Context 'billing/rule/label/add'
     cid=$(taikun billing credential add $name -p $pass -u $url -l $user -I)
     id=$(taikun billing rule add $name -b $cid -l ed=vim -m abc --price 1 --price-rate 1 --type count -I)
   }
-
-  BeforeEach 'setup'
+  BeforeAll 'setup'
 
   cleanup() {
     taikun billing rule delete $id -q 2> /dev/null || true
     taikun billing credential delete $cid -q 2>/dev/null || true
   }
-
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   add_label() {
     taikun billing rule label add $id -l lang -v rust -q
   }
-
   Before 'add_label'
 
   Example 'add a label'

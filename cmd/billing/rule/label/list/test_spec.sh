@@ -9,15 +9,13 @@ Context 'billing/rule/label/list'
     cid=$(taikun billing credential add $name -p $pass -u $url -l $user -I)
     id=$(taikun billing rule add $name -b $cid -l ed=vim,lang=rust -m abc --price 1 --price-rate 1 --type count -I)
   }
-
-  BeforeEach 'setup'
+  BeforeAll 'setup'
 
   cleanup() {
     taikun billing rule delete $id -q 2> /dev/null || true
     taikun billing credential delete $cid -q 2>/dev/null || true
   }
-
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   Example 'list all labels'
     When call taikun billing rule label list $id --no-decorate

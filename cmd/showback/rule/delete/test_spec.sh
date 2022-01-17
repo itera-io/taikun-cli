@@ -15,12 +15,11 @@ Context 'showback/rule/delete'
       name=$(_rnd_name)
       id=$(taikun showback rule add $name -t sum -k general -m node --global-alert-limit 10 --price 1 -I)
     }
+    BeforeEach 'setup'
 
     cleanup() {
       taikun showback rule delete $id -q 2>/dev/null || true
     }
-
-    BeforeEach 'setup'
     AfterEach 'cleanup'
 
     Example 'delete existing showback rule'
