@@ -3,6 +3,7 @@ package delete
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/users"
@@ -10,7 +11,7 @@ import (
 )
 
 func NewCmdDelete() *cobra.Command {
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "delete <user-id>...",
 		Short: "Delete one or more users",
 		Args:  cobra.MinimumNArgs(1),
@@ -20,7 +21,9 @@ func NewCmdDelete() *cobra.Command {
 		Aliases: cmdutils.DeleteAliases,
 	}
 
-	return cmd
+	complete.CompleteArgsWithUserID(&cmd)
+
+	return &cmd
 }
 
 func deleteRun(id string) (err error) {

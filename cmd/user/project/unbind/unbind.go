@@ -3,6 +3,7 @@ package unbind
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/user_projects"
@@ -18,7 +19,7 @@ type UnbindOptions struct {
 func NewCmdUnbind() *cobra.Command {
 	var opts UnbindOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "unbind <user-id>",
 		Short: "Unbind a user from a project",
 		Args:  cobra.ExactArgs(1),
@@ -28,10 +29,12 @@ func NewCmdUnbind() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "project-id")
+	complete.CompleteArgsWithUserID(&cmd)
 
-	return cmd
+	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
+	cmdutils.MarkFlagRequired(&cmd, "project-id")
+
+	return &cmd
 }
 
 func unbindRun(opts *UnbindOptions) (err error) {

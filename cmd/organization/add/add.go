@@ -51,7 +51,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.VatNumber, "vat-number", "v", "", "VAT number")
 
 	cmd.Flags().StringVar(&opts.Country, "country", "", "Country")
-	cmdutils.RegisterFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
+	cmdutils.SetFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
 		completions = make([]string, 0)
 
 		apiClient, err := api.NewClient()

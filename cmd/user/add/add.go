@@ -40,7 +40,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(cmd, "role")
-	cmdutils.RegisterFlagCompletion(cmd, "role", types.UserRoles.Keys()...)
+	cmdutils.SetFlagCompletionValues(cmd, "role", types.UserRoles.Keys()...)
 
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")

@@ -48,14 +48,14 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Flavor, "flavor", "f", "", "Flavor (required)")
 	cmdutils.MarkFlagRequired(&cmd, "flavor")
-	cmdutils.RegisterFlagCompletionFunc(&cmd, "flavor", flavorCompletionFunc)
+	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", flavorCompletionFunc)
 
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
 
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
 	cmdutils.MarkFlagRequired(&cmd, "role")
-	cmdutils.RegisterFlagCompletion(&cmd, "role", types.ServerRoles.Keys()...)
+	cmdutils.SetFlagCompletionValues(&cmd, "role", types.ServerRoles.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 

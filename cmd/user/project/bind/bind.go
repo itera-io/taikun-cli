@@ -3,6 +3,7 @@ package bind
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikungoclient/client/user_projects"
@@ -18,7 +19,7 @@ type BindOptions struct {
 func NewCmdBind() *cobra.Command {
 	var opts BindOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "bind <user-id>",
 		Short: "Bind a user to a project",
 		Args:  cobra.ExactArgs(1),
@@ -28,10 +29,12 @@ func NewCmdBind() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "project-id")
+	complete.CompleteArgsWithUserID(&cmd)
 
-	return cmd
+	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
+	cmdutils.MarkFlagRequired(&cmd, "project-id")
+
+	return &cmd
 }
 
 func bindRun(opts *BindOptions) (err error) {
