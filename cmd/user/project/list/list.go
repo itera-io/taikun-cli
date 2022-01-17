@@ -3,6 +3,7 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
@@ -24,6 +25,8 @@ func NewCmdList() *cobra.Command {
 			return listRun(&opts)
 		},
 	}
+
+	complete.CompleteArgsWithUserID(&cmd)
 
 	return &cmd
 }
