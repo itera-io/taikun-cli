@@ -17,15 +17,23 @@ func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	}
 }
 
-func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective)) {
-	if err := cmd.RegisterFlagCompletionFunc(flagName, f); err != nil {
+type FlagCompCoreFunc func(cmd *cobra.Command, args []string, toComplete string) []string
+
+func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f FlagCompCoreFunc) {
+	if err := cmd.RegisterFlagCompletionFunc(flagName, makeFlagCompFunc(f)); err != nil {
 		log.Fatal(err)
 	}
 }
 
+func makeFlagCompFunc(f FlagCompCoreFunc) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return f(cmd, args, toComplete), cobra.ShellCompDirectiveNoFileComp
+	}
+}
+
 func RegisterFlagCompletion(cmd *cobra.Command, flagName string, values ...string) {
-	RegisterFlagCompletionFunc(cmd, flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return values, cobra.ShellCompDirectiveDefault
+	RegisterFlagCompletionFunc(cmd, flagName, func(cmd *cobra.Command, args []string, toComplete string) []string {
+		return values
 	})
 }
 

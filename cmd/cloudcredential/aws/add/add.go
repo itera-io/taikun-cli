@@ -40,24 +40,25 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.AWSRegion, "region", "r", "", "AWS Region (required)")
 	cmdutils.MarkFlagRequired(cmd, "region")
-	cmdutils.RegisterFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmdutils.RegisterFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
+		completions = make([]string, 0)
+
 		apiClient, err := api.NewClient()
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveDefault
+			return
 		}
 
 		params := aws.NewAwsRegionListParams().WithV(api.Version)
 		result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveDefault
+			return
 		}
 
-		regionNames := make([]string, 0)
 		for _, region := range result.Payload {
-			regionNames = append(regionNames, region.Region)
+			completions = append(completions, region.Region)
 		}
 
-		return regionNames, cobra.ShellCompDirectiveDefault
+		return
 	})
 
 	cmd.Flags().StringVarP(&opts.AWSAvailabilityZone, "availability-zone", "z", "", "AWS Availability Zone")
