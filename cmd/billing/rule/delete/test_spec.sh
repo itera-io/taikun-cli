@@ -6,16 +6,23 @@ Context 'billing/rule/delete'
     cid=$(taikun billing credential add -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
 
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
-    id=$(taikun billing rule add $name $flags -I)
   }
+  BeforeAll 'setup'
 
   cleanup() {
-    taikun billing rule delete $id -q 2>/dev/null || true
     taikun billing credential delete $cid -q 2>/dev/null || true
   }
+  AfterAll 'cleanup'
 
-  BeforeEach 'setup'
-  AfterEach 'cleanup'
+  add_rule() {
+    id=$(taikun billing rule add $name $flags -I)
+  }
+  BeforeEach 'add_rule'
+
+  rm_rule() {
+    taikun billing rule delete $id -q 2>/dev/null || true
+  }
+  AfterEach 'rm_rule'
 
   Example 'delete nonexistent billing rule'
     When call taikun billing rule delete 0
@@ -40,5 +47,4 @@ Context 'billing/rule/delete'
     The stderr should include 404
     The stderr should include 'Error: Failed to delete one or more resources'
   End
-
 End

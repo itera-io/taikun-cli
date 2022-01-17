@@ -4,13 +4,12 @@ Context 'showback/rule/label/clear'
     name=$(_rnd_name)
     id=$(taikun showback rule add $name -t count -k general -m any --global-alert-limit 3 --price 3 -I)
   }
+  BeforeAll 'setup'
 
   cleanup() {
     taikun showback rule delete $id -q 2>/dev/null || true
   }
-
-  BeforeEach 'setup'
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   add_and_clear_labels() {
     taikun showback rule label add $id --label foo0 --value bar0 --quiet

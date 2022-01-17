@@ -6,7 +6,7 @@ Context 'project/server/delete'
     pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --flavors $flavor -I)
   }
 
-  BeforeEach 'setup'
+  BeforeAll 'setup'
 
   cleanup() {
     if ! taikun project delete $pid -q 2>/dev/null; then
@@ -15,7 +15,7 @@ Context 'project/server/delete'
     taikun cloud-credential delete $ccid -q 2>/dev/null || true
   }
 
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   Context
 

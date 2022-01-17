@@ -10,15 +10,14 @@ Context 'billing/rule/list'
     id1=$(taikun billing rule add $name1 $flags -I)
     id2=$(taikun billing rule add $name2 $flags -I)
   }
+  BeforeAll 'setup'
 
   cleanup() {
     taikun billing rule delete $id1 -q 2>/dev/null || true
     taikun billing rule delete $id2 -q 2>/dev/null || true
     taikun billing credential delete $cid -q 2>/dev/null || true
   }
-
-  BeforeEach 'setup'
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   Example 'list all billing rules'
     When call taikun billing rule list --no-decorate

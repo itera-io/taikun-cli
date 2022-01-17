@@ -5,8 +5,7 @@ Context 'project/server/list'
     flavor=$(taikun cloud-credential flavors $ccid --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1)
     pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --flavors $flavor -I)
   }
-
-  BeforeEach 'setup'
+  BeforeAll 'setup'
 
   cleanup() {
     if ! taikun project delete $pid -q 2>/dev/null; then
@@ -14,8 +13,7 @@ Context 'project/server/list'
     fi
     taikun cloud-credential delete $ccid -q 2>/dev/null || true
   }
-
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   Example 'empty project'
     When call taikun project server list $pid --no-decorate
@@ -29,13 +27,11 @@ Context 'project/server/list'
       msid=$(taikun project server add $pid -n master -r kubemaster -f $flavor -I)
       wsid=$(taikun project server add $pid -n worker -r kubeworker -f $flavor -I)
     }
-
     Before 'add_servers'
 
     remove_servers() {
-      taikun project server delete $pid --server-ids $bsid,$msid,$wsid -q 2>/dev/null || true
+      taikun project server delete $pid --all -q
     }
-
     After 'remove_servers'
 
     Example 'project with 3 servers'

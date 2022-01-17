@@ -11,7 +11,7 @@ Context 'billing/rule/organization/unbind'
     id=$(taikun billing rule add $name -b $cid -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
   }
 
-  BeforeEach 'setup'
+  BeforeAll 'setup'
 
   cleanup() {
     taikun billing rule delete $id -q 2> /dev/null || true
@@ -19,7 +19,7 @@ Context 'billing/rule/organization/unbind'
     taikun organization delete $oid -q 2>/dev/null || true
   }
 
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   Context
     bind_unbind_org() {

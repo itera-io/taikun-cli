@@ -5,8 +5,7 @@ Context 'project/server/add'
     flavor=$(taikun cloud-credential flavors $ccid --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1)
     pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --flavors $flavor -I)
   }
-
-  BeforeEach 'setup'
+  BeforeAll 'setup'
 
   cleanup() {
     if ! taikun project delete $pid -q 2>/dev/null; then
@@ -14,21 +13,18 @@ Context 'project/server/add'
     fi
     taikun cloud-credential delete $ccid -q 2>/dev/null || true
   }
-
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   Context
     add_master() {
       msid=$(taikun project server add $pid --name master -r kubemaster -k foo=bar,bar=foo -f $flavor -I)
     }
-
-    BeforeEach 'add_master'
+    BeforeAll 'add_master'
 
     remove_master() {
       taikun project server delete $pid --server-ids $msid -q 2>/dev/null || true
     }
-
-    AfterEach 'remove_master'
+    AfterAll 'remove_master'
 
     Example 'add one server'
       When call taikun project server list $pid --no-decorate
@@ -43,5 +39,4 @@ Context 'project/server/add'
       The stderr should include 'Duplicate name occured'
     End
   End
-
 End

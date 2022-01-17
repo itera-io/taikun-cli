@@ -4,13 +4,12 @@ Context 'showback/rule/label/list'
     name=$(_rnd_name)
     id=$(taikun showback rule add $name -t sum -k general -m wat --global-alert-limit 4 --price 2 -I)
   }
+  BeforeAll 'setup'
 
   cleanup() {
     taikun showback rule delete $id -q 2>/dev/null || true
   }
-
-  BeforeEach 'setup'
-  AfterEach 'cleanup'
+  AfterAll 'cleanup'
 
   Example 'empty list'
     When call taikun showback rule label list $id --no-decorate
@@ -19,14 +18,12 @@ Context 'showback/rule/label/list'
   End
 
   Context
-
     add_labels() {
       taikun showback rule label add $id --label foo0 --value bar0 --quiet
       taikun showback rule label add $id --label foo1 --value bar1 --quiet
       taikun showback rule label add $id --label foo2 --value bar2 --quiet
     }
-
-    BeforeEach 'add_labels'
+    BeforeAll 'add_labels'
 
     Example 'list only one label'
       When call taikun showback rule label list $id --no-decorate --limit 1
@@ -39,7 +36,5 @@ Context 'showback/rule/label/list'
       The status should equal 0
       The lines of output should equal 3
     End
-
   End
-
 End

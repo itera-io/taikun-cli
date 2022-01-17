@@ -8,6 +8,7 @@ Context 'showback/rule/list'
       ids="$ids $id"
     done
   }
+  BeforeAll 'setup'
 
   cleanup() {
     for id in $ids; do
@@ -15,8 +16,6 @@ Context 'showback/rule/list'
     done
     taikun organization delete $oid -q
   }
-
-  BeforeAll 'setup'
   AfterAll 'cleanup'
 
   Example 'negative limit causes error'
