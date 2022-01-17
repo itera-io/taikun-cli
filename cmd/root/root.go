@@ -4,20 +4,8 @@ import (
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
-	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
-	"github.com/itera-io/taikun-cli/cmd/backupcredential"
-	"github.com/itera-io/taikun-cli/cmd/billing"
-	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile"
-	"github.com/itera-io/taikun-cli/cmd/organization"
-	"github.com/itera-io/taikun-cli/cmd/policyprofile"
-	"github.com/itera-io/taikun-cli/cmd/project"
-	"github.com/itera-io/taikun-cli/cmd/showback"
-	"github.com/itera-io/taikun-cli/cmd/slackconfiguration"
-	"github.com/itera-io/taikun-cli/cmd/user"
-	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
 
 	"github.com/spf13/cobra"
@@ -43,30 +31,23 @@ func NewCmdRoot() *cobra.Command {
 	setPersistentFlags(cmd)
 
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
-	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
-	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
-	cmd.AddCommand(billing.NewCmdBilling())
-	cmd.AddCommand(cloudcredential.NewCmdCloudCredential())
-	cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile())
-	cmd.AddCommand(organization.NewCmdOrganization())
-	cmd.AddCommand(policyprofile.NewCmdPolicyProfile())
-	cmd.AddCommand(project.NewCmdProject())
-	cmd.AddCommand(showback.NewCmdShowback())
-	cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration())
-	cmd.AddCommand(user.NewCmdUser())
-	cmd.AddCommand(whoami.NewCmdWhoAmI())
+	// cmd.AddCommand(alertingprofile.NewCmdAlertingProfile()) TODO
+	// cmd.AddCommand(backupcredential.NewCmdBackupCredential()) TODO
+	// cmd.AddCommand(billing.NewCmdBilling()) TODO
+	// cmd.AddCommand(cloudcredential.NewCmdCloudCredential()) TODO
+	// cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile()) TODO
+	// cmd.AddCommand(organization.NewCmdOrganization()) TODO
+	// cmd.AddCommand(policyprofile.NewCmdPolicyProfile()) TODO
+	// cmd.AddCommand(project.NewCmdProject()) TODO
+	// cmd.AddCommand(showback.NewCmdShowback()) TODO
+	// cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration()) TODO
+	// cmd.AddCommand(user.NewCmdUser()) TODO
+	// cmd.AddCommand(whoami.NewCmdWhoAmI()) TODO
 
 	return cmd
 }
 
 func setPersistentFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringSliceVarP(
-		&config.Columns,
-		"columns", "C",
-		[]string{},
-		"Specify which output columns to print (only valid for table format)",
-	)
-
 	cmd.PersistentFlags().BoolVar(
 		&config.NoDecorate,
 		"no-decorate",
