@@ -121,4 +121,6 @@ jobs:
           TAIKUN_EMAIL: ${{ secrets.TAIKUN_EMAIL }}
           TAIKUN_PASSWORD: ${{ secrets.TAIKUN_PASSWORD }}
         run: |
-          shellspec --shell bash --format tap --jobs $(nproc)
+          shellspec --shell bash --format tap --jobs $(nproc) | tee shellspec.log
+          echo 'Rerunning failed tests:'
+          ./scripts/tests/rerun_failed_tests.sh shellspec.log
