@@ -121,4 +121,4 @@ jobs:
           TAIKUN_EMAIL: ${{ secrets.TAIKUN_EMAIL }}
           TAIKUN_PASSWORD: ${{ secrets.TAIKUN_PASSWORD }}
         run: |
-          shellspec --shell bash --format tap
+          shellspec --shell bash --format tap --jobs $(nproc)
