@@ -52,7 +52,7 @@ func setPersistentFlags(cmd *cobra.Command) {
 		&config.NoDecorate,
 		"no-decorate",
 		false,
-		"Display tables without field names and separators",
+		"Display output table without field names and separators",
 	)
 
 	cmd.PersistentFlags().StringVarP(
