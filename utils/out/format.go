@@ -29,3 +29,10 @@ func resourceIDToString(id interface{}) string {
 	}
 	return fmt.Sprint(id)
 }
+
+func FormatDateTimeString(v interface{}) string {
+	dateTime := v.(string)
+	dateTime = strings.Replace(dateTime, "T", " ", 1)
+	dateTime = strings.Replace(dateTime, "Z", "", 1)
+	return dateTime
+}

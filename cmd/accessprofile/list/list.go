@@ -15,15 +15,33 @@ import (
 
 var listFields = fields.New(
 	[]*field.Field{
-		field.NewVisible("ID", "id"),
-		field.NewVisible("NAME", "name"),
-		field.NewVisible("ORG-NAME", "organizationName"),
-		field.NewVisible("HTTP-PROXY", "httpProxy"),
-		field.NewVisible("LOCKED", "isLocked"),
-		field.NewHidden("CREATED-BY", "createdBy"),
-		field.NewHidden("LAST-MODIFIED", "lastModified"),
-		field.NewHidden("LAST-MODIFIED-BY", "lastModifiedBy"),
-		field.NewHidden("ORG-ID", "organizationId"),
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG-NAME", "organizationName",
+		),
+		field.NewVisible(
+			"HTTP-PROXY", "httpProxy",
+		),
+		field.NewVisible(
+			"LOCKED", "isLocked",
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+		field.NewHiddenWithToStringFunc(
+			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"LAST-MODIFIED-BY", "lastModifiedBy",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
 	},
 )
 
