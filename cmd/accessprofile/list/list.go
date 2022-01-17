@@ -5,10 +5,26 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible("ID", "id"),
+		field.NewVisible("NAME", "name"),
+		field.NewVisible("ORG-NAME", "organizationName"),
+		field.NewVisible("HTTP-PROXY", "httpProxy"),
+		field.NewVisible("LOCKED", "isLocked"),
+		field.NewHidden("CREATED-BY", "createdBy"),
+		field.NewHidden("LAST-MODIFIED", "lastModified"),
+		field.NewHidden("LAST-MODIFIED-BY", "lastModifiedBy"),
+		field.NewHidden("ORG-ID", "organizationId"),
+	},
 )
 
 type ListOptions struct {
@@ -31,7 +47,8 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByAndReverseFlags(cmd, models.AccessProfilesListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, listFields)
+	cmdutils.AddColumnsFlag(cmd, listFields)
 
 	return cmd
 }
@@ -47,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		params = params.WithSortBy(config.GetSortByParam(listFields)).WithSortDirection(api.GetSortDirection())
 	}
 
 	var accessProfiles = make([]*models.AccessProfilesListDto, 0)
@@ -71,11 +88,6 @@ func listRun(opts *ListOptions) (err error) {
 		accessProfiles = accessProfiles[:config.Limit]
 	}
 
-	out.PrintResults(accessProfiles,
-		"id",
-		"name",
-		"organizationName",
-		"isLocked",
-	)
+	out.PrintResults(accessProfiles, listFields)
 	return
 }
