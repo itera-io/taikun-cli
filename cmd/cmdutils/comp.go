@@ -14,6 +14,10 @@ func SetFlagCompletionFunc(cmd *cobra.Command, flagName string, f completionCore
 	}
 }
 
+func SetArgsCompletionFunc(cmd *cobra.Command, f completionCoreFunc) {
+	cmd.ValidArgsFunction = makeCompletionFunc(f)
+}
+
 func makeCompletionFunc(f completionCoreFunc) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return f(cmd, args, toComplete), cobra.ShellCompDirectiveNoFileComp
