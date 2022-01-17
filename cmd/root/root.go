@@ -80,7 +80,7 @@ func setPersistentFlags(cmd *cobra.Command) {
 		config.OutputFormatTable,
 		fmt.Sprintf("Output format for list-type commands: one of %v", config.OutputFormats),
 	)
-	cmdutils.RegisterFlagCompletion(cmd, "format", config.OutputFormats...)
+	cmdutils.SetFlagCompletionValues(cmd, "format", config.OutputFormats...)
 
 	cmd.PersistentFlags().BoolVar(
 		&config.ShowLargeValues,

@@ -38,7 +38,7 @@ func NewCmdCheck() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.AWSRegion, "region", "r", "", "AWS Region (required)")
 	cmdutils.MarkFlagRequired(cmd, "region")
-	cmdutils.RegisterFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
+	cmdutils.SetFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
 		completions = make([]string, 0)
 
 		apiClient, err := api.NewClient()

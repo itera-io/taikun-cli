@@ -39,7 +39,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.RegisterFlagCompletion(&cmd, "type", types.SlackTypes.Keys()...)
+	cmdutils.SetFlagCompletionValues(&cmd, "type", types.SlackTypes.Keys()...)
 
 	cmd.Flags().StringVarP(&opts.URL, "url", "u", "", "URL (required)")
 	cmdutils.MarkFlagRequired(&cmd, "url")

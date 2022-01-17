@@ -46,7 +46,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Kind, "kind", "k", "", "Kind (required)")
 	cmdutils.MarkFlagRequired(&cmd, "kind")
-	cmdutils.RegisterFlagCompletion(&cmd, "kind", types.ShowbackKinds.Keys()...)
+	cmdutils.SetFlagCompletionValues(&cmd, "kind", types.ShowbackKinds.Keys()...)
 
 	cmd.Flags().StringVarP(&opts.MetricName, "metric-name", "m", "", "Metric name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "metric-name")
@@ -58,7 +58,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.RegisterFlagCompletion(&cmd, "type", types.PrometheusTypes.Keys()...)
+	cmdutils.SetFlagCompletionValues(&cmd, "type", types.PrometheusTypes.Keys()...)
 
 	cmd.Flags().Int32Var(&opts.ProjectAlertLimit, "project-alert-limit", 0, "Project alert limit")
 
