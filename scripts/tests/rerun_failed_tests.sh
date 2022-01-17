@@ -20,10 +20,18 @@ if [[ -z $fctx ]]; then
   exit 0
 fi
 
+failures=0
+
 for context in $fctx; do
   if [[ ! -d "./cmd/$context" ]]; then
     echo "Error: invalid context $context, please fix context name"
     exit 1
   fi
-  shellspec --shell bash --format tap --jobs $(nproc) ./cmd/$context
+  if ! shellspec --shell bash --format tap --jobs $(nproc) ./cmd/$context; then
+    failures=$((failures+1))
+  fi
 done
+
+if [[ $failures -gt 0 ]]; then
+  exit 1
+fi
