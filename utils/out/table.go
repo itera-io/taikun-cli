@@ -14,7 +14,9 @@ import (
 func printTable(data interface{}, fields fields.Fields) {
 	t := newTable()
 
-	if len(config.Columns) != 0 {
+	if config.AllColumns {
+		fields.ShowAll()
+	} else if len(config.Columns) != 0 {
 		fields.SetVisible(config.Columns)
 	}
 

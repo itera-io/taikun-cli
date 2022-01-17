@@ -42,7 +42,10 @@ func printTableWithDifferentTypes(
 
 	t := newTable()
 
-	if len(config.Columns) != 0 {
+	if config.AllColumns {
+		fields.ShowAll()
+		addTypeColumn = true
+	} else if len(config.Columns) != 0 {
 		fields.SetVisible(config.Columns)
 		addTypeColumn = false
 	}

@@ -66,6 +66,12 @@ func (f Fields) hideAll() {
 	}
 }
 
+func (f Fields) ShowAll() {
+	for _, field := range f.fields {
+		field.Show()
+	}
+}
+
 func (f Fields) get(fieldName string) *field.Field {
 	for _, field := range f.fields {
 		if field.Matches(fieldName) {

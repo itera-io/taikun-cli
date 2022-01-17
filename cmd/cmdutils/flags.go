@@ -130,6 +130,14 @@ func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
 		"Specify which columns to display in the output table",
 	)
 	RegisterFlagCompletion(cmd, "columns", fields.AllNames()...)
+
+	cmd.Flags().BoolVarP(
+		&config.AllColumns,
+		"all-columns",
+		"A",
+		false,
+		"Display all columns in the output table (takes priority over the --columns flag)",
+	)
 }
 
 func AddLimitFlag(cmd *cobra.Command) {

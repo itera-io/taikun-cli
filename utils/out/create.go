@@ -31,7 +31,9 @@ func printResourceID(resource interface{}) {
 }
 
 func printApiResponseTable(response interface{}, fields fields.Fields) {
-	if len(config.Columns) != 0 {
+	if config.AllColumns {
+		fields.ShowAll()
+	} else if len(config.Columns) != 0 {
 		fields.SetVisible(config.Columns)
 	}
 
