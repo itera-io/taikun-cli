@@ -22,7 +22,7 @@ var listFields = fields.New(
 			"NAME", "name",
 		),
 		field.NewVisible(
-			"ORG-NAME", "organizationName",
+			"ORG", "organizationName",
 		),
 		field.NewVisible(
 			"HTTP-PROXY", "httpProxy",
