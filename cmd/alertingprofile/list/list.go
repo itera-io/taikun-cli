@@ -66,7 +66,7 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddLimitFlag(&cmd)
-	cmdutils.AddSortByAndReverseFlags(&cmd, listFields)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "alerting-profiles", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd

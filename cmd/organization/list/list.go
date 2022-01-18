@@ -90,7 +90,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddSortByAndReverseFlags(&cmd, ListFields)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "organizations", ListFields)
 	cmdutils.AddColumnsFlag(&cmd, ListFields)
 	cmdutils.AddLimitFlag(&cmd)
 
