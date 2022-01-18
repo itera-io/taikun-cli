@@ -100,6 +100,10 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
 		"Sort results by attribute value",
 	)
 
+	fieldNames := fields.AllNames()
+	lowerStringSlice(fieldNames)
+	RegisterFlagCompletion(cmd, "sort-by", fieldNames...)
+
 	cmd.Flags().BoolVarP(
 		&config.ReverseSortDirection,
 		"reverse",
@@ -107,8 +111,6 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
 		false,
 		"Reverse order of results when passed with the --sort-by flag",
 	)
-
-	RegisterFlagCompletion(cmd, "sort-by", fields.AllNames()...)
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {
