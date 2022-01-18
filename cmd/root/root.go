@@ -7,6 +7,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
 
@@ -38,7 +39,7 @@ func NewCmdRoot() *cobra.Command {
 	// cmd.AddCommand(billing.NewCmdBilling()) TODO
 	// cmd.AddCommand(cloudcredential.NewCmdCloudCredential()) TODO
 	// cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile()) TODO
-	// cmd.AddCommand(organization.NewCmdOrganization()) TODO
+	cmd.AddCommand(organization.NewCmdOrganization())
 	// cmd.AddCommand(policyprofile.NewCmdPolicyProfile()) TODO
 	// cmd.AddCommand(project.NewCmdProject()) TODO
 	// cmd.AddCommand(showback.NewCmdShowback()) TODO

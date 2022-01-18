@@ -3,11 +3,19 @@ package info
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/organization/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/spf13/cobra"
 )
+
+var infoFields = list.ListFields
+
+func init() {
+	infoFields.ShowAll()
+}
 
 type InfoOptions struct {
 	OrganizationID int32
@@ -29,6 +37,8 @@ func NewCmdInfo() *cobra.Command {
 		},
 	}
 
+	cmdutils.AddColumnsFlag(&cmd, infoFields)
+
 	return &cmd
 }
 
@@ -49,7 +59,7 @@ func infoRun(opts *InfoOptions) (err error) {
 		return cmderr.ResourceNotFoundError("Organization", opts.OrganizationID)
 	}
 
-	out.PrintResult(response.Payload.Data[0])
+	out.PrintResult(response.Payload.Data[0], infoFields)
 
 	return
 }

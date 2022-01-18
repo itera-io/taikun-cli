@@ -5,14 +5,81 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
+var ListFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"FULL-NAME", "fullName",
+		),
+		field.NewVisible(
+			"DISCOUNT-RATE", "discountRate",
+		),
+		field.NewVisible(
+			"PARTNER", "partnerName",
+		),
+		field.NewVisible(
+			"LOCKED", "isLocked",
+		),
+		field.NewVisible(
+			"READ-ONLY", "isReadOnly",
+		),
+		field.NewHidden(
+			"EMAIL", "email",
+		),
+		field.NewHidden(
+			"BILLING-EMAIL", "billingEmail",
+		),
+		field.NewHidden(
+			"CITY", "city",
+		),
+		field.NewHidden(
+			"COUNTRY", "country",
+		),
+		field.NewHidden(
+			"PHONE", "phone",
+		),
+		field.NewHidden(
+			"VAT", "vatNumber",
+		),
+		field.NewHidden(
+			"SUBSCRIPTION-UPDATES", "isEligibleUpdateSubscription",
+		),
+		field.NewHidden(
+			"PARTNER-ID", "partnerId",
+		),
+		field.NewHidden(
+			"CLOUD-CREDENTIALS", "cloudCredentials",
+		),
+		field.NewHidden(
+			"PROJECTS", "projects",
+		),
+		field.NewHidden(
+			"SERVERS", "servers",
+		),
+		field.NewHidden(
+			"USERS", "users",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+	},
+)
+
 func NewCmdList() *cobra.Command {
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -22,10 +89,11 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddSortByAndReverseFlags(cmd, models.OrganizationDetailsDto{})
-	cmdutils.AddLimitFlag(cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, ListFields)
+	cmdutils.AddColumnsFlag(&cmd, ListFields)
+	cmdutils.AddLimitFlag(&cmd)
 
-	return cmd
+	return &cmd
 }
 
 func listRun() (err error) {
@@ -36,7 +104,7 @@ func listRun() (err error) {
 
 	params := organizations.NewOrganizationsListParams().WithV(api.Version)
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		params = params.WithSortBy(config.GetSortByParam(ListFields)).WithSortDirection(api.GetSortDirection())
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
@@ -60,14 +128,6 @@ func listRun() (err error) {
 		organizations = organizations[:config.Limit]
 	}
 
-	out.PrintResults(organizations,
-		"id",
-		"name",
-		"fullName",
-		"discountRate",
-		"partnerName",
-		"isLocked",
-		"isReadOnly",
-	)
+	out.PrintResults(organizations, ListFields)
 	return
 }
