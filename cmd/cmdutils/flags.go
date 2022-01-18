@@ -2,7 +2,6 @@ package cmdutils
 
 import (
 	"log"
-	"reflect"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/api"
@@ -14,23 +13,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type FlagCompCoreFunc func(cmd *cobra.Command, args []string, toComplete string) []string
+
 func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	if err := cmd.MarkFlagRequired(flag); err != nil {
 		log.Fatal(err)
 	}
 }
 
-type FlagCompCoreFunc func(cmd *cobra.Command, args []string, toComplete string) []string
-
 func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f FlagCompCoreFunc) {
 	if err := cmd.RegisterFlagCompletionFunc(flagName, makeFlagCompFunc(f)); err != nil {
 		log.Fatal(err)
-	}
-}
-
-func makeFlagCompFunc(f FlagCompCoreFunc) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return f(cmd, args, toComplete), cobra.ShellCompDirectiveNoFileComp
 	}
 }
 
@@ -40,57 +33,10 @@ func RegisterFlagCompletion(cmd *cobra.Command, flagName string, values ...strin
 	})
 }
 
-func getStructFieldJsonTag(structType reflect.Type, i int) string {
-	return structType.Field(i).Tag.Get("json")
-}
-
-func extractNameFromJsonTag(tag string) (name string) {
-	if strings.Count(tag, ",") == 0 {
-		name = tag
-	} else {
-		tokens := strings.Split(tag, ",")
-		name = tokens[0]
+func makeFlagCompFunc(f FlagCompCoreFunc) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return f(cmd, args, toComplete), cobra.ShellCompDirectiveNoFileComp
 	}
-	return
-}
-
-func getStructJsonTags(s interface{}) []string {
-	structType := reflect.ValueOf(s).Type()
-	structFieldCount := structType.NumField()
-	structFieldJsonTags := make([]string, structFieldCount)
-	for i := 0; i < structFieldCount; i++ {
-		tag := getStructFieldJsonTag(structType, i)
-		structFieldJsonTags[i] = extractNameFromJsonTag(tag)
-	}
-	return structFieldJsonTags
-}
-
-func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
-	freqMap := map[string]int{}
-	for _, str := range stringSlice {
-		freqMap[str] += 1
-	}
-	return freqMap
-}
-
-func getCommonJsonTagsInStructs(structs []interface{}) []string {
-	jsonTags := make([]string, 0)
-
-	for _, s := range structs {
-		jsonTags = append(jsonTags, getStructJsonTags(s)...)
-	}
-
-	jsonTagsFreqMap := frequencyMapFromStringSlice(jsonTags)
-
-	structsCount := len(structs)
-	commonJsonTags := make([]string, 0)
-	for jsonTag, jsonTagFreq := range jsonTagsFreqMap {
-		if jsonTagFreq == structsCount {
-			commonJsonTags = append(commonJsonTags, jsonTag)
-		}
-	}
-
-	return commonJsonTags
 }
 
 func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields.Fields) {
