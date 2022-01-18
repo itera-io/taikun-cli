@@ -24,9 +24,6 @@ func NewCmdRoot() *cobra.Command {
 			if !config.OutputFormatIsValid() {
 				return cmderr.OutputFormatInvalidError
 			}
-			if config.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			return nil
 		},
 	}

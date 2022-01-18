@@ -153,6 +153,15 @@ func lowerStringSlice(stringSlice []string) {
 
 func AddLimitFlag(cmd *cobra.Command) {
 	cmd.Flags().Int32VarP(&config.Limit, "limit", "L", 0, "Limit number of results (limitless by default)")
+	cmd.PreRunE = aggregateRunE(cmd.PreRunE,
+		func(cmd *cobra.Command, args []string) error {
+			if config.Limit < 0 {
+				return cmderr.NegativeLimitFlagError
+			}
+			return nil
+		},
+	)
+
 }
 
 func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) error {
