@@ -7,11 +7,34 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"ALERTING-PROFILE", "alertingProfileName",
+		),
+		field.NewVisible(
+			"URL", "url",
+		),
+		field.NewVisible(
+			"TOKEN", "token",
+		),
+		field.NewVisible(
+			"TYPE", "alertingIntegrationType",
+		),
+		// TODO check json
+	},
 )
 
 type AddOptions struct {
@@ -24,7 +47,7 @@ type AddOptions struct {
 func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "add <alerting-profile-id>",
 		Short: "Add an integration to an alerting profile",
 		Args:  cobra.ExactArgs(1),
@@ -44,17 +67,18 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.URL, "url", "u", "", "URL (required)")
-	cmdutils.MarkFlagRequired(cmd, "url")
+	cmdutils.MarkFlagRequired(&cmd, "url")
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
-	cmdutils.MarkFlagRequired(cmd, "type")
-	cmdutils.SetFlagCompletionValues(cmd, "type", types.AlertingIntegrationTypes.Keys()...)
+	cmdutils.MarkFlagRequired(&cmd, "type")
+	cmdutils.SetFlagCompletionValues(&cmd, "type", types.AlertingIntegrationTypes.Keys()...)
 
 	cmd.Flags().StringVar(&opts.Token, "token", "", "Token")
 
-	cmdutils.AddOutputOnlyIDFlag(cmd)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
-	return cmd
+	return &cmd
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -74,13 +98,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(api.Version).WithBody(&body)
 	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"alertingProfileName",
-			"url",
-			"token",
-			"alertingIntegrationType",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return

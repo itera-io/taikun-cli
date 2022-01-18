@@ -8,10 +8,21 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"URL", "url",
+		),
+	},
+	// TODO check json
 )
 
 type ListOptions struct {
@@ -63,8 +74,6 @@ func listRun(opts *ListOptions) (err error) {
 		alertingWebhooks = alertingWebhooks[:config.Limit]
 	}
 
-	out.PrintResults(alertingWebhooks,
-		"url",
-	)
+	out.PrintResults(alertingWebhooks, listFields)
 	return
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
@@ -32,7 +33,7 @@ func NewCmdRoot() *cobra.Command {
 	setPersistentFlags(cmd)
 
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
-	// cmd.AddCommand(alertingprofile.NewCmdAlertingProfile()) TODO
+	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
 	// cmd.AddCommand(backupcredential.NewCmdBackupCredential()) TODO
 	// cmd.AddCommand(billing.NewCmdBilling()) TODO
 	// cmd.AddCommand(cloudcredential.NewCmdCloudCredential()) TODO
