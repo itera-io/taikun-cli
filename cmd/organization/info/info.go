@@ -13,10 +13,6 @@ import (
 
 var infoFields = list.ListFields
 
-func init() {
-	infoFields.ShowAll()
-}
-
 type InfoOptions struct {
 	OrganizationID int32
 }
@@ -33,6 +29,7 @@ func NewCmdInfo() *cobra.Command {
 			if err != nil {
 				return
 			}
+			infoFields.ShowAll()
 			return infoRun(&opts)
 		},
 	}
