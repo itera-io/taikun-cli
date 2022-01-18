@@ -117,7 +117,7 @@ func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error)
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		params = params.WithSortBy(config.GetSortByParam(ListFields)).WithSortDirection(api.GetSortDirection())
 	}
 
 	userList = make([]*models.UserForListDto, 0)
