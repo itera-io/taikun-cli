@@ -3,6 +3,8 @@ package out
 import (
 	"encoding/json"
 	"log"
+
+	"github.com/itera-io/taikun-cli/cmd/cmdutils/options"
 )
 
 const (
@@ -10,8 +12,8 @@ const (
 	prettyPrintIndent = "    "
 )
 
-func prettyPrintJson(data interface{}) {
-	Println(string(marshalJsonData(data)))
+func prettyPrintJson(opts options.Outputter, data interface{}) {
+	Println(opts, string(marshalJsonData(data)))
 }
 
 func marshalJsonData(data interface{}) []byte {

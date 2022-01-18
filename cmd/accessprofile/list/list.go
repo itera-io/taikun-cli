@@ -3,7 +3,6 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fieldnames"
@@ -48,12 +47,40 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+
+	Limit int32
+
+	SortBy               string
+	ReverseSortDirection bool
+
+	Columns    []string
+	AllColumns bool
 }
+
+// func (opts *ListOptions) GetLimitOption() *int32 {
+// 	return &opts.Limit
+// }
+
+// func (opts *ListOptions) GetSortByOption() *string {
+// 	return &opts.SortBy
+// }
+
+// func (opts *ListOptions) GetReverseSortDirectionOption() *bool {
+// 	return &opts.ReverseSortDirection
+// }
+
+// func (opts *ListOptions) GetColumnsOption() []string {
+// 	return opts.Columns
+// }
+
+// func (opts *ListOptions) GetAllColumnsOption() *bool {
+// 	return &opts.AllColumns
+// }
 
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List access profiles",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -65,11 +92,11 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByAndReverseFlags(cmd, listFields)
-	cmdutils.AddColumnsFlag(cmd, listFields)
+	cmdutils.AddLimitFlag(&cmd, &opts)
+	cmdutils.AddSortByAndReverseFlags(&cmd, &opts, listFields)
+	cmdutils.AddColumnsFlag(&cmd, &opts, listFields)
 
-	return cmd
+	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -82,8 +109,8 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if config.SortBy != "" {
-		params = params.WithSortBy(config.GetSortByParam(listFields)).WithSortDirection(api.GetSortDirection())
+	if opts.SortBy != "" {
+		params = params.WithSortBy(opts.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var accessProfiles = make([]*models.AccessProfilesListDto, 0)
@@ -94,7 +121,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		accessProfiles = append(accessProfiles, response.Payload.Data...)
 		count := int32(len(accessProfiles))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -103,8 +130,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(accessProfiles)) > config.Limit {
-		accessProfiles = accessProfiles[:config.Limit]
+	if opts.Limit != 0 && int32(len(accessProfiles)) > opts.Limit {
+		accessProfiles = accessProfiles[:opts.Limit]
 	}
 
 	out.PrintResults(accessProfiles, listFields)

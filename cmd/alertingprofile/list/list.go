@@ -3,7 +3,6 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fieldnames"
@@ -82,8 +81,8 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
-	if config.SortBy != "" {
-		params = params.WithSortBy(config.GetSortByParam(listFields)).WithSortDirection(api.GetSortDirection())
+	if opts.SortBy != "" {
+		params = params.WithSortBy(opts.GetSortByParam(listFields)).WithSortDirection(api.GetSortDirection())
 	}
 
 	var alertingProfiles = make([]*models.AlertingProfilesListDto, 0)
@@ -94,7 +93,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		alertingProfiles = append(alertingProfiles, response.Payload.Data...)
 		alertingProfilesCount := int32(len(alertingProfiles))
-		if config.Limit != 0 && alertingProfilesCount >= config.Limit {
+		if opts.Limit != 0 && alertingProfilesCount >= opts.Limit {
 			break
 		}
 		if alertingProfilesCount == response.Payload.TotalCount {
@@ -103,8 +102,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&alertingProfilesCount)
 	}
 
-	if config.Limit != 0 && int32(len(alertingProfiles)) > config.Limit {
-		alertingProfiles = alertingProfiles[:config.Limit]
+	if opts.Limit != 0 && int32(len(alertingProfiles)) > opts.Limit {
+		alertingProfiles = alertingProfiles[:opts.Limit]
 	}
 
 	out.PrintResults(alertingProfiles, listFields)

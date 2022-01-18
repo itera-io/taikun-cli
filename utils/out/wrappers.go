@@ -3,30 +3,30 @@ package out
 import (
 	"fmt"
 
-	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils/options"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-func Println(a ...interface{}) {
-	if !config.Quiet {
+func Println(opts options.Outputter, a ...interface{}) {
+	if !*opts.GetQuietOption() {
 		fmt.Println(a...)
 	}
 }
 
-func Printf(format string, a ...interface{}) {
-	if !config.Quiet {
+func Printf(opts options.Outputter, format string, a ...interface{}) {
+	if !*opts.GetQuietOption() {
 		fmt.Printf(format, a...)
 	}
 }
 
-func Print(a ...interface{}) {
-	if !config.Quiet {
+func Print(opts options.Outputter, a ...interface{}) {
+	if !*opts.GetQuietOption() {
 		fmt.Print(a...)
 	}
 }
 
-func renderTable(t table.Writer) {
-	if !config.Quiet {
+func renderTable(opts options.Outputter, t table.Writer) {
+	if !*opts.GetQuietOption() {
 		t.Render()
 	}
 }

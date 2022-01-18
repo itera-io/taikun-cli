@@ -64,7 +64,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().StringSliceVarP(&opts.DNSServers, "dns-servers", "d", []string{}, "DNS Servers")
 	cmd.Flags().StringSliceVarP(&opts.NTPServers, "ntp-servers", "n", []string{}, "NTP Servers")
-	cmdutils.AddOutputOnlyIDFlag(cmd)
+	cmdutils.AddOutputOnlyIDFlag(opts, cmd)
 	cmdutils.AddColumnsFlag(cmd, addFields)
 
 	return cmd

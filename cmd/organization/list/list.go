@@ -3,7 +3,6 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fieldnames"
@@ -104,8 +103,8 @@ func listRun() (err error) {
 	}
 
 	params := organizations.NewOrganizationsListParams().WithV(api.Version)
-	if config.SortBy != "" {
-		params = params.WithSortBy(config.GetSortByParam(ListFields)).WithSortDirection(api.GetSortDirection())
+	if opts.SortBy != "" {
+		params = params.WithSortBy(opts.GetSortByParam(ListFields)).WithSortDirection(api.GetSortDirection())
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
@@ -116,7 +115,7 @@ func listRun() (err error) {
 		}
 		organizations = append(organizations, response.Payload.Data...)
 		organizationsCount := int32(len(organizations))
-		if config.Limit != 0 && organizationsCount >= config.Limit {
+		if opts.Limit != 0 && organizationsCount >= opts.Limit {
 			break
 		}
 		if organizationsCount == response.Payload.TotalCount {
@@ -125,8 +124,8 @@ func listRun() (err error) {
 		params = params.WithOffset(&organizationsCount)
 	}
 
-	if config.Limit != 0 && int32(len(organizations)) > config.Limit {
-		organizations = organizations[:config.Limit]
+	if opts.Limit != 0 && int32(len(organizations)) > opts.Limit {
+		organizations = organizations[:opts.Limit]
 	}
 
 	out.PrintResults(organizations, ListFields)

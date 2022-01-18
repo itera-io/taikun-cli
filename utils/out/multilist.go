@@ -3,7 +3,7 @@ package out
 import (
 	"log"
 
-	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils/options"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 )
 
@@ -17,18 +17,21 @@ import (
 func PrintResultsOfDifferentTypes(
 	resourceSlices []interface{},
 	resourceTypes []string,
+	opts interface{},
 	fields fields.Fields,
 ) {
-	if config.OutputFormat == config.OutputFormatJson {
+	outputOpts := opts.(options.Outputter)
+	if *outputOpts.GetOutputFormatOption() == options.OutputFormatJson {
 		for _, slice := range resourceSlices {
-			prettyPrintJson(slice)
+			prettyPrintJson(outputOpts, slice)
 		}
-	} else if config.OutputFormat == config.OutputFormatTable {
-		printTableWithDifferentTypes(resourceSlices, resourceTypes, fields)
+	} else if *outputOpts.GetOutputFormatOption() == options.OutputFormatTable {
+		printTableWithDifferentTypes(opts.(options.TableWriter), resourceSlices, resourceTypes, fields)
 	}
 }
 
 func printTableWithDifferentTypes(
+	opts interface{},
 	resourceSlices []interface{},
 	resourceTypes []string,
 	fields fields.Fields,
@@ -40,13 +43,14 @@ func printTableWithDifferentTypes(
 		log.Fatal("PrintMultipleResults: resourcesSlices and resourceTypes must have the same length")
 	}
 
-	t := newTable()
+	tableOpts := opts.(options.TableWriter)
+	t := newTable(tableOpts)
 
-	if config.AllColumns {
+	if *tableOpts.GetAllColumnsOption() {
 		fields.ShowAll()
 		addTypeColumn = true
-	} else if len(config.Columns) != 0 {
-		fields.SetVisible(config.Columns)
+	} else if len(*tableOpts.GetColumnsOption()) != 0 {
+		fields.SetVisible(*tableOpts.GetColumnsOption())
 		addTypeColumn = false
 	}
 
@@ -54,13 +58,13 @@ func printTableWithDifferentTypes(
 	if addTypeColumn {
 		header = append(header, "TYPE")
 	}
-	appendHeader(t, header)
+	appendHeader(tableOpts, t, header)
 
 	for resourceIndex, resourcesData := range resourceSlices {
 		resources := resourcesData.([]interface{})
 		resourceMaps := jsonObjectsToMaps(resources)
 		for _, resourceMap := range resourceMaps {
-			row := resourceMapToRow(resourceMap, fields)
+			row := resourceMapToRow(tableOpts, resourceMap, fields)
 			if addTypeColumn {
 				row = append(row, resourceTypes[resourceIndex])
 			}
@@ -68,5 +72,5 @@ func printTableWithDifferentTypes(
 		}
 	}
 
-	renderTable(t)
+	renderTable(opts.(options.Outputter), t)
 }

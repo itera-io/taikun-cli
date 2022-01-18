@@ -5,34 +5,35 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils/options"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
 
-func printTable(data interface{}, fields fields.Fields) {
-	t := newTable()
+func printTable(opts options.TableWriter, data interface{}, fields fields.Fields) {
+	tableOpts := opts.(options.TableWriter)
+	t := newTable(tableOpts)
 
-	if config.AllColumns {
+	if *tableOpts.GetAllColumnsOption() {
 		fields.ShowAll()
-	} else if len(config.Columns) != 0 {
-		fields.SetVisible(config.Columns)
+	} else if len(*tableOpts.GetColumnsOption()) != 0 {
+		fields.SetVisible(*tableOpts.GetColumnsOption())
 	}
 
-	appendHeader(t, fields.VisibleNames())
+	appendHeader(tableOpts, t, fields.VisibleNames())
 
 	resources := interfaceToInterfaceSlice(data)
 
 	resourceMaps := jsonObjectsToMaps(resources)
 	for _, resourceMap := range resourceMaps {
-		t.AppendRow(resourceMapToRow(resourceMap, fields))
+		t.AppendRow(resourceMapToRow(tableOpts, resourceMap, fields))
 	}
 
-	renderTable(t)
+	renderTable(opts.(options.Outputter), t)
 }
 
-func newTable() table.Writer {
+func newTable(opts options.TableWriter) table.Writer {
 	t := table.NewWriter()
 
 	t.SetOutputMirror(os.Stdout)
@@ -40,7 +41,7 @@ func newTable() table.Writer {
 	t.Style().Format.Header = text.FormatDefault
 	t.Style().Options = table.OptionsNoBorders
 
-	if config.NoDecorate {
+	if *opts.GetNoDecorateOption() {
 		t.Style().Options = table.OptionsNoBordersAndSeparators
 		t.Style().Box.PaddingLeft = ""
 	}
@@ -48,7 +49,7 @@ func newTable() table.Writer {
 	return t
 }
 
-func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
+func resourceMapToRow(opts options.TableWriter, resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
 	row := make([]interface{}, fields.VisibleSize())
 	for i, field := range fields.VisibleFields() {
 		if value, found := resourceMap[field.JsonTag()]; found && value != nil {
@@ -56,7 +57,7 @@ func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) 
 		} else {
 			row[i] = ""
 		}
-		row[i] = trimCellValue(row[i])
+		row[i] = trimCellValue(opts, row[i])
 	}
 	return row
 }
@@ -89,8 +90,8 @@ func stringSliceToRow(fields []string) table.Row {
 	return row
 }
 
-func appendHeader(t table.Writer, fields []string) {
-	if !config.NoDecorate {
+func appendHeader(opts options.TableWriter, t table.Writer, fields []string) {
+	if !*opts.GetNoDecorateOption() {
 		t.AppendHeader(stringSliceToRow(fields))
 	}
 }

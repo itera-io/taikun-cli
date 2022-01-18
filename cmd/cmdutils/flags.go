@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils/options"
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/spf13/cobra"
@@ -91,9 +91,10 @@ func getCommonJsonTagsInStructs(structs []interface{}) []string {
 	return commonJsonTags
 }
 
-func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
+// TODO move to options package
+func AddSortByAndReverseFlags(cmd *cobra.Command, opts options.ListSorter, fields fields.Fields) {
 	cmd.Flags().StringVarP(
-		&config.SortBy,
+		opts.GetSortByOption(),
 		"sort-by",
 		"S",
 		"",
@@ -105,7 +106,7 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
 	RegisterFlagCompletion(cmd, "sort-by", fieldNames...)
 
 	cmd.Flags().BoolVarP(
-		&config.ReverseSortDirection,
+		opts.GetReverseSortDirectionOption(),
 		"reverse",
 		"R",
 		false,
@@ -113,9 +114,10 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
 	)
 }
 
-func AddOutputOnlyIDFlag(cmd *cobra.Command) {
+// TODO move to options package
+func AddOutputOnlyIDFlag(cmd *cobra.Command, opts options.Creator) {
 	cmd.Flags().BoolVarP(
-		&config.OutputOnlyID,
+		opts.GetOutputOnlyIDOption(),
 		"id-only",
 		"I",
 		false,
@@ -123,9 +125,10 @@ func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 	)
 }
 
-func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
+// TODO move to options package
+func AddColumnsFlag(cmd *cobra.Command, opts options.TableWriter, fields fields.Fields) {
 	cmd.Flags().StringSliceVarP(
-		&config.Columns,
+		opts.GetColumnsOption(),
 		"columns",
 		"C",
 		[]string{},
@@ -136,7 +139,7 @@ func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
 	RegisterFlagCompletion(cmd, "columns", columns...)
 
 	cmd.Flags().BoolVarP(
-		&config.AllColumns,
+		opts.GetAllColumnsOption(),
 		"all-columns",
 		"A",
 		false,
@@ -151,8 +154,9 @@ func lowerStringSlice(stringSlice []string) {
 	}
 }
 
-func AddLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().Int32VarP(&config.Limit, "limit", "L", 0, "Limit number of results (limitless by default)")
+// TODO move to options package
+func AddLimitFlag(cmd *cobra.Command, opts options.ListLimiter) {
+	cmd.Flags().Int32VarP(opts.GetLimitOption(), "limit", "L", 0, "Limit number of results (limitless by default)")
 }
 
 func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) error {

@@ -1,26 +1,21 @@
 package api
 
-import "github.com/itera-io/taikun-cli/config"
+const (
+	// API version
+	Version = "1"
 
-// API version
-const Version = "1"
+	// Name of default access profile
+	DefaultAccessProfileName = "default"
 
-// Names of default profiles
-const DefaultAccessProfileName = "default"
-const DefaultAlertingProfileName = "default"
-const DefaultKubernetesProfileName = "default"
+	// Name of default alerting profile
+	DefaultAlertingProfileName = "default"
 
-// Name of field in ApiResponse containing resource info
-const ResultField = "result"
+	// Name of default Kubernetes profile
+	DefaultKubernetesProfileName = "default"
 
-// Name of payload field
-const PayloadField = "Payload"
+	// Name of field in ApiResponse containing resource info
+	ResultField = "result"
 
-// Sort direction to use when listing resources
-func GetSortDirection() *string {
-	var sortDirection string = "asc"
-	if config.ReverseSortDirection {
-		sortDirection = "desc"
-	}
-	return &sortDirection
-}
+	// Name of payload field
+	PayloadField = "Payload"
+)

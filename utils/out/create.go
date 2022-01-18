@@ -5,41 +5,44 @@ import (
 	"os"
 
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils/options"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 )
 
-func PrintResult(resource interface{}, fields fields.Fields) {
-	if config.OutputOnlyID {
-		printResourceID(resource)
+func PrintResult(resource interface{}, opts interface{}, fields fields.Fields) {
+	createOpts := opts.(options.Creator)
+	if *createOpts.GetOutputOnlyIDOption() {
+		printResourceID(opts.(options.Outputter), resource)
 	} else {
-		if config.OutputFormat == config.OutputFormatJson {
-			prettyPrintJson(resource)
-		} else if config.OutputFormat == config.OutputFormatTable {
-			printApiResponseTable(resource, fields)
+		outputOpts := opts.(options.Outputter)
+		if *outputOpts.GetOutputFormatOption() == options.OutputFormatJson {
+			prettyPrintJson(outputOpts, resource)
+		} else if *outputOpts.GetOutputFormatOption() == options.OutputFormatTable {
+			printApiResponseTable(opts.(options.TableWriter), resource, fields)
 		}
 	}
 }
 
-func printResourceID(resource interface{}) {
+func printResourceID(opts options.Outputter, resource interface{}) {
 	resourceMap := jsonObjectToMap(resource)
 	if id, found := resourceMap["id"]; found {
-		Println(resourceIDToString(id))
+		Println(opts, resourceIDToString(id))
 	} else {
 		fmt.Fprintln(os.Stderr, "ID not found")
 	}
 }
 
-func printApiResponseTable(response interface{}, fields fields.Fields) {
-	if config.AllColumns {
+func printApiResponseTable(opts interface{}, response interface{}, fields fields.Fields) {
+	tableOpts := opts.(options.TableWriter)
+	if *tableOpts.GetAllColumnsOption() {
 		fields.ShowAll()
-	} else if len(config.Columns) != 0 {
-		fields.SetVisible(config.Columns)
+	} else if len(*tableOpts.GetColumnsOption()) != 0 {
+		fields.SetVisible(*tableOpts.GetColumnsOption())
 	}
 
 	resourceMap := getApiResponseResourceMap(response)
 
-	t := newTable()
+	t := newTable(tableOpts)
 	for _, field := range fields.VisibleFields() {
 		t.AppendRow([]interface{}{
 			field.Name(),
@@ -47,7 +50,7 @@ func printApiResponseTable(response interface{}, fields fields.Fields) {
 		})
 	}
 
-	renderTable(t)
+	renderTable(opts.(options.Outputter), t)
 }
 
 func getApiResponseResourceMap(response interface{}) map[string]interface{} {

@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils/options"
 )
 
 const maxColumnWidth = 50
 const trimmedValueSuffix = "..."
 
-func trimCellValue(value interface{}) interface{} {
-	if !config.ShowLargeValues {
+func trimCellValue(opts options.TableWriter, value interface{}) interface{} {
+	if !*opts.GetShowLargeValuesOption() {
 		if str, isString := value.(string); isString {
 			if len(str) > maxColumnWidth {
 				str = str[:(maxColumnWidth - len(trimmedValueSuffix))]
