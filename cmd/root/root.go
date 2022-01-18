@@ -6,6 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
 
 	"github.com/spf13/cobra"
@@ -42,7 +43,7 @@ func NewCmdRoot() *cobra.Command {
 	// cmd.AddCommand(showback.NewCmdShowback()) TODO
 	// cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration()) TODO
 	// cmd.AddCommand(user.NewCmdUser()) TODO
-	// cmd.AddCommand(whoami.NewCmdWhoAmI()) TODO
+	cmd.AddCommand(whoami.NewCmdWhoAmI())
 
 	return cmd
 }
