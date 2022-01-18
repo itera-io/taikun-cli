@@ -23,18 +23,17 @@ Context 'alertingprofile'
       AfterEach 'del_profile'
 
       Example 'add and then remove'
-        When call taikun alerting-profile list -o $oid --no-decorate
+        When call taikun alerting-profile list -o $oid --columns name,reminder --no-decorate
         The status should equal 0
         The lines of output should equal 2 # counting the default
         The output should include "$name"
-        The output should include "daily"
+        The output should include "Daily"
       End
 
       Example 'duplicate name causes error'
         When call taikun alerting-profile add $name --reminder daily -o $oid
         The status should equal 1
-        The stderr should include 'already exists'
-        The stderr should include "$name"
+        The stderr should include 'Please specify another name'
       End
 
       Example 'invalid reminder causes error'
