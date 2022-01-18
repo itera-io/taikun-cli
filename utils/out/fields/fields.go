@@ -2,6 +2,7 @@ package fields
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -49,15 +50,36 @@ func (f Fields) VisibleSize() int {
 // Override the default visibility settings and display only the given fields
 func (f Fields) SetVisible(fieldNames []string) {
 	f.hideAll()
-	for _, fieldName := range fieldNames {
-		field := f.get(fieldName)
-		if field == nil {
+	for rank, fieldName := range fieldNames {
+		i := f.getFieldIndex(fieldName)
+		if i == -1 {
 			fmt.Fprintf(os.Stderr, "Error: unknown field name '%s'\n", fieldName)
 			os.Exit(1)
 		} else {
-			field.Show()
+			f.fields[i].Show()
+			f.moveFieldBack(i, rank)
 		}
 	}
+}
+
+func (f Fields) getFieldIndex(fieldName string) int {
+	for i, field := range f.fields {
+		if field.Matches(fieldName) {
+			return i
+		}
+	}
+	return -1
+}
+
+func (f Fields) moveFieldBack(source int, destination int) {
+	if destination > source {
+		log.Fatal("Fields.moveFieldBack: destination must not be greater than source")
+	}
+	sourceField := f.fields[source]
+	for i := source; i > destination; i-- {
+		f.fields[i] = f.fields[i-1]
+	}
+	f.fields[destination] = sourceField
 }
 
 func (f Fields) hideAll() {
@@ -70,15 +92,6 @@ func (f Fields) ShowAll() {
 	for _, field := range f.fields {
 		field.Show()
 	}
-}
-
-func (f Fields) get(fieldName string) *field.Field {
-	for _, field := range f.fields {
-		if field.Matches(fieldName) {
-			return field
-		}
-	}
-	return nil
 }
 
 // Get the list of all field names
