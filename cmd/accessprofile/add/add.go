@@ -24,16 +24,16 @@ var addFields = fields.New(
 			"ORG", "organizationName",
 		),
 		field.NewVisible(
-			"HTTP-PROXY", "httpProxy",
+			"ORG-ID", "organizationId",
 		),
 		field.NewVisible(
+			"HTTP-PROXY", "httpProxy",
+		),
+		field.NewHidden(
 			"LOCKED", "isLocked",
 		),
 		field.NewHidden(
 			"CREATED-BY", "createdBy",
-		),
-		field.NewHidden(
-			"ORG-ID", "organizationId",
 		),
 	},
 )
