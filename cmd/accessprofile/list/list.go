@@ -6,6 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fieldnames"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
@@ -27,8 +28,8 @@ var listFields = fields.New(
 		field.NewVisible(
 			"HTTP-PROXY", "httpProxy",
 		),
-		field.NewVisible(
-			"LOCKED", "isLocked",
+		field.NewVisibleWithToStringFunc(
+			fieldnames.IsLocked, "isLocked", out.FormatLockStatus,
 		),
 		field.NewVisibleWithToStringFunc(
 			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,

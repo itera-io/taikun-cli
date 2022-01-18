@@ -36,3 +36,11 @@ func FormatDateTimeString(v interface{}) string {
 	dateTime = strings.Replace(dateTime, "Z", "", 1)
 	return dateTime
 }
+
+func FormatLockStatus(v interface{}) string {
+	lockStatus := v.(bool)
+	if lockStatus {
+		return "Locked"
+	}
+	return "Unlocked"
+}
