@@ -375,8 +375,8 @@ github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/itera-io/taikungoclient v0.0.0-20220104003129-b6b306951f4b h1:GvH46laRCnydphymhbhDY1D12tBOjdQ+E4Klbrtevgo=
-github.com/itera-io/taikungoclient v0.0.0-20220104003129-b6b306951f4b/go.mod h1:YQa5kM/9pR9G1mKtJwfbeCz4/Il1+EcF9xXQx2WmwUY=
+github.com/itera-io/taikungoclient v0.0.0-20220118164339-fdcb7b599ac7 h1:wU8HyBN7lZgqIWSLUTFEsKlua9SRhRj1BfuiMd76EEM=
+github.com/itera-io/taikungoclient v0.0.0-20220118164339-fdcb7b599ac7/go.mod h1:YQa5kM/9pR9G1mKtJwfbeCz4/Il1+EcF9xXQx2WmwUY=
 github.com/jedib0t/go-pretty/v6 v6.2.4 h1:wdaj2KHD2W+mz8JgJ/Q6L/T5dB7kyqEFI16eLq7GEmk=
 github.com/jedib0t/go-pretty/v6 v6.2.4/go.mod h1:+nE9fyyHGil+PuISTCrp7avEdo6bqoMwqZnuiK2r2a0=
 github.com/jmespath/go-jmespath v0.4.0/go.mod h1:T8mJZnbsbmF+m6zOOFylbeCJqk5+pHWvzYPziyZiYoo=
