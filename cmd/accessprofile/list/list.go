@@ -30,11 +30,11 @@ var listFields = fields.New(
 		field.NewVisible(
 			"LOCKED", "isLocked",
 		),
+		field.NewVisibleWithToStringFunc(
+			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
+		),
 		field.NewHidden(
 			"CREATED-BY", "createdBy",
-		),
-		field.NewHiddenWithToStringFunc(
-			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
 		),
 		field.NewHidden(
 			"LAST-MODIFIED-BY", "lastModifiedBy",
