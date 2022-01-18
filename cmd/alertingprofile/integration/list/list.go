@@ -31,7 +31,6 @@ var listFields = fields.New(
 		field.NewVisible(
 			"TYPE", "alertingIntegrationType",
 		),
-		// TODO check json
 	},
 )
 

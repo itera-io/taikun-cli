@@ -25,16 +25,18 @@ var addFields = fields.New(
 			"ORG", "organizationName",
 		),
 		field.NewVisible(
-			"SLACK-CONFIG", "slackConfigurationName",
+			"ORG-ID", "organizationId",
 		),
 		field.NewVisible(
 			"REMINDER", "reminder",
 		),
 		field.NewVisible(
+			"SLACK-CONFIG", "slackConfigurationName",
+		),
+		field.NewHidden(
 			"LOCKED", "isLocked",
 		),
 	},
-	// TODO check json
 )
 
 type AddOptions struct {

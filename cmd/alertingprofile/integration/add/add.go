@@ -22,18 +22,8 @@ var addFields = fields.New(
 			"ID", "id",
 		),
 		field.NewVisible(
-			"ALERTING-PROFILE", "alertingProfileName",
-		),
-		field.NewVisible(
 			"URL", "url",
 		),
-		field.NewVisible(
-			"TOKEN", "token",
-		),
-		field.NewVisible(
-			"TYPE", "alertingIntegrationType",
-		),
-		// TODO check json
 	},
 )
 

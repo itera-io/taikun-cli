@@ -22,7 +22,6 @@ var listFields = fields.New(
 			"URL", "url",
 		),
 	},
-	// TODO check json
 )
 
 type ListOptions struct {
