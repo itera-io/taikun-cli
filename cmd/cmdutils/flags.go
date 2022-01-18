@@ -5,10 +5,12 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/spf13/cobra"
 )
 
@@ -91,7 +93,7 @@ func getCommonJsonTagsInStructs(structs []interface{}) []string {
 	return commonJsonTags
 }
 
-func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
+func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields.Fields) {
 	cmd.Flags().StringVarP(
 		&config.SortBy,
 		"sort-by",
@@ -102,7 +104,27 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
 
 	fieldNames := fields.AllNames()
 	lowerStringSlice(fieldNames)
-	RegisterFlagCompletion(cmd, "sort-by", fieldNames...)
+	RegisterFlagCompletionFunc(cmd, "sort-by", func(cmd *cobra.Command, args []string, toComplete string) []string {
+		sortingElements, err := getSortingElements(sortType)
+		if err != nil {
+			return []string{}
+		}
+
+		completions := make([]string, 0)
+		for _, jsonTag := range sortingElements {
+			for _, field := range fields.AllFields() {
+				if field.JsonTag() == jsonTag {
+					completions = append(completions, field.Name())
+					break
+				}
+			}
+		}
+
+		lowerStringSlice(completions)
+
+		return completions
+	},
+	)
 
 	cmd.Flags().BoolVarP(
 		&config.ReverseSortDirection,
@@ -111,6 +133,25 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, fields fields.Fields) {
 		false,
 		"Reverse order of results when passed with the --sort-by flag",
 	)
+}
+
+func getSortingElements(sortType string) (sortingElements []string, err error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := common.NewCommonGetSortingElementsParams().WithV(api.Version)
+	params = params.WithType(sortType)
+
+	response, err := apiClient.Client.Common.CommonGetSortingElements(params, apiClient)
+	if err != nil {
+		return
+	}
+
+	sortingElements = response.Payload
+
+	return
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {
