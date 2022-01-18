@@ -27,7 +27,7 @@ func NewVisible(name string, jsonTag string) *Field {
 	return &Field{
 		name:     name,
 		jsonTag:  jsonTag,
-		toString: defaultToString,
+		toString: FormatByDefault,
 		visible:  true,
 	}
 }
@@ -37,14 +37,20 @@ func NewHidden(name string, jsonTag string) *Field {
 	return &Field{
 		name:     name,
 		jsonTag:  jsonTag,
-		toString: defaultToString,
+		toString: FormatByDefault,
 		visible:  false,
 	}
 }
 
-func defaultToString(v interface{}) string {
+func FormatByDefault(v interface{}) string {
 	if v == nil {
 		return ""
+	}
+	if b, ok := v.(bool); ok {
+		if b {
+			return "Yes"
+		}
+		return "No"
 	}
 	return fmt.Sprint(v)
 }
