@@ -4,10 +4,35 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/openstack"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "cloudCredentialName",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewVisible(
+			"PROJECT", "openStackProject",
+		),
+		field.NewVisible(
+			"USER", "openStackUser",
+		),
+		field.NewVisible(
+			"LOCK", "isLocked",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -29,7 +54,7 @@ type AddOptions struct {
 func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "add <name>",
 		Short: "Add an OpenStack cloud credential",
 		Args:  cobra.ExactArgs(1),
@@ -40,25 +65,25 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "OpenStack Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "username")
+	cmdutils.MarkFlagRequired(&cmd, "username")
 
 	cmd.Flags().StringVarP(&opts.Password, "password", "p", "", "OpenStack Password (required)")
-	cmdutils.MarkFlagRequired(cmd, "password")
+	cmdutils.MarkFlagRequired(&cmd, "password")
 
 	cmd.Flags().StringVarP(&opts.Domain, "domain", "d", "", "OpenStack Domain (required)")
-	cmdutils.MarkFlagRequired(cmd, "domain")
+	cmdutils.MarkFlagRequired(&cmd, "domain")
 
 	cmd.Flags().StringVar(&opts.URL, "url", "", "OpenStack URL (required)")
-	cmdutils.MarkFlagRequired(cmd, "url")
+	cmdutils.MarkFlagRequired(&cmd, "url")
 
 	cmd.Flags().StringVar(&opts.Project, "project", "", "OpenStack Project (required)")
-	cmdutils.MarkFlagRequired(cmd, "project")
+	cmdutils.MarkFlagRequired(&cmd, "project")
 
 	cmd.Flags().StringVarP(&opts.Region, "region", "r", "", "OpenStack Region (required)")
-	cmdutils.MarkFlagRequired(cmd, "region")
+	cmdutils.MarkFlagRequired(&cmd, "region")
 
 	cmd.Flags().StringVar(&opts.PublicNetwork, "public-network", "", "OpenStack Public Network (required)")
-	cmdutils.MarkFlagRequired(cmd, "public-network")
+	cmdutils.MarkFlagRequired(&cmd, "public-network")
 
 	cmd.Flags().StringVar(&opts.AvailabilityZone, "availability-zone", "", "OpenStack Availability Zone")
 	cmd.Flags().StringVar(&opts.InternalSubnetId, "internal-subnet-id", "", "OpenStack Internal Subnet ID")
@@ -67,9 +92,10 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
-	cmdutils.AddOutputOnlyIDFlag(cmd)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
-	return cmd
+	return &cmd
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -97,14 +123,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := openstack.NewOpenstackCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.Openstack.OpenstackCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"cloudCredentialName",
-			"organizationName",
-			"openStackProject",
-			"openStackUser",
-			"isLocked",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return
