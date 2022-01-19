@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 )
 
@@ -55,7 +56,7 @@ func (f Fields) SetFieldJsonTag(name string, jsonTag string) error {
 
 // Returns whether or not the field's name is valid
 func fieldNameIsValid(name string) bool {
-	maxFieldNameLength := 24
+	maxFieldNameLength := config.MaxCellWidth
 	if len(name) == 0 || len(name) > maxFieldNameLength {
 		return false
 	}

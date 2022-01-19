@@ -9,14 +9,13 @@ import (
 	"github.com/itera-io/taikun-cli/utils/types"
 )
 
-const maxColumnWidth = 50
 const trimmedValueSuffix = "..."
 
 func trimCellValue(value interface{}) interface{} {
 	if !config.ShowLargeValues {
 		if str, isString := value.(string); isString {
-			if len(str) > maxColumnWidth {
-				str = str[:(maxColumnWidth - len(trimmedValueSuffix))]
+			if len(str) > config.MaxCellWidth {
+				str = str[:(config.MaxCellWidth - len(trimmedValueSuffix))]
 				str += trimmedValueSuffix
 			}
 			return str
