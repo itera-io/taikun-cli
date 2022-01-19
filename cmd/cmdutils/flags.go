@@ -55,9 +55,7 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 			}
 		}
 
-		lowerStringSlice(completions)
-
-		return completions
+		return lowerStringSlice(completions)
 	}
 }
 
@@ -98,9 +96,7 @@ func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
 		[]string{},
 		"Specify which columns to display in the output table",
 	)
-	columns := fields.AllNames()
-	lowerStringSlice(columns)
-	SetFlagCompletionValues(cmd, "columns", columns...)
+	SetFlagCompletionValues(cmd, "columns", lowerStringSlice(fields.AllNames())...)
 
 	cmd.Flags().BoolVarP(
 		&config.AllColumns,
@@ -111,11 +107,12 @@ func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
 	)
 }
 
-func lowerStringSlice(stringSlice []string) {
-	size := len(stringSlice)
-	for i := 0; i < size; i++ {
-		stringSlice[i] = strings.ToLower(stringSlice[i])
+func lowerStringSlice(stringSlice []string) []string {
+	lower := make([]string, len(stringSlice))
+	for i, str := range stringSlice {
+		lower[i] = strings.ToLower(str)
 	}
+	return lower
 }
 
 func AddLimitFlag(cmd *cobra.Command) {
