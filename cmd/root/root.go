@@ -12,6 +12,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile"
 	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/cmd/project"
+	"github.com/itera-io/taikun-cli/cmd/slackconfiguration"
 	"github.com/itera-io/taikun-cli/cmd/user"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
@@ -45,7 +46,7 @@ func NewCmdRoot() *cobra.Command {
 	// cmd.AddCommand(policyprofile.NewCmdPolicyProfile()) TODO
 	cmd.AddCommand(project.NewCmdProject())
 	// cmd.AddCommand(showback.NewCmdShowback()) TODO
-	// cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration()) TODO
+	cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration())
 	cmd.AddCommand(user.NewCmdUser())
 	cmd.AddCommand(whoami.NewCmdWhoAmI())
 

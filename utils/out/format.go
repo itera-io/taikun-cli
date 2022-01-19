@@ -127,3 +127,11 @@ func FormatID(v interface{}) string {
 	}
 	return "N/A"
 }
+
+// Format Slack channel
+func FormatSlackChannel(v interface{}) string {
+	if channel, ok := v.(string); ok {
+		return fmt.Sprintf("#%s", channel)
+	}
+	return "N/A"
+}

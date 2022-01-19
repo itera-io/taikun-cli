@@ -4,10 +4,20 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/slack"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -76,9 +86,7 @@ func addRun(opts *AddOptions) (err error) {
 		payload := map[string]interface{}{
 			"id": response.Payload,
 		}
-		out.PrintResult(payload,
-			"id",
-		)
+		out.PrintResult(payload, addFields)
 	}
 
 	return
