@@ -57,6 +57,9 @@ func printTableWithDifferentTypes(
 	appendHeader(t, header)
 
 	for resourceIndex, resourcesData := range resourceSlices {
+		if resourceIndex > 0 {
+			appendSeparator(t)
+		}
 		resources := resourcesData.([]interface{})
 		resourceMaps := jsonObjectsToMaps(resources)
 		for _, resourceMap := range resourceMaps {

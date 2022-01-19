@@ -94,3 +94,9 @@ func appendHeader(t table.Writer, fields []string) {
 		t.AppendHeader(stringSliceToRow(fields))
 	}
 }
+
+func appendSeparator(t table.Writer) {
+	if !config.NoDecorate {
+		t.AppendSeparator()
+	}
+}

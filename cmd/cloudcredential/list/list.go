@@ -44,7 +44,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "list",
-		Short: "List cloud credentials",
+		Short: "List all cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun(&opts)
 		},
