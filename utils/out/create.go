@@ -43,7 +43,7 @@ func printApiResponseTable(response interface{}, fields fields.Fields) {
 	for _, field := range fields.VisibleFields() {
 		t.AppendRow([]interface{}{
 			field.Name(),
-			field.Format(resourceMap[field.JsonTag()]),
+			trimCellValue(field.Format(resourceMap[field.JsonTag()])),
 		})
 	}
 
