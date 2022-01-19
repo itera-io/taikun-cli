@@ -30,23 +30,38 @@ func resourceIDToString(id interface{}) string {
 	return fmt.Sprint(id)
 }
 
+// Format a datetime string with format '<YYYY>-<MM>-<DD>T<HH>:<MM>:<SS>Z'
 func FormatDateTimeString(v interface{}) string {
-	if v == nil {
-		return "N/A"
+	if dateTime, ok := v.(string); ok {
+		if dateTime == "" {
+			return "N/A"
+		}
+		dateTime = strings.Replace(dateTime, "T", " ", 1)
+		dateTime = strings.Replace(dateTime, "Z", "", 1)
+		return dateTime
 	}
-	dateTime := v.(string)
-	if dateTime == "" {
-		return "N/A"
-	}
-	dateTime = strings.Replace(dateTime, "T", " ", 1)
-	dateTime = strings.Replace(dateTime, "Z", "", 1)
-	return dateTime
+	return "N/A"
+
 }
 
+// Display true/false as Locked/Unlocked
 func FormatLockStatus(v interface{}) string {
-	lockStatus := v.(bool)
-	if lockStatus {
-		return "Locked"
+	if lockStatus, ok := v.(bool); ok {
+		if lockStatus {
+			return "Locked"
+		}
+		return "Unlocked"
 	}
-	return "Unlocked"
+	return "N/A"
+}
+
+// If not availabale, display N/A
+func FormatProjectHealth(v interface{}) string {
+	if health, ok := v.(string); ok {
+		if health == "None" {
+			return "N/A"
+		}
+		return health
+	}
+	return "N/A"
 }

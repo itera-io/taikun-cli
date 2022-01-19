@@ -42,9 +42,10 @@ func NewHidden(name string, jsonTag string) *Field {
 	}
 }
 
+// Default field formatting function
 func FormatByDefault(v interface{}) string {
 	if v == nil {
-		return ""
+		return "N/A"
 	}
 	if b, ok := v.(bool); ok {
 		if b {
