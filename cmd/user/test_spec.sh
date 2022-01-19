@@ -19,12 +19,12 @@ Context 'user'
         username=$(_rnd_name)
         uid=$(taikun user add $username --role user --email "${username}@mailinator.com" -o $oid -I)
       }
-      BeforeEach 'add_user'
+      BeforeAll 'add_user'
 
       del_user() {
         taikun user delete $uid -q
       }
-      AfterEach 'del_user'
+      AfterAll 'del_user'
 
       Example 'add and then remove'
         When call taikun user list -o $oid --no-decorate
@@ -46,27 +46,24 @@ Context 'user'
         The stderr should include 'already exists'
         The stderr should include "${username}@mailinator.com"
       End
-    End
 
-    Context
-      add_and_bind_user() {
-        username=$(_rnd_name)
-        uid=$(taikun user add $username --role user --email "${username}@mailinator.com" -o $oid -I)
-        taikun user project bind $uid --project-id $pid -q
-      }
-      Before 'add_and_bind_user'
+      Context
+        bind() {
+          taikun user project bind $uid --project-id $pid -q
+        }
+        BeforeEach 'bind'
 
-      unbind_and_delete_user() {
-        taikun user project unbind $uid --project-id $pid -q 2>/dev/null || true # TODO remove failsafe
-        taikun user delete $uid -q
-      }
-      After 'unbind_and_delete_user'
+        unbind() {
+          taikun user project unbind $uid --project-id $pid -q 2>/dev/null || true # TODO remove failsafe
 
-      Example 'bind and unbind'
-        When call taikun user project list $uid --no-decorate
-        The status should equal 0
-        The lines of output should equal 1
+        }
+        AfterEach 'unbind'
+
+        Example 'bind and unbind'
+          When call taikun user project list $uid --no-decorate
+          The status should equal 0
+          The lines of output should equal 1
+        End
       End
     End
-
 End
