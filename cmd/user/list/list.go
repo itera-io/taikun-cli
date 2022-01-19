@@ -21,14 +21,14 @@ var ListFields = fields.New(
 		field.NewVisible(
 			"NAME", "username",
 		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
 		field.NewHidden(
 			"DISPLAY-NAME", "displayName",
 		),
 		field.NewVisible(
 			"ROLE", "role",
-		),
-		field.NewVisible(
-			"ORG", "organizationName",
 		),
 		field.NewHidden(
 			"ORG-ID", "organizationId",
@@ -57,7 +57,7 @@ var ListFields = fields.New(
 		field.NewHidden(
 			"MUST-RESET-PASSWORD", "isForcedToResetPassword",
 		),
-		field.NewHiddenWithToStringFunc(
+		field.NewVisibleWithToStringFunc(
 			"LOCK", "isLocked", out.FormatLockStatus,
 		),
 		field.NewHidden(

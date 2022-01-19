@@ -30,12 +30,6 @@ var ListFields = fields.New(
 		field.NewVisible(
 			"PARTNER", "partnerName",
 		),
-		field.NewVisibleWithToStringFunc(
-			"LOCK", "isLocked", out.FormatLockStatus,
-		),
-		field.NewVisible(
-			"READ-ONLY", "isReadOnly",
-		),
 		field.NewHidden(
 			"EMAIL", "email",
 		),
@@ -71,6 +65,12 @@ var ListFields = fields.New(
 		),
 		field.NewHidden(
 			"USERS", "users",
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewHidden(
+			"READ-ONLY", "isReadOnly",
 		),
 		field.NewHiddenWithToStringFunc(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,
