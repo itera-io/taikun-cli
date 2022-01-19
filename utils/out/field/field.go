@@ -105,8 +105,7 @@ func (f *Field) Show() {
 	f.visible = true
 }
 
-// Whether the field matches the given identifying string
-func (f *Field) Matches(id string) bool {
-	id = strings.ToLower(id)
-	return strings.ToLower(f.name) == id || strings.ToLower(f.jsonTag) == id
+// Whether the field's name matches the given string (case-insensitive)
+func (f *Field) NameMatches(name string) bool {
+	return strings.ToLower(f.name) == strings.ToLower(name)
 }

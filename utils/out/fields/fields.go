@@ -36,6 +36,17 @@ func (f Fields) VisibleFields() []*field.Field {
 	return fields
 }
 
+// Get JSON tag of field with the given name
+// Returns empty string of no field has the given name
+func (f Fields) GetJsonTagFromName(name string) string {
+	for _, field := range f.fields {
+		if field.NameMatches(name) {
+			return field.JsonTag()
+		}
+	}
+	return ""
+}
+
 // Get number of visible fields
 func (f Fields) VisibleSize() int {
 	size := 0
@@ -64,7 +75,7 @@ func (f Fields) SetVisible(fieldNames []string) {
 
 func (f Fields) getFieldIndex(fieldName string) int {
 	for i, field := range f.fields {
-		if field.Matches(fieldName) {
+		if field.NameMatches(fieldName) {
 			return i
 		}
 	}
