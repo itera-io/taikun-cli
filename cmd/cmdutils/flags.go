@@ -27,10 +27,19 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields
 		"",
 		"Sort results by attribute value",
 	)
+	SetFlagCompletionFunc(cmd, "sort-by", makeSortByCompletionFunc(sortType, fields))
 
-	fieldNames := fields.AllNames()
-	lowerStringSlice(fieldNames)
-	SetFlagCompletionFunc(cmd, "sort-by", func(cmd *cobra.Command, args []string, toComplete string) []string {
+	cmd.Flags().BoolVarP(
+		&config.ReverseSortDirection,
+		"reverse",
+		"R",
+		false,
+		"Reverse order of results when passed with the --sort-by flag",
+	)
+}
+
+func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *cobra.Command, args []string, toComplete string) []string {
+	return func(cmd *cobra.Command, args []string, toComplete string) []string {
 		sortingElements, err := getSortingElements(sortType)
 		if err != nil {
 			return []string{}
@@ -49,16 +58,7 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields
 		lowerStringSlice(completions)
 
 		return completions
-	},
-	)
-
-	cmd.Flags().BoolVarP(
-		&config.ReverseSortDirection,
-		"reverse",
-		"R",
-		false,
-		"Reverse order of results when passed with the --sort-by flag",
-	)
+	}
 }
 
 func getSortingElements(sortType string) (sortingElements []string, err error) {
