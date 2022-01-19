@@ -28,11 +28,11 @@ var addFields = fields.New(
 		field.NewVisible(
 			"CPU", "cpu",
 		),
-		field.NewVisible(
-			"RAM", "ram",
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatBToGiB,
 		),
-		field.NewVisible(
-			"DISK-SIZE", "diskSize",
+		field.NewVisibleWithToStringFunc(
+			"DISK", "diskSize", out.FormatBToGiB,
 		),
 		field.NewVisible(
 			"ROLE", "role",
@@ -40,9 +40,16 @@ var addFields = fields.New(
 		field.NewVisible(
 			"STATUS", "status",
 		),
+		field.NewHiddenWithToStringFunc(
+			"CLOUDTYPE", "cloudType", out.FormatCloudType,
+		),
+		field.NewHidden(
+			"PROJECT", "projectName",
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
 	},
-	// TODO check JSON
-	// TODO FORMAT???
 )
 
 type AddOptions struct {

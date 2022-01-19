@@ -19,26 +19,30 @@ var listFields = fields.New(
 			"ID", "id",
 		),
 		field.NewVisible(
-			"CPU", "cpu",
+			"PROJECT", "projectName",
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
+		field.NewVisibleWithToStringFunc(
+			"CPU", "cpu", out.FormatNumber,
 		),
 		field.NewVisible(
 			"UNLIMITED-CPU", "isCpuUnlimited",
 		),
-		field.NewVisible(
-			"DISK-SIZE", "diskSize",
+		field.NewVisibleWithToStringFunc(
+			"DISK", "diskSize", out.FormatBToGiB,
 		),
 		field.NewVisible(
-			"UNLIMITED-DISK-SIZE", "isDiskSizeUnlimited",
+			"UNLIMITED-DISK", "isDiskSizeUnlimited",
 		),
-		field.NewVisible(
-			"RAM", "ram",
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatBToGiB,
 		),
 		field.NewVisible(
 			"UNLIMITED-RAM", "isRamUnlimited",
 		),
 	},
-	// TODO format sizes
-	// TODO check JSON
 )
 
 type ListOptions struct {

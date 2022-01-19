@@ -15,13 +15,15 @@ import (
 var etcFields = fields.New(
 	[]*field.Field{
 		field.NewVisible(
-			"OPERATION", "operation", // TODO add placeholder when no operation yet
+			"OPERATION", "operation",
 		),
-		field.NewVisible(
-			"ESTIMATEDTIME", "estimatedTime", // TODO add formatter with time unit
+		field.NewVisibleWithToStringFunc(
+			"ESTIMATED-TIME", "estimatedTime", out.FormatETC,
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
 		),
 	},
-	// TODO check JSON
 )
 
 type EtcOptions struct {

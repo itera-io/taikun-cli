@@ -20,26 +20,33 @@ var listFields = fields.New(
 			"NAME", "serviceAccountName",
 		),
 		field.NewVisible(
-			"USERNAME", "userName",
-		),
-		field.NewVisible(
-			"USER-ROLE", "userRole",
-		),
-		field.NewVisible(
 			"PROJECT", "projectName",
 		),
 		field.NewVisible(
-			"ACCESSIBLE-FOR-ALL", "isAccessibleForAll",
+			"ROLE", "kubeConfigRoleName",
 		),
 		field.NewVisible(
-			"KUBECONFIG-ROLE", "kubeConfigRoleName",
+			"ALL-HAVE-ACCESS", "isAccessibleForAll",
 		),
 		field.NewVisible(
+			"MANAGERS-HAVE-ACCESS", "isAccessibleForManager",
+		),
+		field.NewVisible(
+			"USERNAME", "userName",
+		),
+		field.NewHiddenWithToStringFunc(
+			"USER-ID", "userId", out.FormatID,
+		),
+		field.NewHidden(
+			"USER-ROLE", "userRole",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
 			"CREATED-BY", "createdBy",
 		),
 	},
-	// TODO FORMAT???
-	// TODO check json
 )
 
 type ListOptions struct {

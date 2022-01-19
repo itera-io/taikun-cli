@@ -24,30 +24,55 @@ var listFields = fields.New(
 		field.NewVisible(
 			"ORG", "organizationName",
 		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
 		field.NewVisible(
 			"STATUS", "status",
 		),
-		field.NewVisible(
-			"HEALTH", "health",
+		field.NewVisibleWithToStringFunc(
+			"HEALTH", "health", out.FormatProjectHealth,
 		),
 		field.NewHiddenWithToStringFunc(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,
 		),
+		field.NewVisibleWithToStringFunc(
+			"CLOUD", "cloudType", out.FormatCloudType,
+		),
 		field.NewVisible(
-			"CLOUD", "cloudType",
+			"K8S", "isKubernetes",
 		),
 		field.NewVisible(
 			"QUOTA-ID", "quotaId",
 		),
-		field.NewVisible(
-			"EXPIRES", "expiredAt",
+		field.NewHidden(
+			"CLOUD-CREDENTIAL", "cloudCredentialName",
+		),
+		field.NewHidden(
+			"HAS-KUBECONFIG", "hasKubeConfigFile",
+		),
+		field.NewHidden(
+			"K8S-VERSION", "kubernetesCurrentVersion",
+		),
+		field.NewHidden(
+			"KUBESPRAY-VERSION", "kubesprayCurrentVersion",
+		),
+		field.NewHidden(
+			"SERVERS", "totalServersCount",
+		),
+		field.NewVisibleWithToStringFunc(
+			"EXPIRES", "expiredAt", out.FormatDateTimeString,
 		),
 		field.NewVisible(
 			"LOCK", "isLocked",
 		),
+		field.NewHiddenWithToStringFunc(
+			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"LAST-MODIFIED-BY", "lastModifiedBy",
+		),
 	},
-	// TODO FORMAT???
-	// TODO check JSON
 )
 
 type ListOptions struct {

@@ -23,23 +23,33 @@ var addFields = fields.New(
 			"NAME", "serviceAccountName",
 		),
 		field.NewVisible(
+			"PROJECT", "projectName",
+		),
+		field.NewVisible(
+			"ROLE", "kubeConfigRoleName",
+		),
+		field.NewVisible(
+			"ALL-HAVE-ACCESS", "isAccessibleForAll",
+		),
+		field.NewVisible(
+			"MANAGERS-HAVE-ACCESS", "isAccessibleForManager",
+		),
+		field.NewVisible(
 			"USERNAME", "userName",
+		),
+		field.NewVisibleWithToStringFunc(
+			"USER-ID", "userId", out.FormatID,
 		),
 		field.NewVisible(
 			"USER-ROLE", "userRole",
 		),
-		field.NewVisible(
-			"PROJECT", "projectName",
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
 		),
-		field.NewVisible(
-			"ACCESSIBLE-FOR-ALL", "isAccessibleForAll",
-		),
-		field.NewVisible(
-			"KUBECONFIG-ROLE", "kubeConfigRoleName",
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
 		),
 	},
-	// TODO FORMAT???
-	// TODO check JSON
 )
 
 type AddOptions struct {

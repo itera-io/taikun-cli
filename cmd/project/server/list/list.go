@@ -25,6 +25,9 @@ var listFields = fields.New(
 		field.NewVisible(
 			"IP", "ipAddress",
 		),
+		field.NewHidden(
+			"CLOUD", "cloudType",
+		),
 		field.NewVisible(
 			"FLAVOR", "",
 			// JSON tag is set in the listRun function
@@ -33,11 +36,11 @@ var listFields = fields.New(
 		field.NewVisible(
 			"CPU", "cpu",
 		),
-		field.NewVisible(
-			"RAM", "ram",
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatBToGiB,
 		),
-		field.NewVisible(
-			"DISK-SIZE", "diskSize",
+		field.NewVisibleWithToStringFunc(
+			"DISK", "diskSize", out.FormatBToGiB,
 		),
 		field.NewVisible(
 			"ROLE", "role",
@@ -45,12 +48,31 @@ var listFields = fields.New(
 		field.NewVisible(
 			"STATUS", "status",
 		),
+		field.NewHidden(
+			"PROJECT", "projectName",
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
+		field.NewHidden(
+			"ORG", "organizationName",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
 		field.NewVisibleWithToStringFunc(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,
 		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+		field.NewHiddenWithToStringFunc(
+			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"LAST-MODIFIED-BY", "lastModifiedBy",
+		),
 	},
-	// TODO FORMAT???
-	// TODO check JSON
 )
 
 type ListOptions struct {

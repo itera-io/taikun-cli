@@ -29,7 +29,13 @@ var addFields = fields.New(
 			"NAME", "name",
 		),
 		field.NewVisible(
+			"CLOUD-CREDENTIAL", "cloudCredentialName",
+		),
+		field.NewVisible(
 			"ORG", "organizationName",
+		),
+		field.NewVisible(
+			"ORG-ID", "organizationId",
 		),
 		field.NewVisible(
 			"STATUS", "status",
@@ -38,16 +44,16 @@ var addFields = fields.New(
 			"HEALTH", "health",
 		),
 		field.NewVisible(
-			"CREATED-AT", "createdAt",
+			"K8S", "isKubernetes",
 		),
 		field.NewVisible(
 			"K8S-VERSION", "kubernetesCurrentVersion",
 		),
 		field.NewVisible(
-			"CLOUD", "cloudType",
+			"KUBESPRAY-VERSION", "kubesprayCurrentVersion",
 		),
-		field.NewHidden(
-			"HAS-KUBECONFIG", "hasKubeConfigFile",
+		field.NewVisible(
+			"CLOUD", "cloudType",
 		),
 		field.NewVisible(
 			"QUOTA-ID", "quotaId",
@@ -58,9 +64,13 @@ var addFields = fields.New(
 		field.NewVisibleWithToStringFunc(
 			"LOCK", "isLocked", out.FormatLockStatus,
 		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
 	},
-	// TODO FORMAT???
-	// TODO check json
 )
 
 type AddOptions struct {

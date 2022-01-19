@@ -26,6 +26,9 @@ var listFields = fields.New(
 		field.NewVisible(
 			"CPU", "cpu",
 		),
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatBToGiB,
+		),
 		field.NewVisible(
 			"AWS", "isAws",
 		),
@@ -35,12 +38,13 @@ var listFields = fields.New(
 		field.NewVisible(
 			"OPENSTACK", "isOpenstack",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"PROJECT", "projectName",
 		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
 	},
-	// TODO FORMAT???
-	// TODO check JSON
 )
 
 type ListOptions struct {
