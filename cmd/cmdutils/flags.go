@@ -13,29 +13,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type FlagCompCoreFunc func(cmd *cobra.Command, args []string, toComplete string) []string
-
 func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	if err := cmd.MarkFlagRequired(flag); err != nil {
 		log.Fatal(err)
-	}
-}
-
-func RegisterFlagCompletionFunc(cmd *cobra.Command, flagName string, f FlagCompCoreFunc) {
-	if err := cmd.RegisterFlagCompletionFunc(flagName, makeFlagCompFunc(f)); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func RegisterFlagCompletion(cmd *cobra.Command, flagName string, values ...string) {
-	RegisterFlagCompletionFunc(cmd, flagName, func(cmd *cobra.Command, args []string, toComplete string) []string {
-		return values
-	})
-}
-
-func makeFlagCompFunc(f FlagCompCoreFunc) func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		return f(cmd, args, toComplete), cobra.ShellCompDirectiveNoFileComp
 	}
 }
 
@@ -50,7 +30,7 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields
 
 	fieldNames := fields.AllNames()
 	lowerStringSlice(fieldNames)
-	RegisterFlagCompletionFunc(cmd, "sort-by", func(cmd *cobra.Command, args []string, toComplete string) []string {
+	SetFlagCompletionFunc(cmd, "sort-by", func(cmd *cobra.Command, args []string, toComplete string) []string {
 		sortingElements, err := getSortingElements(sortType)
 		if err != nil {
 			return []string{}
@@ -120,7 +100,7 @@ func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
 	)
 	columns := fields.AllNames()
 	lowerStringSlice(columns)
-	RegisterFlagCompletion(cmd, "columns", columns...)
+	SetFlagCompletionValues(cmd, "columns", columns...)
 
 	cmd.Flags().BoolVarP(
 		&config.AllColumns,
