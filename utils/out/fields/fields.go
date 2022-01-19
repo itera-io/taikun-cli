@@ -41,6 +41,18 @@ func New(fields []*field.Field) Fields {
 	}
 }
 
+// Modify the JSON tag of the field with the given name
+// If no field is found with the given name, returns an error
+func (f Fields) SetFieldJsonTag(name string, jsonTag string) error {
+	for _, field := range f.fields {
+		if field.NameMatches(name) {
+			field.SetJsonTag(jsonTag)
+			return nil
+		}
+	}
+	return fmt.Errorf("invalid field name %s", name)
+}
+
 // Returns whether or not the field's name is valid
 func fieldNameIsValid(name string) bool {
 	maxFieldNameLength := 20

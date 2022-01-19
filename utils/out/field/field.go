@@ -85,6 +85,11 @@ func (f *Field) JsonTag() string {
 	return f.jsonTag
 }
 
+// Modifiy a field's JSON tag
+func (f *Field) SetJsonTag(newJsonTag string) {
+	f.jsonTag = newJsonTag
+}
+
 // Get field's name
 func (f *Field) Name() string {
 	return f.name
