@@ -8,10 +8,38 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"METRIC", "metricName",
+		),
+		field.NewVisible(
+			"PRICE", "price",
+		),
+		field.NewVisible(
+			"TYPE", "type",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -60,6 +88,7 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.SetFlagCompletionValues(&cmd, "type", types.PrometheusTypes.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
 	return &cmd
 }
@@ -89,14 +118,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Prometheus.PrometheusCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"metricName",
-			"price",
-			"type",
-			"createdAt",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return

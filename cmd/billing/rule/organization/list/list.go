@@ -6,9 +6,28 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewVisible(
+			"ORG-ID", "organizationId",
+		),
+		field.NewVisible(
+			"DISCOUNT-RATE", "ruleDiscountRate",
+		),
+		field.NewVisible(
+			"GLOBAL-DISCOUNT-RATE", "globalDiscountRate",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -33,6 +52,7 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
@@ -60,12 +80,7 @@ func listRun(opts *ListOptions) (err error) {
 		boundOrganizations = boundOrganizations[:config.Limit]
 	}
 
-	out.PrintResults(boundOrganizations,
-		"organizationId",
-		"organizationName",
-		"ruleDiscountRate",
-		"globalDiscountRate",
-	)
+	out.PrintResults(boundOrganizations, listFields)
 
 	return
 }

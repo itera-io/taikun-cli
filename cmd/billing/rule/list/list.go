@@ -5,9 +5,46 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"METRIC", "metricName",
+		),
+		field.NewVisible(
+			"USER", "userName",
+		),
+		field.NewVisible(
+			"URL", "url",
+		),
+		field.NewHidden(
+			"PASSWORD", "password",
+		),
+		field.NewVisible(
+			"PRICE", "price",
+		),
+		field.NewVisible(
+			"TYPE", "type",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+	},
 )
 
 func NewCmdList() *cobra.Command {
@@ -22,7 +59,8 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmdutils.AddLimitFlag(&cmd)
-	cmdutils.AddSortByAndReverseFlags(&cmd, models.AccessProfilesListDto{})
+	cmdutils.AddSortByAndReverseFlags(&cmd, "prometheus", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
@@ -59,14 +97,7 @@ func listRun() (err error) {
 		billingRules = billingRules[:config.Limit]
 	}
 
-	out.PrintResults(billingRules,
-		"id",
-		"name",
-		"metricName",
-		"price",
-		"createdAt",
-		"type",
-	)
+	out.PrintResults(billingRules, listFields)
 
 	return
 }
