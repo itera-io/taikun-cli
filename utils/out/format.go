@@ -31,6 +31,9 @@ func resourceIDToString(id interface{}) string {
 }
 
 func FormatDateTimeString(v interface{}) string {
+	if v == nil {
+		return "N/A"
+	}
 	dateTime := v.(string)
 	if dateTime == "" {
 		return "N/A"
