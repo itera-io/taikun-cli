@@ -55,7 +55,7 @@ func (f Fields) SetFieldJsonTag(name string, jsonTag string) error {
 
 // Returns whether or not the field's name is valid
 func fieldNameIsValid(name string) bool {
-	maxFieldNameLength := 20
+	maxFieldNameLength := 24
 	if len(name) == 0 || len(name) > maxFieldNameLength {
 		return false
 	}
