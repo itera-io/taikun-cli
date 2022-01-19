@@ -37,14 +37,16 @@ func (f Fields) VisibleFields() []*field.Field {
 }
 
 // Get JSON tag of field with the given name
-// Returns empty string of no field has the given name
-func (f Fields) GetJsonTagFromName(name string) string {
+// Returns the tag and a boolean to indicate whether the field was found
+func (f Fields) GetJsonTagFromName(name string) (jsonTag string, found bool) {
 	for _, field := range f.fields {
 		if field.NameMatches(name) {
-			return field.JsonTag()
+			jsonTag = field.JsonTag()
+			found = true
+			break
 		}
 	}
-	return ""
+	return
 }
 
 // Get number of visible fields

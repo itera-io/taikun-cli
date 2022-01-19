@@ -1,6 +1,7 @@
 package cmdutils
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -28,6 +29,7 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields
 		"Sort results by attribute value",
 	)
 	SetFlagCompletionFunc(cmd, "sort-by", makeSortByCompletionFunc(sortType, fields))
+	cmd.PreRunE = aggregateRunE(cmd.PreRunE, makeSortByPreRunE(fields))
 
 	cmd.Flags().BoolVarP(
 		&config.ReverseSortDirection,
@@ -36,6 +38,20 @@ func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields
 		false,
 		"Reverse order of results when passed with the --sort-by flag",
 	)
+}
+
+func makeSortByPreRunE(fields fields.Fields) runE {
+	return func(cmd *cobra.Command, args []string) error {
+		if config.SortBy == "" {
+			return nil
+		}
+		jsonTag, found := fields.GetJsonTagFromName(config.SortBy)
+		if !found {
+			return fmt.Errorf("unknown sorting element '%s'", config.SortBy)
+		}
+		config.SortBy = jsonTag
+		return nil
+	}
 }
 
 func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *cobra.Command, args []string, toComplete string) []string {
@@ -125,7 +141,6 @@ func AddLimitFlag(cmd *cobra.Command) {
 			return nil
 		},
 	)
-
 }
 
 func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) error {
