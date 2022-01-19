@@ -29,6 +29,15 @@ var addFields = fields.New(
 		field.NewVisible(
 			"AVAILABILITY-ZONE", "awsAvailabilityZone",
 		),
+		field.NewHidden(
+			"ACCESS-KEY-ID", "awsAccessKeyId",
+		),
+		field.NewHidden(
+			"SECRET-ACCESS-KEY", "awsSecretAccessKey",
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
 	},
 )
 

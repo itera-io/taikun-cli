@@ -23,14 +23,11 @@ var addFields = fields.New(
 		field.NewVisible(
 			"ORG", "organizationName",
 		),
-		field.NewVisible(
-			"PROJECT", "openStackProject",
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
 		),
-		field.NewVisible(
-			"USER", "openStackUser",
-		),
-		field.NewVisible(
-			"LOCK", "isLocked",
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
 		),
 	},
 )

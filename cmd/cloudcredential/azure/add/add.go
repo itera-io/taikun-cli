@@ -29,6 +29,21 @@ var addFields = fields.New(
 		field.NewVisible(
 			"AVAILABILITY-ZONE", "azureAvailabilityZone",
 		),
+		field.NewHidden(
+			"CLIENT-ID", "azureClientId",
+		),
+		field.NewHidden(
+			"CLIENT-SECRET", "azureClientSecret",
+		),
+		field.NewHidden(
+			"SUBSCRIPTION-ID", "azureSubscriptionId",
+		),
+		field.NewHidden(
+			"TENANT-ID", "azureTenantId",
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
 	},
 )
 

@@ -23,14 +23,17 @@ var listFields = fields.New(
 		field.NewVisible(
 			"ORG", "organizationName",
 		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
 		field.NewVisible(
 			"DEFAULT", "isDefault",
 		),
-		field.NewVisible(
-			"CREATED-BY", "createdBy",
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
 		),
-		field.NewVisible(
-			"LOCK", "isLocked",
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
 		),
 	},
 )

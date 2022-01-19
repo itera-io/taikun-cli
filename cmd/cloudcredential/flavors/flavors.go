@@ -26,6 +26,9 @@ var flavorsFields = fields.New(
 		field.NewVisible(
 			"RAM", "ram",
 		),
+		field.NewHidden(
+			"DESCRIPTION", "description",
+		),
 	},
 )
 

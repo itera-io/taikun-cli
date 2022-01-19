@@ -24,17 +24,41 @@ var listFields = fields.New(
 		field.NewVisible(
 			"ORG", "organizationName",
 		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
 		field.NewVisible(
 			"PROJECT", "project",
 		),
 		field.NewVisible(
 			"USER", "user",
 		),
+		field.NewHidden(
+			"DOMAIN", "domain",
+		),
+		field.NewHidden(
+			"IMPORT-NETWORK", "importNetwork",
+		),
+		field.NewHidden(
+			"PUBLIC-NETWORK", "publicNetwork",
+		),
+		field.NewHidden(
+			"REGION", "region",
+		),
+		field.NewHidden(
+			"TENANT-ID", "tenantId",
+		),
+		field.NewHidden(
+			"URL", "url",
+		),
 		field.NewVisible(
 			"DEFAULT", "isDefault",
 		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
 		field.NewVisible(
-			"LOCK", "isLocked",
+			"CREATED-BY", "createdBy",
 		),
 	},
 )
