@@ -47,7 +47,7 @@ func fieldNameIsValid(name string) bool {
 	if len(name) == 0 || len(name) > maxFieldNameLength {
 		return false
 	}
-	matched, err := regexp.Match("^[A-Z]+(-[A-Z]+)*$", []byte(name))
+	matched, err := regexp.Match("^[A-Z0-9]+(-[A-Z0-9]+)*$", []byte(name))
 	if err != nil {
 		log.Fatal("fieldNameIsValid: invalid regex pattern")
 	}
