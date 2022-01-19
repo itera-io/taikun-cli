@@ -4,10 +4,59 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
+		field.NewVisible(
+			"METRIC", "metricName",
+		),
+		field.NewVisible(
+			"PRICE", "price",
+		),
+		field.NewVisible(
+			"KIND", "kind",
+		),
+		field.NewVisible(
+			"TYPE", "type",
+		),
+		field.NewVisible(
+			"GLOBAL-ALERT-LIMIT", "globalAlertLimit",
+		),
+		field.NewVisible(
+			"PROJECT-ALERT-LIMIT", "projectAlertLimit",
+		),
+		field.NewVisible(
+			"CREDENTIAL", "showbackCredentialName",
+		),
+		field.NewVisible(
+			"CREDENTIAL-ID", "showbackCredentialId",
+		),
+		field.NewVisibleWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -65,6 +114,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.ShowbackCredentialID, "showback-credential-id", "s", 0, "Showback credential ID")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
 	return &cmd
 }
@@ -101,19 +151,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Showback.ShowbackCreateRule(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"metricName",
-			"organizationName",
-			"kind",
-			"type",
-			"globalAlertLimit",
-			"projectAlertLimit",
-			"price",
-			"showbackCredentialName",
-			"createdAt",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return
