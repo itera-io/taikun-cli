@@ -68,79 +68,22 @@ func NewCmdAdd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(
-		&opts.CloudCredentialID, "cloud-credential-id", "c", 0,
-		"Cloud credential ID (required)",
-	)
+	cmd.Flags().Int32VarP(&opts.CloudCredentialID, "cloud-credential-id", "c", 0, "Cloud credential ID (required)")
 	cmdutils.MarkFlagRequired(cmd, "cloud-credential-id")
 
-	cmd.Flags().Int32Var(
-		&opts.AccessProfileID, "access-profile-id", 0,
-		"Access profile ID",
-	)
-
-	cmd.Flags().Int32Var(
-		&opts.AlertingProfileID, "alerting-profile-id", 0,
-		"Alerting profile ID",
-	)
-
-	cmd.Flags().BoolVarP(
-		&opts.AutoUpgrade, "auto-upgrade", "u", false,
-		"Enable auto upgrade",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.BackupCredentialID, "backup-credential-id", "b", 0,
-		"Backup credential ID",
-	)
-
-	cmd.Flags().StringVarP(
-		&opts.ExpirationDate, "expiration-date", "e", "",
-		fmt.Sprintf(
-			"Expiration date in the format: %s",
-			types.ExpectedDateFormat,
-		),
-	)
-
-	cmd.Flags().StringSliceVarP(
-		&opts.Flavors, "flavors", "f", []string{},
-		"Bind flavors to the project",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0,
-		"Kubernetes profile ID",
-	)
-
-	cmd.Flags().BoolVarP(
-		&opts.Monitoring, "monitoring", "m", false,
-		"Enable monitoring",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.OrganizationID, "organization-id", "o", 0,
-		"Organization ID",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.PolicyProfileID, "policy-profile-id", "p", 0,
-		"Policy profile ID",
-	)
-
-	cmd.Flags().Int32Var(
-		&opts.RouterIDStartRange, "router-id-start-range", -1,
-		"Router ID start range (required with OpenStack and Taikun load balancer",
-	)
-
-	cmd.Flags().Int32Var(
-		&opts.RouterIDEndRange, "router-id-end-range", -1,
-		"Router ID end range (required with OpenStack and Taikun load balancer",
-	)
-
-	cmd.Flags().StringVar(
-		&opts.TaikunLBFlavor, "taikun-lb-flavor", "",
-		"Taikun load balancer flavor(required with OpenStack and Taikun load balancer",
-	)
+	cmd.Flags().Int32Var(&opts.AccessProfileID, "access-profile-id", 0, "Access profile ID")
+	cmd.Flags().Int32Var(&opts.AlertingProfileID, "alerting-profile-id", 0, "Alerting profile ID")
+	cmd.Flags().BoolVarP(&opts.AutoUpgrade, "auto-upgrade", "u", false, "Enable auto upgrade")
+	cmd.Flags().Int32VarP(&opts.BackupCredentialID, "backup-credential-id", "b", 0, "Backup credential ID")
+	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s", types.ExpectedDateFormat))
+	cmd.Flags().StringSliceVarP(&opts.Flavors, "flavors", "f", []string{}, "Bind flavors to the project")
+	cmd.Flags().Int32VarP(&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0, "Kubernetes profile ID")
+	cmd.Flags().BoolVarP(&opts.Monitoring, "monitoring", "m", false, "Enable monitoring")
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmd.Flags().Int32VarP(&opts.PolicyProfileID, "policy-profile-id", "p", 0, "Policy profile ID")
+	cmd.Flags().Int32Var(&opts.RouterIDStartRange, "router-id-start-range", -1, "Router ID start range (required with OpenStack and Taikun load balancer")
+	cmd.Flags().Int32Var(&opts.RouterIDEndRange, "router-id-end-range", -1, "Router ID end range (required with OpenStack and Taikun load balancer")
+	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
 
