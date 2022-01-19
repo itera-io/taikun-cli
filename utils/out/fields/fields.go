@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	"github.com/itera-io/taikun-cli/utils/out/field"
 )
@@ -14,10 +15,43 @@ type Fields struct {
 }
 
 // Create new Fields struct
+// Exits with error code if fields don't respect the following requirements:
+// - fields must be unique within a table
+// - names must be less than 20 characters
+// - names must contain only uppercase letters and hyphens
+// - names must not start or end with a hyphen
 func New(fields []*field.Field) Fields {
+	nameFrequencyMap := map[string]bool{}
+	jsonTagFrequencyMap := map[string]bool{}
+	for _, field := range fields {
+		if !fieldNameIsValid(field.Name()) {
+			log.Fatal("fields.New: Field name '", field.Name(), "' is not valid")
+		}
+		if nameFrequencyMap[field.Name()] {
+			log.Fatal("fields.New: Field name '", field.Name(), "' is defined more than once")
+		}
+		nameFrequencyMap[field.Name()] = true
+		if jsonTagFrequencyMap[field.JsonTag()] {
+			log.Fatal("fields.New: Field JSON tag '", field.JsonTag(), "' is defined more than once")
+		}
+		jsonTagFrequencyMap[field.JsonTag()] = true
+	}
 	return Fields{
 		fields: fields,
 	}
+}
+
+// Returns whether or not the field's name is valid
+func fieldNameIsValid(name string) bool {
+	maxFieldNameLength := 20
+	if len(name) == 0 || len(name) > maxFieldNameLength {
+		return false
+	}
+	matched, err := regexp.Match("^[A-Z]+(-[A-Z]+)*$", []byte(name))
+	if err != nil {
+		log.Fatal("fieldNameIsValid: invalid regex pattern")
+	}
+	return matched
 }
 
 // Get all fields
@@ -95,12 +129,14 @@ func (f Fields) moveFieldBack(source int, destination int) {
 	f.fields[destination] = sourceField
 }
 
+// Set all fields to hidden
 func (f Fields) hideAll() {
 	for _, field := range f.fields {
 		field.Hide()
 	}
 }
 
+// Set all fields to visible
 func (f Fields) ShowAll() {
 	for _, field := range f.fields {
 		field.Show()

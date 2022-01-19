@@ -43,7 +43,7 @@ var addFields = fields.New(
 			"EMAIL-CONFIRMED", "isEmailConfirmed",
 		),
 		field.NewVisible(
-			"EMAIL-NOTIFICATION-ENABLED", "isEmailNotificationEnabled",
+			"EMAIL-NOTIFICATIONS", "isEmailNotificationEnabled",
 		),
 		field.NewVisible(
 			"APPROVED-BY-PARTNER", "isApprovedByPartner",

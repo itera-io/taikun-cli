@@ -43,7 +43,7 @@ var ListFields = fields.New(
 			"EMAIL-CONFIRMED", "isEmailConfirmed",
 		),
 		field.NewHidden(
-			"EMAIL-NOTIFICATION-ENABLED", "isEmailNotificationEnabled",
+			"EMAIL-NOTIFICATIONS", "isEmailNotificationEnabled",
 		),
 		field.NewHidden(
 			"APPROVED-BY-PARTNER", "isApprovedByPartner",
