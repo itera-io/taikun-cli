@@ -32,6 +32,9 @@ func resourceIDToString(id interface{}) string {
 
 func FormatDateTimeString(v interface{}) string {
 	dateTime := v.(string)
+	if dateTime == "" {
+		return "N/A"
+	}
 	dateTime = strings.Replace(dateTime, "T", " ", 1)
 	dateTime = strings.Replace(dateTime, "Z", "", 1)
 	return dateTime
