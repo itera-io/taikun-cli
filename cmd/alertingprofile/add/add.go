@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
-	"github.com/itera-io/taikun-cli/utils/out/fieldnames"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
@@ -35,7 +34,7 @@ var addFields = fields.New(
 			"SLACK-CONFIG", "slackConfigurationName",
 		),
 		field.NewHiddenWithToStringFunc(
-			fieldnames.IsLocked, "isLocked", out.FormatLockStatus,
+			"LOCK", "isLocked", out.FormatLockStatus,
 		),
 	},
 )

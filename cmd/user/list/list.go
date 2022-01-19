@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
-	"github.com/itera-io/taikun-cli/utils/out/fieldnames"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/users"
@@ -59,7 +58,7 @@ var ListFields = fields.New(
 			"MUST-RESET-PASSWORD", "isForcedToResetPassword",
 		),
 		field.NewHiddenWithToStringFunc(
-			fieldnames.IsLocked, "isLocked", out.FormatLockStatus,
+			"LOCK", "isLocked", out.FormatLockStatus,
 		),
 		field.NewHidden(
 			"READ-ONLY", "isReadOnly",
