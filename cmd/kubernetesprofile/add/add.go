@@ -4,10 +4,50 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
+		field.NewVisible(
+			"TAIKUN-LB", "taikunLBEnabled",
+		),
+		field.NewVisible(
+			"OCTAVIA", "octaviaEnabled",
+		),
+		field.NewVisible(
+			"BASTION-PROXY", "exposeNodePortOnBastion",
+		),
+		field.NewVisible(
+			"CNI", "cni",
+		),
+		field.NewVisible(
+			"SCHEDULE-ON-MASTER", "allowSchedulingOnMaster",
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -22,7 +62,7 @@ type AddOptions struct {
 func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "add <name>",
 		Short: "Add a kubernetes profile",
 		Args:  cobra.ExactArgs(1),
@@ -38,9 +78,10 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
 
-	cmdutils.AddOutputOnlyIDFlag(cmd)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
-	return cmd
+	return &cmd
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -61,16 +102,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"organizationName",
-			"taikunLBEnabled",
-			"octaviaEnabled",
-			"exposeNodePortOnBastion",
-			"cni",
-			"allowSchedulingOnMaster",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return
