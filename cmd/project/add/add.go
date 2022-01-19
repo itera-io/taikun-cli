@@ -7,6 +7,8 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
@@ -16,6 +18,49 @@ import (
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewVisible(
+			"HEALTH", "health",
+		),
+		field.NewVisible(
+			"CREATED-AT", "createdAt",
+		),
+		field.NewVisible(
+			"K8S-VERSION", "kubernetesCurrentVersion",
+		),
+		field.NewVisible(
+			"CLOUD", "cloudType",
+		),
+		field.NewHidden(
+			"HAS-KUBECONFIG", "hasKubeConfigFile",
+		),
+		field.NewVisible(
+			"QUOTA-ID", "quotaId",
+		),
+		field.NewVisibleWithToStringFunc(
+			"EXPIRES", "expiredAt", out.FormatDateTimeString,
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+	},
+	// TODO FORMAT???
+	// TODO check json
 )
 
 type AddOptions struct {
@@ -39,7 +84,7 @@ type AddOptions struct {
 func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "add <name>",
 		Short: "Add a project",
 		Args:  cobra.ExactArgs(1),
@@ -69,7 +114,7 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().Int32VarP(&opts.CloudCredentialID, "cloud-credential-id", "c", 0, "Cloud credential ID (required)")
-	cmdutils.MarkFlagRequired(cmd, "cloud-credential-id")
+	cmdutils.MarkFlagRequired(&cmd, "cloud-credential-id")
 
 	cmd.Flags().Int32Var(&opts.AccessProfileID, "access-profile-id", 0, "Access profile ID")
 	cmd.Flags().Int32Var(&opts.AlertingProfileID, "alerting-profile-id", 0, "Alerting profile ID")
@@ -85,9 +130,10 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.RouterIDEndRange, "router-id-end-range", -1, "Router ID end range (required with OpenStack and Taikun load balancer")
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
 
-	cmdutils.AddOutputOnlyIDFlag(cmd)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
-	return cmd
+	return &cmd
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -163,20 +209,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"organizationName",
-			"status",
-			"health",
-			"createdAt",
-			"kubernetesCurrentVersion",
-			"cloudType",
-			"hasKubeConfigFile",
-			"quotaId",
-			"expiredAt",
-			"isLocked",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return

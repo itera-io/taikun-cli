@@ -4,10 +4,42 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/kube_config"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "serviceAccountName",
+		),
+		field.NewVisible(
+			"USERNAME", "userName",
+		),
+		field.NewVisible(
+			"USER-ROLE", "userRole",
+		),
+		field.NewVisible(
+			"PROJECT", "projectName",
+		),
+		field.NewVisible(
+			"ACCESSIBLE-FOR-ALL", "isAccessibleForAll",
+		),
+		field.NewVisible(
+			"KUBECONFIG-ROLE", "kubeConfigRoleName",
+		),
+		field.NewVisible(
+			"CREATED-BY", "createdBy",
+		),
+	},
+	// TODO FORMAT???
+	// TODO check json
 )
 
 type ListOptions struct {
@@ -31,7 +63,8 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddSortByAndReverseFlags(&cmd, models.KubeConfigForUserDto{})
+	cmdutils.AddSortByAndReverseFlags(&cmd, "kube-configs", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
@@ -47,16 +80,7 @@ func listRun(opts *ListOptions) (err error) {
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)
 	if err == nil {
-		out.PrintResults(response.Payload.Data,
-			"id",
-			"serviceAccountName",
-			"userName",
-			"userRole",
-			"projectName",
-			"isAccessibleForAll",
-			"kubeConfigRoleName",
-			"createdBy",
-		)
+		out.PrintResults(response.Payload.Data, listFields)
 	}
 
 	return

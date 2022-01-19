@@ -5,10 +5,49 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewVisible(
+			"HEALTH", "health",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewVisible(
+			"CLOUD", "cloudType",
+		),
+		field.NewVisible(
+			"QUOTA-ID", "quotaId",
+		),
+		field.NewVisible(
+			"EXPIRES", "expiredAt",
+		),
+		field.NewVisible(
+			"LOCK", "isLocked",
+		),
+	},
+	// TODO FORMAT???
+	// TODO check JSON
 )
 
 type ListOptions struct {
@@ -18,7 +57,7 @@ type ListOptions struct {
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List projects",
 		Args:  cobra.NoArgs,
@@ -30,10 +69,11 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByAndReverseFlags(cmd, models.ProjectListForUIDto{})
-	cmdutils.AddLimitFlag(cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "projects", listFields)
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
-	return cmd
+	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -71,17 +111,6 @@ func listRun(opts *ListOptions) (err error) {
 		projects = projects[:config.Limit]
 	}
 
-	out.PrintResults(projects,
-		"id",
-		"name",
-		"organizationName",
-		"status",
-		"health",
-		"createdAt",
-		"cloudType",
-		"quotaId",
-		"expiredAt",
-		"isLocked",
-	)
+	out.PrintResults(projects, listFields)
 	return
 }

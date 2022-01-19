@@ -6,10 +6,51 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"IP", "ipAddress",
+		),
+		field.NewVisible(
+			"FLAVOR", "",
+			// JSON tag is set in the listRun function
+			// as it depends on the server's cloud type
+		),
+		field.NewVisible(
+			"CPU", "cpu",
+		),
+		field.NewVisible(
+			"RAM", "ram",
+		),
+		field.NewVisible(
+			"DISK-SIZE", "diskSize",
+		),
+		field.NewVisible(
+			"ROLE", "role",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewVisibleWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+	},
+	// TODO FORMAT???
+	// TODO check JSON
 )
 
 type ListOptions struct {
@@ -33,7 +74,8 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddSortByAndReverseFlags(&cmd, models.ServerListDto{})
+	cmdutils.AddSortByAndReverseFlags(&cmd, "projects-k8s", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
@@ -41,23 +83,14 @@ func NewCmdList() *cobra.Command {
 func listRun(opts *ListOptions) (err error) {
 	projectServers, err := ListServers(opts)
 	if err == nil {
-		flavorNameField, err := getFlavorNameField(projectServers)
+		flavorJsonTag, err := getFlavorField(projectServers)
 		if err != nil {
 			return err
 		}
 
-		out.PrintResults(projectServers,
-			"id",
-			"name",
-			"ipAddress",
-			flavorNameField,
-			"cpu",
-			"ram",
-			"diskSize",
-			"role",
-			"status",
-			"createdAt",
-		)
+		listFields.SetFieldJsonTag("FLAVOR", flavorJsonTag)
+
+		out.PrintResults(projectServers, listFields)
 	}
 
 	return
@@ -84,7 +117,7 @@ func ListServers(opts *ListOptions) (projectServers []*models.ServerListDto, err
 	return
 }
 
-func getFlavorNameField(servers []*models.ServerListDto) (string, error) {
+func getFlavorField(servers []*models.ServerListDto) (string, error) {
 	if len(servers) == 0 {
 		return "flavor", nil
 	}

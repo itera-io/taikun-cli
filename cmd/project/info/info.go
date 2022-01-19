@@ -3,10 +3,23 @@ package info
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/spf13/cobra"
+)
+
+var infoFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+	},
+	// TODO FORMAT???
+	// TOOD check JSON
 )
 
 type InfoOptions struct {
@@ -29,6 +42,8 @@ func NewCmdInfo() *cobra.Command {
 		},
 	}
 
+	cmdutils.AddColumnsFlag(&cmd, infoFields)
+
 	return &cmd
 }
 
@@ -43,7 +58,7 @@ func infoRun(opts *InfoOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload.Project)
+		out.PrintResult(response.Payload.Project, infoFields)
 	}
 
 	return
