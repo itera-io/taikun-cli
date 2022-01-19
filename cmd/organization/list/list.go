@@ -104,7 +104,7 @@ func listRun() (err error) {
 
 	params := organizations.NewOrganizationsListParams().WithV(api.Version)
 	if config.SortBy != "" {
-		params = params.WithSortBy(config.GetSortByParam(ListFields)).WithSortDirection(api.GetSortDirection())
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)

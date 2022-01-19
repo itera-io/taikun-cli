@@ -87,7 +87,7 @@ func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err 
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
 	if config.SortBy != "" {
-		params = params.WithSortBy(config.GetSortByParam(listFields)).WithSortDirection(api.GetSortDirection())
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var amazonCloudCredentials = make([]*models.AmazonCredentialsListDto, 0)

@@ -79,7 +79,7 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
 	if config.SortBy != "" {
-		params = params.WithSortBy(config.GetSortByParam(flavorsFields)).WithSortDirection(api.GetSortDirection())
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	flavors := []*models.FlavorsListDto{}
