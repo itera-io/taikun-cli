@@ -76,7 +76,7 @@ Context 'cmd/standaloneprofile'
       When call taikun standalone-profile list -o $oid --columns name --no-decorate
       The status should equal 0
       The lines of output should equal 1
-      The output should include "$name"
+      The output should include "$new_name"
     End
   End
 End
