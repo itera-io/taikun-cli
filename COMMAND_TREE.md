@@ -59,7 +59,7 @@
         * list (List Azure cloud credentials)
       * delete (Delete one or more cloud credentials)
       * flavors (List a cloud credential's flavors)
-      * list (List cloud credentials)
+      * list (List all cloud credentials)
       * lock (Lock a cloud credential)
       * openstack (Manage OpenStack cloud credentials)
         * add (Add an OpenStack cloud credential)
