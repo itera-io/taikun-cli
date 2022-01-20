@@ -5,10 +5,44 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewVisible(
+			"SLACK-CONFIG", "slackConfigurationName",
+		),
+		field.NewVisible(
+			"REMINDER", "reminder",
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewHiddenWithToStringFunc(
+			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"LAST-MODIFIED-BY", "lastModifiedBy",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -18,7 +52,7 @@ type ListOptions struct {
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List alerting profiles",
 		Args:  cobra.NoArgs,
@@ -30,10 +64,11 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByAndReverseFlags(cmd, models.AlertingProfilesListDto{})
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "alerting-profiles", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
-	return cmd
+	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -71,13 +106,6 @@ func listRun(opts *ListOptions) (err error) {
 		alertingProfiles = alertingProfiles[:config.Limit]
 	}
 
-	out.PrintResults(alertingProfiles,
-		"id",
-		"name",
-		"organizationName",
-		"slackConfigurationName",
-		"reminder",
-		"isLocked",
-	)
+	out.PrintResults(alertingProfiles, listFields)
 	return
 }

@@ -5,10 +5,74 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewVisibleWithToStringFunc(
+			"HEALTH", "health", out.FormatProjectHealth,
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewVisibleWithToStringFunc(
+			"CLOUD", "cloudType", out.FormatCloudType,
+		),
+		field.NewVisible(
+			"K8S", "isKubernetes",
+		),
+		field.NewVisible(
+			"QUOTA-ID", "quotaId",
+		),
+		field.NewHidden(
+			"CLOUD-CREDENTIAL", "cloudCredentialName",
+		),
+		field.NewHidden(
+			"HAS-KUBECONFIG", "hasKubeConfigFile",
+		),
+		field.NewHidden(
+			"K8S-VERSION", "kubernetesCurrentVersion",
+		),
+		field.NewHidden(
+			"KUBESPRAY-VERSION", "kubesprayCurrentVersion",
+		),
+		field.NewHidden(
+			"SERVERS", "totalServersCount",
+		),
+		field.NewVisibleWithToStringFunc(
+			"EXPIRES", "expiredAt", out.FormatDateTimeString,
+		),
+		field.NewVisible(
+			"LOCK", "isLocked",
+		),
+		field.NewHiddenWithToStringFunc(
+			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"LAST-MODIFIED-BY", "lastModifiedBy",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -18,7 +82,7 @@ type ListOptions struct {
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List projects",
 		Args:  cobra.NoArgs,
@@ -30,10 +94,11 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByAndReverseFlags(cmd, models.ProjectListForUIDto{})
-	cmdutils.AddLimitFlag(cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "projects", listFields)
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
-	return cmd
+	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -71,17 +136,6 @@ func listRun(opts *ListOptions) (err error) {
 		projects = projects[:config.Limit]
 	}
 
-	out.PrintResults(projects,
-		"id",
-		"name",
-		"organizationName",
-		"status",
-		"health",
-		"createdAt",
-		"cloudType",
-		"quotaId",
-		"expiredAt",
-		"isLocked",
-	)
+	out.PrintResults(projects, listFields)
 	return
 }

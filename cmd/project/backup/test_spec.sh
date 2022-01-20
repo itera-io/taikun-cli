@@ -37,7 +37,7 @@ Context 'project/backup'
     Example 'enable backup'
       When call get_backup_status $pid
       The status should equal 0
-      The output should include true
+      The output should include 'Yes'
     End
   End
 
@@ -51,7 +51,7 @@ Context 'project/backup'
     Example 'disable backup'
       When call get_backup_status $pid
       The status should equal 0
-      The output should include false
+      The output should include 'No'
     End
   End
 

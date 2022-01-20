@@ -6,11 +6,45 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"CPU", "cpu",
+		),
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatBToGiB,
+		),
+		field.NewVisible(
+			"AWS", "isAws",
+		),
+		field.NewVisible(
+			"AZURE", "isAzure",
+		),
+		field.NewVisible(
+			"OPENSTACK", "isOpenstack",
+		),
+		field.NewHidden(
+			"PROJECT", "projectName",
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -20,7 +54,7 @@ type ListOptions struct {
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list <project-id>",
 		Short: "List a project's bound flavors",
 		Args:  cobra.ExactArgs(1),
@@ -35,10 +69,11 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByAndReverseFlags(cmd, models.BoundFlavorsForProjectsListDto{})
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "bound-flavors", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
-	return cmd
+	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -75,14 +110,6 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = flavors[:config.Limit]
 	}
 
-	out.PrintResults(flavors,
-		"id",
-		"name",
-		"cpu",
-		"isAws",
-		"isAzure",
-		"isOpenstack",
-		"projectName",
-	)
+	out.PrintResults(flavors, listFields)
 	return
 }

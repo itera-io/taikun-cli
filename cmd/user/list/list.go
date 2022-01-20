@@ -5,10 +5,68 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var ListFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "username",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewHidden(
+			"DISPLAY-NAME", "displayName",
+		),
+		field.NewVisible(
+			"ROLE", "role",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
+		field.NewHidden(
+			"OWNER", "owner",
+		),
+		field.NewHidden(
+			"EMAIL", "email",
+		),
+		field.NewHidden(
+			"EMAIL-CONFIRMED", "isEmailConfirmed",
+		),
+		field.NewHidden(
+			"EMAIL-NOTIFICATIONS", "isEmailNotificationEnabled",
+		),
+		field.NewHidden(
+			"APPROVED-BY-PARTNER", "isApprovedByPartner",
+		),
+		field.NewHidden(
+			"CSM", "isCsm",
+		),
+		field.NewHidden(
+			"SUBSCRIPTION-UPDATES", "isEligibleUpdateSubscription",
+		),
+		field.NewHidden(
+			"MUST-RESET-PASSWORD", "isForcedToResetPassword",
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewHidden(
+			"READ-ONLY", "isReadOnly",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED", "createdAt", out.FormatDateTimeString,
+		),
+	},
 )
 
 type ListOptions struct {
@@ -30,7 +88,8 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddSortByAndReverseFlags(cmd, models.UserForListDto{})
+	cmdutils.AddSortByAndReverseFlags(cmd, "users", ListFields)
+	cmdutils.AddColumnsFlag(cmd, ListFields)
 	cmdutils.AddLimitFlag(cmd)
 
 	return cmd
@@ -42,13 +101,7 @@ func listRun(opts *ListOptions) (err error) {
 		return err
 	}
 
-	out.PrintResults(users,
-		"id",
-		"username",
-		"role",
-		"organizationName",
-		"email",
-	)
+	out.PrintResults(users, ListFields)
 	return
 }
 

@@ -6,11 +6,30 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var flavorsFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"CPU", "cpu",
+		),
+		field.NewVisible(
+			"RAM", "ram",
+		),
+		field.NewHidden(
+			"DESCRIPTION", "description",
+		),
+	},
 )
 
 type FlavorsOptions struct {
@@ -24,7 +43,7 @@ type FlavorsOptions struct {
 func NewCmdFlavors() *cobra.Command {
 	var opts FlavorsOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "flavors <cloud-credential-id>",
 		Short: "List a cloud credential's flavors",
 		Args:  cobra.ExactArgs(1),
@@ -43,10 +62,11 @@ func NewCmdFlavors() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
 	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
 
-	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByAndReverseFlags(cmd, models.FlavorsListDto{})
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "flavors", flavorsFields)
+	cmdutils.AddColumnsFlag(&cmd, flavorsFields)
 
-	return cmd
+	return &cmd
 }
 
 func flavorRun(opts *FlavorsOptions) (err error) {
@@ -86,10 +106,6 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 		flavors = flavors[:config.Limit]
 	}
 
-	out.PrintResults(flavors,
-		"name",
-		"cpu",
-		"ram",
-	)
+	out.PrintResults(flavors, flavorsFields)
 	return
 }

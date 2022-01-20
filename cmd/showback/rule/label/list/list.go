@@ -6,10 +6,23 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"LABEL", "label",
+		),
+		field.NewVisible(
+			"VALUE", "value",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -34,6 +47,7 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
@@ -50,7 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		labels = labels[:config.Limit]
 	}
 
-	out.PrintResults(labels, "label", "value")
+	out.PrintResults(labels, listFields)
 
 	return
 }

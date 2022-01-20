@@ -33,9 +33,6 @@ func NewCmdRoot() *cobra.Command {
 			if !config.OutputFormatIsValid() {
 				return cmderr.OutputFormatInvalidError
 			}
-			if config.Limit < 0 {
-				return cmderr.NegativeLimitFlagError
-			}
 			return nil
 		},
 	}
@@ -60,18 +57,11 @@ func NewCmdRoot() *cobra.Command {
 }
 
 func setPersistentFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringSliceVarP(
-		&config.Columns,
-		"columns", "C",
-		[]string{},
-		"Specify which output columns to print (only valid for table format)",
-	)
-
 	cmd.PersistentFlags().BoolVar(
 		&config.NoDecorate,
 		"no-decorate",
 		false,
-		"Display tables without field names and separators",
+		"Display output table without field names and separators",
 	)
 
 	cmd.PersistentFlags().StringVarP(

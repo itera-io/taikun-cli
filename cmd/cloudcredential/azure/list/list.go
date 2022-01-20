@@ -5,10 +5,47 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewHidden(
+			"ORG-ID", "organizationId",
+		),
+		field.NewVisible(
+			"LOCATION", "location",
+		),
+		field.NewVisible(
+			"AVAILABILITY-ZONE", "availabilityZone",
+		),
+		field.NewHidden(
+			"TENANT-ID", "tenantId",
+		),
+		field.NewVisible(
+			"DEFAULT", "isDefault",
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -18,7 +55,7 @@ type ListOptions struct {
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List Azure cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -30,10 +67,11 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByAndReverseFlags(cmd, models.AzureCredentialsListDto{})
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "cloud-credentials", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
-	return cmd
+	return &cmd
 }
 
 func listRun(opts *ListOptions) error {
@@ -42,15 +80,7 @@ func listRun(opts *ListOptions) error {
 		return err
 	}
 
-	out.PrintResults(azureCloudCredentials,
-		"id",
-		"name",
-		"organizationName",
-		"location",
-		"availabilityZone",
-		"isDefault",
-		"isLocked",
-	)
+	out.PrintResults(azureCloudCredentials, listFields)
 
 	return nil
 }

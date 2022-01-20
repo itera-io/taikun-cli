@@ -3,10 +3,24 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "projectId",
+		),
+		field.NewVisible(
+			"NAME", "projectName",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -28,6 +42,8 @@ func NewCmdList() *cobra.Command {
 
 	complete.CompleteArgsWithUserID(&cmd)
 
+	cmdutils.AddColumnsFlag(&cmd, listFields)
+
 	return &cmd
 }
 
@@ -48,10 +64,7 @@ func listRun(opts *ListOptions) (err error) {
 		return cmderr.ResourceNotFoundError("User", opts.UserID)
 	}
 
-	out.PrintResults(response.Payload.Data[0].BoundProjects,
-		"projectId",
-		"projectName",
-	)
+	out.PrintResults(response.Payload.Data[0].BoundProjects, listFields)
 
 	return
 }

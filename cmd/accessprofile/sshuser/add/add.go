@@ -6,12 +6,28 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"PUBLIC-KEY", "sshPublicKey",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -52,6 +68,7 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(cmd, "public-key")
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
+	cmdutils.AddColumnsFlag(cmd, addFields)
 
 	return cmd
 }
@@ -86,11 +103,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := ssh_users.NewSSHUsersCreateParams().WithV(api.Version).WithBody(&body)
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"sshPublicKey",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return

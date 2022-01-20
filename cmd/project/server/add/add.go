@@ -8,11 +8,48 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"CPU", "cpu",
+		),
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatBToGiB,
+		),
+		field.NewVisibleWithToStringFunc(
+			"DISK", "diskSize", out.FormatBToGiB,
+		),
+		field.NewVisible(
+			"ROLE", "role",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CLOUDTYPE", "cloudType", out.FormatCloudType,
+		),
+		field.NewHidden(
+			"PROJECT", "projectName",
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -58,6 +95,7 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.SetFlagCompletionValues(&cmd, "role", types.ServerRoles.Keys()...)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
 	return &cmd
 }
@@ -88,15 +126,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"cpu",
-			"ram",
-			"diskSize",
-			"role",
-			"status",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return

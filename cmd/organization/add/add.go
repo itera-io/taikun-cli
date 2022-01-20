@@ -4,11 +4,78 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"FULL-NAME", "fullName",
+		),
+		field.NewVisible(
+			"DISCOUNT-RATE", "discountRate",
+		),
+		field.NewVisible(
+			"PARTNER", "partnerName",
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewVisible(
+			"READ-ONLY", "isReadOnly",
+		),
+		field.NewVisible(
+			"EMAIL", "email",
+		),
+		field.NewVisible(
+			"BILLING-EMAIL", "billingEmail",
+		),
+		field.NewVisible(
+			"CITY", "city",
+		),
+		field.NewVisible(
+			"COUNTRY", "country",
+		),
+		field.NewVisible(
+			"PHONE", "phone",
+		),
+		field.NewVisible(
+			"VAT", "vatNumber",
+		),
+		field.NewVisible(
+			"SUBSCRIPTION-UPDATES", "isEligibleUpdateSubscription",
+		),
+		field.NewVisible(
+			"PARTNER-ID", "partnerId",
+		),
+		field.NewHidden(
+			"CLOUD-CREDENTIALS", "cloudCredentials",
+		),
+		field.NewHidden(
+			"PROJECTS", "projects",
+		),
+		field.NewHidden(
+			"SERVERS", "servers",
+		),
+		field.NewHidden(
+			"USERS", "users",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+	},
 )
 
 type AddOptions struct {
@@ -73,6 +140,7 @@ func NewCmdAdd() *cobra.Command {
 	})
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
+	cmdutils.AddColumnsFlag(cmd, addFields)
 
 	return cmd
 }
@@ -100,16 +168,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := organizations.NewOrganizationsCreateParams().WithV(api.Version).WithBody(&body)
 	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"fullName",
-			"discountRate",
-			"partnerName",
-			"isEligibleUpdateSubscription",
-			"isLocked",
-			"isReadOnly",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return

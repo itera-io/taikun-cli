@@ -6,11 +6,10 @@ func init() {
 
 // root command's persistent flags
 var (
-	Columns         []string // --columns, -C
-	NoDecorate      bool     // --no-decorate
-	OutputFormat    string   // --format, -F
-	Quiet           bool     // --quiet, -q
-	ShowLargeValues bool     // --show-large-values
+	NoDecorate      bool   // --no-decorate
+	OutputFormat    string // --format, -F
+	Quiet           bool   // --quiet, -q
+	ShowLargeValues bool   // --show-large-values
 )
 
 const (

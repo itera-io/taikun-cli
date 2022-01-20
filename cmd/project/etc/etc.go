@@ -2,11 +2,28 @@ package etc
 
 import (
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/notifications"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var etcFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"OPERATION", "operation",
+		),
+		field.NewVisibleWithToStringFunc(
+			"ESTIMATED-TIME", "estimatedTime", out.FormatETC,
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
+	},
 )
 
 type EtcOptions struct {
@@ -29,6 +46,8 @@ func NewCmdEtc() *cobra.Command {
 		},
 	}
 
+	cmdutils.AddColumnsFlag(&cmd, etcFields)
+
 	return &cmd
 }
 
@@ -47,7 +66,7 @@ func etcRun(opts *EtcOptions) (err error) {
 
 	response, err := apiClient.Client.Notifications.NotificationsGetProjectOperationMessages(params, apiClient)
 	if err == nil {
-		out.PrintResult(response, "operation", "estimatedTime")
+		out.PrintResult(response, etcFields)
 	}
 
 	return

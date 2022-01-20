@@ -4,10 +4,13 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
+	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
 )
+
+var infoFields = list.ListFields
 
 func NewCmdInfo() *cobra.Command {
 	cmd := cobra.Command{
@@ -19,6 +22,7 @@ func NewCmdInfo() *cobra.Command {
 			if len(args) == 1 {
 				return infoRun(args[0])
 			}
+			infoFields.ShowAll()
 			return myInfoRun()
 		},
 	}
@@ -37,7 +41,7 @@ func myInfoRun() (err error) {
 	params := users.NewUsersDetailsParams().WithV(api.Version)
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload.Data)
+		out.PrintResult(response.Payload.Data, infoFields)
 	}
 
 	return
@@ -60,7 +64,7 @@ func infoRun(userID string) (err error) {
 		return cmderr.ResourceNotFoundError("User", userID)
 	}
 
-	out.PrintResult(response.Payload.Data[0])
+	out.PrintResult(response.Payload.Data[0], infoFields)
 
 	return
 }

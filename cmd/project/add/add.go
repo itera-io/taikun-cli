@@ -7,6 +7,8 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 
 	"github.com/itera-io/taikungoclient/client/access_profiles"
@@ -16,6 +18,59 @@ import (
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"CLOUD-CREDENTIAL", "cloudCredentialName",
+		),
+		field.NewVisible(
+			"ORG", "organizationName",
+		),
+		field.NewVisible(
+			"ORG-ID", "organizationId",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewVisible(
+			"HEALTH", "health",
+		),
+		field.NewVisible(
+			"K8S", "isKubernetes",
+		),
+		field.NewVisible(
+			"K8S-VERSION", "kubernetesCurrentVersion",
+		),
+		field.NewVisible(
+			"KUBESPRAY-VERSION", "kubesprayCurrentVersion",
+		),
+		field.NewVisible(
+			"CLOUD", "cloudType",
+		),
+		field.NewVisible(
+			"QUOTA-ID", "quotaId",
+		),
+		field.NewVisibleWithToStringFunc(
+			"EXPIRES", "expiredAt", out.FormatDateTimeString,
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+	},
 )
 
 type AddOptions struct {
@@ -39,7 +94,7 @@ type AddOptions struct {
 func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "add <name>",
 		Short: "Add a project",
 		Args:  cobra.ExactArgs(1),
@@ -68,83 +123,27 @@ func NewCmdAdd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(
-		&opts.CloudCredentialID, "cloud-credential-id", "c", 0,
-		"Cloud credential ID (required)",
-	)
-	cmdutils.MarkFlagRequired(cmd, "cloud-credential-id")
+	cmd.Flags().Int32VarP(&opts.CloudCredentialID, "cloud-credential-id", "c", 0, "Cloud credential ID (required)")
+	cmdutils.MarkFlagRequired(&cmd, "cloud-credential-id")
 
-	cmd.Flags().Int32Var(
-		&opts.AccessProfileID, "access-profile-id", 0,
-		"Access profile ID",
-	)
+	cmd.Flags().Int32Var(&opts.AccessProfileID, "access-profile-id", 0, "Access profile ID")
+	cmd.Flags().Int32Var(&opts.AlertingProfileID, "alerting-profile-id", 0, "Alerting profile ID")
+	cmd.Flags().BoolVarP(&opts.AutoUpgrade, "auto-upgrade", "u", false, "Enable auto upgrade")
+	cmd.Flags().Int32VarP(&opts.BackupCredentialID, "backup-credential-id", "b", 0, "Backup credential ID")
+	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s", types.ExpectedDateFormat))
+	cmd.Flags().StringSliceVarP(&opts.Flavors, "flavors", "f", []string{}, "Bind flavors to the project")
+	cmd.Flags().Int32VarP(&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0, "Kubernetes profile ID")
+	cmd.Flags().BoolVarP(&opts.Monitoring, "monitoring", "m", false, "Enable monitoring")
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmd.Flags().Int32VarP(&opts.PolicyProfileID, "policy-profile-id", "p", 0, "Policy profile ID")
+	cmd.Flags().Int32Var(&opts.RouterIDStartRange, "router-id-start-range", -1, "Router ID start range (required with OpenStack and Taikun load balancer")
+	cmd.Flags().Int32Var(&opts.RouterIDEndRange, "router-id-end-range", -1, "Router ID end range (required with OpenStack and Taikun load balancer")
+	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
 
-	cmd.Flags().Int32Var(
-		&opts.AlertingProfileID, "alerting-profile-id", 0,
-		"Alerting profile ID",
-	)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
-	cmd.Flags().BoolVarP(
-		&opts.AutoUpgrade, "auto-upgrade", "u", false,
-		"Enable auto upgrade",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.BackupCredentialID, "backup-credential-id", "b", 0,
-		"Backup credential ID",
-	)
-
-	cmd.Flags().StringVarP(
-		&opts.ExpirationDate, "expiration-date", "e", "",
-		fmt.Sprintf(
-			"Expiration date in the format: %s",
-			types.ExpectedDateFormat,
-		),
-	)
-
-	cmd.Flags().StringSliceVarP(
-		&opts.Flavors, "flavors", "f", []string{},
-		"Bind flavors to the project",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0,
-		"Kubernetes profile ID",
-	)
-
-	cmd.Flags().BoolVarP(
-		&opts.Monitoring, "monitoring", "m", false,
-		"Enable monitoring",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.OrganizationID, "organization-id", "o", 0,
-		"Organization ID",
-	)
-
-	cmd.Flags().Int32VarP(
-		&opts.PolicyProfileID, "policy-profile-id", "p", 0,
-		"Policy profile ID",
-	)
-
-	cmd.Flags().Int32Var(
-		&opts.RouterIDStartRange, "router-id-start-range", -1,
-		"Router ID start range (required with OpenStack and Taikun load balancer",
-	)
-
-	cmd.Flags().Int32Var(
-		&opts.RouterIDEndRange, "router-id-end-range", -1,
-		"Router ID end range (required with OpenStack and Taikun load balancer",
-	)
-
-	cmd.Flags().StringVar(
-		&opts.TaikunLBFlavor, "taikun-lb-flavor", "",
-		"Taikun load balancer flavor(required with OpenStack and Taikun load balancer",
-	)
-
-	cmdutils.AddOutputOnlyIDFlag(cmd)
-
-	return cmd
+	return &cmd
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -220,20 +219,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload,
-			"id",
-			"name",
-			"organizationName",
-			"status",
-			"health",
-			"createdAt",
-			"kubernetesCurrentVersion",
-			"cloudType",
-			"hasKubeConfigFile",
-			"quotaId",
-			"expiredAt",
-			"isLocked",
-		)
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return

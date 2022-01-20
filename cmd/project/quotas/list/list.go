@@ -5,10 +5,44 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 
 	"github.com/itera-io/taikungoclient/client/project_quotas"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+)
+
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"PROJECT", "projectName",
+		),
+		field.NewHidden(
+			"PROJECT-ID", "projectId",
+		),
+		field.NewVisibleWithToStringFunc(
+			"CPU", "cpu", out.FormatNumber,
+		),
+		field.NewVisible(
+			"UNLIMITED-CPU", "isCpuUnlimited",
+		),
+		field.NewVisibleWithToStringFunc(
+			"DISK", "diskSize", out.FormatBToGiB,
+		),
+		field.NewVisible(
+			"UNLIMITED-DISK", "isDiskSizeUnlimited",
+		),
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatBToGiB,
+		),
+		field.NewVisible(
+			"UNLIMITED-RAM", "isRamUnlimited",
+		),
+	},
 )
 
 type ListOptions struct {
@@ -18,7 +52,7 @@ type ListOptions struct {
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := &cobra.Command{
+	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List project quotas",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -30,10 +64,11 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(cmd)
-	cmdutils.AddSortByAndReverseFlags(cmd, models.KubernetesProfilesListDto{})
+	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "project-quotas", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
-	return cmd
+	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
@@ -71,14 +106,6 @@ func listRun(opts *ListOptions) (err error) {
 		projectQuotas = projectQuotas[:config.Limit]
 	}
 
-	out.PrintResults(projectQuotas,
-		"id",
-		"cpu",
-		"isCpuUnlimited",
-		"diskSize",
-		"isDiskSizeUnlimited",
-		"ram",
-		"isRamUnlimited",
-	)
+	out.PrintResults(projectQuotas, listFields)
 	return
 }

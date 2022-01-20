@@ -1,13 +1,16 @@
 package cmdutils
 
 import (
+	"fmt"
 	"log"
-	"reflect"
 	"strings"
 
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/gmap"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/spf13/cobra"
 )
 
@@ -15,6 +18,80 @@ func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	if err := cmd.MarkFlagRequired(flag); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func AddSortByAndReverseFlags(cmd *cobra.Command, sortType string, fields fields.Fields) {
+	cmd.Flags().StringVarP(
+		&config.SortBy,
+		"sort-by",
+		"S",
+		"",
+		"Sort results by attribute value",
+	)
+	SetFlagCompletionFunc(cmd, "sort-by", makeSortByCompletionFunc(sortType, fields))
+	cmd.PreRunE = aggregateRunE(cmd.PreRunE, makeSortByPreRunE(fields))
+
+	cmd.Flags().BoolVarP(
+		&config.ReverseSortDirection,
+		"reverse",
+		"R",
+		false,
+		"Reverse order of results when passed with the --sort-by flag",
+	)
+}
+
+func makeSortByPreRunE(fields fields.Fields) runE {
+	return func(cmd *cobra.Command, args []string) error {
+		if config.SortBy == "" {
+			return nil
+		}
+		jsonTag, found := fields.GetJsonTagFromName(config.SortBy)
+		if !found {
+			return fmt.Errorf("unknown sorting element '%s'", config.SortBy)
+		}
+		config.SortBy = jsonTag
+		return nil
+	}
+}
+
+func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *cobra.Command, args []string, toComplete string) []string {
+	return func(cmd *cobra.Command, args []string, toComplete string) []string {
+		sortingElements, err := getSortingElements(sortType)
+		if err != nil {
+			return []string{}
+		}
+
+		completions := make([]string, 0)
+		for _, jsonTag := range sortingElements {
+			for _, field := range fields.AllFields() {
+				if field.JsonTag() == jsonTag {
+					completions = append(completions, field.Name())
+					break
+				}
+			}
+		}
+
+		return lowerStringSlice(completions)
+	}
+}
+
+func getSortingElements(sortType string) (sortingElements []string, err error) {
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := common.NewCommonGetSortingElementsParams().WithV(api.Version)
+	params = params.WithType(sortType)
+
+	response, err := apiClient.Client.Common.CommonGetSortingElements(params, apiClient)
+	if err != nil {
+		return
+	}
+
+	sortingElements = response.Payload
+
+	return
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {
@@ -27,8 +104,43 @@ func AddOutputOnlyIDFlag(cmd *cobra.Command) {
 	)
 }
 
+func AddColumnsFlag(cmd *cobra.Command, fields fields.Fields) {
+	cmd.Flags().StringSliceVarP(
+		&config.Columns,
+		"columns",
+		"C",
+		[]string{},
+		"Specify which columns to display in the output table",
+	)
+	SetFlagCompletionValues(cmd, "columns", lowerStringSlice(fields.AllNames())...)
+
+	cmd.Flags().BoolVarP(
+		&config.AllColumns,
+		"all-columns",
+		"A",
+		false,
+		"Display all columns in the output table (takes priority over the --columns flag)",
+	)
+}
+
+func lowerStringSlice(stringSlice []string) []string {
+	lower := make([]string, len(stringSlice))
+	for i, str := range stringSlice {
+		lower[i] = strings.ToLower(str)
+	}
+	return lower
+}
+
 func AddLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().Int32VarP(&config.Limit, "limit", "l", 0, "Limit number of results (limitless by default)")
+	cmd.Flags().Int32VarP(&config.Limit, "limit", "L", 0, "Limit number of results (limitless by default)")
+	cmd.PreRunE = aggregateRunE(cmd.PreRunE,
+		func(cmd *cobra.Command, args []string) error {
+			if config.Limit < 0 {
+				return cmderr.NegativeLimitFlagError
+			}
+			return nil
+		},
+	)
 }
 
 func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) error {
@@ -36,79 +148,4 @@ func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) er
 		return cmderr.UnknownFlagValueError(flagName, flagValue, valid.Keys())
 	}
 	return nil
-}
-
-func AddSortByAndReverseFlags(cmd *cobra.Command, resultStructs ...interface{}) {
-	cmd.Flags().StringVarP(
-		&config.SortBy,
-		"sort-by",
-		"s",
-		"",
-		"Sort results by attribute value",
-	)
-
-	cmd.Flags().BoolVarP(
-		&config.ReverseSortDirection,
-		"reverse",
-		"r",
-		false,
-		"Reverse order of results when passed with the --sort-by flag",
-	)
-
-	commonTags := getCommonJsonTagsInStructs(resultStructs)
-
-	SetFlagCompletionValues(cmd, "sort-by", commonTags...)
-}
-
-func getCommonJsonTagsInStructs(structs []interface{}) []string {
-	jsonTags := make([]string, 0)
-
-	for _, s := range structs {
-		jsonTags = append(jsonTags, getStructJsonTags(s)...)
-	}
-
-	jsonTagsFreqMap := frequencyMapFromStringSlice(jsonTags)
-
-	structsCount := len(structs)
-	commonJsonTags := make([]string, 0)
-	for jsonTag, jsonTagFreq := range jsonTagsFreqMap {
-		if jsonTagFreq == structsCount {
-			commonJsonTags = append(commonJsonTags, jsonTag)
-		}
-	}
-
-	return commonJsonTags
-}
-
-func getStructJsonTags(s interface{}) []string {
-	structType := reflect.ValueOf(s).Type()
-	structFieldCount := structType.NumField()
-	structFieldJsonTags := make([]string, structFieldCount)
-	for i := 0; i < structFieldCount; i++ {
-		tag := getStructFieldJsonTag(structType, i)
-		structFieldJsonTags[i] = extractNameFromJsonTag(tag)
-	}
-	return structFieldJsonTags
-}
-
-func getStructFieldJsonTag(structType reflect.Type, i int) string {
-	return structType.Field(i).Tag.Get("json")
-}
-
-func extractNameFromJsonTag(tag string) (name string) {
-	if strings.Count(tag, ",") == 0 {
-		name = tag
-	} else {
-		tokens := strings.Split(tag, ",")
-		name = tokens[0]
-	}
-	return
-}
-
-func frequencyMapFromStringSlice(stringSlice []string) map[string]int {
-	freqMap := map[string]int{}
-	for _, str := range stringSlice {
-		freqMap[str] += 1
-	}
-	return freqMap
 }
