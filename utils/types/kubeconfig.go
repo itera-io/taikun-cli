@@ -1,6 +1,8 @@
 package types
 
-import "github.com/itera-io/taikun-cli/utils/gmap"
+import (
+	"github.com/itera-io/taikun-cli/utils/gmap"
+)
 
 var KubeconfigRoles = gmap.New(
 	map[string]interface{}{

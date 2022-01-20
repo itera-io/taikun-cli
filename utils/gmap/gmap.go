@@ -1,17 +1,28 @@
 package gmap
 
+import (
+	"log"
+	"strings"
+)
+
 type GenericMap struct {
 	m map[string]interface{}
 }
 
 func New(m map[string]interface{}) GenericMap {
+	for key, _ := range m {
+		if key != strings.ToLower(key) {
+			log.Fatal("GenericMap keys must be lowercase, have: ", key)
+		}
+	}
 	return GenericMap{
 		m: m,
 	}
 }
 
+// Search for value associated to the given key, is case-insensitive
 func (m GenericMap) Get(key string) interface{} {
-	return m.m[key]
+	return m.m[strings.ToLower(key)]
 }
 
 func (m GenericMap) Keys() []string {
@@ -22,7 +33,8 @@ func (m GenericMap) Keys() []string {
 	return keys
 }
 
+// Check whether key exists, is case-insensitive
 func (m GenericMap) Contains(key string) bool {
-	_, contains := m.m[key]
+	_, contains := m.m[strings.ToLower(key)]
 	return contains
 }
