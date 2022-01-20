@@ -1,3 +1,3 @@
 package config
 
-const MaxCellWidth = 24
+const MaxCellWidth = 37
