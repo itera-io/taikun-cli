@@ -2,11 +2,11 @@ package check
 
 import (
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 
-	"github.com/itera-io/taikungoclient/client/aws"
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -38,26 +38,7 @@ func NewCmdCheck() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.AWSRegion, "region", "r", "", "AWS Region (required)")
 	cmdutils.MarkFlagRequired(cmd, "region")
-	cmdutils.SetFlagCompletionFunc(cmd, "region", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
-		completions = make([]string, 0)
-
-		apiClient, err := api.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := aws.NewAwsRegionListParams().WithV(api.Version)
-		result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		for _, region := range result.Payload {
-			completions = append(completions, region.Region)
-		}
-
-		return
-	})
+	cmdutils.SetFlagCompletionFunc(cmd, "region", complete.MakeAwsRegionCompletionFunc(&opts.AWSAccessKeyID, &opts.AWSSecretAccessKey))
 
 	return cmd
 }
