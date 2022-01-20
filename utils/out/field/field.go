@@ -113,5 +113,5 @@ func (f *Field) Show() {
 
 // Whether the field's name matches the given string (case-insensitive)
 func (f *Field) NameMatches(name string) bool {
-	return strings.ToLower(f.name) == strings.ToLower(name)
+	return strings.EqualFold(f.name, name)
 }
