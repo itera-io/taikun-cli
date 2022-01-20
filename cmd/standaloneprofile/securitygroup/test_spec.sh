@@ -26,31 +26,31 @@ Context 'cmd/standaloneprofile/securitygroup'
   End
 
   Example 'calling add without standalone profile ID should cause error'
-    When call taikun standalone-profile security-group add --name "doom" --protocol udp --min-port 666 --max-port 666 --remote-ip-prefix '192.0.2'
+    When call taikun standalone-profile security-group add --name "doom2" --protocol udp --min-port 666 --max-port 666 --remote-ip-prefix '192.0.2'
     The status should equal 1
     The stderr should equal 'Error: accepts 1 arg(s), received 0'
   End
 
   Example 'calling add without remote IP prefix should cause error'
-    When call taikun standalone-profile security-group add --name "doom" --protocol udp --min-port 666 --max-port 666
+    When call taikun standalone-profile security-group add $id --name "doom2" --protocol udp --min-port 666 --max-port 666
     The status should equal 1
     The stderr should equal 'Error: required flag(s) "remote-ip-prefix" not set'
   End
 
   Example 'calling add without max port should cause error'
-    When call taikun standalone-profile security-group add --name "doom" --protocol udp --min-port 666 --remote-ip-prefix '192.0.2'
+    When call taikun standalone-profile security-group add $id --name "doom2" --protocol udp --min-port 666 --remote-ip-prefix '192.0.2'
     The status should equal 1
     The stderr should include 'max-port'
   End
 
   Example 'calling add without min port should cause error'
-    When call taikun standalone-profile security-group add --name "doom" --protocol udp --max-port 666 --remote-ip-prefix '192.0.2'
+    When call taikun standalone-profile security-group add $id --name "doom2" --protocol udp --max-port 666 --remote-ip-prefix '192.0.2'
     The status should equal 1
     The stderr should include 'min-port'
   End
 
   Example 'adding ICMP with port range should cause error'
-    When call taikun standalone-profile security-group add --name "doom" --protocol udp --min-port 666 --max-port 666 --remote-ip-prefix '192.0.2'
+    When call taikun standalone-profile security-group add $id --name "doom2" --protocol icmp --min-port 666 --max-port 666 --remote-ip-prefix '192.0.2'
     The status should equal 1
     The stderr should include 'port range'
   End
