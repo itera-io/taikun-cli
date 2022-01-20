@@ -2,6 +2,7 @@ package add
 
 import (
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -71,7 +72,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.AWSRegion, "region", "r", "", "AWS Region (required)")
 	cmdutils.MarkFlagRequired(&cmd, "region")
-	cmdutils.SetFlagCompletionFunc(&cmd, "region", awsRegionCompletionFunc)
+	cmdutils.SetFlagCompletionFunc(&cmd, "region", complete.MakeAwsRegionCompletionFunc(&opts.AWSAccessKeyID, &opts.AWSSecretAccessKey))
 
 	cmd.Flags().StringVarP(&opts.AWSAvailabilityZone, "availability-zone", "z", "", "AWS Availability Zone")
 	cmdutils.MarkFlagRequired(&cmd, "availability-zone")
@@ -82,27 +83,6 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.AddColumnsFlag(&cmd, addFields)
 
 	return &cmd
-}
-
-func awsRegionCompletionFunc(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
-	completions = make([]string, 0)
-
-	apiClient, err := api.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := aws.NewAwsRegionListParams().WithV(api.Version)
-	result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	for _, region := range result.Payload {
-		completions = append(completions, region.Region)
-	}
-
-	return
 }
 
 func addRun(opts *AddOptions) (err error) {
