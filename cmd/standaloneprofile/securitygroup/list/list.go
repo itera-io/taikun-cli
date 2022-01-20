@@ -1,20 +1,44 @@
 package list
 
 import (
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient/client/security_group"
 	"github.com/spf13/cobra"
 )
 
 var listFields = fields.New(
 	[]*field.Field{
-		// FIXME
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"PROFILE", "profileName",
+		),
+		field.NewVisible(
+			"REMOTE-IP-PREFIX", "remoteIpPrefix",
+		),
+		field.NewVisibleWithToStringFunc(
+			"PROTOCOL", "protocol", out.FormatStringUpper,
+		),
+		field.NewVisible(
+			"MIN-PORT", "portMinRange",
+		),
+		field.NewVisible(
+			"MAX-PORT", "portMaxRange",
+		),
 	},
 )
 
 type ListOptions struct {
-	// FIXME add options
+	StandAloneProfileID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -23,20 +47,35 @@ func NewCmdList() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "list <standalone-profile-id>",
 		Short: "List a standalone profile's security groups",
-		Args:  cobra.ExactArgs(1), // FIXME maybe
-		RunE: func(cmd *cobra.Command, args []string) error {
-			// FIXME maybe
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.StandAloneProfileID, err = types.Atoi32(args[0])
+			if err != nil {
+				return
+			}
 			return listRun(&opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
 
-	// FIXME
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
-	// FIXME
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := security_group.NewSecurityGroupListParams().WithV(api.Version)
+	params = params.WithStandAloneProfileID(opts.StandAloneProfileID)
+
+	response, err := apiClient.Client.SecurityGroup.SecurityGroupList(params, apiClient)
+	if err == nil {
+		out.PrintResults(response.Payload, listFields)
+	}
+
 	return
 }
