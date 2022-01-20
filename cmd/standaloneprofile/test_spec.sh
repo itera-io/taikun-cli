@@ -4,8 +4,8 @@ Context 'cmd/standaloneprofile'
     oid=$(taikun organization add $(_rnd_name) --full-name $(_rnd_name) -I)
 
     name=$(_rnd_name)
-    pubkey="ssh-ed25519 AAAAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/xxxxxxxxxxxxxxxxxxxx dummy"
-    id=$(taikun standalone-profile add $name --public-key $pubkey -o $oid -I)
+    pubkey="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy"
+    id=$(taikun standalone-profile add $name --public-key "$pubkey" -o $oid -I)
   }
   BeforeAll 'setup'
 
@@ -24,13 +24,13 @@ Context 'cmd/standaloneprofile'
   End
 
   Example 'duplicate name should cause error'
-    When call taikun standalone-profile add $name --public-key $pubkey -o $oid
+    When call taikun standalone-profile add $name --public-key "$pubkey" -o $oid
     The status should equal 1
-    The stderr should include 'duplicate'
+    The stderr should include 'Please specify another name'
   End
 
   Example 'calling add without name should cause error'
-    When call taikun standalone-profile add --public-key $pubkey -o $oid
+    When call taikun standalone-profile add --public-key "$pubkey" -o $oid
     The status should equal 1
     The stderr should equal 'Error: accepts 1 arg(s), received 0'
   End
