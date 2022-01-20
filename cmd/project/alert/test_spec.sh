@@ -35,7 +35,7 @@ Context 'project/alert'
     Example 'attach then detach'
       When call project_has_alerting_profile
       The status should equal 0
-      The output should include 'false'
+      The output should include 'No'
     End
   End
 
