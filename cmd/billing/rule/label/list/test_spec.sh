@@ -28,7 +28,7 @@ Context 'billing/rule/label/list'
   End
 
   Example 'list only one label'
-    When call taikun billing rule label list $id --no-decorate -l 1
+    When call taikun billing rule label list $id --no-decorate --limit 1
     The status should equal 0
     The lines of output should equal 1
   End
