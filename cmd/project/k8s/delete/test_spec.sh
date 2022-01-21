@@ -20,20 +20,20 @@ Context 'project/server/delete'
   Context
 
     add_and_remove_master() {
-      msid=$(taikun project server add $pid -n master -r kubemaster -f $flavor -I)
-      taikun project server delete $pid --server-ids $msid -q
+      msid=$(taikun project k8s add $pid -n master -r kubemaster -f $flavor -I)
+      taikun project k8s delete $pid --server-ids $msid -q
     }
 
     BeforeEach 'add_and_remove_master'
 
     Example 'delete one server'
-      When call taikun project server list $pid --no-decorate
+      When call taikun project k8s list $pid --no-decorate
       The status should equal 0
       The lines of output should equal 0
     End
 
     Example 'delete the same server twice'
-      When call taikun project server delete $pid --server-ids $msid
+      When call taikun project k8s delete $pid --server-ids $msid
       The status should equal 1
       The stderr should include '404'
     End
@@ -42,16 +42,16 @@ Context 'project/server/delete'
   Context
 
     add_servers_then_remove_all() {
-      msid=$(taikun project server add $pid -n m -r kubemaster -f $flavor -I)
-      wsid=$(taikun project server add $pid -n w -r kubeworker -f $flavor -I)
-      bsid=$(taikun project server add $pid -n b -r bastion -f $flavor -I)
-      taikun project server delete $pid --all -q
+      msid=$(taikun project k8s add $pid -n m -r kubemaster -f $flavor -I)
+      wsid=$(taikun project k8s add $pid -n w -r kubeworker -f $flavor -I)
+      bsid=$(taikun project k8s add $pid -n b -r bastion -f $flavor -I)
+      taikun project k8s delete $pid --all -q
     }
 
     Before 'add_servers_then_remove_all'
 
     Example 'delete all servers'
-      When call taikun project server list $pid --no-decorate
+      When call taikun project k8s list $pid --no-decorate
       The status should equal 0
       The lines of output should equal 0
     End

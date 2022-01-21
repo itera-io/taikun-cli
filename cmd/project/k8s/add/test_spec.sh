@@ -17,24 +17,24 @@ Context 'project/server/add'
 
   Context
     add_master() {
-      msid=$(taikun project server add $pid --name master -r kubemaster -k foo=bar,bar=foo -f $flavor -I)
+      msid=$(taikun project k8s add $pid --name master -r kubemaster -k foo=bar,bar=foo -f $flavor -I)
     }
     BeforeAll 'add_master'
 
     remove_master() {
-      taikun project server delete $pid --server-ids $msid -q 2>/dev/null || true
+      taikun project k8s delete $pid --server-ids $msid -q 2>/dev/null || true
     }
     AfterAll 'remove_master'
 
     Example 'add one server'
-      When call taikun project server list $pid --no-decorate
+      When call taikun project k8s list $pid --no-decorate
       The status should equal 0
       The lines of output should equal 1
       The output should include 'master'
     End
 
     Example 'add two servers with the same name'
-      When call taikun project server add $pid --name master -r kubemaster -f $flavor
+      When call taikun project k8s add $pid --name master -r kubemaster -f $flavor
       The status should equal 1
       The stderr should include 'Duplicate name occured'
     End

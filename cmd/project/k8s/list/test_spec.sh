@@ -16,26 +16,26 @@ Context 'project/server/list'
   AfterAll 'cleanup'
 
   Example 'empty project'
-    When call taikun project server list $pid --no-decorate
+    When call taikun project k8s list $pid --no-decorate
     The status should equal 0
     The lines of output should equal 0
   End
 
   Context
     add_servers() {
-      bsid=$(taikun project server add $pid -n bastion -r bastion -f $flavor -I)
-      msid=$(taikun project server add $pid -n master -r kubemaster -f $flavor -I)
-      wsid=$(taikun project server add $pid -n worker -r kubeworker -f $flavor -I)
+      bsid=$(taikun project k8s add $pid -n bastion -r bastion -f $flavor -I)
+      msid=$(taikun project k8s add $pid -n master -r kubemaster -f $flavor -I)
+      wsid=$(taikun project k8s add $pid -n worker -r kubeworker -f $flavor -I)
     }
     Before 'add_servers'
 
     remove_servers() {
-      taikun project server delete $pid --all -q
+      taikun project k8s delete $pid --all -q
     }
     After 'remove_servers'
 
     Example 'project with 3 servers'
-      When call taikun project server list $pid --no-decorate
+      When call taikun project k8s list $pid --no-decorate
       The status should equal 0
       The lines of output should equal 3
       The output should include 'bastion'
