@@ -10,11 +10,11 @@ func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
 	cmd := cobra.Command{
-		Use:   "add <project-id>",
-		Short: "Add a standalone VM to a project",
-		Args:  cobra.ExactArgs(1),
+		Use:   "add <vm-id>",
+		Short: "Add a disk to a standalone VM",
+		Args:  cobra.ExactArgs(1), // FIXME maybe
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// FIXME
+			// FIXME maybe
 			return addRun(&opts)
 		},
 	}
