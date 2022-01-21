@@ -1,4 +1,4 @@
-Context 'project/backup'
+Context 'project/k8s/backup'
 
   setup() {
     bid=$(taikun backup-credential add $(_rnd_name) -a $AWS_ACCESS_KEY_ID -e $S3_ENDPOINT -r $S3_REGION -s $AWS_SECRET_ACCESS_KEY -I)
