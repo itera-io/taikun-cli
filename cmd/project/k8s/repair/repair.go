@@ -1,4 +1,4 @@
-package commit
+package repair
 
 import (
 	"github.com/itera-io/taikun-cli/api"
@@ -8,39 +8,39 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type CommitOptions struct {
+type RepairOptions struct {
 	ProjectID int32
 }
 
-func NewCmdCommit() *cobra.Command {
-	var opts CommitOptions
+func NewCmdRepair() *cobra.Command {
+	var opts RepairOptions
 
 	cmd := cobra.Command{
-		Use:   "commit <project-id>",
-		Short: "Commit the project's changes",
+		Use:   "repair <project-id>",
+		Short: "Repair a project's Kubernetes servers",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
 			if err != nil {
 				return
 			}
-			return commitRun(&opts)
+			return repairRun(&opts)
 		},
 	}
 
 	return &cmd
 }
 
-func commitRun(opts *CommitOptions) (err error) {
+func repairRun(opts *RepairOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := projects.NewProjectsCommitParams().WithV(api.Version)
+	params := projects.NewProjectsRepairParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
-	_, err = apiClient.Client.Projects.ProjectsCommit(params, apiClient)
+	_, err = apiClient.Client.Projects.ProjectsRepair(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()
 	}

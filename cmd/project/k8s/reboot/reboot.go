@@ -18,7 +18,7 @@ func NewCmdReboot() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "reboot <server-id>",
-		Short: "Reboot a server",
+		Short: "Reboot a Kubernetes server",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ServerID, err = types.Atoi32(args[0])

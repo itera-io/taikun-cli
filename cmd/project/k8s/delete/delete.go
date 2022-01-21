@@ -5,7 +5,7 @@ import (
 
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/cmd/project/server/list"
+	"github.com/itera-io/taikun-cli/cmd/project/k8s/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/servers"
@@ -24,7 +24,7 @@ func NewCmdDelete() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "delete <project-id>",
-		Short: "Delete some or all servers from a project",
+		Short: "Delete some or all Kubernetes servers from a project",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])

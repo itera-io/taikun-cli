@@ -17,7 +17,7 @@ func NewCmdStatus() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "status <server-id>",
-		Short: "Display a server's status",
+		Short: "Display a Kubernetes server's status",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ServerID, err = types.Atoi32(args[0])

@@ -66,7 +66,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "add <project-id>",
-		Short: "Add a server to a project",
+		Short: "Add a Kubernetes server to a project",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])

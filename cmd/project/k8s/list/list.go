@@ -84,7 +84,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "list <project-id>",
-		Short: "List a project's servers",
+		Short: "List a project's Kubernetes servers",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
