@@ -1,4 +1,4 @@
-Context 'cmd/standaloneprofile/securitygroup'
+Context 'standaloneprofile/securitygroup'
 
   setup() {
     id=$(taikun standalone-profile add $(_rnd_name) --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I)

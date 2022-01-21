@@ -1,4 +1,4 @@
-Context 'cmd/standaloneprofile'
+Context 'standaloneprofile'
 
   setup() {
     oid=$(taikun organization add $(_rnd_name) --full-name $(_rnd_name) -I)
