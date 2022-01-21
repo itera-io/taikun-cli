@@ -10,7 +10,7 @@ type GenericMap struct {
 }
 
 func New(m map[string]interface{}) GenericMap {
-	for key, _ := range m {
+	for key := range m {
 		if key != strings.ToLower(key) {
 			log.Fatal("GenericMap keys must be lowercase, have: ", key)
 		}
