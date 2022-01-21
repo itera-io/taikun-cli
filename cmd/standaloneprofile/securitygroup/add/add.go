@@ -8,13 +8,36 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/security_group"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
-// TODO add fields once endpoint has ApiResponse
+var addFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"REMOTE-IP-PREFIX", "remoteIpPrefix",
+		),
+		field.NewVisibleWithToStringFunc(
+			"PROTOCOL", "protocol", out.FormatStringUpper,
+		),
+		field.NewVisible(
+			"MIN-PORT", "portMinRange",
+		),
+		field.NewVisible(
+			"MAX-PORT", "portMaxRange",
+		),
+	},
+)
 
 type AddOptions struct {
 	MaxPort             int32
@@ -67,7 +90,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.MaxPort, "max-port", -1, "Port range maximum")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
-	// TODO add columns flag using addFields once endpoint has ApiResponse
+	cmdutils.AddColumnsFlag(&cmd, addFields)
 
 	return &cmd
 }
@@ -90,10 +113,9 @@ func addRun(opts *AddOptions) (err error) {
 	params := security_group.NewSecurityGroupCreateParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
-	_, err = apiClient.Client.SecurityGroup.SecurityGroupCreate(params, apiClient)
+	response, err := apiClient.Client.SecurityGroup.SecurityGroupCreate(params, apiClient)
 	if err == nil {
-		out.PrintStandardSuccess()
-		// TODO print using addFields once endpoint has ApiResponse
+		out.PrintResult(response.Payload, addFields)
 	}
 
 	return
