@@ -17,7 +17,7 @@ func NewCmdCommit() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "commit <project-id>",
-		Short: "Commit the project's Kubernetes server changes",
+		Short: "Commit changes to a project's Kubernetes servers",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
