@@ -1,8 +1,6 @@
 package types
 
 import (
-	"strings"
-
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikungoclient/models"
 )
@@ -16,5 +14,5 @@ var ServerRoles = gmap.New(
 )
 
 func GetServerRole(serverRole string) models.CloudRole {
-	return ServerRoles.Get(strings.ToLower(serverRole)).(models.CloudRole)
+	return ServerRoles.Get(serverRole).(models.CloudRole)
 }

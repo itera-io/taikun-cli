@@ -1,8 +1,6 @@
 package types
 
 import (
-	"strings"
-
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikungoclient/models"
 )
@@ -15,5 +13,5 @@ var ShowbackKinds = gmap.New(
 )
 
 func GetShowbackKind(showbackKind string) models.ShowbackType {
-	return ShowbackKinds.Get(strings.ToLower(showbackKind)).(models.ShowbackType)
+	return ShowbackKinds.Get(showbackKind).(models.ShowbackType)
 }

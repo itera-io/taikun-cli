@@ -8,11 +8,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func MakeAwsRegionCompletionFunc(accessKeyID *string, secretKey *string) cmdutils.CompletionCoreFunc {
+func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) cmdutils.CompletionCoreFunc {
 	return func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
 		completions = make([]string, 0)
 
-		if *accessKeyID == "" || *secretKey == "" {
+		if *accessKeyID == "" || *secretAccessKey == "" {
 			return
 		}
 
@@ -22,8 +22,8 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretKey *string) cmdutil
 		}
 
 		body := models.RegionListCommand{
-			AccessKeyID: *accessKeyID,
-			SecretKey:   *secretKey,
+			AwsAccessKeyID:     *accessKeyID,
+			AwsSecretAccessKey: *secretAccessKey,
 		}
 
 		params := aws.NewAwsRegionListParams().WithV(api.Version)

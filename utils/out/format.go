@@ -135,3 +135,11 @@ func FormatSlackChannel(v interface{}) string {
 	}
 	return "N/A"
 }
+
+// Format string as all caps
+func FormatStringUpper(v interface{}) string {
+	if str, ok := v.(string); ok {
+		return strings.ToUpper(str)
+	}
+	return "N/A"
+}

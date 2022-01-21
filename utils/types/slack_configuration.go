@@ -1,8 +1,6 @@
 package types
 
 import (
-	"strings"
-
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikungoclient/models"
 )
@@ -15,5 +13,5 @@ var SlackTypes = gmap.New(
 )
 
 func GetSlackType(slackType string) models.SlackType {
-	return SlackTypes.Get(strings.ToLower(slackType)).(models.SlackType)
+	return SlackTypes.Get(slackType).(models.SlackType)
 }
