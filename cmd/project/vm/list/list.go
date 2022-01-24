@@ -1,13 +1,75 @@
 package list
 
 import (
-	"fmt"
-
+	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient/client/stand_alone"
 	"github.com/spf13/cobra"
 )
 
+var listFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"NAME", "name",
+		),
+		field.NewVisible(
+			"FLAVOR", "currentFlavor",
+		),
+		field.NewVisible(
+			"IP", "ipAddress",
+		),
+		field.NewVisible(
+			"PUBLIC-IP", "publicIp",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewVisible(
+			"PROFILE", "profile/name",
+		),
+		field.NewHidden(
+			"PROFILE-ID", "profile/id",
+		),
+		field.NewVisible(
+			"IMAGE", "imageName",
+		),
+		field.NewHidden(
+			"IMAGE-ID", "imageId",
+		),
+		field.NewHidden(
+			"SSH-PUBLIC-KEY", "sshPublicKey",
+		),
+		field.NewHidden(
+			"VOL-SIZE", "volumeSize",
+		),
+		field.NewHidden(
+			"VOL-TYPE", "volumeType",
+		),
+		field.NewVisibleWithToStringFunc(
+			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"CREATED-BY", "createdBy",
+		),
+		field.NewHiddenWithToStringFunc(
+			"LAST-MODIFIED", "lastModified", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"LAST-MODIFIED-BY", "lastModifiedBy",
+		),
+	},
+)
+
 type ListOptions struct {
-	// FIXME add options
+	ProjectID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -17,19 +79,37 @@ func NewCmdList() *cobra.Command {
 		Use:   "list <project-id>",
 		Short: "List a project's standalone VMs",
 		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			// FIXME maybe
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			opts.ProjectID, err = types.Atoi32(args[0])
+			if err != nil {
+				return
+			}
 			return listRun(&opts)
 		},
 	}
 
-	// FIXME
+	cmdutils.AddSortByAndReverseFlags(&cmd, "standalone-vms", listFields)
+	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
-	fmt.Println("TODO")
-	// FIXME
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := stand_alone.NewStandAloneDetailsParams().WithV(api.Version)
+	params = params.WithProjectID(opts.ProjectID)
+	if config.SortBy != "" {
+		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+	}
+
+	response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)
+	if err == nil {
+		out.PrintResults(response.Payload.Data, listFields)
+	}
+
 	return
 }
