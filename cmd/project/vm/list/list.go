@@ -9,6 +9,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/stand_alone"
+	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -95,6 +96,15 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
+	vms, err := ListVMs(opts)
+	if err == nil {
+		out.PrintResults(vms, listFields)
+	}
+
+	return
+}
+
+func ListVMs(opts *ListOptions) (vms []*models.StandaloneVmsListForDetailsDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -108,7 +118,7 @@ func listRun(opts *ListOptions) (err error) {
 
 	response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)
 	if err == nil {
-		out.PrintResults(response.Payload.Data, listFields)
+		vms = response.Payload.Data
 	}
 
 	return
