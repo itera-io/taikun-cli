@@ -50,6 +50,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -67,7 +68,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "showback-credentials", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -96,7 +97,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		showbackCredentials = append(showbackCredentials, response.Payload.Data...)
 		showbackCredentialsCount := int32(len(showbackCredentials))
-		if config.Limit != 0 && showbackCredentialsCount >= config.Limit {
+		if opts.Limit != 0 && showbackCredentialsCount >= opts.Limit {
 			break
 		}
 		if showbackCredentialsCount == response.Payload.TotalCount {
@@ -105,8 +106,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&showbackCredentialsCount)
 	}
 
-	if config.Limit != 0 && int32(len(showbackCredentials)) > config.Limit {
-		showbackCredentials = showbackCredentials[:config.Limit]
+	if opts.Limit != 0 && int32(len(showbackCredentials)) > opts.Limit {
+		showbackCredentials = showbackCredentials[:opts.Limit]
 	}
 
 	out.PrintResults(showbackCredentials, listFields)

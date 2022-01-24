@@ -47,6 +47,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -64,7 +65,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(cmd)
+	cmdutils.AddLimitFlag(cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(cmd, "cloud-credentials", listFields)
 	cmdutils.AddColumnsFlag(cmd, listFields)
 
@@ -104,7 +105,7 @@ func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err 
 		}
 		amazonCloudCredentials = append(amazonCloudCredentials, response.Payload.Amazon...)
 		count := int32(len(amazonCloudCredentials))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCountAws {
@@ -113,8 +114,8 @@ func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err 
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(amazonCloudCredentials)) > config.Limit {
-		amazonCloudCredentials = amazonCloudCredentials[:config.Limit]
+	if opts.Limit != 0 && int32(len(amazonCloudCredentials)) > opts.Limit {
+		amazonCloudCredentials = amazonCloudCredentials[:opts.Limit]
 	}
 
 	credentials = make([]interface{}, len(amazonCloudCredentials))

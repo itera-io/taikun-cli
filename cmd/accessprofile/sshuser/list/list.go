@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -33,6 +32,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	AccessProfileID int32
+	Limit           int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -53,7 +53,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(cmd)
+	cmdutils.AddLimitFlag(cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(cmd, listFields)
 
 	return cmd
@@ -72,8 +72,8 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	sshUsers := response.Payload
 
-	if config.Limit != 0 && int32(len(sshUsers)) > config.Limit {
-		sshUsers = sshUsers[:config.Limit]
+	if opts.Limit != 0 && int32(len(sshUsers)) > opts.Limit {
+		sshUsers = sshUsers[:opts.Limit]
 	}
 
 	out.PrintResults(sshUsers, listFields)

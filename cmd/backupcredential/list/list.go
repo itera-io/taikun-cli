@@ -3,7 +3,6 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -50,6 +49,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -66,7 +66,7 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
@@ -91,7 +91,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		backupCredentials = append(backupCredentials, response.Payload.Data...)
 		backupCredentialsCount := int32(len(backupCredentials))
-		if config.Limit != 0 && backupCredentialsCount >= config.Limit {
+		if opts.Limit != 0 && backupCredentialsCount >= opts.Limit {
 			break
 		}
 		if backupCredentialsCount == response.Payload.TotalCount {
@@ -100,8 +100,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&backupCredentialsCount)
 	}
 
-	if config.Limit != 0 && int32(len(backupCredentials)) > config.Limit {
-		backupCredentials = backupCredentials[:config.Limit]
+	if opts.Limit != 0 && int32(len(backupCredentials)) > opts.Limit {
+		backupCredentials = backupCredentials[:opts.Limit]
 	}
 
 	out.PrintResults(backupCredentials, listFields)

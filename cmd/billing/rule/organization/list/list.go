@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -32,6 +31,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	BillingRuleID int32
+	Limit         int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -51,7 +51,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
@@ -76,8 +76,8 @@ func listRun(opts *ListOptions) (err error) {
 
 	boundOrganizations := response.Payload.Data[0].BoundOrganizations
 
-	if config.Limit != 0 && int32(len(boundOrganizations)) > config.Limit {
-		boundOrganizations = boundOrganizations[:config.Limit]
+	if opts.Limit != 0 && int32(len(boundOrganizations)) > opts.Limit {
+		boundOrganizations = boundOrganizations[:opts.Limit]
 	}
 
 	out.PrintResults(boundOrganizations, listFields)

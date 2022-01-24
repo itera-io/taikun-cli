@@ -47,25 +47,31 @@ var listFields = fields.New(
 	},
 )
 
+type ListOptions struct {
+	Limit int32
+}
+
 func NewCmdList() *cobra.Command {
+	var opts ListOptions
+
 	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List billing rules",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun()
+			return listRun(&opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "prometheus", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
 
-func listRun() (err error) {
+func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -84,7 +90,7 @@ func listRun() (err error) {
 		}
 		billingRules = append(billingRules, response.Payload.Data...)
 		count := int32(len(billingRules))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -93,8 +99,8 @@ func listRun() (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(billingRules)) > config.Limit {
-		billingRules = billingRules[:config.Limit]
+	if opts.Limit != 0 && int32(len(billingRules)) > opts.Limit {
+		billingRules = billingRules[:opts.Limit]
 	}
 
 	out.PrintResults(billingRules, listFields)

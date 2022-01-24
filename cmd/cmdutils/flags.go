@@ -131,11 +131,11 @@ func lowerStringSlice(stringSlice []string) []string {
 	return lower
 }
 
-func AddLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().Int32VarP(&config.Limit, "limit", "L", 0, "Limit number of results (limitless by default)")
+func AddLimitFlag(cmd *cobra.Command, limit *int32) {
+	cmd.Flags().Int32VarP(limit, "limit", "L", 0, "Limit number of results (limitless by default)")
 	cmd.PreRunE = aggregateRunE(cmd.PreRunE,
 		func(cmd *cobra.Command, args []string) error {
-			if config.Limit < 0 {
+			if *limit < 0 {
 				return cmderr.NegativeLimitFlagError
 			}
 			return nil

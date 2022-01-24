@@ -38,6 +38,7 @@ type FlavorsOptions struct {
 	MaxRAM            float64
 	MinCPU            int32
 	MinRAM            float64
+	Limit             int32
 }
 
 func NewCmdFlavors() *cobra.Command {
@@ -62,7 +63,7 @@ func NewCmdFlavors() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
 	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "flavors", flavorsFields)
 	cmdutils.AddColumnsFlag(&cmd, flavorsFields)
 
@@ -93,7 +94,7 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 		}
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
-		if config.Limit != 0 && flavorsCount >= config.Limit {
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
 		if flavorsCount == response.Payload.TotalCount {
@@ -102,8 +103,8 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 		params = params.WithOffset(&flavorsCount)
 	}
 
-	if config.Limit != 0 && int32(len(flavors)) > config.Limit {
-		flavors = flavors[:config.Limit]
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
 	}
 
 	out.PrintResults(flavors, flavorsFields)

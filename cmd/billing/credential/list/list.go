@@ -3,7 +3,6 @@ package list
 import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -50,6 +49,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -66,7 +66,7 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
@@ -91,7 +91,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		billingCredentials = append(billingCredentials, response.Payload.Data...)
 		count := int32(len(billingCredentials))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -100,8 +100,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(billingCredentials)) > config.Limit {
-		billingCredentials = billingCredentials[:config.Limit]
+	if opts.Limit != 0 && int32(len(billingCredentials)) > opts.Limit {
+		billingCredentials = billingCredentials[:opts.Limit]
 	}
 
 	out.PrintResults(billingCredentials, listFields)

@@ -10,7 +10,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -37,6 +36,7 @@ type ImagesOptions struct {
 	AzurePublisher    string
 	AzureOffer        string
 	AzureSKU          string
+	Limit             int32
 }
 
 func NewCmdImages() *cobra.Command {
@@ -65,7 +65,7 @@ func NewCmdImages() *cobra.Command {
 	cmdutils.SetFlagCompletionFunc(&cmd, "azure-sku", complete.MakeAzureSKUCompletionFunc(&opts.AzurePublisher, &opts.AzureOffer))
 
 	cmdutils.AddColumnsFlag(&cmd, imagesFields)
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 
 	return &cmd
 }
@@ -95,11 +95,11 @@ func getImages(opts *ImagesOptions) (images interface{}, err error) {
 
 	switch cloudType {
 	case AWS:
-		images, err = getAwsImages(opts.CloudCredentialID)
+		images, err = getAwsImages(opts)
 	case AZURE:
 		images, err = getAzureImages(opts)
 	case OPENSTACK:
-		images, err = getOpenstackImages(opts.CloudCredentialID)
+		images, err = getOpenstackImages(opts)
 	}
 
 	return
@@ -130,14 +130,14 @@ func getCloudType(cloudCredentialID int32) (cloudType int, err error) {
 	return
 }
 
-func getAwsImages(cloudCredentialID int32) (awsImages interface{}, err error) {
+func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := images.NewImagesAwsImagesParams().WithV(api.Version)
-	params = params.WithCloudID(cloudCredentialID)
+	params = params.WithCloudID(opts.CloudCredentialID)
 
 	images := make([]*models.CommonStringBasedDropdownDto, 0)
 	for {
@@ -147,7 +147,7 @@ func getAwsImages(cloudCredentialID int32) (awsImages interface{}, err error) {
 		}
 		images = append(images, response.Payload.Data...)
 		count := int32(len(images))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -156,8 +156,8 @@ func getAwsImages(cloudCredentialID int32) (awsImages interface{}, err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(images)) > config.Limit {
-		images = images[:config.Limit]
+	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+		images = images[:opts.Limit]
 	}
 
 	awsImages = images
@@ -165,14 +165,14 @@ func getAwsImages(cloudCredentialID int32) (awsImages interface{}, err error) {
 	return
 }
 
-func getOpenstackImages(cloudCredentialID int32) (openStackImages interface{}, err error) {
+func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := images.NewImagesOpenstackImagesParams().WithV(api.Version)
-	params = params.WithCloudID(cloudCredentialID)
+	params = params.WithCloudID(opts.CloudCredentialID)
 
 	images := make([]*models.CommonStringBasedDropdownDto, 0)
 	for {
@@ -182,7 +182,7 @@ func getOpenstackImages(cloudCredentialID int32) (openStackImages interface{}, e
 		}
 		images = append(images, response.Payload.Data...)
 		count := int32(len(images))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -191,8 +191,8 @@ func getOpenstackImages(cloudCredentialID int32) (openStackImages interface{}, e
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(images)) > config.Limit {
-		images = images[:config.Limit]
+	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+		images = images[:opts.Limit]
 	}
 
 	openStackImages = images
@@ -234,13 +234,13 @@ func getAllAzureImages(opts *ImagesOptions) (azureImages []*models.CommonStringB
 			return nil, err
 		}
 		azureImages = append(azureImages, moreImages...)
-		if config.Limit != 0 && int32(len(azureImages)) >= config.Limit {
+		if opts.Limit != 0 && int32(len(azureImages)) >= opts.Limit {
 			break
 		}
 	}
 
-	if config.Limit != 0 && int32(len(azureImages)) > config.Limit {
-		azureImages = azureImages[:config.Limit]
+	if opts.Limit != 0 && int32(len(azureImages)) > opts.Limit {
+		azureImages = azureImages[:opts.Limit]
 	}
 
 	return
@@ -264,13 +264,13 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []*models.Com
 			return nil, err
 		}
 		azureImages = append(azureImages, moreImages...)
-		if config.Limit != 0 && int32(len(azureImages)) >= config.Limit {
+		if opts.Limit != 0 && int32(len(azureImages)) >= opts.Limit {
 			break
 		}
 	}
 
-	if config.Limit != 0 && int32(len(azureImages)) > config.Limit {
-		azureImages = azureImages[:config.Limit]
+	if opts.Limit != 0 && int32(len(azureImages)) > opts.Limit {
+		azureImages = azureImages[:opts.Limit]
 	}
 
 	return
@@ -295,13 +295,13 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonS
 			return nil, err
 		}
 		azureImages = append(azureImages, moreImages...)
-		if config.Limit != 0 && int32(len(azureImages)) >= config.Limit {
+		if opts.Limit != 0 && int32(len(azureImages)) >= opts.Limit {
 			break
 		}
 	}
 
-	if config.Limit != 0 && int32(len(azureImages)) > config.Limit {
-		azureImages = azureImages[:config.Limit]
+	if opts.Limit != 0 && int32(len(azureImages)) > opts.Limit {
+		azureImages = azureImages[:opts.Limit]
 	}
 
 	return
@@ -327,7 +327,7 @@ func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []*models.CommonStr
 		}
 		azureImages = append(azureImages, response.Payload.Data...)
 		count := int32(len(azureImages))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -336,8 +336,8 @@ func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []*models.CommonStr
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(azureImages)) > config.Limit {
-		azureImages = azureImages[:config.Limit]
+	if opts.Limit != 0 && int32(len(azureImages)) > opts.Limit {
+		azureImages = azureImages[:opts.Limit]
 	}
 
 	return

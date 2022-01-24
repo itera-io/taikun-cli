@@ -77,6 +77,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -95,7 +96,7 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
 	cmdutils.AddSortByAndReverseFlags(&cmd, "projects", listFields)
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
@@ -123,7 +124,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		projects = append(projects, response.Payload.Data...)
 		projectsCount := int32(len(projects))
-		if config.Limit != 0 && projectsCount >= config.Limit {
+		if opts.Limit != 0 && projectsCount >= opts.Limit {
 			break
 		}
 		if projectsCount == response.Payload.TotalCount {
@@ -132,8 +133,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&projectsCount)
 	}
 
-	if config.Limit != 0 && int32(len(projects)) > config.Limit {
-		projects = projects[:config.Limit]
+	if opts.Limit != 0 && int32(len(projects)) > opts.Limit {
+		projects = projects[:opts.Limit]
 	}
 
 	out.PrintResults(projects, listFields)
