@@ -46,7 +46,7 @@ func NewCmdDelete() *cobra.Command {
 	}
 
 	cmd.Flags().Int32SliceVarP(&opts.ServerIDs, "server-ids", "s", []int32{}, "IDs of the servers to delete")
-	cmd.Flags().BoolVarP(&opts.DeleteAll, "all", "a", false, "Delete all servers")
+	cmd.Flags().BoolVarP(&opts.DeleteAll, "all", "a", false, "Delete all of the project's servers")
 
 	return &cmd
 }
