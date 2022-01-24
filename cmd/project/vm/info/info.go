@@ -1,6 +1,10 @@
 package info
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type InfoOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdInfo() *cobra.Command {
 }
 
 func infoRun(opts *InfoOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

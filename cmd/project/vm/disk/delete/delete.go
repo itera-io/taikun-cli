@@ -1,6 +1,10 @@
 package delete
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type DeleteOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(opts *DeleteOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

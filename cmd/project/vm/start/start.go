@@ -1,6 +1,10 @@
 package start
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type StartOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdStart() *cobra.Command {
 }
 
 func startRun(opts *StartOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

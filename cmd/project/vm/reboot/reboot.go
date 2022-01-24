@@ -1,6 +1,10 @@
 package reboot
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type RebootOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdReboot() *cobra.Command {
 }
 
 func rebootRun(opts *RebootOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

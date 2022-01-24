@@ -1,6 +1,10 @@
 package commit
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type CommitOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdCommit() *cobra.Command {
 }
 
 func commitRun(opts *CommitOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

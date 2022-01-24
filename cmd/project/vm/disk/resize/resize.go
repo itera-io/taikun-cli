@@ -1,6 +1,10 @@
 package resize
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type ResizeOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdResize() *cobra.Command {
 }
 
 func resizeRun(opts *ResizeOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

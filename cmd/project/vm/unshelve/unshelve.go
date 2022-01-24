@@ -1,6 +1,10 @@
 package unshelve
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type UnshelveOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdUnshelve() *cobra.Command {
 }
 
 func unshelveRun(opts *UnshelveOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

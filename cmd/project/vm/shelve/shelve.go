@@ -1,6 +1,10 @@
 package shelve
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type ShelveOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdShelve() *cobra.Command {
 }
 
 func shelveRun(opts *ShelveOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }

@@ -1,6 +1,10 @@
 package repair
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
 
 type RepairOptions struct {
 	// FIXME add options
@@ -25,6 +29,7 @@ func NewCmdRepair() *cobra.Command {
 }
 
 func repairRun(opts *RepairOptions) (err error) {
+	fmt.Println("TODO")
 	// FIXME
 	return
 }
