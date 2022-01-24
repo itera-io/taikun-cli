@@ -51,7 +51,7 @@ func newTable() table.Writer {
 func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
 	row := make([]interface{}, fields.VisibleSize())
 	for i, field := range fields.VisibleFields() {
-		if value, found := resourceMap[field.JsonTag()]; found && value != nil {
+		if value, found := getValueFromJsonMap(resourceMap, field.JsonTag()); found && value != nil {
 			row[i] = field.Format(value)
 		} else {
 			row[i] = ""

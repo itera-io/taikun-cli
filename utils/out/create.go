@@ -2,6 +2,7 @@ package out
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/itera-io/taikun-cli/api"
@@ -22,7 +23,10 @@ func PrintResult(resource interface{}, fields fields.Fields) {
 }
 
 func printResourceID(resource interface{}) {
-	resourceMap := jsonObjectToMap(resource)
+	resourceMap, err := jsonObjectToMap(resource)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if id, found := resourceMap["id"]; found {
 		Println(resourceIDToString(id))
 	} else {
@@ -51,7 +55,10 @@ func printApiResponseTable(response interface{}, fields fields.Fields) {
 }
 
 func getApiResponseResourceMap(response interface{}) map[string]interface{} {
-	resourceMap := jsonObjectToMap(response)
+	resourceMap, err := jsonObjectToMap(response)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if resourceMap[api.ResultField] != nil {
 		resourceMap = resourceMap[api.ResultField].(map[string]interface{})
 	} else if resourceMap[api.PayloadField] != nil {
