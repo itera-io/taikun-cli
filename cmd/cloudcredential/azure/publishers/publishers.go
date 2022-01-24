@@ -2,6 +2,7 @@ package publishers
 
 import (
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient/client/azure"
@@ -10,6 +11,7 @@ import (
 
 type PublishersOptions struct {
 	CloudCredentialID int32
+	Limit             int32
 }
 
 func NewCmdPublishers() *cobra.Command {
@@ -27,6 +29,8 @@ func NewCmdPublishers() *cobra.Command {
 			return publishersRun(&opts)
 		},
 	}
+
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 
 	return &cmd
 }
@@ -56,10 +60,17 @@ func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 		}
 		publishers = append(publishers, response.Payload.Data...)
 		count := int32(len(publishers))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
 		if count == response.Payload.TotalCount {
 			break
 		}
 		params = params.WithOffset(&count)
+	}
+
+	if opts.Limit != 0 && int32(len(publishers)) > opts.Limit {
+		publishers = publishers[:opts.Limit]
 	}
 
 	return

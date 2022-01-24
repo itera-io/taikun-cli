@@ -15,6 +15,7 @@ type SKUsOptions struct {
 	CloudCredentialID int32
 	Publisher         string
 	Offer             string
+	Limit             int32
 }
 
 func NewCmdSKUs() *cobra.Command {
@@ -74,6 +75,8 @@ func NewCmdSKUs() *cobra.Command {
 		},
 	)
 
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
+
 	return &cmd
 }
 
@@ -104,10 +107,17 @@ func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
 		}
 		skus = append(skus, response.Payload.Data...)
 		count := int32(len(skus))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
 		if count == response.Payload.TotalCount {
 			break
 		}
 		params = params.WithOffset(&count)
+	}
+
+	if opts.Limit != 0 && int32(len(skus)) > opts.Limit {
+		skus = skus[:opts.Limit]
 	}
 
 	return

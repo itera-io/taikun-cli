@@ -13,6 +13,7 @@ import (
 type OffersOptions struct {
 	CloudCredentialID int32
 	Publisher         string
+	Limit             int32
 }
 
 func NewCmdOffers() *cobra.Command {
@@ -51,6 +52,8 @@ func NewCmdOffers() *cobra.Command {
 		},
 	)
 
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
+
 	return &cmd
 }
 
@@ -80,10 +83,17 @@ func ListOffers(opts *OffersOptions) (offers []string, err error) {
 		}
 		offers = append(offers, response.Payload.Data...)
 		count := int32(len(offers))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
 		if count == response.Payload.TotalCount {
 			break
 		}
 		params = params.WithOffset(&count)
+	}
+
+	if opts.Limit != 0 && int32(len(offers)) > opts.Limit {
+		offers = offers[:opts.Limit]
 	}
 
 	return
