@@ -30,3 +30,11 @@ func renderTable(t table.Writer) {
 		t.Render()
 	}
 }
+
+func PrintStringSlice(s []string) {
+	if !config.Quiet {
+		for _, str := range s {
+			fmt.Println(str)
+		}
+	}
+}
