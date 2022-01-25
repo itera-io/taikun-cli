@@ -2,6 +2,7 @@ package delete
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -66,6 +67,9 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		allVMs, err := list.ListVMs(&list.ListOptions{ProjectID: opts.ProjectID})
 		if err != nil {
 			return err
+		}
+		if len(allVMs) == 0 {
+			return fmt.Errorf("project %d has no standalone VMs", opts.ProjectID)
 		}
 		allVMIDs := make([]int32, len(allVMs))
 		for i, vm := range allVMs {
