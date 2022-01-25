@@ -2,6 +2,7 @@ package bind
 
 import (
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -25,7 +26,7 @@ func NewCmdBind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
 			if err != nil {
-				return
+				return cmderr.IDArgumentNotANumberError
 			}
 			return bindRun(&opts)
 		},
