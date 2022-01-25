@@ -1,7 +1,8 @@
 Context 'project/image'
   setup() {
     cc=$(taikun cloud-credential openstack add $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
-    id=$(taikun project add $(_rnd_name) --cloud-credential-id $cc --flavors $flavor -I)
+    sleep 0.1
+    id=$(taikun project add $(_rnd_name) --cloud-credential-id $cc -I)
   }
   BeforeAll 'setup'
 
@@ -33,7 +34,7 @@ Context 'project/image'
     AfterEach 'unbind'
 
     Example 'bind then unbind image'
-      When call taikun project image list $id --no-decorate
+      When call taikun project image list $id --no-decorate --columns image-id
       The status should equal 0
       The lines of output should equal 1
       The output should include "$img"
