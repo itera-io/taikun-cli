@@ -2,6 +2,7 @@ package delete
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -65,6 +66,9 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		allServers, err := list.ListServers(&list.ListOptions{ProjectID: opts.ProjectID})
 		if err != nil {
 			return err
+		}
+		if len(allServers) == 0 {
+			return fmt.Errorf("project %d has no Kubernetes servers", opts.ProjectID)
 		}
 		allServerIDs := make([]int32, len(allServers))
 		for i, server := range allServers {
