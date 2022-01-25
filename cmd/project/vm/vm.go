@@ -22,7 +22,7 @@ func NewCmdVm() *cobra.Command {
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
-	cmd.AddCommand(commit.NewCmdCommit()) // TODO
+	cmd.AddCommand(commit.NewCmdCommit())
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(disk.NewCmdDisk()) // TODO
 	cmd.AddCommand(list.NewCmdList())
