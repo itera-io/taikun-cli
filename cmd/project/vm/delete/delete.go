@@ -35,11 +35,11 @@ func NewCmdDelete() *cobra.Command {
 			}
 			if opts.DeleteAll {
 				if len(opts.VMIDs) != 0 {
-					return errors.New("Cannot set both --vm-ids and --all flags")
+					return errors.New("Cannot set both --vm-ids and --all-vms flags")
 				}
 			} else {
 				if len(opts.VMIDs) == 0 {
-					return errors.New("Must set one of --vm-ids and --all flags")
+					return errors.New("Must set one of --vm-ids and --all-vms flags")
 				}
 			}
 			return deleteRun(&opts)
@@ -48,7 +48,7 @@ func NewCmdDelete() *cobra.Command {
 	}
 
 	cmd.Flags().Int32SliceVarP(&opts.VMIDs, "vm-ids", "v", []int32{}, "IDs of the standalone VMs to delete")
-	cmd.Flags().BoolVarP(&opts.DeleteAll, "all", "a", false, "Delete all of the project's standalone VMs")
+	cmd.Flags().BoolVarP(&opts.DeleteAll, "all-vms", "a", false, "Delete all of the project's standalone VMs")
 
 	return &cmd
 }
