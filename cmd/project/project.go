@@ -13,7 +13,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/list"
 	"github.com/itera-io/taikun-cli/cmd/project/lock"
 	"github.com/itera-io/taikun-cli/cmd/project/monitoringtoggle"
-	"github.com/itera-io/taikun-cli/cmd/project/quotas"
+	"github.com/itera-io/taikun-cli/cmd/project/quota"
 	"github.com/itera-io/taikun-cli/cmd/project/unlock"
 	"github.com/itera-io/taikun-cli/cmd/project/vm"
 
@@ -37,7 +37,7 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(kubeconfig.NewCmdKubeconfig())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
-	cmd.AddCommand(quotas.NewCmdQuotas())
+	cmd.AddCommand(quota.NewCmdQuota())
 	cmd.AddCommand(monitoringtoggle.NewCmdMonitoringToggle())
 	cmd.AddCommand(unlock.NewCmdUnlock())
 	cmd.AddCommand(vm.NewCmdVm())
