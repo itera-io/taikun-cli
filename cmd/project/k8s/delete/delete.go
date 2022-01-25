@@ -33,11 +33,11 @@ func NewCmdDelete() *cobra.Command {
 			}
 			if opts.DeleteAll {
 				if len(opts.ServerIDs) != 0 {
-					return errors.New("Cannot set both --server-ids and --all flags")
+					return errors.New("Cannot set both --server-ids and --all-servers flags")
 				}
 			} else {
 				if len(opts.ServerIDs) == 0 {
-					return errors.New("Must set one of --server-ids and --all flags")
+					return errors.New("Must set one of --server-ids and --all-servers flags")
 				}
 			}
 			return deleteRun(&opts)
@@ -46,7 +46,7 @@ func NewCmdDelete() *cobra.Command {
 	}
 
 	cmd.Flags().Int32SliceVarP(&opts.ServerIDs, "server-ids", "s", []int32{}, "IDs of the servers to delete")
-	cmd.Flags().BoolVarP(&opts.DeleteAll, "all", "a", false, "Delete all of the project's servers")
+	cmd.Flags().BoolVarP(&opts.DeleteAll, "all-servers", "a", false, "Delete all of the project's servers")
 
 	return &cmd
 }
