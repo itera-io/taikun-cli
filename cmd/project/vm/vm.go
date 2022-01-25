@@ -21,17 +21,17 @@ func NewCmdVm() *cobra.Command {
 		Short: "Manage a project's standalone VMs",
 	}
 
-	cmd.AddCommand(add.NewCmdAdd())
-	cmd.AddCommand(commit.NewCmdCommit())
+	cmd.AddCommand(add.NewCmdAdd())       // TODO
+	cmd.AddCommand(commit.NewCmdCommit()) // TODO
 	cmd.AddCommand(delete.NewCmdDelete())
-	cmd.AddCommand(disk.NewCmdDisk())
+	cmd.AddCommand(disk.NewCmdDisk()) // TODO
 	cmd.AddCommand(list.NewCmdList())
-	cmd.AddCommand(reboot.NewCmdReboot())
-	cmd.AddCommand(repair.NewCmdRepair())
-	cmd.AddCommand(shelve.NewCmdShelve())
-	cmd.AddCommand(start.NewCmdStart())
-	cmd.AddCommand(tags.NewCmdTags())
-	cmd.AddCommand(unshelve.NewCmdUnshelve())
+	cmd.AddCommand(reboot.NewCmdReboot())     // TODO
+	cmd.AddCommand(repair.NewCmdRepair())     // TODO
+	cmd.AddCommand(shelve.NewCmdShelve())     // TODO
+	cmd.AddCommand(start.NewCmdStart())       // TODO
+	cmd.AddCommand(tags.NewCmdTags())         // TODO
+	cmd.AddCommand(unshelve.NewCmdUnshelve()) // TODO
 
 	return &cmd
 }
