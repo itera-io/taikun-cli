@@ -15,12 +15,12 @@ import (
 var listFields = fields.New(
 	[]*field.Field{
 		field.NewVisible(
-			"ID", "id",
+			"BINDING-ID", "id",
 		),
 		field.NewVisible(
 			"IMAGE", "name",
 		),
-		field.NewHidden(
+		field.NewVisible(
 			"IMAGE-ID", "imageId",
 		),
 		field.NewVisible(
@@ -32,16 +32,16 @@ var listFields = fields.New(
 		field.NewVisible(
 			"SIZE", "size",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"CLOUD-ID", "cloudId",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"AWS", "isAws",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"AZURE", "isAzure",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"OPENSTACK", "isOpenstack",
 		),
 	},
