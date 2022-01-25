@@ -49,10 +49,10 @@ var listFields = fields.New(
 			"SSH-PUBLIC-KEY", "sshPublicKey",
 		),
 		field.NewHidden(
-			"VOL-SIZE", "volumeSize",
+			"VOLUME-SIZE", "volumeSize",
 		),
 		field.NewHidden(
-			"VOL-TYPE", "volumeType",
+			"VOLUME-TYPE", "volumeType",
 		),
 		field.NewVisibleWithToStringFunc(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,
