@@ -6,6 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/vm/delete"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/disk"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/list"
+	"github.com/itera-io/taikun-cli/cmd/project/vm/publicip"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/reboot"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/repair"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/shelve"
@@ -27,6 +28,7 @@ func NewCmdVm() *cobra.Command {
 	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(disk.NewCmdDisk())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(publicip.NewCmdPublicIp())
 	cmd.AddCommand(reboot.NewCmdReboot())
 	cmd.AddCommand(repair.NewCmdRepair())
 	cmd.AddCommand(shelve.NewCmdShelve())

@@ -6,3 +6,8 @@ func GetVMRebootType(hardReboot bool) string {
 	}
 	return "SOFT"
 }
+
+const (
+	EnableVMPublicIP  = "enable"
+	DisableVMPublicIP = "disable"
+)
