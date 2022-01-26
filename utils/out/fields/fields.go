@@ -12,7 +12,8 @@ import (
 
 // Table fields
 type Fields struct {
-	fields []*field.Field
+	fields           []*field.Field
+	parentObjectName string
 }
 
 // Create new Fields struct
@@ -40,6 +41,19 @@ func New(fields []*field.Field) Fields {
 	return Fields{
 		fields: fields,
 	}
+}
+
+// Same as New, create new Fields struct but fields are in a nested object
+func NewNested(fields []*field.Field, parentObjectName string) Fields {
+	f := New(fields)
+	f.parentObjectName = parentObjectName
+	return f
+}
+
+// Returns whether the fields belong to a nested structure and the parent
+// object's name
+func (f Fields) AreNested() (parentObjectName string, areNested bool) {
+	return f.parentObjectName, f.parentObjectName != ""
 }
 
 // Modify the JSON tag of the field with the given name
