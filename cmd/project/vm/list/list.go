@@ -54,6 +54,9 @@ var listFields = fields.New(
 		field.NewHidden(
 			"VOLUME-TYPE", "volumeType",
 		),
+		field.NewHiddenWithToStringFunc(
+			"TAGS", "standAloneMetaDatas", out.FormatVMTags,
+		),
 		field.NewVisibleWithToStringFunc(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,
 		),

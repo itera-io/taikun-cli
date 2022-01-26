@@ -143,3 +143,44 @@ func FormatStringUpper(v interface{}) string {
 	}
 	return "N/A"
 }
+
+// Format standalone VM tag list
+func FormatVMTags(v interface{}) (str string) {
+	str = "N/A"
+	if tags, ok := v.([]interface{}); ok {
+		var stringBuilder strings.Builder
+		tagCount := len(tags)
+		for i, tag := range tags {
+			if m, ok := tag.(map[string]interface{}); ok {
+				if key, ok := m["key"]; ok {
+					if keyString, ok := key.(string); ok {
+						stringBuilder.WriteString(keyString)
+					} else {
+						return
+					}
+				} else {
+					return
+				}
+				stringBuilder.WriteString("=")
+				if value, ok := m["value"]; ok {
+					if valueString, ok := value.(string); ok {
+						stringBuilder.WriteString(valueString)
+					} else {
+						return
+					}
+				} else {
+					return
+				}
+			} else {
+				return
+			}
+			if i < tagCount-1 {
+				stringBuilder.WriteString(", ")
+			}
+		}
+		if tagCount != 0 {
+			str = stringBuilder.String()
+		}
+	}
+	return
+}
