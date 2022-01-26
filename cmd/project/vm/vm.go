@@ -32,8 +32,8 @@ func NewCmdVm() *cobra.Command {
 	cmd.AddCommand(shelve.NewCmdShelve())
 	cmd.AddCommand(start.NewCmdStart()) // TODO
 	cmd.AddCommand(status.NewCmdStatus())
-	cmd.AddCommand(tags.NewCmdTags())         // TODO
-	cmd.AddCommand(unshelve.NewCmdUnshelve()) // TODO
+	cmd.AddCommand(tags.NewCmdTags()) // TODO
+	cmd.AddCommand(unshelve.NewCmdUnshelve())
 
 	return &cmd
 }
