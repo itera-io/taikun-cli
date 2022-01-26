@@ -31,7 +31,7 @@ func NewCmdVm() *cobra.Command {
 	cmd.AddCommand(reboot.NewCmdReboot())
 	cmd.AddCommand(repair.NewCmdRepair())
 	cmd.AddCommand(shelve.NewCmdShelve())
-	cmd.AddCommand(start.NewCmdStart()) // TODO
+	cmd.AddCommand(start.NewCmdStart())
 	cmd.AddCommand(status.NewCmdStatus())
 	cmd.AddCommand(stop.NewCmdStop())
 	cmd.AddCommand(tags.NewCmdTags()) // TODO
