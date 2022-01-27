@@ -94,6 +94,9 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int64VarP(&opts.Size, "size", "s", 0, "Size in GiB (required)")
 	cmdutils.MarkFlagRequired(&cmd, "size")
 
+	cmdutils.AddColumnsFlag(&cmd, addFields)
+	cmdutils.AddOutputOnlyIDFlag(&cmd)
+
 	return &cmd
 }
 
