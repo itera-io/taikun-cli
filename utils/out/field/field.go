@@ -12,9 +12,9 @@ type Field struct {
 	// name of the field in the column
 	name string
 
-	// Corresponding JSON tag
+	// Corresponding JSON property name
 	//
-	// Putting slashes in the tag lets you access nested attributes
+	// Putting slashes in the property name lets you access nested objects
 	// Consider this JSON object:
 	// {
 	//   "id": 1234,
@@ -22,8 +22,8 @@ type Field struct {
 	//     "name": "foo"
 	//   }
 	// }
-	// Set the jsonTag to "profile/name" to access the name attribute
-	jsonTag string
+	// Set the jsonPropertyName to "profile/name" to access the name attribute
+	jsonPropertyName string
 
 	// Function to format the field's value as a string
 	toString ToStringFunc
@@ -33,22 +33,22 @@ type Field struct {
 }
 
 // Create new visible Field struct
-func NewVisible(name string, jsonTag string) *Field {
+func NewVisible(name string, jsonPropertyName string) *Field {
 	return &Field{
-		name:     name,
-		jsonTag:  jsonTag,
-		toString: FormatByDefault,
-		visible:  true,
+		name:             name,
+		jsonPropertyName: jsonPropertyName,
+		toString:         FormatByDefault,
+		visible:          true,
 	}
 }
 
 // Create new hidden Field struct
-func NewHidden(name string, jsonTag string) *Field {
+func NewHidden(name string, jsonPropertyName string) *Field {
 	return &Field{
-		name:     name,
-		jsonTag:  jsonTag,
-		toString: FormatByDefault,
-		visible:  false,
+		name:             name,
+		jsonPropertyName: jsonPropertyName,
+		toString:         FormatByDefault,
+		visible:          false,
 	}
 }
 
@@ -67,22 +67,22 @@ func FormatByDefault(v interface{}) string {
 }
 
 // Create new visible Field struct with To String function
-func NewVisibleWithToStringFunc(name string, jsonTag string, toString ToStringFunc) *Field {
+func NewVisibleWithToStringFunc(name string, jsonPropertyName string, toString ToStringFunc) *Field {
 	return &Field{
-		name:     name,
-		jsonTag:  jsonTag,
-		toString: toString,
-		visible:  true,
+		name:             name,
+		jsonPropertyName: jsonPropertyName,
+		toString:         toString,
+		visible:          true,
 	}
 }
 
 // Create new hidden Field struct with To String function
-func NewHiddenWithToStringFunc(name string, jsonTag string, toString ToStringFunc) *Field {
+func NewHiddenWithToStringFunc(name string, jsonPropertyName string, toString ToStringFunc) *Field {
 	return &Field{
-		name:     name,
-		jsonTag:  jsonTag,
-		toString: toString,
-		visible:  false,
+		name:             name,
+		jsonPropertyName: jsonPropertyName,
+		toString:         toString,
+		visible:          false,
 	}
 }
 
@@ -91,14 +91,14 @@ func (f *Field) Format(value interface{}) interface{} {
 	return f.toString(value)
 }
 
-// Get field's JSON tag
-func (f *Field) JsonTag() string {
-	return f.jsonTag
+// Get field's JSON property name
+func (f *Field) JsonPropertyName() string {
+	return f.jsonPropertyName
 }
 
-// Modifiy a field's JSON tag
-func (f *Field) SetJsonTag(newJsonTag string) {
-	f.jsonTag = newJsonTag
+// Modifiy a field's JSON property name
+func (f *Field) SetJsonPropertyName(newJsonPropertyName string) {
+	f.jsonPropertyName = newJsonPropertyName
 }
 
 // Get field's name

@@ -80,7 +80,7 @@ func getNestedResources(resource interface{}, parentObjectName string) (nestedRe
 func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
 	row := make([]interface{}, fields.VisibleSize())
 	for i, field := range fields.VisibleFields() {
-		if value, found := getValueFromJsonMap(resourceMap, field.JsonTag()); found && value != nil {
+		if value, found := getValueFromJsonMap(resourceMap, field.JsonPropertyName()); found && value != nil {
 			row[i] = field.Format(value)
 		} else {
 			row[i] = ""
