@@ -6,6 +6,8 @@ on:
       - 'dev'
     paths-ignore:
       - 'README.md'
+      - 'LICENSE'
+      - 'NOTICE'
       - 'Dockerfile'
       - 'GNUmakefile'
       - 'go.mod'
