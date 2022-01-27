@@ -21,7 +21,7 @@ Context 'project/vm/disk'
   AfterAll 'cleanup'
 
   Example 'no disks initially'
-    When call taikun project vm disk list $id --vm-id $vm --no-decorate
+    When call taikun project vm disk list $vm --project-id $id --no-decorate
     The status should equal 0
     The lines of output should equal 0
   End
@@ -38,7 +38,7 @@ Context 'project/vm/disk'
     AfterAll 'remove'
 
     Example 'add and then remove disk'
-      When call taikun project vm disk list $id --vm-id $vm --columns name,size,volumeType --no-decorate
+      When call taikun project vm disk list $vm --project-id $id --columns name,size,volume-type --no-decorate
       The status should equal 0
       The lines of output should equal 1
       The output should include 'ext'
@@ -50,10 +50,10 @@ Context 'project/vm/disk'
       resize() {
         taikun project vm disk resize $disk --size 10 -q
       }
-      Before 'resize' 
+      BeforeEach 'resize'
 
       Example 'resize disk'
-        When call taikun project vm disk list $id --vm-id $vm --columns name,size,type --no-decorate
+        When call taikun project vm disk list $vm --project-id $id --columns target-size --no-decorate
         The status should equal 0
         The lines of output should equal 1
         The output should include '10'
