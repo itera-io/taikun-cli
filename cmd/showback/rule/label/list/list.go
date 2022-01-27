@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -27,6 +26,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	ShowbackRuleID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -46,7 +46,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
@@ -60,8 +60,8 @@ func listRun(opts *ListOptions) (err error) {
 
 	labels := showbackRule.Labels
 
-	if config.Limit != 0 && int32(len(labels)) > config.Limit {
-		labels = labels[:config.Limit]
+	if opts.Limit != 0 && int32(len(labels)) > opts.Limit {
+		labels = labels[:opts.Limit]
 	}
 
 	out.PrintResults(labels, listFields)

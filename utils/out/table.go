@@ -1,6 +1,7 @@
 package out
 
 import (
+	"errors"
 	"log"
 	"os"
 	"reflect"
@@ -23,6 +24,18 @@ func printTable(data interface{}, fields fields.Fields) {
 	appendHeader(t, fields.VisibleNames())
 
 	resources := interfaceToInterfaceSlice(data)
+
+	if parentObjectName, nested := fields.AreNested(); nested {
+		allNestedResources := make([]interface{}, 0)
+		for i := range resources {
+			if nestedResources, err := getNestedResources(resources[i], parentObjectName); err != nil {
+				log.Fatal("failed to retrieve nested object ", parentObjectName, ": ", err)
+			} else {
+				allNestedResources = append(allNestedResources, nestedResources...)
+			}
+		}
+		resources = allNestedResources
+	}
 
 	resourceMaps := jsonObjectsToMaps(resources)
 	for _, resourceMap := range resourceMaps {
@@ -48,10 +61,26 @@ func newTable() table.Writer {
 	return t
 }
 
+func getNestedResources(resource interface{}, parentObjectName string) (nestedResources []interface{}, err error) {
+	resourceMap, err := jsonObjectToMap(resource)
+	if err != nil {
+		return
+	}
+	nestedData, ok := resourceMap[parentObjectName]
+	if !ok {
+		return nil, errors.New("could not find nested resource")
+	}
+	nestedResources, ok = nestedData.([]interface{})
+	if !ok {
+		return nil, errors.New("nested resource is not array")
+	}
+	return
+}
+
 func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
 	row := make([]interface{}, fields.VisibleSize())
 	for i, field := range fields.VisibleFields() {
-		if value, found := resourceMap[field.JsonTag()]; found && value != nil {
+		if value, found := getValueFromJsonMap(resourceMap, field.JsonTag()); found && value != nil {
 			row[i] = field.Format(value)
 		} else {
 			row[i] = ""

@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -36,6 +35,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	AlertingProfileID int32
+	Limit             int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -56,7 +56,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
@@ -77,8 +77,8 @@ func listRun(opts *ListOptions) (err error) {
 	}
 	alertingIntegrations := response.Payload
 
-	if config.Limit != 0 && int32(len(alertingIntegrations)) > config.Limit {
-		alertingIntegrations = alertingIntegrations[:config.Limit]
+	if opts.Limit != 0 && int32(len(alertingIntegrations)) > opts.Limit {
+		alertingIntegrations = alertingIntegrations[:opts.Limit]
 	}
 
 	out.PrintResults(alertingIntegrations, listFields)

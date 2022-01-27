@@ -55,6 +55,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -72,7 +73,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "showback-rules", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -101,7 +102,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		showbackRules = append(showbackRules, response.Payload.Data...)
 		count := int32(len(showbackRules))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -110,8 +111,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(showbackRules)) > config.Limit {
-		showbackRules = showbackRules[:config.Limit]
+	if opts.Limit != 0 && int32(len(showbackRules)) > opts.Limit {
+		showbackRules = showbackRules[:opts.Limit]
 	}
 
 	out.PrintResults(showbackRules, listFields)

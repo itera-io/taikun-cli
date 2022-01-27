@@ -40,6 +40,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -57,7 +58,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "slack", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -86,7 +87,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		slackConfigurations = append(slackConfigurations, response.Payload.Data...)
 		count := int32(len(slackConfigurations))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCount {
@@ -95,8 +96,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(slackConfigurations)) > config.Limit {
-		slackConfigurations = slackConfigurations[:config.Limit]
+	if opts.Limit != 0 && int32(len(slackConfigurations)) > opts.Limit {
+		slackConfigurations = slackConfigurations[:opts.Limit]
 	}
 
 	out.PrintResults(slackConfigurations, listFields)

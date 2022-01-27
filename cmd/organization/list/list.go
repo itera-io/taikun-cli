@@ -78,12 +78,18 @@ var ListFields = fields.New(
 	},
 )
 
+type ListOptions struct {
+	Limit int32
+}
+
 func NewCmdList() *cobra.Command {
+	var opts ListOptions
+
 	cmd := cobra.Command{
 		Use:   "list",
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun()
+			return listRun(&opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -91,12 +97,12 @@ func NewCmdList() *cobra.Command {
 
 	cmdutils.AddSortByAndReverseFlags(&cmd, "organizations", ListFields)
 	cmdutils.AddColumnsFlag(&cmd, ListFields)
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 
 	return &cmd
 }
 
-func listRun() (err error) {
+func listRun(opts *ListOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -115,7 +121,7 @@ func listRun() (err error) {
 		}
 		organizations = append(organizations, response.Payload.Data...)
 		organizationsCount := int32(len(organizations))
-		if config.Limit != 0 && organizationsCount >= config.Limit {
+		if opts.Limit != 0 && organizationsCount >= opts.Limit {
 			break
 		}
 		if organizationsCount == response.Payload.TotalCount {
@@ -124,8 +130,8 @@ func listRun() (err error) {
 		params = params.WithOffset(&organizationsCount)
 	}
 
-	if config.Limit != 0 && int32(len(organizations)) > config.Limit {
-		organizations = organizations[:config.Limit]
+	if opts.Limit != 0 && int32(len(organizations)) > opts.Limit {
+		organizations = organizations[:opts.Limit]
 	}
 
 	out.PrintResults(organizations, ListFields)

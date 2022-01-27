@@ -65,6 +65,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -82,7 +83,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "cloud-credentials", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -122,7 +123,7 @@ func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}
 		}
 		openstackCloudCredentials = append(openstackCloudCredentials, response.Payload.Openstack...)
 		count := int32(len(openstackCloudCredentials))
-		if config.Limit != 0 && count >= config.Limit {
+		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 		if count == response.Payload.TotalCountOpenstack {
@@ -131,8 +132,8 @@ func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}
 		params = params.WithOffset(&count)
 	}
 
-	if config.Limit != 0 && int32(len(openstackCloudCredentials)) > config.Limit {
-		openstackCloudCredentials = openstackCloudCredentials[:config.Limit]
+	if opts.Limit != 0 && int32(len(openstackCloudCredentials)) > opts.Limit {
+		openstackCloudCredentials = openstackCloudCredentials[:opts.Limit]
 	}
 
 	credentials = make([]interface{}, len(openstackCloudCredentials))

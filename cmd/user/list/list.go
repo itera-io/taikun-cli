@@ -71,6 +71,7 @@ var ListFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -90,7 +91,7 @@ func NewCmdList() *cobra.Command {
 
 	cmdutils.AddSortByAndReverseFlags(cmd, "users", ListFields)
 	cmdutils.AddColumnsFlag(cmd, ListFields)
-	cmdutils.AddLimitFlag(cmd)
+	cmdutils.AddLimitFlag(cmd, &opts.Limit)
 
 	return cmd
 }
@@ -127,7 +128,7 @@ func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error)
 		}
 		userList = append(userList, response.Payload.Data...)
 		usersCount := int32(len(userList))
-		if config.Limit != 0 && usersCount >= config.Limit {
+		if opts.Limit != 0 && usersCount >= opts.Limit {
 			break
 		}
 		if usersCount == response.Payload.TotalCount {
@@ -136,8 +137,8 @@ func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error)
 		params = params.WithOffset(&usersCount)
 	}
 
-	if config.Limit != 0 && int32(len(userList)) > config.Limit {
-		userList = userList[:config.Limit]
+	if opts.Limit != 0 && int32(len(userList)) > opts.Limit {
+		userList = userList[:opts.Limit]
 	}
 
 	return

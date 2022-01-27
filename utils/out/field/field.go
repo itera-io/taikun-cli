@@ -13,6 +13,16 @@ type Field struct {
 	name string
 
 	// Corresponding JSON tag
+	//
+	// Putting slashes in the tag lets you access nested attributes
+	// Consider this JSON object:
+	// {
+	//   "id": 1234,
+	//   "profile": {
+	//     "name": "foo"
+	//   }
+	// }
+	// Set the jsonTag to "profile/name" to access the name attribute
 	jsonTag string
 
 	// Function to format the field's value as a string

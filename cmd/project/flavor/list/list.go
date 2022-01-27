@@ -49,6 +49,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	ProjectID int32
+	Limit     int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -69,7 +70,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "bound-flavors", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -97,7 +98,7 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
 
-		if config.Limit != 0 && flavorsCount >= config.Limit {
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
 		if flavorsCount == response.Payload.TotalCount {
@@ -106,8 +107,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&flavorsCount)
 	}
 
-	if config.Limit != 0 && int32(len(flavors)) > config.Limit {
-		flavors = flavors[:config.Limit]
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
 	}
 
 	out.PrintResults(flavors, listFields)

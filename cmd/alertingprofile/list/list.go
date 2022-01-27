@@ -47,6 +47,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	OrganizationID int32
+	Limit          int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -64,7 +65,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	cmdutils.AddLimitFlag(&cmd)
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "alerting-profiles", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -93,7 +94,7 @@ func listRun(opts *ListOptions) (err error) {
 		}
 		alertingProfiles = append(alertingProfiles, response.Payload.Data...)
 		alertingProfilesCount := int32(len(alertingProfiles))
-		if config.Limit != 0 && alertingProfilesCount >= config.Limit {
+		if opts.Limit != 0 && alertingProfilesCount >= opts.Limit {
 			break
 		}
 		if alertingProfilesCount == response.Payload.TotalCount {
@@ -102,8 +103,8 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithOffset(&alertingProfilesCount)
 	}
 
-	if config.Limit != 0 && int32(len(alertingProfiles)) > config.Limit {
-		alertingProfiles = alertingProfiles[:config.Limit]
+	if opts.Limit != 0 && int32(len(alertingProfiles)) > opts.Limit {
+		alertingProfiles = alertingProfiles[:opts.Limit]
 	}
 
 	out.PrintResults(alertingProfiles, listFields)
