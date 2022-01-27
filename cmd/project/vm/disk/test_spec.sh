@@ -28,7 +28,7 @@ Context 'project/vm/disk'
 
   Context
     add() {
-      disk=$(taikun project vm disk add $vm --name 'ext' --size 5 --volume-type "__DEFAULT__" -I)
+      disk=$(taikun project vm disk add $vm --name 'ext' --size 5 --openstack-volume-type "__DEFAULT__" -I)
     }
     BeforeAll 'add'
 
@@ -38,7 +38,7 @@ Context 'project/vm/disk'
     AfterAll 'remove'
 
     Example 'add and then remove disk'
-      When call taikun project vm disk list $id --vm-id $vm --columns name,size,type --no-decorate
+      When call taikun project vm disk list $id --vm-id $vm --columns name,size,volumeType --no-decorate
       The status should equal 0
       The lines of output should equal 1
       The output should include 'ext'
