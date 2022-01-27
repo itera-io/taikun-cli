@@ -103,7 +103,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := aws.NewAwsCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload, addFields)
+		return out.PrintResult(response.Payload, addFields)
 	}
 
 	return

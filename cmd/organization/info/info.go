@@ -56,7 +56,5 @@ func infoRun(opts *InfoOptions) (err error) {
 		return cmderr.ResourceNotFoundError("Organization", opts.OrganizationID)
 	}
 
-	out.PrintResult(response.Payload.Data[0], infoFields)
-
-	return
+	return out.PrintResult(response.Payload.Data[0], infoFields)
 }

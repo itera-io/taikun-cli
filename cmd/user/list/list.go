@@ -102,8 +102,7 @@ func listRun(opts *ListOptions) (err error) {
 		return err
 	}
 
-	out.PrintResults(users, ListFields)
-	return
+	return out.PrintResults(users, ListFields)
 }
 
 func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error) {

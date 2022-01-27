@@ -73,6 +73,5 @@ func listRun(opts *ListOptions) (err error) {
 		alertingWebhooks = alertingWebhooks[:opts.Limit]
 	}
 
-	out.PrintResults(alertingWebhooks, listFields)
-	return
+	return out.PrintResults(alertingWebhooks, listFields)
 }

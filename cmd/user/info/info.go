@@ -41,7 +41,7 @@ func myInfoRun() (err error) {
 	params := users.NewUsersDetailsParams().WithV(api.Version)
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload.Data, infoFields)
+		return out.PrintResult(response.Payload.Data, infoFields)
 	}
 
 	return
@@ -64,7 +64,5 @@ func infoRun(userID string) (err error) {
 		return cmderr.ResourceNotFoundError("User", userID)
 	}
 
-	out.PrintResult(response.Payload.Data[0], infoFields)
-
-	return
+	return out.PrintResult(response.Payload.Data[0], infoFields)
 }

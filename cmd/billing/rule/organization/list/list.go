@@ -80,7 +80,5 @@ func listRun(opts *ListOptions) (err error) {
 		boundOrganizations = boundOrganizations[:opts.Limit]
 	}
 
-	out.PrintResults(boundOrganizations, listFields)
-
-	return
+	return out.PrintResults(boundOrganizations, listFields)
 }

@@ -96,9 +96,7 @@ func listRun(opts *ListOptions) error {
 		return err
 	}
 
-	out.PrintResults(openstackCloudCredentials, listFields)
-
-	return nil
+	return out.PrintResults(openstackCloudCredentials, listFields)
 }
 
 func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}, err error) {

@@ -10,8 +10,6 @@ cat > main.go << EOF
 package main
 
 import (
-	"log"
-
 	"github.com/itera-io/taikun-cli/cmd/root"
 	"github.com/spf13/cobra/doc"
 )
@@ -19,7 +17,7 @@ import (
 func main() {
 	rootCmd := root.NewCmdRoot()
 	if err := doc.GenMarkdownTree(rootCmd, "docs/markdown"); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 EOF

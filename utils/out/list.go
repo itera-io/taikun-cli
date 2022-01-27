@@ -5,10 +5,9 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 )
 
-func PrintResults(slice interface{}, fields fields.Fields) {
+func PrintResults(slice interface{}, fields fields.Fields) error {
 	if config.OutputFormat == config.OutputFormatJson {
-		prettyPrintJson(slice)
-	} else if config.OutputFormat == config.OutputFormatTable {
-		printTable(slice, fields)
+		return prettyPrintJson(slice)
 	}
+	return printTable(slice, fields)
 }

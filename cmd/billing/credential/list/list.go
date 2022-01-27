@@ -104,6 +104,5 @@ func listRun(opts *ListOptions) (err error) {
 		billingCredentials = billingCredentials[:opts.Limit]
 	}
 
-	out.PrintResults(billingCredentials, listFields)
-	return
+	return out.PrintResults(billingCredentials, listFields)
 }

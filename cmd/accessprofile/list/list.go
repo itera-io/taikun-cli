@@ -107,6 +107,5 @@ func listRun(opts *ListOptions) (err error) {
 		accessProfiles = accessProfiles[:opts.Limit]
 	}
 
-	out.PrintResults(accessProfiles, listFields)
-	return
+	return out.PrintResults(accessProfiles, listFields)
 }

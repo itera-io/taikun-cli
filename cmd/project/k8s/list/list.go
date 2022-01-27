@@ -110,9 +110,11 @@ func listRun(opts *ListOptions) (err error) {
 			return err
 		}
 
-		listFields.SetFieldJsonPropertyName("FLAVOR", flavorJsonPropertyName)
+		if err := listFields.SetFieldJsonPropertyName("FLAVOR", flavorJsonPropertyName); err != nil {
+			return err
+		}
 
-		out.PrintResults(projectServers, listFields)
+		return out.PrintResults(projectServers, listFields)
 	}
 
 	return

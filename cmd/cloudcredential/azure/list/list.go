@@ -81,9 +81,7 @@ func listRun(opts *ListOptions) error {
 		return err
 	}
 
-	out.PrintResults(azureCloudCredentials, listFields)
-
-	return nil
+	return out.PrintResults(azureCloudCredentials, listFields)
 }
 
 func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, err error) {

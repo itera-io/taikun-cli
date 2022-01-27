@@ -88,7 +88,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	out.PrintResultsOfDifferentTypes(
+	return out.PrintResultsOfDifferentTypes(
 		[]interface{}{
 			credentialsAmazon,
 			credentialsAzure,
@@ -101,6 +101,4 @@ func listRun(opts *ListOptions) (err error) {
 		},
 		listFields,
 	)
-
-	return
 }

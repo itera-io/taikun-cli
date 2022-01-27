@@ -110,6 +110,5 @@ func listRun(opts *ListOptions) (err error) {
 		kubernetesProfiles = kubernetesProfiles[:opts.Limit]
 	}
 
-	out.PrintResults(kubernetesProfiles, listFields)
-	return
+	return out.PrintResults(kubernetesProfiles, listFields)
 }

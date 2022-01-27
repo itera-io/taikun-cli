@@ -76,6 +76,5 @@ func listRun(opts *ListOptions) (err error) {
 		sshUsers = sshUsers[:opts.Limit]
 	}
 
-	out.PrintResults(sshUsers, listFields)
-	return
+	return out.PrintResults(sshUsers, listFields)
 }

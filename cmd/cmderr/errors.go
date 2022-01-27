@@ -44,3 +44,14 @@ func UnknownFlagValueError(flag string, received string, expected []string) erro
 var ProjectBackupAlreadyDisabledError = errors.New(
 	"Project backup already disabled",
 )
+
+func ProgramError(functionName string, err error) error {
+	return fmt.Errorf(
+		"%s: %s\n"+
+			"This is a bug with the CLI. "+
+			"Please report it at "+
+			"https://github.com/itera-io/taikun-cli/issues",
+		functionName,
+		err,
+	)
+}

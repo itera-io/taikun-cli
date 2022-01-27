@@ -97,7 +97,5 @@ func listRun(opts *ListOptions) (err error) {
 		standAloneProfiles = standAloneProfiles[:opts.Limit]
 	}
 
-	out.PrintResults(standAloneProfiles, listFields)
-
-	return
+	return out.PrintResults(standAloneProfiles, listFields)
 }

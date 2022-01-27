@@ -2,7 +2,6 @@ package cmdutils
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/api"
@@ -16,7 +15,7 @@ import (
 
 func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	if err := cmd.MarkFlagRequired(flag); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 

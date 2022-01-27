@@ -100,7 +100,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(api.Version).WithBody(&body)
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload, addFields)
+		return out.PrintResult(response.Payload, addFields)
 	}
 
 	return
