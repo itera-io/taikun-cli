@@ -30,7 +30,7 @@ Context 'project/k8s/list'
     Before 'add_servers'
 
     remove_servers() {
-      taikun project k8s delete $pid --all -q
+      taikun project k8s delete $pid --all-servers -q
     }
     After 'remove_servers'
 

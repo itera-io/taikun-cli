@@ -45,7 +45,7 @@ Context 'project/k8s/delete'
       msid=$(taikun project k8s add $pid -n m -r kubemaster -f $flavor -I)
       wsid=$(taikun project k8s add $pid -n w -r kubeworker -f $flavor -I)
       bsid=$(taikun project k8s add $pid -n b -r bastion -f $flavor -I)
-      taikun project k8s delete $pid --all -q
+      taikun project k8s delete $pid --all-servers -q
     }
 
     Before 'add_servers_then_remove_all'

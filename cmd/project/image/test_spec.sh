@@ -28,7 +28,7 @@ Context 'project/image'
     BeforeEach 'bind'
 
     unbind() {
-      binding=$(taikun project image list $id --no-decorate --columns id)
+      binding=$(taikun project image list $id --no-decorate --columns binding-id)
       taikun project image unbind $binding -q
     }
     AfterEach 'unbind'
