@@ -107,6 +107,5 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	out.PrintResults(flavors, flavorsFields)
-	return
+	return out.PrintResults(flavors, flavorsFields)
 }

@@ -30,7 +30,7 @@ var listFields = fields.New(
 		),
 		field.NewVisible(
 			"FLAVOR", "",
-			// JSON tag is set in the listRun function
+			// JSON property name is set in the listRun function
 			// as it depends on the server's cloud type
 		),
 		field.NewVisible(
@@ -105,14 +105,16 @@ func NewCmdList() *cobra.Command {
 func listRun(opts *ListOptions) (err error) {
 	projectServers, err := ListServers(opts)
 	if err == nil {
-		flavorJsonTag, err := getFlavorField(projectServers)
+		flavorJsonPropertyName, err := getFlavorField(projectServers)
 		if err != nil {
 			return err
 		}
 
-		listFields.SetFieldJsonTag("FLAVOR", flavorJsonTag)
+		if err := listFields.SetFieldJsonPropertyName("FLAVOR", flavorJsonPropertyName); err != nil {
+			return err
+		}
 
-		out.PrintResults(projectServers, listFields)
+		return out.PrintResults(projectServers, listFields)
 	}
 
 	return

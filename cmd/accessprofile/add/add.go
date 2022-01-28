@@ -99,7 +99,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload, addFields)
+		return out.PrintResult(response.Payload, addFields)
 	}
 
 	return

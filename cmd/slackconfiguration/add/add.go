@@ -86,7 +86,7 @@ func addRun(opts *AddOptions) (err error) {
 		payload := map[string]interface{}{
 			"id": response.Payload,
 		}
-		out.PrintResult(payload, addFields)
+		return out.PrintResult(payload, addFields)
 	}
 
 	return

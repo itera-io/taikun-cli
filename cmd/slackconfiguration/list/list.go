@@ -100,7 +100,5 @@ func listRun(opts *ListOptions) (err error) {
 		slackConfigurations = slackConfigurations[:opts.Limit]
 	}
 
-	out.PrintResults(slackConfigurations, listFields)
-
-	return
+	return out.PrintResults(slackConfigurations, listFields)
 }

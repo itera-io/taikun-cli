@@ -64,7 +64,5 @@ func listRun(opts *ListOptions) (err error) {
 		return cmderr.ResourceNotFoundError("User", opts.UserID)
 	}
 
-	out.PrintResults(response.Payload.Data[0].BoundProjects, listFields)
-
-	return
+	return out.PrintResults(response.Payload.Data[0].BoundProjects, listFields)
 }

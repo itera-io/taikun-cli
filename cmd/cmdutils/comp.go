@@ -1,8 +1,6 @@
 package cmdutils
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
@@ -10,7 +8,7 @@ type CompletionCoreFunc func(cmd *cobra.Command, args []string, toComplete strin
 
 func SetFlagCompletionFunc(cmd *cobra.Command, flagName string, f CompletionCoreFunc) {
 	if err := cmd.RegisterFlagCompletionFunc(flagName, makeCompletionFunc(f)); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 

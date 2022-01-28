@@ -74,7 +74,7 @@ func listRun(opts *ListOptions) (err error) {
 
 	response, err := apiClient.Client.SecurityGroup.SecurityGroupList(params, apiClient)
 	if err == nil {
-		out.PrintResults(response.Payload, listFields)
+		return out.PrintResults(response.Payload, listFields)
 	}
 
 	return

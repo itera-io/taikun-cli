@@ -1,8 +1,9 @@
 package out
 
 import (
-	"log"
+	"errors"
 
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 )
@@ -18,26 +19,28 @@ func PrintResultsOfDifferentTypes(
 	resourceSlices []interface{},
 	resourceTypes []string,
 	fields fields.Fields,
-) {
+) error {
 	if config.OutputFormat == config.OutputFormatJson {
 		for _, slice := range resourceSlices {
-			prettyPrintJson(slice)
+			if err := prettyPrintJson(slice); err != nil {
+				return err
+			}
 		}
-	} else if config.OutputFormat == config.OutputFormatTable {
-		printTableWithDifferentTypes(resourceSlices, resourceTypes, fields)
+		return nil
 	}
+	return printTableWithDifferentTypes(resourceSlices, resourceTypes, fields)
 }
 
 func printTableWithDifferentTypes(
 	resourceSlices []interface{},
 	resourceTypes []string,
 	fields fields.Fields,
-) {
+) error {
 	addTypeColumn := true
 	if len(resourceTypes) == 0 {
 		addTypeColumn = false
 	} else if len(resourceSlices) != len(resourceTypes) {
-		log.Fatal("PrintMultipleResults: resourcesSlices and resourceTypes must have the same length")
+		return cmderr.ProgramError("PrintMultipleResults", errors.New("resourcesSlices and resourceTypes must have the same length"))
 	}
 
 	t := newTable()
@@ -46,7 +49,9 @@ func printTableWithDifferentTypes(
 		fields.ShowAll()
 		addTypeColumn = true
 	} else if len(config.Columns) != 0 {
-		fields.SetVisible(config.Columns)
+		if err := fields.SetVisible(config.Columns); err != nil {
+			return err
+		}
 		addTypeColumn = false
 	}
 
@@ -61,7 +66,10 @@ func printTableWithDifferentTypes(
 			appendSeparator(t)
 		}
 		resources := resourcesData.([]interface{})
-		resourceMaps := jsonObjectsToMaps(resources)
+		resourceMaps, err := jsonObjectsToMaps(resources)
+		if err != nil {
+			return cmderr.ProgramError("printTableWithDifferentTypes", err)
+		}
 		for _, resourceMap := range resourceMaps {
 			row := resourceMapToRow(resourceMap, fields)
 			if addTypeColumn {
@@ -72,4 +80,5 @@ func printTableWithDifferentTypes(
 	}
 
 	renderTable(t)
+	return nil
 }

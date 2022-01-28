@@ -102,7 +102,7 @@ func NewCmdList() *cobra.Command {
 func listRun(opts *ListOptions) (err error) {
 	vms, err := ListVMs(opts)
 	if err == nil {
-		out.PrintResults(vms, listFields)
+		return out.PrintResults(vms, listFields)
 	}
 
 	return

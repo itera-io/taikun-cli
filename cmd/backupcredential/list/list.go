@@ -104,6 +104,5 @@ func listRun(opts *ListOptions) (err error) {
 		backupCredentials = backupCredentials[:opts.Limit]
 	}
 
-	out.PrintResults(backupCredentials, listFields)
-	return
+	return out.PrintResults(backupCredentials, listFields)
 }

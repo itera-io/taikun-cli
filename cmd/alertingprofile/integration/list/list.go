@@ -81,6 +81,5 @@ func listRun(opts *ListOptions) (err error) {
 		alertingIntegrations = alertingIntegrations[:opts.Limit]
 	}
 
-	out.PrintResults(alertingIntegrations, listFields)
-	return
+	return out.PrintResults(alertingIntegrations, listFields)
 }

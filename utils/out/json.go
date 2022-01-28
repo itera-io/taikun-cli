@@ -2,8 +2,9 @@ package out
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
+
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 )
 
 const (
@@ -11,8 +12,13 @@ const (
 	prettyPrintIndent = "    "
 )
 
-func prettyPrintJson(data interface{}) {
-	Println(string(marshalJsonData(data)))
+func prettyPrintJson(data interface{}) error {
+	jsonEncoding, err := marshalJsonData(data)
+	if err != nil {
+		return cmderr.ProgramError("prettyPrintJson", err)
+	}
+	Println(string(jsonEncoding))
+	return nil
 }
 
 func getValueFromJsonMap(m map[string]interface{}, compositeKey string) (value interface{}, found bool) {
@@ -32,33 +38,29 @@ func getValueFromJsonMap(m map[string]interface{}, compositeKey string) (value i
 	return
 }
 
-func marshalJsonData(data interface{}) []byte {
+func marshalJsonData(data interface{}) ([]byte, error) {
 	if data == nil {
 		data = struct{}{}
 	}
-	jsonBytes, err := json.MarshalIndent(data, prettyPrintPrefix, prettyPrintIndent)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return jsonBytes
+	return json.MarshalIndent(data, prettyPrintPrefix, prettyPrintIndent)
 }
 
-func jsonObjectsToMaps(structs []interface{}) []map[string]interface{} {
+func jsonObjectsToMaps(structs []interface{}) ([]map[string]interface{}, error) {
 	maps := make([]map[string]interface{}, len(structs))
 	for i, s := range structs {
 		m, err := jsonObjectToMap(s)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		maps[i] = m
 	}
-	return maps
+	return maps, nil
 }
 
-func jsonObjectToMap(data interface{}) (map[string]interface{}, error) {
-	var m map[string]interface{}
-	if err := json.Unmarshal(marshalJsonData(data), &m); err != nil {
-		return nil, err
+func jsonObjectToMap(data interface{}) (m map[string]interface{}, err error) {
+	jsonEncoding, err := marshalJsonData(data)
+	if err == nil {
+		err = json.Unmarshal(jsonEncoding, &m)
 	}
-	return m, nil
+	return
 }

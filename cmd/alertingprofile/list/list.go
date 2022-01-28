@@ -107,6 +107,5 @@ func listRun(opts *ListOptions) (err error) {
 		alertingProfiles = alertingProfiles[:opts.Limit]
 	}
 
-	out.PrintResults(alertingProfiles, listFields)
-	return
+	return out.PrintResults(alertingProfiles, listFields)
 }

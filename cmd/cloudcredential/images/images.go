@@ -76,9 +76,7 @@ func imagesRun(opts *ImagesOptions) (err error) {
 		return err
 	}
 
-	out.PrintResults(images, imagesFields)
-
-	return
+	return out.PrintResults(images, imagesFields)
 }
 
 const (

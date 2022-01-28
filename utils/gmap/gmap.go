@@ -1,7 +1,7 @@
 package gmap
 
 import (
-	"log"
+	"fmt"
 	"strings"
 )
 
@@ -12,7 +12,7 @@ type GenericMap struct {
 func New(m map[string]interface{}) GenericMap {
 	for key := range m {
 		if key != strings.ToLower(key) {
-			log.Fatal("GenericMap keys must be lowercase, have: ", key)
+			panic(fmt.Sprintf("GenericMap keys must be lowercase, have: %s", key))
 		}
 	}
 	return GenericMap{

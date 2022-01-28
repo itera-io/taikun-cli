@@ -110,6 +110,5 @@ func listRun(opts *ListOptions) (err error) {
 		showbackCredentials = showbackCredentials[:opts.Limit]
 	}
 
-	out.PrintResults(showbackCredentials, listFields)
-	return
+	return out.PrintResults(showbackCredentials, listFields)
 }

@@ -82,7 +82,7 @@ func listRun(opts *ListOptions) (err error) {
 
 	response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)
 	if err == nil {
-		out.PrintResults(response.Payload.Data, listFields)
+		return out.PrintResults(response.Payload.Data, listFields)
 	}
 
 	return

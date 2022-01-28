@@ -113,6 +113,5 @@ func listRun(opts *ListOptions) (err error) {
 		policyProfiles = policyProfiles[:opts.Limit]
 	}
 
-	out.PrintResults(policyProfiles, listFields)
-	return
+	return out.PrintResults(policyProfiles, listFields)
 }

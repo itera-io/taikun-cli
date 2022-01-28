@@ -1,11 +1,11 @@
 package fields
 
 import (
+	"errors"
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 )
@@ -24,19 +24,19 @@ type Fields struct {
 // - names must not start or end with a hyphen
 func New(fields []*field.Field) Fields {
 	nameFrequencyMap := map[string]bool{}
-	jsonTagFrequencyMap := map[string]bool{}
+	jsonPropertyNameFreqMap := map[string]bool{}
 	for _, field := range fields {
 		if !fieldNameIsValid(field.Name()) {
-			log.Fatal("fields.New: Field name '", field.Name(), "' is not valid")
+			panic(fmt.Sprintf("fields.New: Field name '%s' is not valid", field.Name()))
 		}
 		if nameFrequencyMap[field.Name()] {
-			log.Fatal("fields.New: Field name '", field.Name(), "' is defined more than once")
+			panic(fmt.Sprintf("fields.New: Field name '%s' is defined more than once", field.Name()))
 		}
 		nameFrequencyMap[field.Name()] = true
-		if jsonTagFrequencyMap[field.JsonTag()] {
-			log.Fatal("fields.New: Field JSON tag '", field.JsonTag(), "' is defined more than once")
+		if jsonPropertyNameFreqMap[field.JsonPropertyName()] {
+			panic(fmt.Sprintf("fields.New: Field JSON property name '%s' is defined more than once", field.JsonPropertyName()))
 		}
-		jsonTagFrequencyMap[field.JsonTag()] = true
+		jsonPropertyNameFreqMap[field.JsonPropertyName()] = true
 	}
 	return Fields{
 		fields: fields,
@@ -56,16 +56,16 @@ func (f Fields) AreNested() (parentObjectName string, areNested bool) {
 	return f.parentObjectName, f.parentObjectName != ""
 }
 
-// Modify the JSON tag of the field with the given name
+// Modify the JSON property name of the field with the given name
 // If no field is found with the given name, returns an error
-func (f Fields) SetFieldJsonTag(name string, jsonTag string) {
+func (f Fields) SetFieldJsonPropertyName(name string, jsonPropertyName string) error {
 	for _, field := range f.fields {
 		if field.NameMatches(name) {
-			field.SetJsonTag(jsonTag)
-			return
+			field.SetJsonPropertyName(jsonPropertyName)
+			return nil
 		}
 	}
-	log.Fatal("SetFieldJsonTag: invalid field name ", name)
+	return cmderr.ProgramError("SetFieldJsonPropertyName", fmt.Errorf("unknown field name: %s", name))
 }
 
 // Returns whether or not the field's name is valid
@@ -76,7 +76,7 @@ func fieldNameIsValid(name string) bool {
 	}
 	matched, err := regexp.Match("^[A-Z0-9]+(-[A-Z0-9]+)*$", []byte(name))
 	if err != nil {
-		log.Fatal("fieldNameIsValid: invalid regex pattern")
+		panic("fieldNameIsValid: invalid regex pattern")
 	}
 	return matched
 }
@@ -97,12 +97,12 @@ func (f Fields) VisibleFields() []*field.Field {
 	return fields
 }
 
-// Get JSON tag of field with the given name
-// Returns the tag and a boolean to indicate whether the field was found
-func (f Fields) GetJsonTagFromName(name string) (jsonTag string, found bool) {
+// Get JSON property name of field with the given name
+// Returns the property name and a boolean to indicate whether the field was found
+func (f Fields) GetJsonPropertyNameFromName(name string) (jsonPropertyName string, found bool) {
 	for _, field := range f.fields {
 		if field.NameMatches(name) {
-			jsonTag = field.JsonTag()
+			jsonPropertyName = field.JsonPropertyName()
 			found = true
 			break
 		}
@@ -122,18 +122,20 @@ func (f Fields) VisibleSize() int {
 }
 
 // Override the default visibility settings and display only the given fields
-func (f Fields) SetVisible(fieldNames []string) {
+func (f Fields) SetVisible(fieldNames []string) error {
 	f.hideAll()
 	for rank, fieldName := range fieldNames {
 		i := f.getFieldIndex(fieldName)
 		if i == -1 {
-			fmt.Fprintf(os.Stderr, "Error: unknown field name '%s'\n", fieldName)
-			os.Exit(1)
+			return fmt.Errorf("unknown field name '%s'", fieldName)
 		} else {
 			f.fields[i].Show()
-			f.moveFieldBack(i, rank)
+			if err := f.moveFieldBack(i, rank); err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
 func (f Fields) getFieldIndex(fieldName string) int {
@@ -145,15 +147,16 @@ func (f Fields) getFieldIndex(fieldName string) int {
 	return -1
 }
 
-func (f Fields) moveFieldBack(source int, destination int) {
+func (f Fields) moveFieldBack(source int, destination int) error {
 	if destination > source {
-		log.Fatal("Fields.moveFieldBack: destination must not be greater than source")
+		return errors.New("Fields.moveFieldBack: destination must not be greater than source")
 	}
 	sourceField := f.fields[source]
 	for i := source; i > destination; i-- {
 		f.fields[i] = f.fields[i-1]
 	}
 	f.fields[destination] = sourceField
+	return nil
 }
 
 // Set all fields to hidden
@@ -190,13 +193,13 @@ func (f Fields) VisibleNames() []string {
 	return names
 }
 
-// Get the list of JSON tags of the visible fields
-func (f Fields) VisibleJsonTags() []string {
-	jsonTags := make([]string, 0)
+// Get the list of JSON property names of the visible fields
+func (f Fields) VisibleFieldsJsonPropertyNames() []string {
+	jsonPropertyNames := make([]string, 0)
 	for _, field := range f.fields {
 		if field.IsVisible() {
-			jsonTags = append(jsonTags, field.JsonTag())
+			jsonPropertyNames = append(jsonPropertyNames, field.JsonPropertyName())
 		}
 	}
-	return jsonTags
+	return jsonPropertyNames
 }

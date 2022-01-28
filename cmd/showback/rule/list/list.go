@@ -115,7 +115,5 @@ func listRun(opts *ListOptions) (err error) {
 		showbackRules = showbackRules[:opts.Limit]
 	}
 
-	out.PrintResults(showbackRules, listFields)
-
-	return
+	return out.PrintResults(showbackRules, listFields)
 }

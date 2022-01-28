@@ -137,6 +137,5 @@ func listRun(opts *ListOptions) (err error) {
 		projects = projects[:opts.Limit]
 	}
 
-	out.PrintResults(projects, listFields)
-	return
+	return out.PrintResults(projects, listFields)
 }

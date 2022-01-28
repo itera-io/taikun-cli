@@ -77,7 +77,5 @@ func listRun(opts *ListOptions) (err error) {
 		labels = labels[:opts.Limit]
 	}
 
-	out.PrintResults(labels, listFields)
-
-	return
+	return out.PrintResults(labels, listFields)
 }

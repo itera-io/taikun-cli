@@ -103,7 +103,5 @@ func listRun(opts *ListOptions) (err error) {
 		billingRules = billingRules[:opts.Limit]
 	}
 
-	out.PrintResults(billingRules, listFields)
-
-	return
+	return out.PrintResults(billingRules, listFields)
 }

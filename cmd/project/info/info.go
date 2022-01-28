@@ -158,7 +158,7 @@ func infoRun(opts *InfoOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload.Project, infoFields)
+		return out.PrintResult(response.Payload.Project, infoFields)
 	}
 
 	return

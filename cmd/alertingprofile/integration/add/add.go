@@ -88,7 +88,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(api.Version).WithBody(&body)
 	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-		out.PrintResult(response.Payload, addFields)
+		return out.PrintResult(response.Payload, addFields)
 	}
 
 	return

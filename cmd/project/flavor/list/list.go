@@ -111,6 +111,5 @@ func listRun(opts *ListOptions) (err error) {
 		flavors = flavors[:opts.Limit]
 	}
 
-	out.PrintResults(flavors, listFields)
-	return
+	return out.PrintResults(flavors, listFields)
 }

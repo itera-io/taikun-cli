@@ -66,7 +66,7 @@ func etcRun(opts *EtcOptions) (err error) {
 
 	response, err := apiClient.Client.Notifications.NotificationsGetProjectOperationMessages(params, apiClient)
 	if err == nil {
-		out.PrintResult(response, etcFields)
+		return out.PrintResult(response, etcFields)
 	}
 
 	return

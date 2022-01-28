@@ -135,7 +135,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := s3_credentials.NewS3CredentialsCreateParams().WithV(api.Version).WithBody(&body)
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload, addFields)
+		return out.PrintResult(response.Payload, addFields)
 	}
 
 	return

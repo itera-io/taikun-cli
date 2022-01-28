@@ -2,7 +2,6 @@ package cmdutils
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/api"
@@ -16,7 +15,7 @@ import (
 
 func MarkFlagRequired(cmd *cobra.Command, flag string) {
 	if err := cmd.MarkFlagRequired(flag); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -45,11 +44,11 @@ func makeSortByPreRunE(fields fields.Fields) runE {
 		if config.SortBy == "" {
 			return nil
 		}
-		jsonTag, found := fields.GetJsonTagFromName(config.SortBy)
+		jsonPropertyName, found := fields.GetJsonPropertyNameFromName(config.SortBy)
 		if !found {
 			return fmt.Errorf("unknown sorting element '%s'", config.SortBy)
 		}
-		config.SortBy = jsonTag
+		config.SortBy = jsonPropertyName
 		return nil
 	}
 }
@@ -62,9 +61,9 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 		}
 
 		completions := make([]string, 0)
-		for _, jsonTag := range sortingElements {
+		for _, jsonPropertyName := range sortingElements {
 			for _, field := range fields.AllFields() {
-				if field.JsonTag() == jsonTag {
+				if field.JsonPropertyName() == jsonPropertyName {
 					completions = append(completions, field.Name())
 					break
 				}

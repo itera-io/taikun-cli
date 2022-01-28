@@ -102,7 +102,7 @@ func addRun(opts *AddOptions) (err error) {
 	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(api.Version).WithBody(body)
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload, addFields)
+		return out.PrintResult(response.Payload, addFields)
 	}
 
 	return

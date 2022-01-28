@@ -126,7 +126,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
 	if err == nil {
-		out.PrintResult(response.Payload, addFields)
+		return out.PrintResult(response.Payload, addFields)
 	}
 
 	return
