@@ -49,7 +49,7 @@ func ProgramError(functionName string, err error) error {
 	return fmt.Errorf(
 		"%s: %s\n"+
 			"This is a bug with the CLI. "+
-			"Please report it at "+
+			"If the issue persists, please report it at "+
 			"https://github.com/itera-io/taikun-cli/issues",
 		functionName,
 		err,

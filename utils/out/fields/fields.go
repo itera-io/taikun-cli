@@ -127,7 +127,7 @@ func (f Fields) SetVisible(fieldNames []string) error {
 	for rank, fieldName := range fieldNames {
 		i := f.getFieldIndex(fieldName)
 		if i == -1 {
-			return fmt.Errorf("Error: unknown field name '%s'\n", fieldName)
+			return fmt.Errorf("unknown field name '%s'", fieldName)
 		} else {
 			f.fields[i].Show()
 			if err := f.moveFieldBack(i, rank); err != nil {
