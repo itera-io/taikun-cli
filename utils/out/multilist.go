@@ -50,7 +50,7 @@ func printTableWithDifferentTypes(
 		addTypeColumn = true
 	} else if len(config.Columns) != 0 {
 		if err := fields.SetVisible(config.Columns); err != nil {
-			return cmderr.ProgramError("printTableWithDifferentTypes", err)
+			return err
 		}
 		addTypeColumn = false
 	}

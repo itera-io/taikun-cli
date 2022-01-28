@@ -19,7 +19,7 @@ func printTable(data interface{}, fields fields.Fields) error {
 		fields.ShowAll()
 	} else if len(config.Columns) != 0 {
 		if err := fields.SetVisible(config.Columns); err != nil {
-			return cmderr.ProgramError("printTable", err)
+			return err
 		}
 	}
 
