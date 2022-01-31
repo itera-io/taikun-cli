@@ -3,7 +3,7 @@ module github.com/itera-io/taikun-cli
 go 1.17
 
 require (
-	github.com/go-openapi/runtime v0.21.1
+	github.com/go-openapi/runtime v0.22.0
 	github.com/go-openapi/strfmt v0.21.1
 	github.com/itera-io/taikungoclient v0.0.0-20220127002936-713e35252814
 	github.com/jedib0t/go-pretty/v6 v6.2.5
