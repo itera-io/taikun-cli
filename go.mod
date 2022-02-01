@@ -3,9 +3,9 @@ module github.com/itera-io/taikun-cli
 go 1.17
 
 require (
-	github.com/go-openapi/runtime v0.21.1
+	github.com/go-openapi/runtime v0.22.0
 	github.com/go-openapi/strfmt v0.21.1
-	github.com/itera-io/taikungoclient v0.0.0-20220127140058-bb6c321f061d
+	github.com/itera-io/taikungoclient v0.0.0-20220201111059-364dcf242f2e
 	github.com/jedib0t/go-pretty/v6 v6.2.5
 	github.com/spf13/cobra v1.3.0
 )
@@ -20,7 +20,7 @@ require (
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/loads v0.21.0 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
-	github.com/go-openapi/swag v0.19.15 // indirect
+	github.com/go-openapi/swag v0.21.1 // indirect
 	github.com/go-openapi/validate v0.20.3 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
