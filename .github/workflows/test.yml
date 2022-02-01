@@ -1,0 +1,128 @@
+name: Tests
+on:
+  pull_request:
+  push:
+    branches:
+      - 'main'
+      - 'dev'
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'NOTICE'
+      - 'COMMAND_TREE.md'
+      - 'GNUmakefile'
+      - 'Dockerfile'
+
+jobs:
+  build:
+    name: Build
+    runs-on: self-hosted
+    timeout-minutes: 5
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          go build -v .
+
+  golangci:
+    name: Lint
+    runs-on: self-hosted
+    needs: build
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Lint (golangci-lint)
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+
+  flag_conflicts:
+    name: Check for flag conflicts
+    runs-on: self-hosted
+    needs: golangci
+    timeout-minutes: 5
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Check for flag conflicts
+        run: |
+          # generating the docs using Cobra
+          # will fail if any flags are in conflict
+          ./scripts/docs/gen_markdown.sh
+
+  test:
+    name: Test
+    runs-on: self-hosted
+    needs: flag_conflicts
+    timeout-minutes: 60
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Install shellspec
+        run: |
+          set -o pipefail
+          curl -fsSL "https://github.com/shellspec/shellspec/raw/master/install.sh" | sh -s 0.28.1 -y
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          export GOPATH=$(go env GOPATH)
+          export PATH=$PATH:$GOPATH/bin
+          make install
+
+      - name: Run shellspec
+        env:
+          ARM_AVAILABILITY_ZONE: 1
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_LOCATION: northeurope
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_AVAILABILITY_ZONE: a
+          AWS_DEFAULT_REGION: eu-central-1
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+          OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
+          OS_INTERFACE: ${{ secrets.OS_INTERFACE }}
+          OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
+          OS_PROJECT_NAME: ${{ secrets.OS_PROJECT_NAME }}
+          OS_REGION_NAME: ${{ secrets.OS_REGION_NAME }}
+          OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}
+          OS_USERNAME: ${{ secrets.OS_USERNAME }}
+
+          PROMETHEUS_PASSWORD: ${{ secrets.PROMETHEUS_PASSWORD }}
+          PROMETHEUS_URL: ${{ secrets.PROMETHEUS_URL }}
+          PROMETHEUS_USERNAME: ${{ secrets.PROMETHEUS_USERNAME }}
+
+          S3_ENDPOINT: https://s3.eu-west-2.amazonaws.com
+          S3_REGION: eu-west-2
+
+          TAIKUN_API_HOST: ${{ secrets.TAIKUN_API_HOST }}
+          TAIKUN_EMAIL: ${{ secrets.TAIKUN_EMAIL }}
+          TAIKUN_PASSWORD: ${{ secrets.TAIKUN_PASSWORD }}
+        run: |
+          shellspec --shell bash --format tap --jobs $(nproc) | tee shellspec.log
+          echo 'Rerunning failed tests:'
+          ./scripts/tests/rerun_failed_tests.sh shellspec.log

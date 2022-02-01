@@ -1,0 +1,57 @@
+package cmderr
+
+import (
+	"errors"
+	"fmt"
+)
+
+func CheckFailureError(name string) error {
+	return fmt.Errorf("%s is not valid.", name)
+}
+
+var NegativeLimitFlagError = errors.New(
+	"The --limit flag must be positive.",
+)
+
+var OutputFormatInvalidError = errors.New(
+	"Unknown output format.",
+)
+
+var IDArgumentNotANumberError = errors.New(
+	"The ID argument must be a number.",
+)
+
+var InvalidDateFormatError = errors.New(
+	"Please enter a valid date in the format dd/mm/yyyy",
+)
+
+var RouterIDRangeError = errors.New(
+	"Please specify a positive number between 1 and 255 included",
+)
+
+func ResourceNotFoundError(resourceName string, id interface{}) error {
+	return fmt.Errorf("%s with ID %v not found", resourceName, id)
+}
+
+var ServerHasNoFlavorError = errors.New(
+	"Server has no listed flavor",
+)
+
+func UnknownFlagValueError(flag string, received string, expected []string) error {
+	return fmt.Errorf("unknown %s: %s, expected one of %v.", flag, received, expected)
+}
+
+var ProjectBackupAlreadyDisabledError = errors.New(
+	"Project backup already disabled",
+)
+
+func ProgramError(functionName string, err error) error {
+	return fmt.Errorf(
+		"%s: %s\n"+
+			"This is a bug with the CLI. "+
+			"If the issue persists, please report it at "+
+			"https://github.com/itera-io/taikun-cli/issues",
+		functionName,
+		err,
+	)
+}

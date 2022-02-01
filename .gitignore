@@ -1,0 +1,15 @@
+# Ignore taikun binaries
+taikun
+taikun-cli
+
+# Jetbrains
+.idea
+
+# Other
+*.tmp
+
+# GoReleaser
+dist/
+
+# Shellspec
+report/
