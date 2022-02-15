@@ -147,34 +147,9 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	err = setDefaultAddOptions(opts)
 	if err != nil {
 		return
-	}
-
-	if opts.OrganizationID == 0 {
-		opts.OrganizationID, err = getDefaultOrganizationID()
-		if err != nil {
-			return
-		}
-	}
-	if opts.AccessProfileID == 0 {
-		opts.AccessProfileID, err = getDefaultAccessProfileID(opts.OrganizationID)
-		if err != nil {
-			return
-		}
-	}
-	if opts.AlertingProfileID == 0 {
-		opts.AlertingProfileID, err = getDefaultAlertingProfileID(opts.OrganizationID)
-		if err != nil {
-			return
-		}
-	}
-	if opts.KubernetesProfileID == 0 {
-		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(opts.OrganizationID)
-		if err != nil {
-			return
-		}
 	}
 
 	body := models.CreateProjectCommand{
@@ -217,11 +192,44 @@ func addRun(opts *AddOptions) (err error) {
 	params := projects.NewProjectsCreateParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return
+	}
+
 	response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)
 	}
 
+	return
+}
+
+func setDefaultAddOptions(opts *AddOptions) (err error) {
+	if opts.OrganizationID == 0 {
+		opts.OrganizationID, err = getDefaultOrganizationID()
+		if err != nil {
+			return
+		}
+	}
+	if opts.AccessProfileID == 0 {
+		opts.AccessProfileID, err = getDefaultAccessProfileID(opts.OrganizationID)
+		if err != nil {
+			return
+		}
+	}
+	if opts.AlertingProfileID == 0 {
+		opts.AlertingProfileID, err = getDefaultAlertingProfileID(opts.OrganizationID)
+		if err != nil {
+			return
+		}
+	}
+	if opts.KubernetesProfileID == 0 {
+		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(opts.OrganizationID)
+		if err != nil {
+			return
+		}
+	}
 	return
 }
 
