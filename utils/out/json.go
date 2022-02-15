@@ -21,13 +21,13 @@ func prettyPrintJson(data interface{}) error {
 	return nil
 }
 
-func getValueFromJsonMap(m map[string]interface{}, compositeKey string) (value interface{}, found bool) {
+func getValueFromJsonMap(jsonMap map[string]interface{}, compositeKey string) (value interface{}, found bool) {
 	keys := strings.Split(compositeKey, "/")
 	keyCount := len(keys)
 	if keyCount == 0 {
 		return
 	}
-	value, found = m[keys[0]]
+	value, found = jsonMap[keys[0]]
 	for i := 1; i < keyCount && found; i++ {
 		if m, err := jsonObjectToMap(value); err != nil {
 			found = false

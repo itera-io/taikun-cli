@@ -27,20 +27,20 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(sshUserID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.DeleteSSHUserCommand{
-		ID: id,
+		ID: sshUserID,
 	}
 	params := ssh_users.NewSSHUsersDeleteParams().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.SSHUsers.SSHUsersDelete(params, apiClient)
 
 	if err == nil {
-		out.PrintDeleteSuccess("SSH user", id)
+		out.PrintDeleteSuccess("SSH user", sshUserID)
 	}
 
 	return

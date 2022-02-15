@@ -27,7 +27,7 @@ func NewCmdClear() *cobra.Command {
 	return cmd
 }
 
-func clearRun(id int32) (err error) {
+func clearRun(alertingProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -35,7 +35,7 @@ func clearRun(id int32) (err error) {
 
 	emptyWebhookList := make([]*models.AlertingWebhookDto, 0)
 	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(api.Version)
-	params = params.WithID(id).WithBody(emptyWebhookList)
+	params = params.WithID(alertingProfileID).WithBody(emptyWebhookList)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)
 	if err == nil {

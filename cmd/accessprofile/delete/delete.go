@@ -27,16 +27,16 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(accessProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := access_profiles.NewAccessProfilesDeleteParams().WithV(api.Version).WithID(id)
+	params := access_profiles.NewAccessProfilesDeleteParams().WithV(api.Version).WithID(accessProfileID)
 	_, _, err = apiClient.Client.AccessProfiles.AccessProfilesDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Access profile", id)
+		out.PrintDeleteSuccess("Access profile", accessProfileID)
 	}
 
 	return

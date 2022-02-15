@@ -27,14 +27,14 @@ func NewCmdUnlock() *cobra.Command {
 	return cmd
 }
 
-func unlockRun(id int32) (err error) {
+func unlockRun(policyProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.OpaProfileLockManagerCommand{
-		ID:   id,
+		ID:   policyProfileID,
 		Mode: types.LockedMode,
 	}
 	params := opa_profiles.NewOpaProfilesLockManagerParams().WithV(api.Version).WithBody(&body)

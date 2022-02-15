@@ -28,17 +28,17 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(policyProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := &models.DeleteOpaProfileCommand{ID: id}
+	body := &models.DeleteOpaProfileCommand{ID: policyProfileID}
 	params := opa_profiles.NewOpaProfilesDeleteParams().WithV(api.Version).WithBody(body)
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Policy profile", id)
+		out.PrintDeleteSuccess("Policy profile", policyProfileID)
 	}
 
 	return

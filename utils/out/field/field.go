@@ -53,17 +53,17 @@ func NewHidden(name string, jsonPropertyName string) *Field {
 }
 
 // Default field formatting function
-func FormatByDefault(v interface{}) string {
-	if v == nil {
+func FormatByDefault(fieldValue interface{}) string {
+	if fieldValue == nil {
 		return "N/A"
 	}
-	if b, ok := v.(bool); ok {
+	if b, ok := fieldValue.(bool); ok {
 		if b {
 			return "Yes"
 		}
 		return "No"
 	}
-	return fmt.Sprint(v)
+	return fmt.Sprint(fieldValue)
 }
 
 // Create new visible Field struct with To String function

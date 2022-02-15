@@ -27,14 +27,14 @@ func NewCmdUnlock() *cobra.Command {
 	return cmd
 }
 
-func unlockRun(id int32) (err error) {
+func unlockRun(kubernetesProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.KubernetesProfilesLockManagerCommand{
-		ID:   id,
+		ID:   kubernetesProfileID,
 		Mode: types.LockedMode,
 	}
 	params := kubernetes_profiles.NewKubernetesProfilesLockManagerParams().WithV(api.Version).WithBody(&body)

@@ -27,14 +27,14 @@ func NewCmdLock() *cobra.Command {
 	return cmd
 }
 
-func lockRun(id int32) (err error) {
+func lockRun(billingCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.OperationCredentialLockManagerCommand{
-		ID:   id,
+		ID:   billingCredentialID,
 		Mode: types.LockedMode,
 	}
 	params := ops_credentials.NewOpsCredentialsLockManagerParams().WithV(api.Version).WithBody(&body)

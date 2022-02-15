@@ -27,14 +27,14 @@ func NewCmdLock() *cobra.Command {
 	return cmd
 }
 
-func lockRun(id int32) (err error) {
+func lockRun(cloudCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := &models.CloudLockManagerCommand{
-		ID:   id,
+		ID:   cloudCredentialID,
 		Mode: types.LockedMode,
 	}
 	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(api.Version).WithBody(body)

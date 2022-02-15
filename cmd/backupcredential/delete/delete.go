@@ -27,17 +27,17 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(backupCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(api.Version)
-	params = params.WithID(id)
+	params = params.WithID(backupCredentialID)
 	_, _, err = apiClient.Client.S3Credentials.S3CredentialsDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Backup credential", id)
+		out.PrintDeleteSuccess("Backup credential", backupCredentialID)
 	}
 
 	return

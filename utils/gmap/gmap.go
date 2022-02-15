@@ -9,14 +9,14 @@ type GenericMap struct {
 	m map[string]interface{}
 }
 
-func New(m map[string]interface{}) GenericMap {
-	for key := range m {
+func New(mapData map[string]interface{}) GenericMap {
+	for key := range mapData {
 		if key != strings.ToLower(key) {
 			panic(fmt.Sprintf("GenericMap keys must be lowercase, have: %s", key))
 		}
 	}
 	return GenericMap{
-		m: m,
+		m: mapData,
 	}
 }
 

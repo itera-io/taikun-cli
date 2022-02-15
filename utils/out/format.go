@@ -150,16 +150,16 @@ func FormatVMTags(v interface{}) (str string) {
 	if tags, ok := v.([]interface{}); ok {
 		var stringBuilder strings.Builder
 		if tagCount := len(tags); tagCount != 0 {
-			tag, ok := formatVMTag(tags[0])
-			if ok {
+			tag, tagFormatIsValid := formatVMTag(tags[0])
+			if tagFormatIsValid {
 				stringBuilder.WriteString(tag)
 			}
-			for i := 1; i < tagCount && ok; i++ {
-				tag, ok = formatVMTag(tags[i])
+			for i := 1; i < tagCount && tagFormatIsValid; i++ {
+				tag, tagFormatIsValid = formatVMTag(tags[i])
 				stringBuilder.WriteString(",")
 				stringBuilder.WriteString(tag)
 			}
-			if ok {
+			if tagFormatIsValid {
 				str = stringBuilder.String()
 			}
 		}

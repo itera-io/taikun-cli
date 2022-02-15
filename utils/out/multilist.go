@@ -43,7 +43,7 @@ func printTableWithDifferentTypes(
 		return cmderr.ProgramError("PrintMultipleResults", errors.New("resourcesSlices and resourceTypes must have the same length"))
 	}
 
-	t := newTable()
+	tab := newTable()
 
 	if config.AllColumns {
 		fields.ShowAll()
@@ -59,11 +59,11 @@ func printTableWithDifferentTypes(
 	if addTypeColumn {
 		header = append(header, "TYPE")
 	}
-	appendHeader(t, header)
+	appendHeader(tab, header)
 
 	for resourceIndex, resourcesData := range resourceSlices {
 		if resourceIndex > 0 {
-			appendSeparator(t)
+			appendSeparator(tab)
 		}
 		resources := resourcesData.([]interface{})
 		resourceMaps, err := jsonObjectsToMaps(resources)
@@ -75,10 +75,10 @@ func printTableWithDifferentTypes(
 			if addTypeColumn {
 				row = append(row, resourceTypes[resourceIndex])
 			}
-			t.AppendRow(row)
+			tab.AppendRow(row)
 		}
 	}
 
-	renderTable(t)
+	renderTable(tab)
 	return nil
 }

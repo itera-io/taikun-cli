@@ -27,14 +27,14 @@ func NewCmdUnlock() *cobra.Command {
 	return cmd
 }
 
-func unlockRun(id int32) (err error) {
+func unlockRun(backupCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.BackupLockManagerCommand{
-		ID:   id,
+		ID:   backupCredentialID,
 		Mode: types.UnlockedMode,
 	}
 	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(api.Version).WithBody(&body)

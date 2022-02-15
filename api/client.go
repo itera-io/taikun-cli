@@ -88,7 +88,7 @@ type jwtData struct {
 	Iat        int    `json:"iat"`
 }
 
-func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.Registry) error {
+func (apiClient *Client) AuthenticateRequest(request runtime.ClientRequest, _ strfmt.Registry) error {
 
 	if len(apiClient.token) == 0 {
 
@@ -135,7 +135,7 @@ func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.R
 		apiClient.refreshToken = refreshResult.Payload.RefreshToken
 	}
 
-	err := c.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", apiClient.token))
+	err := request.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", apiClient.token))
 	if err != nil {
 		return err
 	}

@@ -36,7 +36,7 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(billingRuleID int32, id int32) (err error) {
+func deleteRun(billingRuleID int32, labelID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
@@ -45,7 +45,7 @@ func deleteRun(billingRuleID int32, id int32) (err error) {
 	body := models.RuleForUpdateDto{
 		LabelsToDelete: []*models.PrometheusLabelDeleteDto{
 			{
-				ID: id,
+				ID: labelID,
 			},
 		},
 	}
@@ -55,7 +55,7 @@ func deleteRun(billingRuleID int32, id int32) (err error) {
 
 	_, err = apiClient.Client.Prometheus.PrometheusUpdate(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Billing rule label", id)
+		out.PrintDeleteSuccess("Billing rule label", labelID)
 	}
 
 	return

@@ -27,16 +27,16 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(billingCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := ops_credentials.NewOpsCredentialsDeleteParams().WithV(api.Version).WithID(id)
+	params := ops_credentials.NewOpsCredentialsDeleteParams().WithV(api.Version).WithID(billingCredentialID)
 	_, _, err = apiClient.Client.OpsCredentials.OpsCredentialsDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Billing credential", id)
+		out.PrintDeleteSuccess("Billing credential", billingCredentialID)
 	}
 
 	return

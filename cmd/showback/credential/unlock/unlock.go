@@ -27,13 +27,13 @@ func NewCmdUnlock() *cobra.Command {
 	return &cmd
 }
 
-func unlockRun(id int32) (err error) {
+func unlockRun(showbackCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.ShowbackCredentialLockCommand{ID: id, Mode: types.UnlockedMode}
+	body := models.ShowbackCredentialLockCommand{ID: showbackCredentialID, Mode: types.UnlockedMode}
 	params := showback.NewShowbackLockManagerParams().WithV(api.Version)
 	params = params.WithBody(&body)
 

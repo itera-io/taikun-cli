@@ -27,14 +27,14 @@ func NewCmdUnlock() *cobra.Command {
 	return cmd
 }
 
-func unlockRun(id int32) (err error) {
+func unlockRun(alertingProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.AlertingProfilesLockManagerCommand{
-		ID:   id,
+		ID:   alertingProfileID,
 		Mode: types.LockedMode,
 	}
 	params := alerting_profiles.NewAlertingProfilesLockManagerParams().WithV(api.Version).WithBody(&body)

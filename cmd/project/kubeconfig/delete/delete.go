@@ -28,19 +28,19 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(kubeconfigID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.DeleteKubeConfigCommand{ID: id}
+	body := models.DeleteKubeConfigCommand{ID: kubeconfigID}
 	params := kube_config.NewKubeConfigDeleteParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.KubeConfig.KubeConfigDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Kubeconfig", id)
+		out.PrintDeleteSuccess("Kubeconfig", kubeconfigID)
 	}
 
 	return

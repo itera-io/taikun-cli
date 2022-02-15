@@ -28,18 +28,18 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(alertingProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.DeleteAlertingProfilesCommand{ID: id}
+	body := models.DeleteAlertingProfilesCommand{ID: alertingProfileID}
 
 	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(api.Version).WithBody(&body)
 	_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Alerting profile", id)
+		out.PrintDeleteSuccess("Alerting profile", alertingProfileID)
 	}
 
 	return

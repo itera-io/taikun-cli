@@ -27,16 +27,16 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(cloudCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(api.Version).WithCloudID(id)
+	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(api.Version).WithCloudID(cloudCredentialID)
 	_, _, err = apiClient.Client.CloudCredentials.CloudCredentialsDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Cloud credential", id)
+		out.PrintDeleteSuccess("Cloud credential", cloudCredentialID)
 	}
 
 	return

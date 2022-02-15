@@ -27,17 +27,17 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(orgID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := organizations.NewOrganizationsDeleteParams().WithV(api.Version)
-	params = params.WithOrganizationID(id)
+	params = params.WithOrganizationID(orgID)
 	_, _, err = apiClient.Client.Organizations.OrganizationsDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Organization", id)
+		out.PrintDeleteSuccess("Organization", orgID)
 	}
 
 	return

@@ -28,19 +28,19 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(showbackCredentialID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.DeleteShowbackCredentialCommand{ID: id}
+	body := models.DeleteShowbackCredentialCommand{ID: showbackCredentialID}
 	params := showback.NewShowbackDeleteShowbackCredentialParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Showback.ShowbackDeleteShowbackCredential(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Showback credential", id)
+		out.PrintDeleteSuccess("Showback credential", showbackCredentialID)
 	}
 
 	return

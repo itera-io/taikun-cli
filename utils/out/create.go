@@ -46,16 +46,16 @@ func printApiResponseTable(response interface{}, fields fields.Fields) error {
 		return cmderr.ProgramError("printApiResponseTable", err)
 	}
 
-	t := newTable()
+	tab := newTable()
 	for _, field := range fields.VisibleFields() {
 		value, _ := getValueFromJsonMap(resourceMap, field.JsonPropertyName())
-		t.AppendRow([]interface{}{
+		tab.AppendRow([]interface{}{
 			field.Name(),
 			trimCellValue(field.Format(value)),
 		})
 	}
 
-	renderTable(t)
+	renderTable(tab)
 	return nil
 }
 

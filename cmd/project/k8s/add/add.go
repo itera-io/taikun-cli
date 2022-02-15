@@ -134,7 +134,7 @@ func addRun(opts *AddOptions) (err error) {
 
 func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNodeLabelsDto, error) {
 	labels := make([]*models.KubernetesNodeLabelsDto, len(labelsData))
-	for i, labelData := range labelsData {
+	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
 			return nil, errors.New("Invalid empty kubernetes node label")
 		}
@@ -142,7 +142,7 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNod
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
 		}
-		labels[i] = &models.KubernetesNodeLabelsDto{
+		labels[labelIndex] = &models.KubernetesNodeLabelsDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}

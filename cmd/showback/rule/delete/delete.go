@@ -28,19 +28,19 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(showbackRuleID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.DeleteShowbackRuleCommand{ID: id}
+	body := models.DeleteShowbackRuleCommand{ID: showbackRuleID}
 	params := showback.NewShowbackDeleteRuleParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Showback.ShowbackDeleteRule(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Showback rule", id)
+		out.PrintDeleteSuccess("Showback rule", showbackRuleID)
 	}
 
 	return

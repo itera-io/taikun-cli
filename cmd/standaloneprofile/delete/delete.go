@@ -28,19 +28,19 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(standaloneProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.DeleteStandAloneProfileCommand{ID: id}
+	body := models.DeleteStandAloneProfileCommand{ID: standaloneProfileID}
 	params := stand_alone_profile.NewStandAloneProfileDeleteParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAloneProfile.StandAloneProfileDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Standalone profile", id)
+		out.PrintDeleteSuccess("Standalone profile", standaloneProfileID)
 	}
 
 	return

@@ -27,18 +27,18 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(billingRuleID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := prometheus.NewPrometheusDeleteParams().WithV(api.Version)
-	params = params.WithID(id)
+	params = params.WithID(billingRuleID)
 
 	_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Billing rule", id)
+		out.PrintDeleteSuccess("Billing rule", billingRuleID)
 	}
 
 	return

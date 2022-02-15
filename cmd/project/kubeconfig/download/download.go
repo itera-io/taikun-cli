@@ -78,21 +78,21 @@ func downloadRun(opts *DownloadOptions) (err error) {
 	return
 }
 
-func getKubeconfigName(id int32) (name string, err error) {
+func getKubeconfigName(kubeconfigID int32) (name string, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := kube_config.NewKubeConfigListParams().WithV(api.Version)
-	params = params.WithID(&id)
+	params = params.WithID(&kubeconfigID)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)
 	if err != nil {
 		return
 	}
 	if len(response.Payload.Data) != 1 {
-		return "", cmderr.ResourceNotFoundError("Kubeconfig", id)
+		return "", cmderr.ResourceNotFoundError("Kubeconfig", kubeconfigID)
 	}
 
 	name = response.Payload.Data[0].ServiceAccountName

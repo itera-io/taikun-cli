@@ -27,14 +27,14 @@ func NewCmdLock() *cobra.Command {
 	return cmd
 }
 
-func lockRun(id int32) (err error) {
+func lockRun(accessProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.AccessProfilesLockManagementCommand{
-		ID:   id,
+		ID:   accessProfileID,
 		Mode: types.LockedMode,
 	}
 	params := access_profiles.NewAccessProfilesLockManagerParams().WithV(api.Version).WithBody(&body)

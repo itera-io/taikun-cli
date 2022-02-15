@@ -25,16 +25,16 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(id string) (err error) {
+func deleteRun(userID string) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := users.NewUsersDeleteParams().WithV(api.Version).WithID(id)
+	params := users.NewUsersDeleteParams().WithV(api.Version).WithID(userID)
 	_, _, err = apiClient.Client.Users.UsersDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("User", id)
+		out.PrintDeleteSuccess("User", userID)
 	}
 
 	return

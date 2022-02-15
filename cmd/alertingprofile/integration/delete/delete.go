@@ -27,16 +27,16 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(alertingIntegrationID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(api.Version).WithID(id)
+	params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(api.Version).WithID(alertingIntegrationID)
 	_, _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Alerting integration", id)
+		out.PrintDeleteSuccess("Alerting integration", alertingIntegrationID)
 	}
 
 	return

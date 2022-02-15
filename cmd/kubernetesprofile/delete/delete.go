@@ -27,16 +27,16 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(kubernetesProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(api.Version).WithID(id)
+	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(api.Version).WithID(kubernetesProfileID)
 	_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Kubernetes profile", id)
+		out.PrintDeleteSuccess("Kubernetes profile", kubernetesProfileID)
 	}
 
 	return

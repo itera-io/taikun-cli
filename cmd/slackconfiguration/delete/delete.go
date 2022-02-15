@@ -28,19 +28,19 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(id int32) (err error) {
+func deleteRun(slackConfigID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.DeleteSlackConfigurationCommand{ID: id}
+	body := models.DeleteSlackConfigurationCommand{ID: slackConfigID}
 	params := slack.NewSlackDeleteParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
 	_, _, err = apiClient.Client.Slack.SlackDelete(params, apiClient)
 	if err == nil {
-		out.PrintDeleteSuccess("Slack configuration", id)
+		out.PrintDeleteSuccess("Slack configuration", slackConfigID)
 	}
 
 	return

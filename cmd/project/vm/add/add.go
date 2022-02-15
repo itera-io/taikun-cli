@@ -125,7 +125,7 @@ func NewCmdAdd() *cobra.Command {
 
 func parseTagsOption(tagsOption []string) ([]*models.StandAloneMetaDataDto, error) {
 	tags := make([]*models.StandAloneMetaDataDto, len(tagsOption))
-	for i, tag := range tagsOption {
+	for tagIndex, tag := range tagsOption {
 		if len(tag) == 0 {
 			return nil, errors.New("Invalid empty VM tag")
 		}
@@ -133,7 +133,7 @@ func parseTagsOption(tagsOption []string) ([]*models.StandAloneMetaDataDto, erro
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid VM tag format: %s", tag)
 		}
-		tags[i] = &models.StandAloneMetaDataDto{
+		tags[tagIndex] = &models.StandAloneMetaDataDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}
