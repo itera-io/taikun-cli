@@ -8,7 +8,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/lock"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/unlock"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook"
-
 	"github.com/spf13/cobra"
 )
 

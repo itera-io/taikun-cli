@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/user/info"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikun-cli/cmd/user/project"
-
 	"github.com/spf13/cobra"
 )
 

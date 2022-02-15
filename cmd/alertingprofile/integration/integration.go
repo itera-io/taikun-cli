@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/add"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/delete"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/list"
-
 	"github.com/spf13/cobra"
 )
 

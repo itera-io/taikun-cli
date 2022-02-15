@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/offers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/skus"
-
 	"github.com/spf13/cobra"
 )
 

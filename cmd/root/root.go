@@ -20,7 +20,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/user"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
-
 	"github.com/spf13/cobra"
 )
 

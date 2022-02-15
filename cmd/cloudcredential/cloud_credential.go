@@ -10,7 +10,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/lock"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/unlock"
-
 	"github.com/spf13/cobra"
 )
 

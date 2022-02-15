@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/lock"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/unlock"
-
 	"github.com/spf13/cobra"
 )
 

@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/add"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/check"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
-
 	"github.com/spf13/cobra"
 )
 

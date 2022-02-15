@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/add"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/delete"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/list"
-
 	"github.com/spf13/cobra"
 )
 

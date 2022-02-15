@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/policyprofile/list"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile/lock"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile/unlock"
-
 	"github.com/spf13/cobra"
 )
 

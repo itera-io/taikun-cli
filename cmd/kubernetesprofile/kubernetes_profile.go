@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/list"
 	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/lock"
 	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile/unlock"
-
 	"github.com/spf13/cobra"
 )
 
