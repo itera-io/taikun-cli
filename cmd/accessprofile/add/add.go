@@ -80,7 +80,9 @@ func addRun(opts *AddOptions) (err error) {
 			Address: rawDNSServer,
 		}
 	}
+
 	NTPServers := make([]*models.NtpServerListDto, len(opts.NTPServers))
+
 	for i, rawNTPServer := range opts.NTPServers {
 		NTPServers[i] = &models.NtpServerListDto{
 			Address: rawNTPServer,
@@ -96,6 +98,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(api.Version).WithBody(body)
+
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

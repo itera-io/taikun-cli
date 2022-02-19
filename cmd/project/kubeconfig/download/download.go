@@ -54,6 +54,7 @@ func downloadRun(opts *DownloadOptions) (err error) {
 		if err != nil {
 			return err
 		}
+
 		opts.OutputFile = fmt.Sprintf(
 			"taikun-%d-%s.yaml",
 			opts.ProjectID,
@@ -91,6 +92,7 @@ func getKubeconfigName(kubeconfigID int32) (name string, err error) {
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return "", cmderr.ResourceNotFoundError("Kubeconfig", kubeconfigID)
 	}

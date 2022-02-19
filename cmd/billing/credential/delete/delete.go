@@ -34,6 +34,7 @@ func deleteRun(billingCredentialID int32) (err error) {
 	}
 
 	params := ops_credentials.NewOpsCredentialsDeleteParams().WithV(api.Version).WithID(billingCredentialID)
+
 	_, _, err = apiClient.Client.OpsCredentials.OpsCredentialsDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Billing credential", billingCredentialID)

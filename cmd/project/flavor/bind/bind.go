@@ -48,6 +48,7 @@ func bindRun(opts *BindOptions) (err error) {
 		Flavors:   opts.Flavors,
 	}
 	params := flavors.NewFlavorsBindToProjectParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

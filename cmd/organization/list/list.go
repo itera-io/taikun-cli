@@ -113,19 +113,24 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
+
 	for {
 		response, err := apiClient.Client.Organizations.OrganizationsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		organizations = append(organizations, response.Payload.Data...)
+
 		organizationsCount := int32(len(organizations))
 		if opts.Limit != 0 && organizationsCount >= opts.Limit {
 			break
 		}
+
 		if organizationsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&organizationsCount)
 	}
 

@@ -134,19 +134,23 @@ func addRun(opts *AddOptions) (err error) {
 
 func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNodeLabelsDto, error) {
 	labels := make([]*models.KubernetesNodeLabelsDto, len(labelsData))
+
 	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
 			return nil, errors.New("Invalid empty kubernetes node label")
 		}
+
 		tokens := strings.Split(labelData, "=")
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
 		}
+
 		labels[labelIndex] = &models.KubernetesNodeLabelsDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}
 	}
+
 	return labels, nil
 }
 
@@ -156,6 +160,7 @@ func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 	if len(args) == 0 {
 		return
 	}
+
 	projectID, err := types.Atoi32(args[0])
 	if err != nil {
 		return
@@ -174,14 +179,17 @@ func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 		if err != nil {
 			return
 		}
+
 		for _, flavor := range response.Payload.Data {
 			completions = append(completions, flavor.Name)
 		}
+
 		count := int32(len(completions))
 
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

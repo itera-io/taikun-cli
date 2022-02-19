@@ -57,16 +57,19 @@ func editRun(opts *EditOptions) (err error) {
 		body.IsCPUUnlimited = false
 		body.CPU = opts.CPU
 	}
+
 	if opts.DiskSize > 0 {
 		body.IsDiskSizeUnlimited = false
 		body.DiskSize = types.GiBToB(opts.DiskSize)
 	}
+
 	if opts.RAM > 0 {
 		body.IsRAMUnlimited = false
 		body.RAM = types.GiBToB(opts.RAM)
 	}
 
 	params := project_quotas.NewProjectQuotasEditParams().WithV(api.Version).WithBody(body).WithQuotaID(opts.QuotaID)
+
 	_, err = apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

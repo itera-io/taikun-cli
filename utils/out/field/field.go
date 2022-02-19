@@ -57,12 +57,15 @@ func FormatByDefault(fieldValue interface{}) string {
 	if fieldValue == nil {
 		return "N/A"
 	}
+
 	if b, ok := fieldValue.(bool); ok {
 		if b {
 			return "Yes"
 		}
+
 		return "No"
 	}
+
 	return fmt.Sprint(fieldValue)
 }
 

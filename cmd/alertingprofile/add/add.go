@@ -93,10 +93,12 @@ func addRun(opts *AddOptions) (err error) {
 		for i, email := range opts.Emails {
 			emails[i] = &models.AlertingEmailDto{Email: email}
 		}
+
 		body.Emails = emails
 	}
 
 	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(api.Version).WithBody(&body)
+
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

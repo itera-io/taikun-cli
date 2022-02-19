@@ -15,6 +15,7 @@ func New(mapData map[string]interface{}) GenericMap {
 			panic(fmt.Sprintf("GenericMap keys must be lowercase, have: %s", key))
 		}
 	}
+
 	return GenericMap{
 		m: mapData,
 	}
@@ -30,6 +31,7 @@ func (m GenericMap) Keys() []string {
 	for key := range m.m {
 		keys = append(keys, key)
 	}
+
 	return keys
 }
 

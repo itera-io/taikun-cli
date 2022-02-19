@@ -126,18 +126,22 @@ func addRun(opts *AddOptions) (err error) {
 
 func parseLabelsFlag(labelsData []string) ([]*models.PrometheusLabelListDto, error) {
 	labels := make([]*models.PrometheusLabelListDto, len(labelsData))
+
 	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
 			return nil, errors.New("Invalid empty billing rule label")
 		}
+
 		tokens := strings.Split(labelData, "=")
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid billing rule label format: %s", labelData)
 		}
+
 		labels[labelIndex] = &models.PrometheusLabelListDto{
 			Label: tokens[0],
 			Value: tokens[1],
 		}
 	}
+
 	return labels, nil
 }

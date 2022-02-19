@@ -40,6 +40,7 @@ func publishersRun(opts *PublishersOptions) (err error) {
 	if err == nil {
 		out.PrintStringSlice(publishers)
 	}
+
 	return
 }
 
@@ -53,19 +54,24 @@ func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 	params = params.WithCloudID(opts.CloudCredentialID)
 
 	publishers = make([]string, 0)
+
 	for {
 		response, err := apiClient.Client.Azure.AzurePublishers(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		publishers = append(publishers, response.Payload.Data...)
+
 		count := int32(len(publishers))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

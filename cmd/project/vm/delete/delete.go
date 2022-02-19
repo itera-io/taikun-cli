@@ -68,13 +68,16 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		if err != nil {
 			return err
 		}
+
 		if len(allVMs) == 0 {
 			return fmt.Errorf("project %d has no standalone VMs", opts.ProjectID)
 		}
+
 		allVMIDs := make([]int32, len(allVMs))
 		for i, vm := range allVMs {
 			allVMIDs[i] = vm.ID
 		}
+
 		body.VMIds = allVMIDs
 	} else {
 		body.VMIds = opts.VMIDs

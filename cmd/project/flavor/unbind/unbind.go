@@ -41,6 +41,7 @@ func unbindRun(bindings []int32) (err error) {
 		Ids: bindings,
 	}
 	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

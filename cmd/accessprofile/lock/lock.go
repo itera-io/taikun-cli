@@ -38,6 +38,7 @@ func lockRun(accessProfileID int32) (err error) {
 		Mode: types.LockedMode,
 	}
 	params := access_profiles.NewAccessProfilesLockManagerParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.AccessProfiles.AccessProfilesLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

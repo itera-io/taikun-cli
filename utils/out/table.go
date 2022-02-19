@@ -32,13 +32,16 @@ func printTable(data interface{}, fields fields.Fields) error {
 
 	if parentObjectName, nested := fields.AreNested(); nested {
 		allNestedResources := make([]interface{}, 0)
+
 		for i := range resources {
 			nestedResources, err := getNestedResources(resources[i], parentObjectName)
 			if err != nil {
 				return err
 			}
+
 			allNestedResources = append(allNestedResources, nestedResources...)
 		}
+
 		resources = allNestedResources
 	}
 
@@ -46,11 +49,13 @@ func printTable(data interface{}, fields fields.Fields) error {
 	if err != nil {
 		return cmderr.ProgramError("printTable", err)
 	}
+
 	for _, resourceMap := range resourceMaps {
 		tab.AppendRow(resourceMapToRow(resourceMap, fields))
 	}
 
 	renderTable(tab)
+
 	return nil
 }
 
@@ -59,6 +64,7 @@ func newTable() table.Writer {
 
 	tab.SetOutputMirror(os.Stdout)
 	tab.SetStyle(table.StyleDefault)
+
 	tab.Style().Format.Header = text.FormatDefault
 	tab.Style().Options = table.OptionsNoBorders
 
@@ -75,27 +81,33 @@ func getNestedResources(resource interface{}, parentObjectName string) (nestedRe
 	if err != nil {
 		return nil, cmderr.ProgramError("getNestedResource", err)
 	}
+
 	nestedData, ok := resourceMap[parentObjectName]
 	if !ok {
 		return nil, cmderr.ProgramError("getNestedResource", errors.New("could not find nested resource"))
 	}
+
 	nestedResources, ok = nestedData.([]interface{})
 	if !ok {
 		return nil, cmderr.ProgramError("getNestedResource", errors.New("nested resource is not array"))
 	}
+
 	return
 }
 
 func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
 	row := make([]interface{}, fields.VisibleSize())
+
 	for fieldIndex, field := range fields.VisibleFields() {
 		if value, found := getValueFromJsonMap(resourceMap, field.JsonPropertyName()); found && value != nil {
 			row[fieldIndex] = field.Format(value)
 		} else {
 			row[fieldIndex] = ""
 		}
+
 		row[fieldIndex] = trimCellValue(row[fieldIndex])
 	}
+
 	return row
 }
 
@@ -124,6 +136,7 @@ func stringSliceToRow(fields []string) table.Row {
 	for i, field := range fields {
 		row[i] = field
 	}
+
 	return row
 }
 

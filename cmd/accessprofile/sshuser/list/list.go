@@ -65,12 +65,13 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	params := ssh_users.NewSSHUsersListParams().WithV(api.Version).WithAccessProfileID(opts.AccessProfileID)
+
 	response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
 	if err != nil {
 		return err
 	}
-	sshUsers := response.Payload
 
+	sshUsers := response.Payload
 	if opts.Limit != 0 && int32(len(sshUsers)) > opts.Limit {
 		sshUsers = sshUsers[:opts.Limit]
 	}

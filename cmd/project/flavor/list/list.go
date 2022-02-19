@@ -84,25 +84,30 @@ func listRun(opts *ListOptions) (err error) {
 
 	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
 	params = params.WithProjectID(&opts.ProjectID)
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}
+
 	for {
 		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
 
 		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
+
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&flavorsCount)
 	}
 

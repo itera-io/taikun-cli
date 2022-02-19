@@ -58,6 +58,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	params := checker.NewCheckerOpenstackParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.Checker.CheckerOpenstack(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("OpenStack cloud credential")

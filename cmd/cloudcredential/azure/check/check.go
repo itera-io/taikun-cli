@@ -53,6 +53,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	params := checker.NewCheckerAzureParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.Checker.CheckerAzure(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("Azure cloud credential")

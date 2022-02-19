@@ -83,19 +83,24 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	var billingRules = make([]*models.PrometheusRuleListDto, 0)
+
 	for {
 		response, err := apiClient.Client.Prometheus.PrometheusListOfRules(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		billingRules = append(billingRules, response.Payload.Data...)
+
 		count := int32(len(billingRules))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

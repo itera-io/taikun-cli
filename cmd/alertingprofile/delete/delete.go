@@ -37,6 +37,7 @@ func deleteRun(alertingProfileID int32) (err error) {
 	body := models.DeleteAlertingProfilesCommand{ID: alertingProfileID}
 
 	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(api.Version).WithBody(&body)
+
 	_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Alerting profile", alertingProfileID)

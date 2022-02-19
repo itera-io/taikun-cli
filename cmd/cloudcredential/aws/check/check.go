@@ -55,6 +55,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	params := checker.NewCheckerAwsParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.Checker.CheckerAws(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("AWS cloud credential")

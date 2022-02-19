@@ -26,8 +26,10 @@ func PrintResultsOfDifferentTypes(
 				return err
 			}
 		}
+
 		return nil
 	}
+
 	return printTableWithDifferentTypes(resourceSlices, resourceTypes, fields)
 }
 
@@ -46,8 +48,9 @@ func printTableWithDifferentTypes(
 	tab := newTable()
 
 	if config.AllColumns {
-		fields.ShowAll()
 		addTypeColumn = true
+
+		fields.ShowAll()
 	} else if len(config.Columns) != 0 {
 		if err := fields.SetVisible(config.Columns); err != nil {
 			return err
@@ -59,26 +62,32 @@ func printTableWithDifferentTypes(
 	if addTypeColumn {
 		header = append(header, "TYPE")
 	}
+
 	appendHeader(tab, header)
 
 	for resourceIndex, resourcesData := range resourceSlices {
 		if resourceIndex > 0 {
 			appendSeparator(tab)
 		}
+
 		resources := resourcesData.([]interface{})
+
 		resourceMaps, err := jsonObjectsToMaps(resources)
 		if err != nil {
 			return cmderr.ProgramError("printTableWithDifferentTypes", err)
 		}
+
 		for _, resourceMap := range resourceMaps {
 			row := resourceMapToRow(resourceMap, fields)
 			if addTypeColumn {
 				row = append(row, resourceTypes[resourceIndex])
 			}
+
 			tab.AppendRow(row)
 		}
 	}
 
 	renderTable(tab)
+
 	return nil
 }

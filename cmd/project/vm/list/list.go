@@ -116,6 +116,7 @@ func ListVMs(opts *ListOptions) (vms []*models.StandaloneVmsListForDetailsDto, e
 
 	params := stand_alone.NewStandAloneDetailsParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}

@@ -34,6 +34,7 @@ func deleteRun(accessProfileID int32) (err error) {
 	}
 
 	params := access_profiles.NewAccessProfilesDeleteParams().WithV(api.Version).WithID(accessProfileID)
+
 	_, _, err = apiClient.Client.AccessProfiles.AccessProfilesDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Access profile", accessProfileID)

@@ -81,24 +81,30 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	minRAM := types.GiBToMiB(opts.MinRAM)
 	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	flavors := []*models.FlavorsListDto{}
+
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsAllFlavors(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		flavors = append(flavors, response.Payload.Data...)
+
 		flavorsCount := int32(len(flavors))
 		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
+
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&flavorsCount)
 	}
 

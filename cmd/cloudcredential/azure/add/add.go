@@ -114,6 +114,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := azure.NewAzureCreateParams().WithV(api.Version).WithBody(body)
+
 	response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

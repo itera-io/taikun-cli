@@ -114,24 +114,30 @@ func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	userList = make([]*models.UserForListDto, 0)
+
 	for {
 		response, err := apiClient.Client.Users.UsersList(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		userList = append(userList, response.Payload.Data...)
+
 		usersCount := int32(len(userList))
 		if opts.Limit != 0 && usersCount >= opts.Limit {
 			break
 		}
+
 		if usersCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&usersCount)
 	}
 

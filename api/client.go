@@ -101,6 +101,7 @@ func (apiClient *Client) AuthenticateRequest(request runtime.ClientRequest, _ st
 			if err != nil {
 				return err
 			}
+
 			apiClient.token = loginResult.Payload.Token
 			apiClient.refreshToken = loginResult.Payload.RefreshToken
 		} else {
@@ -112,10 +113,10 @@ func (apiClient *Client) AuthenticateRequest(request runtime.ClientRequest, _ st
 			if err != nil {
 				return err
 			}
+
 			apiClient.token = loginResult.Payload.Token
 			apiClient.refreshToken = loginResult.Payload.RefreshToken
 		}
-
 	}
 
 	if apiClient.hasTokenExpired() {
@@ -155,6 +156,7 @@ func (apiClient *Client) hasTokenExpired() bool {
 	}
 
 	jwtData := jwtData{}
+
 	err = json.Unmarshal(data, &jwtData)
 	if err != nil {
 		return true

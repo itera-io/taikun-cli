@@ -38,6 +38,7 @@ func lockRun(backupCredentialID int32) (err error) {
 		Mode: types.LockedMode,
 	}
 	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

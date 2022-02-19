@@ -165,6 +165,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := organizations.NewOrganizationsCreateParams().WithV(api.Version).WithBody(&body)
+
 	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

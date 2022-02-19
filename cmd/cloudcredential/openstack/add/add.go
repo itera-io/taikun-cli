@@ -117,6 +117,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := openstack.NewOpenstackCreateParams().WithV(api.Version).WithBody(body)
+
 	response, err := apiClient.Client.Openstack.OpenstackCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

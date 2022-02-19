@@ -90,24 +90,30 @@ func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err 
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var amazonCloudCredentials = make([]*models.AmazonCredentialsListDto, 0)
+
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		amazonCloudCredentials = append(amazonCloudCredentials, response.Payload.Amazon...)
+
 		count := int32(len(amazonCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCountAws {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

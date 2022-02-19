@@ -35,6 +35,7 @@ func deleteRun(backupCredentialID int32) (err error) {
 
 	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(api.Version)
 	params = params.WithID(backupCredentialID)
+
 	_, _, err = apiClient.Client.S3Credentials.S3CredentialsDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Backup credential", backupCredentialID)

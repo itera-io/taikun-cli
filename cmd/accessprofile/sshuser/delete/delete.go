@@ -24,6 +24,7 @@ func NewCmdDelete() *cobra.Command {
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
+
 	return cmd
 }
 

@@ -93,24 +93,30 @@ func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, er
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var azureCloudCredentials = make([]*models.AzureCredentialsListDto, 0)
+
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		azureCloudCredentials = append(azureCloudCredentials, response.Payload.Azure...)
+
 		count := int32(len(azureCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCountAzure {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

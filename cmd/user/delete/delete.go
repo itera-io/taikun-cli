@@ -32,6 +32,7 @@ func deleteRun(userID string) (err error) {
 	}
 
 	params := users.NewUsersDeleteParams().WithV(api.Version).WithID(userID)
+
 	_, _, err = apiClient.Client.Users.UsersDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("User", userID)

@@ -75,24 +75,30 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var slackConfigurations = make([]*models.SlackConfigurationDto, 0)
+
 	for {
 		response, err := apiClient.Client.Slack.SlackList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		slackConfigurations = append(slackConfigurations, response.Payload.Data...)
+
 		count := int32(len(slackConfigurations))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

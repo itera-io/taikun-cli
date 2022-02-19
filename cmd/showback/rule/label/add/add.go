@@ -53,6 +53,7 @@ func addRun(opts *AddOptions) (err error) {
 	if err != nil {
 		return
 	}
+
 	newLabel := models.ShowbackLabelCreateDto{Label: opts.Label, Value: opts.Value}
 	showbackRule.Labels = append(showbackRule.Labels, &newLabel)
 

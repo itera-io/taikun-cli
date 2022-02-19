@@ -38,6 +38,7 @@ func lockRun(alertingProfileID int32) (err error) {
 		Mode: types.LockedMode,
 	}
 	params := alerting_profiles.NewAlertingProfilesLockManagerParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

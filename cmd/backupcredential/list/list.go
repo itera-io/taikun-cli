@@ -83,19 +83,24 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	backupCredentials := []*models.BackupCredentialsListDto{}
+
 	for {
 		response, err := apiClient.Client.S3Credentials.S3CredentialsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		backupCredentials = append(backupCredentials, response.Payload.Data...)
 		backupCredentialsCount := int32(len(backupCredentials))
+
 		if opts.Limit != 0 && backupCredentialsCount >= opts.Limit {
 			break
 		}
+
 		if backupCredentialsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&backupCredentialsCount)
 	}
 

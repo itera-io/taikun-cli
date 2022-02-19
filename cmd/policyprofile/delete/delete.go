@@ -36,6 +36,7 @@ func deleteRun(policyProfileID int32) (err error) {
 
 	body := &models.DeleteOpaProfileCommand{ID: policyProfileID}
 	params := opa_profiles.NewOpaProfilesDeleteParams().WithV(api.Version).WithBody(body)
+
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Policy profile", policyProfileID)

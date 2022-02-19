@@ -34,6 +34,7 @@ func deleteRun(cloudCredentialID int32) (err error) {
 	}
 
 	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(api.Version).WithCloudID(cloudCredentialID)
+
 	_, _, err = apiClient.Client.CloudCredentials.CloudCredentialsDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Cloud credential", cloudCredentialID)

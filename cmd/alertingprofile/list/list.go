@@ -81,24 +81,30 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var alertingProfiles = make([]*models.AlertingProfilesListDto, 0)
+
 	for {
 		response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		alertingProfiles = append(alertingProfiles, response.Payload.Data...)
+
 		alertingProfilesCount := int32(len(alertingProfiles))
 		if opts.Limit != 0 && alertingProfilesCount >= opts.Limit {
 			break
 		}
+
 		if alertingProfilesCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&alertingProfilesCount)
 	}
 

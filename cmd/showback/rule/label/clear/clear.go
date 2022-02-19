@@ -44,6 +44,7 @@ func clearRun(opts *ClearOptions) (err error) {
 	if err != nil {
 		return
 	}
+
 	emptyLabels := make([]*models.ShowbackLabelCreateDto, 0)
 
 	body := models.UpdateShowbackRuleCommand{

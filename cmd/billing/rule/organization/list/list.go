@@ -70,6 +70,7 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return cmderr.ResourceNotFoundError("Billing rule", opts.BillingRuleID)
 	}

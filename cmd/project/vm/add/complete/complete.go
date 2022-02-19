@@ -37,6 +37,7 @@ func getOpenStackVolumeTypes(projectID int32) (volumeTypes []string, err error) 
 	body := models.OpenstackVolumeTypeListQuery{ProjectID: projectID}
 	params := openstack.NewOpenstackVolumeTypesParams().WithV(api.Version)
 	params = params.WithBody(&body)
+
 	response, err := apiClient.Client.Openstack.OpenstackVolumeTypes(params, apiClient)
 	if err == nil {
 		volumeTypes = response.Payload

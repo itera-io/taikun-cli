@@ -34,6 +34,7 @@ func deleteRun(alertingIntegrationID int32) (err error) {
 	}
 
 	params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(api.Version).WithID(alertingIntegrationID)
+
 	_, _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Alerting integration", alertingIntegrationID)

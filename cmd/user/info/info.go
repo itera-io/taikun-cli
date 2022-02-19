@@ -39,6 +39,7 @@ func myInfoRun() (err error) {
 	}
 
 	params := users.NewUsersDetailsParams().WithV(api.Version)
+
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload.Data, infoFields)
@@ -60,6 +61,7 @@ func infoRun(userID string) (err error) {
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return cmderr.ResourceNotFoundError("User", userID)
 	}

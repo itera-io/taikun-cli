@@ -80,10 +80,12 @@ func GetShowbackRuleByID(showbackRuleID int32) (showbackRule *models.ShowbackRul
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return nil, cmderr.ResourceNotFoundError("Showback rule", showbackRuleID)
 	}
 
 	showbackRule = response.Payload.Data[0]
+
 	return
 }

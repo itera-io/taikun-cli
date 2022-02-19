@@ -108,24 +108,30 @@ func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var openstackCloudCredentials = make([]*models.OpenstackCredentialsListDto, 0)
+
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		openstackCloudCredentials = append(openstackCloudCredentials, response.Payload.Openstack...)
+
 		count := int32(len(openstackCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCountOpenstack {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

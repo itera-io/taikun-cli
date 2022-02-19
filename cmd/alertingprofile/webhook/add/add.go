@@ -59,9 +59,11 @@ func getAlertingProfileWebhooks(alertingProfileID int32) ([]*models.AlertingWebh
 	if err != nil {
 		return nil, err
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return nil, fmt.Errorf("Alerting profile with ID %d not found.", alertingProfileID)
 	}
+
 	return response.Payload.Data[0].Webhooks, nil
 }
 
@@ -69,21 +71,27 @@ func parseAddOptions(opts *AddOptions) (*models.AlertingWebhookDto, error) {
 	alertingWebhook := &models.AlertingWebhookDto{
 		URL: opts.URL,
 	}
+
 	headers := make([]*models.WebhookHeaderDto, len(opts.Headers))
+
 	for headerIndex, header := range opts.Headers {
 		if len(header) == 0 {
 			return nil, errors.New("Invalid empty webhook header")
 		}
+
 		tokens := strings.Split(header, "=")
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid webhook header format: %s", header)
 		}
+
 		headers[headerIndex] = &models.WebhookHeaderDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}
 	}
+
 	alertingWebhook.Headers = headers
+
 	return alertingWebhook, nil
 }
 

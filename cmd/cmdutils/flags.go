@@ -44,11 +44,14 @@ func makeSortByPreRunE(fields fields.Fields) runE {
 		if config.SortBy == "" {
 			return nil
 		}
+
 		jsonPropertyName, found := fields.GetJsonPropertyNameFromName(config.SortBy)
 		if !found {
 			return fmt.Errorf("unknown sorting element '%s'", config.SortBy)
 		}
+
 		config.SortBy = jsonPropertyName
+
 		return nil
 	}
 }
@@ -61,6 +64,7 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 		}
 
 		completions := make([]string, 0)
+
 		for _, jsonPropertyName := range sortingElements {
 			for _, field := range fields.AllFields() {
 				if field.JsonPropertyName() == jsonPropertyName {
@@ -127,6 +131,7 @@ func lowerStringSlice(stringSlice []string) []string {
 	for i, str := range stringSlice {
 		lower[i] = strings.ToLower(str)
 	}
+
 	return lower
 }
 
@@ -146,5 +151,6 @@ func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) er
 	if !valid.Contains(flagValue) {
 		return cmderr.UnknownFlagValueError(flagName, flagValue, valid.Keys())
 	}
+
 	return nil
 }

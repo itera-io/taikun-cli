@@ -84,24 +84,30 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var showbackCredentials = make([]*models.ShowbackCredentialsListDto, 0)
+
 	for {
 		response, err := apiClient.Client.Showback.ShowbackCredentialsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		showbackCredentials = append(showbackCredentials, response.Payload.Data...)
 		showbackCredentialsCount := int32(len(showbackCredentials))
+
 		if opts.Limit != 0 && showbackCredentialsCount >= opts.Limit {
 			break
 		}
+
 		if showbackCredentialsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&showbackCredentialsCount)
 	}
 

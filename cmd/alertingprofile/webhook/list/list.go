@@ -63,9 +63,11 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return err
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return fmt.Errorf("Alerting profile with ID %d not found.", opts.AlertingProfileID)
 	}
+
 	alertingWebhooks := response.Payload.Data[0].Webhooks
 
 	if opts.Limit != 0 && int32(len(alertingWebhooks)) > opts.Limit {

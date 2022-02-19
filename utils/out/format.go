@@ -18,9 +18,11 @@ func trimCellValue(value interface{}) interface{} {
 				str = str[:(config.MaxCellWidth - len(trimmedValueSuffix))]
 				str += trimmedValueSuffix
 			}
+
 			return str
 		}
 	}
+
 	return value
 }
 
@@ -28,6 +30,7 @@ func resourceIDToString(id interface{}) string {
 	if str, isString := id.(string); isString {
 		return strings.ReplaceAll(str, "\"", "")
 	}
+
 	return fmt.Sprint(id)
 }
 
@@ -37,12 +40,14 @@ func FormatDateTimeString(v interface{}) string {
 		if dateTime == "" {
 			return "N/A"
 		}
+
 		dateTime = strings.Replace(dateTime, "T", " ", 1)
 		dateTime = strings.Replace(dateTime, "Z", "", 1)
+
 		return dateTime
 	}
-	return "N/A"
 
+	return "N/A"
 }
 
 // Display true/false as Locked/Unlocked
@@ -51,8 +56,10 @@ func FormatLockStatus(v interface{}) string {
 		if lockStatus {
 			return "Locked"
 		}
+
 		return "Unlocked"
 	}
+
 	return "N/A"
 }
 
@@ -62,8 +69,10 @@ func FormatProjectHealth(v interface{}) string {
 		if health == "None" {
 			return "N/A"
 		}
+
 		return health
 	}
+
 	return "N/A"
 }
 
@@ -79,6 +88,7 @@ func FormatCloudType(v interface{}) string {
 			return "Azure"
 		}
 	}
+
 	return "N/A"
 }
 
@@ -89,10 +99,13 @@ func FormatETC(v interface{}) string {
 			if etcValue == 0 {
 				return "Under a minute"
 			}
+
 			return fmt.Sprintf("%s minutes", etc)
 		}
+
 		return etc
 	}
+
 	return "N/A"
 }
 
@@ -103,8 +116,10 @@ func FormatBToGiB(v interface{}) string {
 		if bytes == jsMaxSafeInteger {
 			return "N/A"
 		}
+
 		return fmt.Sprintf("%d GiB", int(bytes/math.Pow(1024, 3)))
 	}
+
 	return "N/A"
 }
 
@@ -115,8 +130,10 @@ func FormatNumber(v interface{}) string {
 		if n == jsMaxSafeInteger {
 			return "N/A"
 		}
+
 		return fmt.Sprint(n)
 	}
+
 	return "N/A"
 }
 
@@ -125,6 +142,7 @@ func FormatID(v interface{}) string {
 	if id, ok := v.(string); ok && id != "0" {
 		return id
 	}
+
 	return "N/A"
 }
 
@@ -133,6 +151,7 @@ func FormatSlackChannel(v interface{}) string {
 	if channel, ok := v.(string); ok {
 		return fmt.Sprintf("#%s", channel)
 	}
+
 	return "N/A"
 }
 
@@ -141,6 +160,7 @@ func FormatStringUpper(v interface{}) string {
 	if str, ok := v.(string); ok {
 		return strings.ToUpper(str)
 	}
+
 	return "N/A"
 }
 
@@ -149,21 +169,26 @@ func FormatVMTags(v interface{}) (str string) {
 	str = "N/A"
 	if tags, ok := v.([]interface{}); ok {
 		var stringBuilder strings.Builder
+
 		if tagCount := len(tags); tagCount != 0 {
 			tag, tagFormatIsValid := formatVMTag(tags[0])
 			if tagFormatIsValid {
 				stringBuilder.WriteString(tag)
 			}
+
 			for i := 1; i < tagCount && tagFormatIsValid; i++ {
 				tag, tagFormatIsValid = formatVMTag(tags[i])
+
 				stringBuilder.WriteString(",")
 				stringBuilder.WriteString(tag)
 			}
+
 			if tagFormatIsValid {
 				str = stringBuilder.String()
 			}
 		}
 	}
+
 	return
 }
 
@@ -179,14 +204,15 @@ func formatVMTag(v interface{}) (str string, ok bool) {
 	if !ok {
 		return
 	}
-	stringBuilder.WriteString(key)
 
+	stringBuilder.WriteString(key)
 	stringBuilder.WriteString("=")
 
 	value, ok := getTagValue(tagMap, "value")
 	if !ok {
 		return
 	}
+
 	stringBuilder.WriteString(value)
 
 	str = stringBuilder.String()
@@ -199,5 +225,6 @@ func getTagValue(tagMap map[string]interface{}, key string) (valueString string,
 	if ok {
 		valueString, ok = value.(string)
 	}
+
 	return
 }

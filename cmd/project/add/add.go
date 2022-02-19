@@ -181,9 +181,11 @@ func addRun(opts *AddOptions) (err error) {
 	if opts.RouterIDStartRange != -1 {
 		body.RouterIDStartRange = opts.RouterIDStartRange
 	}
+
 	if opts.RouterIDEndRange != -1 {
 		body.RouterIDEndRange = opts.RouterIDEndRange
 	}
+
 	if opts.TaikunLBFlavor != "" {
 		body.TaikunLBFlavor = opts.TaikunLBFlavor
 	}
@@ -211,24 +213,28 @@ func setDefaultAddOptions(opts *AddOptions) (err error) {
 			return
 		}
 	}
+
 	if opts.AccessProfileID == 0 {
 		opts.AccessProfileID, err = getDefaultAccessProfileID(opts.OrganizationID)
 		if err != nil {
 			return
 		}
 	}
+
 	if opts.AlertingProfileID == 0 {
 		opts.AlertingProfileID, err = getDefaultAlertingProfileID(opts.OrganizationID)
 		if err != nil {
 			return
 		}
 	}
+
 	if opts.KubernetesProfileID == 0 {
 		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(opts.OrganizationID)
 		if err != nil {
 			return
 		}
 	}
+
 	return
 }
 
@@ -237,11 +243,14 @@ func getDefaultOrganizationID() (id int32, err error) {
 	if err != nil {
 		return
 	}
+
 	params := users.NewUsersDetailsParams().WithV(api.Version)
+
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
 		id = response.Payload.Data.OrganizationID
 	}
+
 	return
 }
 
@@ -253,6 +262,7 @@ func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
 
 	params := access_profiles.NewAccessProfilesAccessProfilesForOrganizationListParams()
 	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
+
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesAccessProfilesForOrganizationList(params, apiClient)
 	if err != nil {
 		return
@@ -264,6 +274,7 @@ func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
 			return
 		}
 	}
+
 	return
 }
 
@@ -275,6 +286,7 @@ func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
 
 	params := alerting_profiles.NewAlertingProfilesAlertingProfilesForOrganizationListParams()
 	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
+
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesAlertingProfilesForOrganizationList(params, apiClient)
 	if err != nil {
 		return
@@ -286,6 +298,7 @@ func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
 			return
 		}
 	}
+
 	return
 }
 
@@ -297,6 +310,7 @@ func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
 
 	params := kubernetes_profiles.NewKubernetesProfilesKubernetesProfilesForOrganizationListParams()
 	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
+
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesKubernetesProfilesForOrganizationList(params, apiClient)
 	if err != nil {
 		return
@@ -308,5 +322,6 @@ func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
 			return
 		}
 	}
+
 	return
 }

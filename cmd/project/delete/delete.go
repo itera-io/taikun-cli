@@ -51,16 +51,20 @@ func NewCmdDelete() *cobra.Command {
 
 func deleteMultiple(optsList []*DeleteOptions) error {
 	errorOccured := false
+
 	for _, opts := range optsList {
 		if err := deleteRun(opts); err != nil {
-			fmt.Fprintln(os.Stderr, err)
 			errorOccured = true
+
+			fmt.Fprintln(os.Stderr, err)
 		}
 	}
+
 	if errorOccured {
 		fmt.Fprintln(os.Stderr)
 		return errors.New("Failed to delete one or more projects")
 	}
+
 	return nil
 }
 

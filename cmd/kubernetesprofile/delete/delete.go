@@ -34,6 +34,7 @@ func deleteRun(kubernetesProfileID int32) (err error) {
 	}
 
 	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(api.Version).WithID(kubernetesProfileID)
+
 	_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Kubernetes profile", kubernetesProfileID)

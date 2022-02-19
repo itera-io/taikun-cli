@@ -38,6 +38,7 @@ func unlockRun(cloudCredentialID int32) (err error) {
 		Mode: types.UnlockedMode,
 	}
 	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(api.Version).WithBody(body)
+
 	_, err = apiClient.Client.CloudCredentials.CloudCredentialsLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

@@ -38,6 +38,7 @@ func unlockRun(billingCredentialID int32) (err error) {
 		Mode: types.UnlockedMode,
 	}
 	params := ops_credentials.NewOpsCredentialsLockManagerParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.OpsCredentials.OpsCredentialsLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

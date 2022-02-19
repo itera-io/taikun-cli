@@ -85,6 +85,7 @@ func skusRun(opts *SKUsOptions) (err error) {
 	if err == nil {
 		out.PrintStringSlice(skus)
 	}
+
 	return
 }
 
@@ -100,19 +101,24 @@ func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
 	params = params.WithOffer(opts.Offer)
 
 	skus = make([]string, 0)
+
 	for {
 		response, err := apiClient.Client.Azure.AzureSkus(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		skus = append(skus, response.Payload.Data...)
+
 		count := int32(len(skus))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

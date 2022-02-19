@@ -74,8 +74,8 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return err
 	}
-	alertingIntegrations := response.Payload
 
+	alertingIntegrations := response.Payload
 	if opts.Limit != 0 && int32(len(alertingIntegrations)) > opts.Limit {
 		alertingIntegrations = alertingIntegrations[:opts.Limit]
 	}

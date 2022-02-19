@@ -67,13 +67,16 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		if err != nil {
 			return err
 		}
+
 		if len(allServers) == 0 {
 			return fmt.Errorf("project %d has no Kubernetes servers", opts.ProjectID)
 		}
+
 		allServerIDs := make([]int32, len(allServers))
 		for i, server := range allServers {
 			allServerIDs[i] = server.ID
 		}
+
 		body.ServerIds = allServerIDs
 	} else {
 		body.ServerIds = opts.ServerIDs

@@ -22,5 +22,6 @@ func GetSortDirection() *string {
 	if config.ReverseSortDirection {
 		sortDirection = "desc"
 	}
+
 	return &sortDirection
 }

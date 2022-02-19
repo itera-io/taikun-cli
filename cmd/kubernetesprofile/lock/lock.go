@@ -38,6 +38,7 @@ func lockRun(kubernetesProfileID int32) (err error) {
 		Mode: types.LockedMode,
 	}
 	params := kubernetes_profiles.NewKubernetesProfilesLockManagerParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

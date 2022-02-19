@@ -38,6 +38,7 @@ func unlockRun(policyProfileID int32) (err error) {
 		Mode: types.LockedMode,
 	}
 	params := opa_profiles.NewOpaProfilesLockManagerParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

@@ -53,6 +53,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	}
 
 	params := user_projects.NewUserProjectsBindProjectsParams().WithV(api.Version).WithBody(body)
+
 	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()
