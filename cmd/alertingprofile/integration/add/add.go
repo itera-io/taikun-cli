@@ -43,7 +43,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.AlertingProfileID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			if err := cmdutils.CheckFlagValue("type", opts.Type, types.AlertingIntegrationTypes); err != nil {
 				return err

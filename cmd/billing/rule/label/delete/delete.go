@@ -23,7 +23,7 @@ func NewCmdDelete() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return cmdutils.DeleteMultipleChildResources(opts.BillingRuleID, ids, deleteRun)
 		},

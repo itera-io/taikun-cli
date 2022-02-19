@@ -58,7 +58,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	if err == nil {
 		out.PrintCheckSuccess("Azure cloud credential")
 	} else if _, isValidationProblem := err.(*checker.CheckerAzureBadRequest); isValidationProblem {
-		return cmderr.CheckFailureError("Azure cloud credential")
+		return cmderr.ErrCheckFailure("Azure cloud credential")
 	}
 
 	return

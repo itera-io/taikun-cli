@@ -32,7 +32,7 @@ func NewCmdDelete() *cobra.Command {
 			for i, arg := range args {
 				projectID, err := types.Atoi32(arg)
 				if err != nil {
-					return cmderr.IDArgumentNotANumberError
+					return cmderr.ErrIDArgumentNotANumber
 				}
 				optsList[i] = &DeleteOptions{
 					Force:     force,

@@ -24,7 +24,7 @@ func NewCmdUnbind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ImageBindingIDs, err = cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return unbindRun(&opts)
 		},

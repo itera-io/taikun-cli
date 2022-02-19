@@ -31,7 +31,7 @@ func NewCmdRoot() *cobra.Command {
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
+				return cmderr.ErrUnknownOutputFormat
 			}
 			return nil
 		},

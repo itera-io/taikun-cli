@@ -18,7 +18,7 @@ func NewCmdUnlock() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			backupCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return unlockRun(backupCredentialID)
 		},

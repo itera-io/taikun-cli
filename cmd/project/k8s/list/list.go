@@ -159,5 +159,5 @@ func getFlavorField(servers []*models.ServerListDto) (string, error) {
 		return "openstackFlavor", nil
 	}
 
-	return "", cmderr.ServerHasNoFlavorError
+	return "", cmderr.ErrServerHasNoFlavors
 }

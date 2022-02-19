@@ -60,7 +60,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	if err == nil {
 		out.PrintCheckSuccess("AWS cloud credential")
 	} else if _, isValidationProblem := err.(*checker.CheckerAwsBadRequest); isValidationProblem {
-		return cmderr.CheckFailureError("AWS cloud credential")
+		return cmderr.ErrCheckFailure("AWS cloud credential")
 	}
 
 	return

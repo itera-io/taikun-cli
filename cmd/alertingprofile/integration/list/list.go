@@ -47,7 +47,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)

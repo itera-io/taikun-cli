@@ -102,19 +102,19 @@ func NewCmdAdd() *cobra.Command {
 
 			if opts.ExpirationDate != "" {
 				if !types.StrIsValidDate(opts.ExpirationDate) {
-					return cmderr.InvalidDateFormatError
+					return cmderr.ErrUnknownDateFormat
 				}
 			}
 
 			if opts.RouterIDStartRange != -1 {
 				if !types.IsInRouterIDRange(opts.RouterIDStartRange) {
-					return cmderr.RouterIDRangeError
+					return cmderr.ErrRouterIDInvalidRange
 				}
 			}
 
 			if opts.RouterIDEndRange != -1 {
 				if !types.IsInRouterIDRange(opts.RouterIDEndRange) {
-					return cmderr.RouterIDRangeError
+					return cmderr.ErrRouterIDInvalidRange
 				}
 			}
 

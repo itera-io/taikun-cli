@@ -61,7 +61,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			projectID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.ProjectID = projectID
 			return listRun(&opts)

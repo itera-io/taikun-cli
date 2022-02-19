@@ -140,7 +140,7 @@ func AddLimitFlag(cmd *cobra.Command, limit *int32) {
 	cmd.PreRunE = aggregateRunE(cmd.PreRunE,
 		func(cmd *cobra.Command, args []string) error {
 			if *limit < 0 {
-				return cmderr.NegativeLimitFlagError
+				return cmderr.ErrNegativeLimit
 			}
 			return nil
 		},

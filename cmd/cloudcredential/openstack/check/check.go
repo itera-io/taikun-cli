@@ -63,7 +63,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	if err == nil {
 		out.PrintCheckSuccess("OpenStack cloud credential")
 	} else if _, isValidationProblem := err.(*checker.CheckerOpenstackBadRequest); isValidationProblem {
-		return cmderr.CheckFailureError("OpenStack cloud credential")
+		return cmderr.ErrCheckFailure("OpenStack cloud credential")
 	}
 
 	return
