@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/types"
 )
 
@@ -38,7 +39,7 @@ func resourceIDToString(id interface{}) string {
 func FormatDateTimeString(v interface{}) string {
 	if dateTime, ok := v.(string); ok {
 		if dateTime == "" {
-			return "N/A"
+			return field.NA
 		}
 
 		dateTime = strings.Replace(dateTime, "T", " ", 1)
@@ -47,7 +48,7 @@ func FormatDateTimeString(v interface{}) string {
 		return dateTime
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Display true/false as Locked/Unlocked
@@ -60,20 +61,20 @@ func FormatLockStatus(v interface{}) string {
 		return "Unlocked"
 	}
 
-	return "N/A"
+	return field.NA
 }
 
-// If not availabale, display N/A
+// If not available, display N/A
 func FormatProjectHealth(v interface{}) string {
 	if health, ok := v.(string); ok {
 		if health == "None" {
-			return "N/A"
+			return field.NA
 		}
 
 		return health
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Capitalize cloud type
@@ -89,7 +90,7 @@ func FormatCloudType(v interface{}) string {
 		}
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Format estimated time of completion
@@ -106,7 +107,7 @@ func FormatETC(v interface{}) string {
 		return etc
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Format Bytes as GiB
@@ -114,13 +115,13 @@ func FormatBToGiB(v interface{}) string {
 	if bytes, ok := v.(float64); ok {
 		var jsMaxSafeInteger float64 = 9007199254740991
 		if bytes == jsMaxSafeInteger {
-			return "N/A"
+			return field.NA
 		}
 
 		return fmt.Sprintf("%d GiB", int(bytes/math.Pow(1024, 3)))
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Format number
@@ -128,13 +129,13 @@ func FormatNumber(v interface{}) string {
 	if n, ok := v.(float64); ok {
 		var jsMaxSafeInteger float64 = 9007199254740991
 		if n == jsMaxSafeInteger {
-			return "N/A"
+			return field.NA
 		}
 
 		return fmt.Sprint(n)
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Format resource ID
@@ -143,7 +144,7 @@ func FormatID(v interface{}) string {
 		return id
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Format Slack channel
@@ -152,7 +153,7 @@ func FormatSlackChannel(v interface{}) string {
 		return fmt.Sprintf("#%s", channel)
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Format string as all caps
@@ -161,12 +162,12 @@ func FormatStringUpper(v interface{}) string {
 		return strings.ToUpper(str)
 	}
 
-	return "N/A"
+	return field.NA
 }
 
 // Format standalone VM tag list
 func FormatVMTags(v interface{}) (str string) {
-	str = "N/A"
+	str = field.NA
 	if tags, ok := v.([]interface{}); ok {
 		var stringBuilder strings.Builder
 

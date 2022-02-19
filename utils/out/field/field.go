@@ -5,6 +5,9 @@ import (
 	"strings"
 )
 
+// String to display when a field's value is not available/applicable
+const NA = "N/A"
+
 type ToStringFunc func(v interface{}) string
 
 // Struct to represent a field in table output
@@ -55,7 +58,7 @@ func NewHidden(name string, jsonPropertyName string) *Field {
 // Default field formatting function
 func FormatByDefault(fieldValue interface{}) string {
 	if fieldValue == nil {
-		return "N/A"
+		return NA
 	}
 
 	if b, ok := fieldValue.(bool); ok {
