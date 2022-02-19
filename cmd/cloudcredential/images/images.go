@@ -131,7 +131,7 @@ func getCloudType(cloudCredentialID int32) (cloudType int, err error) {
 func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := images.NewImagesAwsImagesParams().WithV(api.Version)
@@ -165,13 +165,13 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 
 	awsImages = images
 
-	return
+	return awsImages, nil
 }
 
 func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := images.NewImagesOpenstackImagesParams().WithV(api.Version)
@@ -205,7 +205,7 @@ func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err e
 
 	openStackImages = images
 
-	return
+	return openStackImages, nil
 }
 
 func getAzureImages(opts *ImagesOptions) (azureImages interface{}, err error) {
@@ -237,7 +237,7 @@ func getAllAzureImages(opts *ImagesOptions) (azureImages []*models.CommonStringB
 
 	publishers, err := publishers.ListPublishers(&publishersOptions)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
@@ -260,7 +260,7 @@ func getAllAzureImages(opts *ImagesOptions) (azureImages []*models.CommonStringB
 		azureImages = azureImages[:opts.Limit]
 	}
 
-	return
+	return azureImages, nil
 }
 
 func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
@@ -271,7 +271,7 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []*models.Com
 
 	offers, err := offers.ListOffers(&offersOptions)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
@@ -294,7 +294,7 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []*models.Com
 		azureImages = azureImages[:opts.Limit]
 	}
 
-	return
+	return azureImages, nil
 }
 
 func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
@@ -306,7 +306,7 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonS
 
 	skus, err := skus.ListSKUs(&skusOptions)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
@@ -329,13 +329,13 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonS
 		azureImages = azureImages[:opts.Limit]
 	}
 
-	return
+	return azureImages, nil
 }
 
 func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := images.NewImagesAzureImagesParams().WithV(api.Version)
@@ -370,5 +370,5 @@ func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []*models.CommonStr
 		azureImages = azureImages[:opts.Limit]
 	}
 
-	return
+	return azureImages, nil
 }

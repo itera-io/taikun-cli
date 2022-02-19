@@ -43,10 +43,10 @@ func NewCmdDownload() *cobra.Command {
 	return &cmd
 }
 
-func downloadRun(opts *DownloadOptions) (err error) {
+func downloadRun(opts *DownloadOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	if opts.OutputFile == "" {
@@ -71,12 +71,14 @@ func downloadRun(opts *DownloadOptions) (err error) {
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigDownload(params, apiClient)
-	if err == nil {
-		content := []byte(response.Payload.(string))
-		err = os.WriteFile(opts.OutputFile, content, 0644)
+	if err != nil {
+		return err
 	}
 
-	return
+	content := []byte(response.Payload.(string))
+	err = os.WriteFile(opts.OutputFile, content, 0644)
+
+	return nil
 }
 
 func getKubeconfigName(kubeconfigID int32) (name string, err error) {

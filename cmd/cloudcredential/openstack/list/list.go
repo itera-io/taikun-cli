@@ -101,7 +101,7 @@ func listRun(opts *ListOptions) error {
 func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(api.Version)
@@ -144,5 +144,5 @@ func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}
 		credentials[i] = *credential
 	}
 
-	return
+	return credentials, nil
 }

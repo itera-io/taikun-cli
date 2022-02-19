@@ -154,30 +154,30 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNod
 	return labels, nil
 }
 
-func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
-	completions = make([]string, 0)
-
+func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
 	if len(args) == 0 {
-		return
+		return []string{}
 	}
 
 	projectID, err := types.Atoi32(args[0])
 	if err != nil {
-		return
+		return []string{}
 	}
 
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return []string{}
 	}
 
 	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
 	params = params.WithProjectID(&projectID)
 
+	completions := make([]string, 0)
+
 	for {
 		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
 		if err != nil {
-			return
+			return []string{}
 		}
 
 		for _, flavor := range response.Payload.Data {
@@ -193,5 +193,5 @@ func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 		params = params.WithOffset(&count)
 	}
 
-	return
+	return completions
 }

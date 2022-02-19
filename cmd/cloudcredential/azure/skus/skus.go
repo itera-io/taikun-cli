@@ -92,7 +92,7 @@ func skusRun(opts *SKUsOptions) (err error) {
 func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := azure.NewAzureSkusParams().WithV(api.Version)
@@ -126,5 +126,5 @@ func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
 		skus = skus[:opts.Limit]
 	}
 
-	return
+	return skus, nil
 }

@@ -69,7 +69,7 @@ func offersRun(opts *OffersOptions) (err error) {
 func ListOffers(opts *OffersOptions) (offers []string, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := azure.NewAzureOffersParams().WithV(api.Version)
@@ -102,5 +102,5 @@ func ListOffers(opts *OffersOptions) (offers []string, err error) {
 		offers = offers[:opts.Limit]
 	}
 
-	return
+	return offers, nil
 }

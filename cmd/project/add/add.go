@@ -148,7 +148,7 @@ func NewCmdAdd() *cobra.Command {
 func addRun(opts *AddOptions) (err error) {
 	err = setDefaultAddOptions(opts)
 	if err != nil {
-		return
+		return err
 	}
 
 	body := models.CreateProjectCommand{
@@ -195,15 +195,15 @@ func addRun(opts *AddOptions) (err error) {
 
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }
 
 func setDefaultAddOptions(opts *AddOptions) (err error) {

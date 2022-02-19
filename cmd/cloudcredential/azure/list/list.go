@@ -86,7 +86,7 @@ func listRun(opts *ListOptions) error {
 func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(api.Version)
@@ -129,5 +129,5 @@ func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, er
 		credentials[i] = *credential
 	}
 
-	return
+	return credentials, nil
 }

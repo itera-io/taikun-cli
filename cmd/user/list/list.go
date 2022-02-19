@@ -107,7 +107,7 @@ func listRun(opts *ListOptions) (err error) {
 func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := users.NewUsersListParams().WithV(api.Version)
@@ -145,5 +145,5 @@ func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error)
 		userList = userList[:opts.Limit]
 	}
 
-	return
+	return userList, nil
 }

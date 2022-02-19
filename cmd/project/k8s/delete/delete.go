@@ -52,10 +52,10 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(opts *DeleteOptions) (err error) {
+func deleteRun(opts *DeleteOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	body := models.DeleteServerCommand{
@@ -85,12 +85,13 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	params := servers.NewServersDeleteParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
-	_, _, err = apiClient.Client.Servers.ServersDelete(params, apiClient)
-	if err == nil {
-		for _, id := range body.ServerIds {
-			out.PrintDeleteSuccess("Server", id)
-		}
+	if _, _, err := apiClient.Client.Servers.ServersDelete(params, apiClient); err != nil {
+		return err
 	}
 
-	return
+	for _, id := range body.ServerIds {
+		out.PrintDeleteSuccess("Server", id)
+	}
+
+	return nil
 }

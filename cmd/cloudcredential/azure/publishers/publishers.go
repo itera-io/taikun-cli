@@ -47,7 +47,7 @@ func publishersRun(opts *PublishersOptions) (err error) {
 func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := azure.NewAzurePublishersParams().WithV(api.Version)
@@ -79,5 +79,5 @@ func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 		publishers = publishers[:opts.Limit]
 	}
 
-	return
+	return publishers, nil
 }

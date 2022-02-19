@@ -34,15 +34,15 @@ func NewCmdClear() *cobra.Command {
 	return &cmd
 }
 
-func clearRun(opts *ClearOptions) (err error) {
+func clearRun(opts *ClearOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	showbackRule, err := list.GetShowbackRuleByID(opts.ShowbackRuleID)
 	if err != nil {
-		return
+		return err
 	}
 
 	emptyLabels := make([]*models.ShowbackLabelCreateDto, 0)
@@ -62,10 +62,11 @@ func clearRun(opts *ClearOptions) (err error) {
 	params := showback.NewShowbackUpdateRuleParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
-	_, err = apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	if _, err := apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient); err != nil {
+		return err
 	}
 
-	return
+	out.PrintStandardSuccess()
+
+	return nil
 }

@@ -145,10 +145,10 @@ func parseTagsOption(tagsOption []string) ([]*models.StandAloneMetaDataDto, erro
 	return tags, nil
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(opts *AddOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	body := models.CreateStandAloneVMCommand{
@@ -183,9 +183,9 @@ func addRun(opts *AddOptions) (err error) {
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.StandAlone.StandAloneCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }

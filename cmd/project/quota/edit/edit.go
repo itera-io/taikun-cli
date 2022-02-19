@@ -41,10 +41,10 @@ func NewCmdEdit() *cobra.Command {
 	return cmd
 }
 
-func editRun(opts *EditOptions) (err error) {
+func editRun(opts *EditOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	body := &models.ProjectQuotaUpdateDto{
@@ -70,10 +70,11 @@ func editRun(opts *EditOptions) (err error) {
 
 	params := project_quotas.NewProjectQuotasEditParams().WithV(api.Version).WithBody(body).WithQuotaID(opts.QuotaID)
 
-	_, err = apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	if _, err := apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient); err != nil {
+		return err
 	}
 
-	return
+	out.PrintStandardSuccess()
+
+	return nil
 }
