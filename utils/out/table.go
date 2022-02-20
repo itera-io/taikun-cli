@@ -82,13 +82,13 @@ func getNestedResources(resource interface{}, parentObjectName string) (nestedRe
 		return nil, cmderr.ProgramError("getNestedResource", err)
 	}
 
-	nestedData, ok := resourceMap[parentObjectName]
-	if !ok {
+	nestedData, nestedDataOk := resourceMap[parentObjectName]
+	if !nestedDataOk {
 		return nil, cmderr.ProgramError("getNestedResource", errors.New("could not find nested resource"))
 	}
 
-	nestedResources, ok = nestedData.([]interface{})
-	if !ok {
+	nestedResources, nestedResourcesOk := nestedData.([]interface{})
+	if !nestedResourcesOk {
 		return nil, cmderr.ProgramError("getNestedResource", errors.New("nested resource is not array"))
 	}
 

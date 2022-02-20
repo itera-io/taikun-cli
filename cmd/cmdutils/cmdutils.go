@@ -11,13 +11,13 @@ import (
 func ArgsToNumericalIDs(args []string) ([]int32, error) {
 	ids := make([]int32, len(args))
 
-	for i, arg := range args {
+	for argIndex, arg := range args {
 		id, err := types.Atoi32(arg)
 		if err != nil {
 			return nil, err
 		}
 
-		ids[i] = id
+		ids[argIndex] = id
 	}
 
 	return ids, nil

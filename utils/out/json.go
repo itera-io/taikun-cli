@@ -51,16 +51,16 @@ func marshalJsonData(data interface{}) ([]byte, error) {
 	return json.MarshalIndent(data, prettyPrintPrefix, prettyPrintIndent)
 }
 
-func jsonObjectsToMaps(structs []interface{}) ([]map[string]interface{}, error) {
-	maps := make([]map[string]interface{}, len(structs))
+func jsonObjectsToMaps(jsonObjects []interface{}) ([]map[string]interface{}, error) {
+	maps := make([]map[string]interface{}, len(jsonObjects))
 
-	for i, s := range structs {
-		m, err := jsonObjectToMap(s)
+	for jsonObjectIndex, jsonObject := range jsonObjects {
+		m, err := jsonObjectToMap(jsonObject)
 		if err != nil {
 			return nil, err
 		}
 
-		maps[i] = m
+		maps[jsonObjectIndex] = m
 	}
 
 	return maps, nil

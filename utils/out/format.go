@@ -39,7 +39,7 @@ func resourceIDToString(id interface{}) string {
 func FormatDateTimeString(v interface{}) string {
 	if dateTime, ok := v.(string); ok {
 		if dateTime == "" {
-			return field.NA
+			return field.NotAvailable
 		}
 
 		dateTime = strings.Replace(dateTime, "T", " ", 1)
@@ -48,7 +48,7 @@ func FormatDateTimeString(v interface{}) string {
 		return dateTime
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Display true/false as Locked/Unlocked
@@ -61,20 +61,20 @@ func FormatLockStatus(v interface{}) string {
 		return "Unlocked"
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // If not available, display N/A
 func FormatProjectHealth(v interface{}) string {
 	if health, ok := v.(string); ok {
 		if health == "None" {
-			return field.NA
+			return field.NotAvailable
 		}
 
 		return health
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Capitalize cloud type
@@ -90,7 +90,7 @@ func FormatCloudType(v interface{}) string {
 		}
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Format estimated time of completion
@@ -107,7 +107,7 @@ func FormatETC(v interface{}) string {
 		return etc
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Format Bytes as GiB
@@ -115,27 +115,27 @@ func FormatBToGiB(v interface{}) string {
 	if bytes, ok := v.(float64); ok {
 		var jsMaxSafeInteger float64 = 9007199254740991
 		if bytes == jsMaxSafeInteger {
-			return field.NA
+			return field.NotAvailable
 		}
 
 		return fmt.Sprintf("%d GiB", int(bytes/math.Pow(1024, 3)))
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Format number
 func FormatNumber(v interface{}) string {
-	if n, ok := v.(float64); ok {
+	if number, ok := v.(float64); ok {
 		var jsMaxSafeInteger float64 = 9007199254740991
-		if n == jsMaxSafeInteger {
-			return field.NA
+		if number == jsMaxSafeInteger {
+			return field.NotAvailable
 		}
 
-		return fmt.Sprint(n)
+		return fmt.Sprint(number)
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Format resource ID
@@ -144,7 +144,7 @@ func FormatID(v interface{}) string {
 		return id
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Format Slack channel
@@ -153,7 +153,7 @@ func FormatSlackChannel(v interface{}) string {
 		return fmt.Sprintf("#%s", channel)
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Format string as all caps
@@ -162,12 +162,12 @@ func FormatStringUpper(v interface{}) string {
 		return strings.ToUpper(str)
 	}
 
-	return field.NA
+	return field.NotAvailable
 }
 
 // Format standalone VM tag list
 func FormatVMTags(v interface{}) (str string) {
-	str = field.NA
+	str = field.NotAvailable
 
 	if tags, ok := v.([]interface{}); ok {
 		var stringBuilder strings.Builder

@@ -6,7 +6,7 @@ import (
 )
 
 // String to display when a field's value is not available/applicable
-const NA = "N/A"
+const NotAvailable = "N/A"
 
 type ToStringFunc func(v interface{}) string
 
@@ -58,7 +58,7 @@ func NewHidden(name string, jsonPropertyName string) *Field {
 // Default field formatting function
 func FormatByDefault(fieldValue interface{}) string {
 	if fieldValue == nil {
-		return NA
+		return NotAvailable
 	}
 
 	if b, ok := fieldValue.(bool); ok {
