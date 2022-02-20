@@ -168,6 +168,7 @@ func FormatStringUpper(v interface{}) string {
 // Format standalone VM tag list
 func FormatVMTags(v interface{}) (str string) {
 	str = field.NA
+
 	if tags, ok := v.([]interface{}); ok {
 		var stringBuilder strings.Builder
 

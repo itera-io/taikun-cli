@@ -89,9 +89,7 @@ type jwtData struct {
 }
 
 func (apiClient *Client) AuthenticateRequest(request runtime.ClientRequest, _ strfmt.Registry) error {
-
 	if len(apiClient.token) == 0 {
-
 		if !apiClient.useKeycloakEndpoint {
 			loginResult, err := apiClient.Client.Auth.AuthLogin(
 				auth.NewAuthLoginParams().WithV(Version).WithBody(
@@ -120,7 +118,6 @@ func (apiClient *Client) AuthenticateRequest(request runtime.ClientRequest, _ st
 	}
 
 	if apiClient.hasTokenExpired() {
-
 		refreshResult, err := apiClient.Client.Auth.AuthRefreshToken(
 			auth.NewAuthRefreshTokenParams().WithV(Version).WithBody(
 				&models.RefreshTokenCommand{
