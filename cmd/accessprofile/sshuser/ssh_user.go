@@ -2,8 +2,8 @@ package sshuser
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/add"
-	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/delete"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/list"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser/remove"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +15,8 @@ func NewCmdSshUser() *cobra.Command {
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
-	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(remove.NewCmdDelete())
 
 	return cmd
 }
