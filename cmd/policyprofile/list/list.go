@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -88,24 +87,30 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var policyProfiles = make([]*models.OpaProfileListDto, 0)
+
 	for {
 		response, err := apiClient.Client.OpaProfiles.OpaProfilesList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		policyProfiles = append(policyProfiles, response.Payload.Data...)
+
 		count := int32(len(policyProfiles))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

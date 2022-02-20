@@ -7,6 +7,7 @@ func Atoi32(str string) (int32, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return int32(res), nil
 }
 

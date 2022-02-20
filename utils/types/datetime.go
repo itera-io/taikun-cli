@@ -12,6 +12,7 @@ const ExpectedDateFormat = "dd.mm.yyyy"
 func StrToDateTime(str string) strfmt.DateTime {
 	dateInRfc3339Format := strToRfc3339DateTime(str)
 	time, _ := time.Parse(time.RFC3339, dateInRfc3339Format)
+
 	return strfmt.DateTime(time)
 }
 
@@ -25,7 +26,9 @@ func StrIsValidDate(str string) bool {
 	if len(str) != 10 {
 		return false
 	}
+
 	dateInRfc3339Format := strToRfc3339DateTime(str)
 	_, err := time.Parse(time.RFC3339, dateInRfc3339Format)
+
 	return err == nil
 }

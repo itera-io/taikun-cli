@@ -2,9 +2,8 @@ package integration
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/add"
-	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/delete"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/list"
-
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile/integration/remove"
 	"github.com/spf13/cobra"
 )
 
@@ -16,8 +15,8 @@ func NewCmdIntegration() *cobra.Command {
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
-	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(remove.NewCmdDelete())
 
 	return cmd
 }

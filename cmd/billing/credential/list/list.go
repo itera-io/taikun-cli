@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -84,19 +83,24 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	var billingCredentials = make([]*models.OperationCredentialsListDto, 0)
+
 	for {
 		response, err := apiClient.Client.OpsCredentials.OpsCredentialsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		billingCredentials = append(billingCredentials, response.Payload.Data...)
+
 		count := int32(len(billingCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

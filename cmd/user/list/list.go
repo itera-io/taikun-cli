@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -108,31 +107,37 @@ func listRun(opts *ListOptions) (err error) {
 func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := users.NewUsersListParams().WithV(api.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	userList = make([]*models.UserForListDto, 0)
+
 	for {
 		response, err := apiClient.Client.Users.UsersList(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		userList = append(userList, response.Payload.Data...)
+
 		usersCount := int32(len(userList))
 		if opts.Limit != 0 && usersCount >= opts.Limit {
 			break
 		}
+
 		if usersCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&usersCount)
 	}
 
@@ -140,5 +145,5 @@ func ListUsers(opts *ListOptions) (userList []*models.UserForListDto, err error)
 		userList = userList[:opts.Limit]
 	}
 
-	return
+	return userList, nil
 }

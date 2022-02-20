@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/add"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/check"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
-
 	"github.com/spf13/cobra"
 )
 

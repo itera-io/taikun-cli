@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -124,6 +123,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := users.NewUsersCreateParams().WithV(api.Version).WithBody(body)
+
 	response, err := apiClient.Client.Users.UsersCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

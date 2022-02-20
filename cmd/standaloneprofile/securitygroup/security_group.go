@@ -2,8 +2,8 @@ package securitygroup
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile/securitygroup/add"
-	"github.com/itera-io/taikun-cli/cmd/standaloneprofile/securitygroup/delete"
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile/securitygroup/list"
+	"github.com/itera-io/taikun-cli/cmd/standaloneprofile/securitygroup/remove"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +15,8 @@ func NewCmdSecurityGroup() *cobra.Command {
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
-	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(remove.NewCmdDelete())
 
 	return &cmd
 }

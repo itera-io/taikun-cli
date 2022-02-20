@@ -9,7 +9,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
@@ -101,6 +100,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := ssh_users.NewSSHUsersCreateParams().WithV(api.Version).WithBody(&body)
+
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

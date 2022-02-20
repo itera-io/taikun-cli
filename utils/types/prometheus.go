@@ -13,5 +13,6 @@ var PrometheusTypes = gmap.New(
 )
 
 func GetPrometheusType(showbackType string) models.PrometheusType {
-	return PrometheusTypes.Get(showbackType).(models.PrometheusType)
+	model, _ := PrometheusTypes.Get(showbackType).(models.PrometheusType)
+	return model
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +17,7 @@ func NewCmdUnlock() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			projectID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return unlockRun(projectID)
 		},

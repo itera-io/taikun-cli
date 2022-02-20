@@ -8,7 +8,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/spf13/cobra"
 )
 
@@ -67,6 +66,7 @@ func listRun(opts *ListOptions) (err error) {
 	amazonOpts := awslist.ListOptions{
 		OrganizationID: opts.OrganizationID,
 	}
+
 	credentialsAmazon, err := awslist.ListCloudCredentialsAws(&amazonOpts)
 	if err != nil {
 		return
@@ -75,6 +75,7 @@ func listRun(opts *ListOptions) (err error) {
 	azureOpts := azlist.ListOptions{
 		OrganizationID: opts.OrganizationID,
 	}
+
 	credentialsAzure, err := azlist.ListCloudCredentialsAzure(&azureOpts)
 	if err != nil {
 		return
@@ -83,6 +84,7 @@ func listRun(opts *ListOptions) (err error) {
 	openstackOpts := oslist.ListOptions{
 		OrganizationID: opts.OrganizationID,
 	}
+
 	credentialsOpenStack, err := oslist.ListCloudCredentialsOpenStack(&openstackOpts)
 	if err != nil {
 		return

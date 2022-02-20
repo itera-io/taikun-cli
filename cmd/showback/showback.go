@@ -3,7 +3,6 @@ package showback
 import (
 	"github.com/itera-io/taikun-cli/cmd/showback/credential"
 	"github.com/itera-io/taikun-cli/cmd/showback/rule"
-
 	"github.com/spf13/cobra"
 )
 

@@ -49,5 +49,6 @@ func rebootRun(opts *RebootOptions) (err error) {
 	if err == nil {
 		out.PrintStandardSuccess()
 	}
+
 	return
 }

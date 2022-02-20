@@ -28,5 +28,6 @@ func OutputFormatIsValid() bool {
 			return true
 		}
 	}
+
 	return false
 }

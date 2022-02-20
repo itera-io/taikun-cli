@@ -1,6 +1,7 @@
 package download
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -43,10 +44,10 @@ func NewCmdDownload() *cobra.Command {
 	return &cmd
 }
 
-func downloadRun(opts *DownloadOptions) (err error) {
+func downloadRun(opts *DownloadOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	if opts.OutputFile == "" {
@@ -54,6 +55,7 @@ func downloadRun(opts *DownloadOptions) (err error) {
 		if err != nil {
 			return err
 		}
+
 		opts.OutputFile = fmt.Sprintf(
 			"taikun-%d-%s.yaml",
 			opts.ProjectID,
@@ -70,29 +72,36 @@ func downloadRun(opts *DownloadOptions) (err error) {
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigDownload(params, apiClient)
-	if err == nil {
-		content := []byte(response.Payload.(string))
-		err = os.WriteFile(opts.OutputFile, content, 0644)
+	if err != nil {
+		return err
 	}
 
-	return
+	payload, payloadOk := response.Payload.(string)
+	if !payloadOk {
+		return cmderr.ProgramError("downloadRun", errors.New("failed to convert payload to string"))
+	}
+
+	content := []byte(payload)
+
+	return os.WriteFile(opts.OutputFile, content, 0644)
 }
 
-func getKubeconfigName(id int32) (name string, err error) {
+func getKubeconfigName(kubeconfigID int32) (name string, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := kube_config.NewKubeConfigListParams().WithV(api.Version)
-	params = params.WithID(&id)
+	params = params.WithID(&kubeconfigID)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
-		return "", cmderr.ResourceNotFoundError("Kubeconfig", id)
+		return "", cmderr.ResourceNotFoundError("Kubeconfig", kubeconfigID)
 	}
 
 	name = response.Payload.Data[0].ServiceAccountName

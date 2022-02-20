@@ -8,7 +8,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/spf13/cobra"
 )
@@ -45,7 +44,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			accessProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AccessProfileID = accessProfileID
 			return listRun(&opts)
@@ -66,12 +65,13 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	params := ssh_users.NewSSHUsersListParams().WithV(api.Version).WithAccessProfileID(opts.AccessProfileID)
+
 	response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
 	if err != nil {
 		return err
 	}
-	sshUsers := response.Payload
 
+	sshUsers := response.Payload
 	if opts.Limit != 0 && int32(len(sshUsers)) > opts.Limit {
 		sshUsers = sshUsers[:opts.Limit]
 	}

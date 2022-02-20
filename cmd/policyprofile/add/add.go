@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -113,6 +112,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := opa_profiles.NewOpaProfilesCreateParams().WithV(api.Version).WithBody(body)
+
 	response, err := apiClient.Client.OpaProfiles.OpaProfilesCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

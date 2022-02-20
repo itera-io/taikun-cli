@@ -26,8 +26,10 @@ func PrintResultsOfDifferentTypes(
 				return err
 			}
 		}
+
 		return nil
 	}
+
 	return printTableWithDifferentTypes(resourceSlices, resourceTypes, fields)
 }
 
@@ -43,11 +45,12 @@ func printTableWithDifferentTypes(
 		return cmderr.ProgramError("PrintMultipleResults", errors.New("resourcesSlices and resourceTypes must have the same length"))
 	}
 
-	t := newTable()
+	tab := newTable()
 
 	if config.AllColumns {
-		fields.ShowAll()
 		addTypeColumn = true
+
+		fields.ShowAll()
 	} else if len(config.Columns) != 0 {
 		if err := fields.SetVisible(config.Columns); err != nil {
 			return err
@@ -59,26 +62,35 @@ func printTableWithDifferentTypes(
 	if addTypeColumn {
 		header = append(header, "TYPE")
 	}
-	appendHeader(t, header)
+
+	appendHeader(tab, header)
 
 	for resourceIndex, resourcesData := range resourceSlices {
 		if resourceIndex > 0 {
-			appendSeparator(t)
+			appendSeparator(tab)
 		}
-		resources := resourcesData.([]interface{})
+
+		resources, resourcesOk := resourcesData.([]interface{})
+		if !resourcesOk {
+			return cmderr.ProgramError("printTableWithDifferentTypes", errors.New("resourceSlices contains non slice type"))
+		}
+
 		resourceMaps, err := jsonObjectsToMaps(resources)
 		if err != nil {
 			return cmderr.ProgramError("printTableWithDifferentTypes", err)
 		}
+
 		for _, resourceMap := range resourceMaps {
 			row := resourceMapToRow(resourceMap, fields)
 			if addTypeColumn {
 				row = append(row, resourceTypes[resourceIndex])
 			}
-			t.AppendRow(row)
+
+			tab.AppendRow(row)
 		}
 	}
 
-	renderTable(t)
+	renderTable(tab)
+
 	return nil
 }

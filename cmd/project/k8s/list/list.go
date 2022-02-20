@@ -128,6 +128,7 @@ func ListServers(opts *ListOptions) (projectServers []*models.ServerListDto, err
 
 	params := servers.NewServersDetailsParams().WithV(api.Version)
 	params = params.WithProjectID(opts.ProjectID)
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy)
 		params = params.WithSortDirection(api.GetSortDirection())
@@ -145,14 +146,18 @@ func getFlavorField(servers []*models.ServerListDto) (string, error) {
 	if len(servers) == 0 {
 		return "flavor", nil
 	}
+
 	if servers[0].AwsInstanceType != "" {
 		return "awsInstanceType", nil
 	}
+
 	if servers[0].AzureVMSize != "" {
 		return "azureVmSize", nil
 	}
+
 	if servers[0].OpenstackFlavor != "" {
 		return "openstackFlavor", nil
 	}
-	return "", cmderr.ServerHasNoFlavorError
+
+	return "", cmderr.ErrServerHasNoFlavors
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -166,6 +165,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := organizations.NewOrganizationsCreateParams().WithV(api.Version).WithBody(&body)
+
 	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

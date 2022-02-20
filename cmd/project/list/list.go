@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -112,24 +111,30 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var projects = make([]*models.ProjectListForUIDto, 0)
+
 	for {
 		response, err := apiClient.Client.Projects.ProjectsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		projects = append(projects, response.Payload.Data...)
+
 		projectsCount := int32(len(projects))
 		if opts.Limit != 0 && projectsCount >= opts.Limit {
 			break
 		}
+
 		if projectsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&projectsCount)
 	}
 

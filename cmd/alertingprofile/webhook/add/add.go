@@ -10,7 +10,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -32,7 +31,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return addRun(&opts)
@@ -47,22 +46,24 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func getAlertingProfileWebhooks(id int32) ([]*models.AlertingWebhookDto, error) {
+func getAlertingProfileWebhooks(alertingProfileID int32) ([]*models.AlertingWebhookDto, error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
 	params := alerting_profiles.NewAlertingProfilesListParams().WithV(api.Version)
-	params = params.WithID(&id)
+	params = params.WithID(&alertingProfileID)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
 	if err != nil {
 		return nil, err
 	}
+
 	if len(response.Payload.Data) != 1 {
-		return nil, fmt.Errorf("Alerting profile with ID %d not found.", id)
+		return nil, fmt.Errorf("Alerting profile with ID %d not found.", alertingProfileID)
 	}
+
 	return response.Payload.Data[0].Webhooks, nil
 }
 
@@ -70,21 +71,27 @@ func parseAddOptions(opts *AddOptions) (*models.AlertingWebhookDto, error) {
 	alertingWebhook := &models.AlertingWebhookDto{
 		URL: opts.URL,
 	}
+
 	headers := make([]*models.WebhookHeaderDto, len(opts.Headers))
-	for i, header := range opts.Headers {
+
+	for headerIndex, header := range opts.Headers {
 		if len(header) == 0 {
 			return nil, errors.New("Invalid empty webhook header")
 		}
+
 		tokens := strings.Split(header, "=")
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid webhook header format: %s", header)
 		}
-		headers[i] = &models.WebhookHeaderDto{
+
+		headers[headerIndex] = &models.WebhookHeaderDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}
 	}
+
 	alertingWebhook.Headers = headers
+
 	return alertingWebhook, nil
 }
 

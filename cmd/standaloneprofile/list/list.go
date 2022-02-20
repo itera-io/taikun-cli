@@ -72,24 +72,30 @@ func listRun(opts *ListOptions) (err error) {
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	standAloneProfiles := make([]*models.StandAloneProfilesListDto, 0)
+
 	for {
 		response, err := apiClient.Client.StandAloneProfile.StandAloneProfileList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		standAloneProfiles = append(standAloneProfiles, response.Payload.Data...)
+
 		count := int32(len(standAloneProfiles))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

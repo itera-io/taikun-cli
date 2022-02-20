@@ -125,26 +125,30 @@ func NewCmdAdd() *cobra.Command {
 
 func parseTagsOption(tagsOption []string) ([]*models.StandAloneMetaDataDto, error) {
 	tags := make([]*models.StandAloneMetaDataDto, len(tagsOption))
-	for i, tag := range tagsOption {
+
+	for tagIndex, tag := range tagsOption {
 		if len(tag) == 0 {
 			return nil, errors.New("Invalid empty VM tag")
 		}
+
 		tokens := strings.Split(tag, "=")
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid VM tag format: %s", tag)
 		}
-		tags[i] = &models.StandAloneMetaDataDto{
+
+		tags[tagIndex] = &models.StandAloneMetaDataDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}
 	}
+
 	return tags, nil
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(opts *AddOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	body := models.CreateStandAloneVMCommand{
@@ -157,17 +161,21 @@ func addRun(opts *AddOptions) (err error) {
 		StandAloneProfileID: opts.StandAloneProfileID,
 		VolumeSize:          opts.VolumeSize,
 	}
+
 	if opts.CloudInit != "" {
 		body.CloudInit = opts.CloudInit
 	}
+
 	if opts.VolumeType != "" {
 		body.VolumeType = opts.VolumeType
 	}
+
 	if len(opts.Tags) > 0 {
 		tags, err := parseTagsOption(opts.Tags)
 		if err != nil {
 			return err
 		}
+
 		body.StandAloneMetaDatas = tags
 	}
 
@@ -175,9 +183,9 @@ func addRun(opts *AddOptions) (err error) {
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.StandAlone.StandAloneCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }

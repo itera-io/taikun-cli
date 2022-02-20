@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -114,19 +113,24 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
+
 	for {
 		response, err := apiClient.Client.Organizations.OrganizationsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		organizations = append(organizations, response.Payload.Data...)
+
 		organizationsCount := int32(len(organizations))
 		if opts.Limit != 0 && organizationsCount >= opts.Limit {
 			break
 		}
+
 		if organizationsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&organizationsCount)
 	}
 

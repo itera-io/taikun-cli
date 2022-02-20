@@ -10,7 +10,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/spf13/cobra"
 )
@@ -38,7 +37,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)
@@ -64,9 +63,11 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return err
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return fmt.Errorf("Alerting profile with ID %d not found.", opts.AlertingProfileID)
 	}
+
 	alertingWebhooks := response.Payload.Data[0].Webhooks
 
 	if opts.Limit != 0 && int32(len(alertingWebhooks)) > opts.Limit {

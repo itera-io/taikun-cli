@@ -49,5 +49,6 @@ func detachRun(opts *DetachOptions) (err error) {
 	if err == nil {
 		out.PrintStandardSuccess()
 	}
+
 	return
 }

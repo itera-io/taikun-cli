@@ -52,6 +52,7 @@ func infoRun(opts *InfoOptions) (err error) {
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return cmderr.ResourceNotFoundError("Organization", opts.OrganizationID)
 	}

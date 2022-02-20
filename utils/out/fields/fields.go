@@ -25,19 +25,24 @@ type Fields struct {
 func New(fields []*field.Field) Fields {
 	nameFrequencyMap := map[string]bool{}
 	jsonPropertyNameFreqMap := map[string]bool{}
+
 	for _, field := range fields {
 		if !fieldNameIsValid(field.Name()) {
 			panic(fmt.Sprintf("fields.New: Field name '%s' is not valid", field.Name()))
 		}
+
 		if nameFrequencyMap[field.Name()] {
 			panic(fmt.Sprintf("fields.New: Field name '%s' is defined more than once", field.Name()))
 		}
-		nameFrequencyMap[field.Name()] = true
+
 		if jsonPropertyNameFreqMap[field.JsonPropertyName()] {
 			panic(fmt.Sprintf("fields.New: Field JSON property name '%s' is defined more than once", field.JsonPropertyName()))
 		}
+
+		nameFrequencyMap[field.Name()] = true
 		jsonPropertyNameFreqMap[field.JsonPropertyName()] = true
 	}
+
 	return Fields{
 		fields: fields,
 	}
@@ -47,6 +52,7 @@ func New(fields []*field.Field) Fields {
 func NewNested(fields []*field.Field, parentObjectName string) Fields {
 	f := New(fields)
 	f.parentObjectName = parentObjectName
+
 	return f
 }
 
@@ -65,6 +71,7 @@ func (f Fields) SetFieldJsonPropertyName(name string, jsonPropertyName string) e
 			return nil
 		}
 	}
+
 	return cmderr.ProgramError("SetFieldJsonPropertyName", fmt.Errorf("unknown field name: %s", name))
 }
 
@@ -74,10 +81,12 @@ func fieldNameIsValid(name string) bool {
 	if len(name) == 0 || len(name) > maxFieldNameLength {
 		return false
 	}
+
 	matched, err := regexp.Match("^[A-Z0-9]+(-[A-Z0-9]+)*$", []byte(name))
 	if err != nil {
 		panic("fieldNameIsValid: invalid regex pattern")
 	}
+
 	return matched
 }
 
@@ -94,6 +103,7 @@ func (f Fields) VisibleFields() []*field.Field {
 			fields = append(fields, field)
 		}
 	}
+
 	return fields
 }
 
@@ -104,26 +114,31 @@ func (f Fields) GetJsonPropertyNameFromName(name string) (jsonPropertyName strin
 		if field.NameMatches(name) {
 			jsonPropertyName = field.JsonPropertyName()
 			found = true
+
 			break
 		}
 	}
+
 	return
 }
 
 // Get number of visible fields
 func (f Fields) VisibleSize() int {
 	size := 0
+
 	for _, field := range f.fields {
 		if field.IsVisible() {
 			size++
 		}
 	}
+
 	return size
 }
 
 // Override the default visibility settings and display only the given fields
 func (f Fields) SetVisible(fieldNames []string) error {
 	f.hideAll()
+
 	for rank, fieldName := range fieldNames {
 		i := f.getFieldIndex(fieldName)
 		if i == -1 {
@@ -135,6 +150,7 @@ func (f Fields) SetVisible(fieldNames []string) error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -144,6 +160,7 @@ func (f Fields) getFieldIndex(fieldName string) int {
 			return i
 		}
 	}
+
 	return -1
 }
 
@@ -151,11 +168,15 @@ func (f Fields) moveFieldBack(source int, destination int) error {
 	if destination > source {
 		return errors.New("Fields.moveFieldBack: destination must not be greater than source")
 	}
+
 	sourceField := f.fields[source]
+
 	for i := source; i > destination; i-- {
 		f.fields[i] = f.fields[i-1]
 	}
+
 	f.fields[destination] = sourceField
+
 	return nil
 }
 
@@ -179,27 +200,32 @@ func (f Fields) AllNames() []string {
 	for i, field := range f.fields {
 		names[i] = field.Name()
 	}
+
 	return names
 }
 
 // Get the list of names of the visible fields
 func (f Fields) VisibleNames() []string {
 	names := make([]string, 0)
+
 	for _, field := range f.fields {
 		if field.IsVisible() {
 			names = append(names, field.Name())
 		}
 	}
+
 	return names
 }
 
 // Get the list of JSON property names of the visible fields
 func (f Fields) VisibleFieldsJsonPropertyNames() []string {
 	jsonPropertyNames := make([]string, 0)
+
 	for _, field := range f.fields {
 		if field.IsVisible() {
 			jsonPropertyNames = append(jsonPropertyNames, field.JsonPropertyName())
 		}
 	}
+
 	return jsonPropertyNames
 }

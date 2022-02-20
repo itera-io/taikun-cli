@@ -7,7 +7,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -94,10 +93,12 @@ func addRun(opts *AddOptions) (err error) {
 		for i, email := range opts.Emails {
 			emails[i] = &models.AlertingEmailDto{Email: email}
 		}
+
 		body.Emails = emails
 	}
 
 	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(api.Version).WithBody(&body)
+
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

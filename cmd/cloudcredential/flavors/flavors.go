@@ -9,7 +9,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -51,7 +50,7 @@ func NewCmdFlavors() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cloudCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.CloudCredentialID = cloudCredentialID
 			return flavorRun(&opts)
@@ -82,24 +81,30 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	minRAM := types.GiBToMiB(opts.MinRAM)
 	maxRAM := types.GiBToMiB(opts.MaxRAM)
 	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	flavors := []*models.FlavorsListDto{}
+
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsAllFlavors(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		flavors = append(flavors, response.Payload.Data...)
+
 		flavorsCount := int32(len(flavors))
 		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
+
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&flavorsCount)
 	}
 

@@ -41,7 +41,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.BillingRuleID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return listRun(&opts)
 		},
@@ -67,6 +67,7 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
 		return cmderr.ResourceNotFoundError("Billing rule", opts.BillingRuleID)
 	}

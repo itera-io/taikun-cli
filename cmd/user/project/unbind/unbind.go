@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
-
 	"github.com/itera-io/taikungoclient/client/user_projects"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -54,6 +53,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	}
 
 	params := user_projects.NewUserProjectsBindProjectsParams().WithV(api.Version).WithBody(body)
+
 	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

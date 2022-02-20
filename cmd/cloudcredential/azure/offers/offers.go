@@ -62,13 +62,14 @@ func offersRun(opts *OffersOptions) (err error) {
 	if err == nil {
 		out.PrintStringSlice(offers)
 	}
+
 	return
 }
 
 func ListOffers(opts *OffersOptions) (offers []string, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	params := azure.NewAzureOffersParams().WithV(api.Version)
@@ -76,19 +77,24 @@ func ListOffers(opts *OffersOptions) (offers []string, err error) {
 	params = params.WithPublisher(opts.Publisher)
 
 	offers = make([]string, 0)
+
 	for {
 		response, err := apiClient.Client.Azure.AzureOffers(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		offers = append(offers, response.Payload.Data...)
+
 		count := int32(len(offers))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 
@@ -96,5 +102,5 @@ func ListOffers(opts *OffersOptions) (offers []string, err error) {
 		offers = offers[:opts.Limit]
 	}
 
-	return
+	return offers, nil
 }

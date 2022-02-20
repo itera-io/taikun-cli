@@ -25,7 +25,7 @@ func NewCmdReboot() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.StandaloneVMID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return rebootRun(&opts)
 		},

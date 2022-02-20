@@ -5,7 +5,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -19,7 +18,7 @@ func NewCmdLock() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return lockRun(id)
 		},
@@ -28,17 +27,18 @@ func NewCmdLock() *cobra.Command {
 	return cmd
 }
 
-func lockRun(id int32) (err error) {
+func lockRun(alertingProfileID int32) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.AlertingProfilesLockManagerCommand{
-		ID:   id,
+		ID:   alertingProfileID,
 		Mode: types.LockedMode,
 	}
 	params := alerting_profiles.NewAlertingProfilesLockManagerParams().WithV(api.Version).WithBody(&body)
+
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

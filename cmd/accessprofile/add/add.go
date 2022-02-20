@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -69,10 +68,10 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(opts *AddOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	DNSServers := make([]*models.DNSServerListDto, len(opts.DNSServers))
@@ -81,7 +80,9 @@ func addRun(opts *AddOptions) (err error) {
 			Address: rawDNSServer,
 		}
 	}
+
 	NTPServers := make([]*models.NtpServerListDto, len(opts.NTPServers))
+
 	for i, rawNTPServer := range opts.NTPServers {
 		NTPServers[i] = &models.NtpServerListDto{
 			Address: rawNTPServer,
@@ -97,10 +98,11 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := access_profiles.NewAccessProfilesCreateParams().WithV(api.Version).WithBody(body)
+
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }

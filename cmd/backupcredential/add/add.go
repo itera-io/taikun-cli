@@ -8,7 +8,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -104,6 +103,7 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+
 	body := models.CheckS3Command{
 		S3AccessKeyID: opts.S3AccessKey,
 		S3SecretKey:   opts.S3SecretKey,
@@ -112,6 +112,7 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 	}
 	params := checker.NewCheckerS3Params().WithV(api.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
+
 	return err == nil, nil
 }
 
@@ -133,6 +134,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := s3_credentials.NewS3CredentialsCreateParams().WithV(api.Version).WithBody(&body)
+
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

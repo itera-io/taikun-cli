@@ -10,7 +10,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -44,7 +43,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.AlertingProfileID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			if err := cmdutils.CheckFlagValue("type", opts.Type, types.AlertingIntegrationTypes); err != nil {
 				return err

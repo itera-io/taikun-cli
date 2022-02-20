@@ -4,14 +4,16 @@ import "github.com/spf13/cobra"
 
 type runE func(cmd *cobra.Command, args []string) error
 
-func aggregateRunE(previous runE, f runE) runE {
+func aggregateRunE(previous runE, newRunE runE) runE {
 	if previous == nil {
-		return f
+		return newRunE
 	}
+
 	return func(cmd *cobra.Command, args []string) error {
 		if err := previous(cmd, args); err != nil {
 			return err
 		}
-		return f(cmd, args)
+
+		return newRunE(cmd, args)
 	}
 }

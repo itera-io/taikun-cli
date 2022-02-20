@@ -74,7 +74,7 @@ func getBackupCredentialID(projectID int32) (id int32, err error) {
 	if err == nil {
 		id = response.Payload.Project.S3CredentialID
 		if id == 0 {
-			err = cmderr.ProjectBackupAlreadyDisabledError
+			err = cmderr.ErrProjectBackupAlreadyDisabled
 		}
 	}
 

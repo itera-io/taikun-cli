@@ -39,7 +39,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ShowbackRuleID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return listRun(&opts)
 		},
@@ -67,23 +67,25 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(labels, listFields)
 }
 
-func GetShowbackRuleByID(id int32) (showbackRule *models.ShowbackRulesListDto, err error) {
+func GetShowbackRuleByID(showbackRuleID int32) (showbackRule *models.ShowbackRulesListDto, err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := showback.NewShowbackRulesListParams().WithV(api.Version)
-	params = params.WithID(&id)
+	params = params.WithID(&showbackRuleID)
 
 	response, err := apiClient.Client.Showback.ShowbackRulesList(params, apiClient)
 	if err != nil {
 		return
 	}
+
 	if len(response.Payload.Data) != 1 {
-		return nil, cmderr.ResourceNotFoundError("Showback rule", id)
+		return nil, cmderr.ResourceNotFoundError("Showback rule", showbackRuleID)
 	}
 
 	showbackRule = response.Payload.Data[0]
+
 	return
 }

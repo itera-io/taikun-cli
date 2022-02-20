@@ -8,7 +8,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/spf13/cobra"
 )
@@ -48,7 +47,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alertingProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AlertingProfileID = alertingProfileID
 			return listRun(&opts)
@@ -75,8 +74,8 @@ func listRun(opts *ListOptions) (err error) {
 	if err != nil {
 		return err
 	}
-	alertingIntegrations := response.Payload
 
+	alertingIntegrations := response.Payload
 	if opts.Limit != 0 && int32(len(alertingIntegrations)) > opts.Limit {
 		alertingIntegrations = alertingIntegrations[:opts.Limit]
 	}

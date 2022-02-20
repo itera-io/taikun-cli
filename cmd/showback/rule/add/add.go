@@ -119,10 +119,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(opts *AddOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	body := models.CreateShowbackRuleCommand{
@@ -150,9 +150,9 @@ func addRun(opts *AddOptions) (err error) {
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Showback.ShowbackCreateRule(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -84,19 +83,24 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	backupCredentials := []*models.BackupCredentialsListDto{}
+
 	for {
 		response, err := apiClient.Client.S3Credentials.S3CredentialsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		backupCredentials = append(backupCredentials, response.Payload.Data...)
 		backupCredentialsCount := int32(len(backupCredentials))
+
 		if opts.Limit != 0 && backupCredentialsCount >= opts.Limit {
 			break
 		}
+
 		if backupCredentialsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&backupCredentialsCount)
 	}
 

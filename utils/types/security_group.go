@@ -14,5 +14,6 @@ var SecurityGroupProtocols = gmap.New(
 )
 
 func GetSecurityGroupProtocol(protocol string) models.SecurityGroupProtocol {
-	return SecurityGroupProtocols.Get(protocol).(models.SecurityGroupProtocol)
+	model, _ := SecurityGroupProtocols.Get(protocol).(models.SecurityGroupProtocol)
+	return model
 }

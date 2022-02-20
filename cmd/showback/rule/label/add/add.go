@@ -28,7 +28,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ShowbackRuleID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return addRun(&opts)
 		},
@@ -43,16 +43,17 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(opts *AddOptions) error {
 	apiClient, err := api.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	showbackRule, err := list.GetShowbackRuleByID(opts.ShowbackRuleID)
 	if err != nil {
-		return
+		return err
 	}
+
 	newLabel := models.ShowbackLabelCreateDto{Label: opts.Label, Value: opts.Value}
 	showbackRule.Labels = append(showbackRule.Labels, &newLabel)
 
@@ -71,10 +72,11 @@ func addRun(opts *AddOptions) (err error) {
 	params := showback.NewShowbackUpdateRuleParams().WithV(api.Version)
 	params = params.WithBody(&body)
 
-	_, err = apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	if _, err := apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient); err != nil {
+		return err
 	}
 
-	return
+	out.PrintStandardSuccess()
+
+	return nil
 }

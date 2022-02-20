@@ -88,10 +88,8 @@ type jwtData struct {
 	Iat        int    `json:"iat"`
 }
 
-func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.Registry) error {
-
+func (apiClient *Client) AuthenticateRequest(request runtime.ClientRequest, _ strfmt.Registry) error {
 	if len(apiClient.token) == 0 {
-
 		if !apiClient.useKeycloakEndpoint {
 			loginResult, err := apiClient.Client.Auth.AuthLogin(
 				auth.NewAuthLoginParams().WithV(Version).WithBody(
@@ -101,6 +99,7 @@ func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.R
 			if err != nil {
 				return err
 			}
+
 			apiClient.token = loginResult.Payload.Token
 			apiClient.refreshToken = loginResult.Payload.RefreshToken
 		} else {
@@ -112,14 +111,13 @@ func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.R
 			if err != nil {
 				return err
 			}
+
 			apiClient.token = loginResult.Payload.Token
 			apiClient.refreshToken = loginResult.Payload.RefreshToken
 		}
-
 	}
 
 	if apiClient.hasTokenExpired() {
-
 		refreshResult, err := apiClient.Client.Auth.AuthRefreshToken(
 			auth.NewAuthRefreshTokenParams().WithV(Version).WithBody(
 				&models.RefreshTokenCommand{
@@ -135,7 +133,7 @@ func (apiClient *Client) AuthenticateRequest(c runtime.ClientRequest, _ strfmt.R
 		apiClient.refreshToken = refreshResult.Payload.RefreshToken
 	}
 
-	err := c.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", apiClient.token))
+	err := request.SetHeaderParam("Authorization", fmt.Sprintf("Bearer %s", apiClient.token))
 	if err != nil {
 		return err
 	}
@@ -155,6 +153,7 @@ func (apiClient *Client) hasTokenExpired() bool {
 	}
 
 	jwtData := jwtData{}
+
 	err = json.Unmarshal(data, &jwtData)
 	if err != nil {
 		return true
