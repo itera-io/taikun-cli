@@ -81,6 +81,8 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
+	// TODO list google cloud credentials
+
 	openstackOpts := oslist.ListOptions{
 		OrganizationID: opts.OrganizationID,
 	}
@@ -94,11 +96,13 @@ func listRun(opts *ListOptions) (err error) {
 		[]interface{}{
 			credentialsAmazon,
 			credentialsAzure,
+			// TODO credentialsGoogle,
 			credentialsOpenStack,
 		},
 		[]string{
 			"AWS",
 			"Azure",
+			// TODO "Google",
 			"OpenStack",
 		},
 		listFields,

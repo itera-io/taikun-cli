@@ -4,6 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/flavors"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/google"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/images"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/list"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/lock"
@@ -23,6 +24,7 @@ func NewCmdCloudCredential() *cobra.Command {
 	cmd.AddCommand(aws.NewCmdAWS())
 	cmd.AddCommand(azure.NewCmdAzure())
 	cmd.AddCommand(flavors.NewCmdFlavors())
+	cmd.AddCommand(google.NewCmdGoogle())
 	cmd.AddCommand(images.NewCmdImages())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
