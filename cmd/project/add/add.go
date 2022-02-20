@@ -6,6 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/project/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -81,6 +82,7 @@ type AddOptions struct {
 	ExpirationDate      string
 	Flavors             []string
 	KubernetesProfileID int32
+	KubernetesVersion   string
 	Monitoring          bool
 	Name                string
 	OrganizationID      int32
@@ -124,6 +126,9 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().Int32VarP(&opts.CloudCredentialID, "cloud-credential-id", "c", 0, "Cloud credential ID (required)")
 	cmdutils.MarkFlagRequired(&cmd, "cloud-credential-id")
+
+	cmd.Flags().StringVarP(&opts.KubernetesVersion, "kubernetes-version", "v", "", "Kubernetes version")
+	cmdutils.SetFlagCompletionFunc(&cmd, "kubernetes-version", complete.KubernetesVersionCompletionFunc)
 
 	cmd.Flags().Int32Var(&opts.AccessProfileID, "access-profile-id", 0, "Access profile ID")
 	cmd.Flags().Int32Var(&opts.AlertingProfileID, "alerting-profile-id", 0, "Alerting profile ID")
@@ -172,6 +177,10 @@ func addRun(opts *AddOptions) (err error) {
 	if opts.ExpirationDate != "" {
 		expiredAt := types.StrToDateTime(opts.ExpirationDate)
 		body.ExpiredAt = &expiredAt
+	}
+
+	if opts.KubernetesVersion != "" {
+		body.KubernetesVersion = opts.KubernetesVersion
 	}
 
 	if opts.PolicyProfileID != 0 {
