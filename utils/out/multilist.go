@@ -70,7 +70,10 @@ func printTableWithDifferentTypes(
 			appendSeparator(tab)
 		}
 
-		resources := resourcesData.([]interface{})
+		resources, resourcesOk := resourcesData.([]interface{})
+		if !resourcesOk {
+			return cmderr.ProgramError("printTableWithDifferentTypes", errors.New("resourceSlices contains non slice type"))
+		}
 
 		resourceMaps, err := jsonObjectsToMaps(resources)
 		if err != nil {

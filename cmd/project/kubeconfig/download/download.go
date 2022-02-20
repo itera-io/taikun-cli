@@ -1,6 +1,7 @@
 package download
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -75,7 +76,12 @@ func downloadRun(opts *DownloadOptions) error {
 		return err
 	}
 
-	content := []byte(response.Payload.(string))
+	payload, payloadOk := response.Payload.(string)
+	if !payloadOk {
+		return cmderr.ProgramError("downloadRun", errors.New("failed to convert payload to string"))
+	}
+
+	content := []byte(payload)
 
 	return os.WriteFile(opts.OutputFile, content, 0644)
 }

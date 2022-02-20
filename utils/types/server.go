@@ -14,5 +14,6 @@ var ServerRoles = gmap.New(
 )
 
 func GetServerRole(serverRole string) models.CloudRole {
-	return ServerRoles.Get(serverRole).(models.CloudRole)
+	model, _ := ServerRoles.Get(serverRole).(models.CloudRole)
+	return model
 }

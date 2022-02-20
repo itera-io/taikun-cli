@@ -13,5 +13,6 @@ var SlackTypes = gmap.New(
 )
 
 func GetSlackType(slackType string) models.SlackType {
-	return SlackTypes.Get(slackType).(models.SlackType)
+	model, _ := SlackTypes.Get(slackType).(models.SlackType)
+	return model
 }

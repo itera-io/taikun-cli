@@ -67,15 +67,12 @@ func printApiResponseTable(response interface{}, fields fields.Fields) error {
 }
 
 func getApiResponseResourceMap(response interface{}) (resourceMap map[string]interface{}, err error) {
-	resourceMap, err = jsonObjectToMap(response)
-	if err != nil {
-		return
-	}
-
-	if resourceMap[api.ResultField] != nil {
-		resourceMap = resourceMap[api.ResultField].(map[string]interface{})
-	} else if resourceMap[api.PayloadField] != nil {
-		resourceMap = resourceMap[api.PayloadField].(map[string]interface{})
+	if resourceMap, err = jsonObjectToMap(response); err == nil {
+		if nestedMap, ok := resourceMap[api.ResultField].(map[string]interface{}); ok {
+			resourceMap = nestedMap
+		} else if nestedMap, ok := resourceMap[api.PayloadField].(map[string]interface{}); ok {
+			resourceMap = nestedMap
+		}
 	}
 
 	return
