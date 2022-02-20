@@ -76,9 +76,8 @@ func downloadRun(opts *DownloadOptions) error {
 	}
 
 	content := []byte(response.Payload.(string))
-	err = os.WriteFile(opts.OutputFile, content, 0644)
 
-	return nil
+	return os.WriteFile(opts.OutputFile, content, 0644)
 }
 
 func getKubeconfigName(kubeconfigID int32) (name string, err error) {
