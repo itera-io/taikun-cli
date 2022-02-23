@@ -3,6 +3,7 @@ package list
 import (
 	awslist "github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/list"
 	azlist "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
+	gcplist "github.com/itera-io/taikun-cli/cmd/cloudcredential/google/list"
 	oslist "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -81,7 +82,14 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	// TODO list google cloud credentials
+	googleOpts := gcplist.ListOptions{
+		OrganizationID: opts.OrganizationID,
+	}
+
+	credentialsGoogle, err := gcplist.ListCloudCredentialsGoogle(&googleOpts)
+	if err != nil {
+		return
+	}
 
 	openstackOpts := oslist.ListOptions{
 		OrganizationID: opts.OrganizationID,
@@ -96,13 +104,13 @@ func listRun(opts *ListOptions) (err error) {
 		[]interface{}{
 			credentialsAmazon,
 			credentialsAzure,
-			// TODO credentialsGoogle,
+			credentialsGoogle,
 			credentialsOpenStack,
 		},
 		[]string{
 			"AWS",
 			"Azure",
-			// TODO "Google",
+			"Google",
 			"OpenStack",
 		},
 		listFields,
