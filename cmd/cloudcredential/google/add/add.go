@@ -14,9 +14,9 @@ func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
 	cmd := cobra.Command{
-		Use:   "add <command>",
-		Short: "Manage adds", // FIXME
-		Args:  cobra.NoArgs,  // FIXME
+		Use:   "add <name>",
+		Short: "Add a Google Cloud Platform credential",
+		Args:  cobra.NoArgs, // FIXME
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// FIXME
 			return addRun(&opts)

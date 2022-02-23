@@ -14,9 +14,9 @@ func NewCmdCheck() *cobra.Command {
 	var opts CheckOptions
 
 	cmd := cobra.Command{
-		Use:   "check <command>",
-		Short: "Manage checks", // FIXME
-		Args:  cobra.NoArgs,    // FIXME
+		Use:   "check <google-credential-filename>",
+		Short: "Check the validity of a Google Cloud Platform credential",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// FIXME
 			return checkRun(&opts)
