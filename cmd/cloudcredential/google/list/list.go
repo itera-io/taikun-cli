@@ -45,9 +45,11 @@ var listFields = fields.New(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,
 		),
 		field.NewVisibleWithToStringFunc(
-			"ISLOCKED", "isLocked", out.FormatLockStatus,
+			"LOCK", "isLocked", out.FormatLockStatus,
 		),
-		// TODO add fields
+		field.NewHidden(
+			"DEFAULT", "isDefault",
+		),
 	},
 )
 
