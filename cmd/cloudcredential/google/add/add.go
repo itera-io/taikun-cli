@@ -19,14 +19,19 @@ var addFields = fields.New(
 			"ID", "id",
 		),
 		field.NewVisible(
-			"NAME", "cloudCredentialName",
+			"BILLING-ACCOUNT", "billingAccountName",
 		),
 		field.NewVisible(
-			"ORG", "organizationName",
+			"BILLING-ACCOUNT-ID", "billingAccountId",
 		),
-		// TODO add more fields
-		field.NewHidden(
-			"CREATED-BY", "createdBy",
+		field.NewVisible(
+			"FOLDER-ID", "folderId",
+		),
+		field.NewVisible(
+			"REGION", "region",
+		),
+		field.NewVisible(
+			"ZONE", "zone",
 		),
 	},
 )
