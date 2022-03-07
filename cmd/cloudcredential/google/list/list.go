@@ -117,7 +117,7 @@ func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, e
 			break
 		}
 
-		if count == response.Payload.TotalCountAws {
+		if count == response.Payload.TotalCountGoogle {
 			break
 		}
 
