@@ -36,6 +36,7 @@ type ImagesOptions struct {
 	AzurePublisher    string
 	AzureOffer        string
 	AzureSKU          string
+	GoogleImageType   string
 	Limit             int32
 }
 
@@ -51,6 +52,11 @@ func NewCmdImages() *cobra.Command {
 			if err != nil {
 				return
 			}
+			if opts.GoogleImageType != "" {
+				if err := cmdutils.CheckFlagValue("google-image-type", opts.GoogleImageType, types.GoogleImageTypes); err != nil {
+					return err
+				}
+			}
 			return imagesRun(&opts)
 		},
 	}
@@ -63,6 +69,9 @@ func NewCmdImages() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.AzureSKU, "azure-sku", "s", "", "Azure SKU (ignored if cloud type isn't Azure)")
 	cmdutils.SetFlagCompletionFunc(&cmd, "azure-sku", complete.MakeAzureSKUCompletionFunc(&opts.AzurePublisher, &opts.AzureOffer))
+
+	cmd.Flags().StringVarP(&opts.GoogleImageType, "google-image-type", "g", "", "Google image type (ignored if cloud type isn't Google)")
+	cmdutils.SetFlagCompletionValues(&cmd, "google-image-type", types.GoogleImageTypes.Keys()...)
 
 	cmdutils.AddColumnsFlag(&cmd, imagesFields)
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
@@ -83,6 +92,7 @@ const (
 	AWS = iota
 	AZURE
 	OPENSTACK
+	GOOGLE
 )
 
 func getImages(opts *ImagesOptions) (images interface{}, err error) {
@@ -98,6 +108,8 @@ func getImages(opts *ImagesOptions) (images interface{}, err error) {
 		images, err = getAzureImages(opts)
 	case OPENSTACK:
 		images, err = getOpenstackImages(opts)
+	case GOOGLE:
+		images, err = getGoogleImages(opts)
 	}
 
 	return
@@ -120,6 +132,8 @@ func getCloudType(cloudCredentialID int32) (cloudType int, err error) {
 			cloudType = AZURE
 		} else if len(response.Payload.Openstack) == 1 {
 			cloudType = OPENSTACK
+		} else if len(response.Payload.Google) == 1 {
+			cloudType = GOOGLE
 		} else {
 			err = cmderr.ResourceNotFoundError("Cloud credential", cloudCredentialID)
 		}
@@ -206,6 +220,50 @@ func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err e
 	openStackImages = images
 
 	return openStackImages, nil
+}
+
+func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) {
+	if opts.GoogleImageType == "" {
+		return nil, errors.New(`required flag(s) "google-image-type" not set`)
+	}
+
+	apiClient, err := api.NewClient()
+	if err != nil {
+		return nil, err
+	}
+
+	params := images.NewImagesGoogleImagesParams().WithV(api.Version)
+	params = params.WithCloudID(opts.CloudCredentialID).WithType(types.GetGoogleImageType(opts.GoogleImageType))
+
+	images := make([]*models.GoogleImageDto, 0)
+
+	for {
+		response, err := apiClient.Client.Images.ImagesGoogleImages(params, apiClient)
+		if err != nil {
+			return nil, err
+		}
+
+		images = append(images, response.Payload.Data...)
+
+		count := int32(len(images))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
+
+		if count == response.Payload.TotalCount {
+			break
+		}
+
+		params = params.WithOffset(&count)
+	}
+
+	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+		images = images[:opts.Limit]
+	}
+
+	googleImages = images
+
+	return googleImages, nil
 }
 
 func getAzureImages(opts *ImagesOptions) (azureImages interface{}, err error) {
