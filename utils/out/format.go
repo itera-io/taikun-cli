@@ -149,6 +149,19 @@ func FormatID(v interface{}) string {
 	return field.NotAvailable
 }
 
+// Format RAM by dividing by 1024 until RAM is less than 1024
+func FormatRAM(v interface{}) string {
+	if ram, ok := v.(float64); ok {
+		for ram >= 1024 {
+			ram = ram / 1024
+		}
+
+		return fmt.Sprintf("%d GiB", int(ram))
+	}
+
+	return field.NotAvailable
+}
+
 // Format Slack channel
 func FormatSlackChannel(v interface{}) string {
 	if channel, ok := v.(string); ok {

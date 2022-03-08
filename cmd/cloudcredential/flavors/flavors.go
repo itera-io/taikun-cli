@@ -22,8 +22,8 @@ var flavorsFields = fields.New(
 		field.NewVisible(
 			"CPU", "cpu",
 		),
-		field.NewVisible(
-			"RAM", "ram",
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatRAM,
 		),
 		field.NewHidden(
 			"DESCRIPTION", "description",
