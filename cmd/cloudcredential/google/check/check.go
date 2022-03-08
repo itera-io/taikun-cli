@@ -47,7 +47,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	_, err = apiClient.Client.Checker.CheckerGoogle(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("Google Cloud Platform credential")
-	} else if _, isValidationProblem := err.(*checker.CheckerAwsBadRequest); isValidationProblem {
+	} else if _, isValidationProblem := err.(*checker.CheckerGoogleBadRequest); isValidationProblem {
 		return cmderr.ErrCheckFailure("Google Cloud Platform credential")
 	}
 
