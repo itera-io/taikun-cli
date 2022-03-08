@@ -36,6 +36,9 @@ var listFields = fields.New(
 			"CLOUD-ID", "cloudId",
 		),
 		field.NewHidden(
+			"WINDOWS", "isWindows",
+		),
+		field.NewHidden(
 			"AWS", "isAws",
 		),
 		field.NewHidden(

@@ -2,6 +2,7 @@ package flavors
 
 import (
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/utils"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -22,8 +23,8 @@ var flavorsFields = fields.New(
 		field.NewVisible(
 			"CPU", "cpu",
 		),
-		field.NewVisible(
-			"RAM", "ram",
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatRAM,
 		),
 		field.NewHidden(
 			"DESCRIPTION", "description",
@@ -53,6 +54,9 @@ func NewCmdFlavors() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.CloudCredentialID = cloudCredentialID
+			if err = adjustRamUnits(&opts); err != nil {
+				return err
+			}
 			return flavorRun(&opts)
 		},
 	}
@@ -69,6 +73,25 @@ func NewCmdFlavors() *cobra.Command {
 	return &cmd
 }
 
+func adjustRamUnits(opts *FlavorsOptions) (err error) {
+	cloudType, err := utils.GetCloudType(opts.CloudCredentialID)
+	if err != nil {
+		return
+	}
+
+	switch cloudType {
+	case utils.GOOGLE:
+		// Temporarily ignore RAM range for Google until units are set to GiB
+		opts.MinRAM = -1
+		opts.MaxRAM = -1
+	default:
+		opts.MinRAM = types.GiBToMiB(opts.MinRAM)
+		opts.MaxRAM = types.GiBToMiB(opts.MaxRAM)
+	}
+
+	return
+}
+
 func flavorRun(opts *FlavorsOptions) (err error) {
 	apiClient, err := api.NewClient()
 	if err != nil {
@@ -78,9 +101,14 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(api.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
-	minRAM := types.GiBToMiB(opts.MinRAM)
-	maxRAM := types.GiBToMiB(opts.MaxRAM)
-	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+
+	minRAM := int32(opts.MinRAM)
+	maxRAM := int32(opts.MaxRAM)
+
+	// Temporarily ignore RAM range for Google until units are set to GiB
+	if minRAM != -1 && maxRAM != -1 {
+		params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+	}
 
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())

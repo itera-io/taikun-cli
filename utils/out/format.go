@@ -87,6 +87,8 @@ func FormatCloudType(v interface{}) string {
 			return "AWS"
 		case "azure":
 			return "Azure"
+		case "google":
+			return "Google"
 		}
 	}
 
@@ -142,6 +144,19 @@ func FormatNumber(v interface{}) string {
 func FormatID(v interface{}) string {
 	if id, ok := v.(string); ok && id != "0" {
 		return id
+	}
+
+	return field.NotAvailable
+}
+
+// Format RAM by dividing by 1024 until RAM is less than 1024
+func FormatRAM(v interface{}) string {
+	if ram, ok := v.(float64); ok {
+		for ram >= 1024 {
+			ram = ram / 1024
+		}
+
+		return fmt.Sprintf("%d GiB", int(ram))
 	}
 
 	return field.NotAvailable

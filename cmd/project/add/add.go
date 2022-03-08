@@ -6,6 +6,7 @@ import (
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/cmd/project/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -15,7 +16,6 @@ import (
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/client/projects"
-	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
@@ -217,7 +217,7 @@ func addRun(opts *AddOptions) (err error) {
 
 func setDefaultAddOptions(opts *AddOptions) (err error) {
 	if opts.OrganizationID == 0 {
-		opts.OrganizationID, err = getDefaultOrganizationID()
+		opts.OrganizationID, err = organization.GetDefaultOrganizationID()
 		if err != nil {
 			return
 		}
@@ -242,22 +242,6 @@ func setDefaultAddOptions(opts *AddOptions) (err error) {
 		if err != nil {
 			return
 		}
-	}
-
-	return
-}
-
-func getDefaultOrganizationID() (id int32, err error) {
-	apiClient, err := api.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := users.NewUsersDetailsParams().WithV(api.Version)
-
-	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
-	if err == nil {
-		id = response.Payload.Data.OrganizationID
 	}
 
 	return

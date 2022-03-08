@@ -11,10 +11,10 @@ func Atoi32(str string) (int32, error) {
 	return int32(res), nil
 }
 
-func GiBToMiB(gibiBytes float64) int32 {
-	return int32(gibiBytes * 1024)
+func GiBToMiB(gibiBytes float64) float64 {
+	return gibiBytes * 1024
 }
 
 func GiBToB(gibiBytes int) int64 {
-	return int64(gibiBytes * 1073741824)
+	return int64(int64(gibiBytes) * 1024 * 1024 * 1024)
 }
