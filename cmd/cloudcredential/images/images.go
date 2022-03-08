@@ -8,13 +8,12 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/skus"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/complete"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/utils"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/client/images"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -88,55 +87,21 @@ func imagesRun(opts *ImagesOptions) (err error) {
 	return out.PrintResults(images, imagesFields)
 }
 
-const (
-	AWS = iota
-	AZURE
-	OPENSTACK
-	GOOGLE
-)
-
 func getImages(opts *ImagesOptions) (images interface{}, err error) {
-	cloudType, err := getCloudType(opts.CloudCredentialID)
+	cloudType, err := utils.GetCloudType(opts.CloudCredentialID)
 	if err != nil {
 		return
 	}
 
 	switch cloudType {
-	case AWS:
+	case utils.AWS:
 		images, err = getAwsImages(opts)
-	case AZURE:
+	case utils.AZURE:
 		images, err = getAzureImages(opts)
-	case OPENSTACK:
+	case utils.OPENSTACK:
 		images, err = getOpenstackImages(opts)
-	case GOOGLE:
+	case utils.GOOGLE:
 		images, err = getGoogleImages(opts)
-	}
-
-	return
-}
-
-func getCloudType(cloudCredentialID int32) (cloudType int, err error) {
-	apiClient, err := api.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(api.Version)
-	params = params.WithID(&cloudCredentialID)
-
-	response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
-	if err == nil {
-		if len(response.Payload.Amazon) == 1 {
-			cloudType = AWS
-		} else if len(response.Payload.Azure) == 1 {
-			cloudType = AZURE
-		} else if len(response.Payload.Openstack) == 1 {
-			cloudType = OPENSTACK
-		} else if len(response.Payload.Google) == 1 {
-			cloudType = GOOGLE
-		} else {
-			err = cmderr.ResourceNotFoundError("Cloud credential", cloudCredentialID)
-		}
 	}
 
 	return
