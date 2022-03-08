@@ -159,5 +159,9 @@ func getFlavorField(servers []*models.ServerListDto) (string, error) {
 		return "openstackFlavor", nil
 	}
 
+	if servers[0].GoogleMachineType != "" {
+		return "googleMachineType", nil
+	}
+
 	return "", cmderr.ErrServerHasNoFlavors
 }
