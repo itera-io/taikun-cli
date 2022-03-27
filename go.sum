@@ -25,8 +25,9 @@ github.com/go-openapi/jsonreference v0.19.6 h1:UBIxjkht+AWIgYzCDSv2GN+E/togfwXUJ
 github.com/go-openapi/jsonreference v0.19.6/go.mod h1:diGHMEHg2IqXZGKxqyvWdfWU/aim5Dprw5bqpKkTvns=
 github.com/go-openapi/loads v0.21.1 h1:Wb3nVZpdEzDTcly8S4HMkey6fjARRzb7iEaySimlDW0=
 github.com/go-openapi/loads v0.21.1/go.mod h1:/DtAMXXneXFjbQMGEtbamCZb+4x7eGwkvZCvBmwUG+g=
-github.com/go-openapi/runtime v0.23.2 h1:SLoYVM3ovq+lynpgrHQZ5WQcx+CBE0HHHCZU3c2jQoo=
 github.com/go-openapi/runtime v0.23.2/go.mod h1:AKurw9fNre+h3ELZfk6ILsfvPN+bvvlaU/M9q/r9hpk=
+github.com/go-openapi/runtime v0.23.3 h1:/dxjx4KCOQI5ImBMz036F6v/DzZ2NUjSRvbLJs1rgoE=
+github.com/go-openapi/runtime v0.23.3/go.mod h1:AKurw9fNre+h3ELZfk6ILsfvPN+bvvlaU/M9q/r9hpk=
 github.com/go-openapi/spec v0.20.4 h1:O8hJrt0UMnhHcluhIdUgCLRWyM2x7QkBXRvOs7m+O1M=
 github.com/go-openapi/spec v0.20.4/go.mod h1:faYFR1CvsJZ0mNsmsphTMSoRrNV3TEDoAM7FOEWeq8I=
 github.com/go-openapi/strfmt v0.21.0/go.mod h1:ZRQ409bWMj+SOgXofQAGTIo2Ebu72Gs+WaRADcS5iNg=
@@ -75,8 +76,8 @@ github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NH
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/itera-io/taikungoclient v0.0.0-20220308195558-c16abf329100 h1:yYPz6s6/5OIeTkx7PIx4q3Xvtl8Hz4HFaqOnkbmbYd0=
 github.com/itera-io/taikungoclient v0.0.0-20220308195558-c16abf329100/go.mod h1:ojP1wGEC3xhLU8TKeIR7CACyQRo2IZp88wMpd+no8Yc=
-github.com/jedib0t/go-pretty/v6 v6.2.7 h1:4823Lult/tJ0VI1PgW3aSKw59pMWQ6Kzv9b3Bj6MwY0=
-github.com/jedib0t/go-pretty/v6 v6.2.7/go.mod h1:FMkOpgGD3EZ91cW8g/96RfxoV7bdeJyzXPYgz1L1ln0=
+github.com/jedib0t/go-pretty/v6 v6.3.0 h1:QQ5yZPDUMEjbZRXDJtZlvwfDQqCYFaxV3yEzTkogUgk=
+github.com/jedib0t/go-pretty/v6 v6.3.0/go.mod h1:FMkOpgGD3EZ91cW8g/96RfxoV7bdeJyzXPYgz1L1ln0=
 github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqxOKXbg=
 github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
