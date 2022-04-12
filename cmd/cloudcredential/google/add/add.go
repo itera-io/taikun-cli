@@ -30,9 +30,6 @@ var addFields = fields.New(
 			"FOLDER-ID", "folderId",
 		),
 		field.NewVisible(
-			"PROJECT-ID", "projectId",
-		),
-		field.NewVisible(
 			"REGION", "region",
 		),
 		field.NewVisible(

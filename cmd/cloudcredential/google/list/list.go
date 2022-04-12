@@ -33,6 +33,9 @@ var listFields = fields.New(
 			"FOLDER-ID", "folderId",
 		),
 		field.NewVisible(
+			"PROJECT-ID", "projectId",
+		),
+		field.NewVisible(
 			"PARTNER", "partnerName",
 		),
 		field.NewVisible(
