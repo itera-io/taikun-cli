@@ -33,6 +33,10 @@ func ResourceNotFoundError(resourceName string, id interface{}) error {
 	return fmt.Errorf("%s with ID %v not found", resourceName, id)
 }
 
+func MutuallyExclusiveFlagsError(flagA string, flagB string) error {
+	return fmt.Errorf("The flags %s and %s are mutually exclusive", flagA, flagB)
+}
+
 var ErrServerHasNoFlavors = errors.New(
 	"Server has no listed flavor",
 )
