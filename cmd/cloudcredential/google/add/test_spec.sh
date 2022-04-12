@@ -1,4 +1,4 @@
-Context 'accessprofile/add'
+Context 'cloudcredential/google/add'
 
   Example 'Cannot set both import-project and billing-account-id'
     When call taikun cloud-credential google add g --region g --zone g --import-project --billing-account-id "foo" 
