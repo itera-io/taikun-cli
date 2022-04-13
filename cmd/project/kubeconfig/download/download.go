@@ -104,7 +104,7 @@ func getKubeconfigName(kubeconfigID int32) (name string, err error) {
 		return "", cmderr.ResourceNotFoundError("Kubeconfig", kubeconfigID)
 	}
 
-	name = response.Payload.Data[0].ServiceAccountName
+	name = response.Payload.Data[0].DisplayName
 
 	return
 }

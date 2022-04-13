@@ -1,9 +1,11 @@
 package add
 
 import (
+	"errors"
 	"os"
 
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -40,6 +42,7 @@ type AddOptions struct {
 	BillingAccountID string
 	ConfigFilePath   string
 	FolderID         string
+	ImportProject    bool
 	Name             string
 	OrganizationID   int32
 	Region           string
@@ -55,18 +58,32 @@ func NewCmdAdd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.Name = args[0]
+			if opts.BillingAccountID != "" {
+				if opts.ImportProject {
+					return cmderr.MutuallyExclusiveFlagsError("--import-project", "--billing-account-id")
+				}
+			} else if !opts.ImportProject {
+				return errors.New("Must set --billing-acount-id if not importing a project")
+			}
+			if opts.FolderID != "" {
+				if opts.ImportProject {
+					return cmderr.MutuallyExclusiveFlagsError("--import-project", "--folder-id")
+				}
+			} else if !opts.ImportProject {
+				return errors.New("Must set --folder-id if not importing a project")
+			}
 			return addRun(&opts)
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.BillingAccountID, "billing-account-id", "b", "", "Billing account ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "billing-account-id")
+	cmd.Flags().StringVarP(&opts.BillingAccountID, "billing-account-id", "b", "", "Billing account ID")
 
 	cmd.Flags().StringVarP(&opts.ConfigFilePath, "config-file", "c", "", "Config file path (required)")
 	cmdutils.MarkFlagRequired(&cmd, "config-file")
 
-	cmd.Flags().StringVarP(&opts.FolderID, "folder-id", "f", "", "Folder ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "folder-id")
+	cmd.Flags().StringVarP(&opts.FolderID, "folder-id", "f", "", "Folder ID")
+
+	cmd.Flags().BoolVarP(&opts.ImportProject, "import-project", "i", false, "Import project")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
@@ -101,12 +118,16 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	params := google_cloud.NewGoogleCloudCreateParams().WithV(api.Version)
-	params = params.WithBillingAccountID(&opts.BillingAccountID)
 	params = params.WithConfig(configFile)
-	params = params.WithFolderID(&opts.FolderID)
 	params = params.WithName(&opts.Name)
 	params = params.WithOrganizationID(&opts.OrganizationID)
 	params = params.WithRegion(&opts.Region).WithZone(&opts.Zone)
+
+	params = params.WithImportProject(&opts.ImportProject)
+	if !opts.ImportProject {
+		params = params.WithBillingAccountID(&opts.BillingAccountID)
+		params = params.WithFolderID(&opts.FolderID)
+	}
 
 	response, err := apiClient.Client.GoogleCloud.GoogleCloudCreate(params, apiClient)
 	if err == nil {

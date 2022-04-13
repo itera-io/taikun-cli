@@ -113,13 +113,17 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 		return nil, err
 	}
 
-	params := images.NewImagesAwsImagesParams().WithV(api.Version)
-	params = params.WithCloudID(opts.CloudCredentialID)
+	body := models.AwsImagesPostListCommand{
+		CloudID: opts.CloudCredentialID,
+	}
 
-	images := make([]*models.CommonStringBasedDropdownDto, 0)
+	params := images.NewImagesAwsImagesAsPostParams().WithV(api.Version)
+	params = params.WithBody(&body)
+
+	images := make([]*models.AwsExtendedImagesListDto, 0)
 
 	for {
-		response, err := apiClient.Client.Images.ImagesAwsImages(params, apiClient)
+		response, err := apiClient.Client.Images.ImagesAwsImagesAsPost(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
@@ -135,7 +139,7 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		params.Body.Offset = count
 	}
 
 	if opts.Limit != 0 && int32(len(images)) > opts.Limit {

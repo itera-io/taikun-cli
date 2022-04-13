@@ -13,3 +13,4 @@ dist/
 
 # Shellspec
 report/
+shellspec.log

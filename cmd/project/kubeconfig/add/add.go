@@ -20,7 +20,7 @@ var addFields = fields.New(
 			"ID", "id",
 		),
 		field.NewVisible(
-			"NAME", "serviceAccountName",
+			"NAME", "displayName",
 		),
 		field.NewVisible(
 			"PROJECT", "projectName",
