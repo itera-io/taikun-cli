@@ -73,6 +73,7 @@ type AddOptions struct {
 	PublicIP            bool
 	StandAloneProfileID int32
 	Tags                []string
+	Username            string
 	VolumeSize          int64
 	VolumeType          string
 }
@@ -110,6 +111,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "standalone-profile-id")
 
 	cmd.Flags().StringSliceVarP(&opts.Tags, "tags", "t", []string{}, `Tags (format: "key=value,key2=value2,...")`)
+
+	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
 
 	cmd.Flags().Int64Var(&opts.VolumeSize, "volume-size", 0, "Volume size in GiB (required)")
 	cmdutils.MarkFlagRequired(&cmd, "volume-size")
@@ -151,32 +154,31 @@ func addRun(opts *AddOptions) error {
 		return err
 	}
 
+	tags, err := parseTagsOption(opts.Tags)
+	if err != nil {
+		return err
+	}
+
 	body := models.CreateStandAloneVMCommand{
+		CloudInit:           opts.CloudInit,
 		Count:               1,
 		FlavorName:          opts.Flavor,
 		Image:               opts.ImageID,
 		Name:                opts.Name,
 		ProjectID:           opts.ProjectID,
 		PublicIPEnabled:     opts.PublicIP,
+		StandAloneMetaDatas: tags,
 		StandAloneProfileID: opts.StandAloneProfileID,
+		StandAloneVMDisks:   make([]*models.StandAloneVMDiskDto, 0),
 		VolumeSize:          opts.VolumeSize,
 	}
 
-	if opts.CloudInit != "" {
-		body.CloudInit = opts.CloudInit
+	if opts.Username != "" {
+		body.Username = opts.Username
 	}
 
 	if opts.VolumeType != "" {
 		body.VolumeType = opts.VolumeType
-	}
-
-	if len(opts.Tags) > 0 {
-		tags, err := parseTagsOption(opts.Tags)
-		if err != nil {
-			return err
-		}
-
-		body.StandAloneMetaDatas = tags
 	}
 
 	params := stand_alone.NewStandAloneCreateParams().WithV(api.Version)
