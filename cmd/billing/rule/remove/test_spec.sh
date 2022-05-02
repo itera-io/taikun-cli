@@ -1,4 +1,4 @@
-Context 'billing/rule/delete'
+Context 'billing/rule/remove'
 
   setup() {
     name=$(_rnd_name)

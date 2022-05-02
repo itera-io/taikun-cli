@@ -1,4 +1,4 @@
-Context 'showback/rule/delete'
+Context 'showback/rule/remove'
 
   Example 'delete nonexistent showback rule'
 
