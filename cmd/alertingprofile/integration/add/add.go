@@ -77,12 +77,10 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	body := models.CreateAlertingIntegrationCommand{
-		AlertingProfileID: opts.AlertingProfileID,
-		AlertingIntegration: &models.AlertingIntegrationDto{
-			URL:                     opts.URL,
-			Token:                   opts.Token,
-			AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
-		},
+		AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
+		Token:                   opts.Token,
+		URL:                     opts.URL,
+		AlertingProfileID:       opts.AlertingProfileID,
 	}
 
 	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(api.Version).WithBody(&body)
