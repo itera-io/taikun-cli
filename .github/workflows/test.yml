@@ -46,7 +46,7 @@ jobs:
           go-version: 1.17
 
       - name: Lint (golangci-lint)
-        uses: golangci/golangci-lint-action@v3.1.0
+        uses: golangci/golangci-lint-action@v3.2.0
         with:
           version: latest
 
