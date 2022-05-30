@@ -6,7 +6,7 @@ require (
 	github.com/go-openapi/runtime v0.24.1
 	github.com/go-openapi/strfmt v0.21.2
 	github.com/itera-io/taikungoclient v0.0.0-20220430001013-28ff9443637d
-	github.com/jedib0t/go-pretty/v6 v6.3.0
+	github.com/jedib0t/go-pretty/v6 v6.3.1
 	github.com/spf13/cobra v1.4.0
 )
 
