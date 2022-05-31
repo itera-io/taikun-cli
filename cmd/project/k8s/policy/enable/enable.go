@@ -1,10 +1,10 @@
 package enable
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func NewCmdEnable() *cobra.Command {
 }
 
 func enableRun(opts *EnableOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -48,7 +48,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		ProjectID:    opts.ProjectID,
 	}
 
-	params := opa_profiles.NewOpaProfilesEnableGatekeeperParams().WithV(api.Version)
+	params := opa_profiles.NewOpaProfilesEnableGatekeeperParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesEnableGatekeeper(params, apiClient)

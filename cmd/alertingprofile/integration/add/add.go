@@ -3,13 +3,13 @@ package add
 import (
 	"errors"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -71,7 +71,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -83,7 +83,7 @@ func addRun(opts *AddOptions) (err error) {
 		AlertingProfileID:       opts.AlertingProfileID,
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(api.Version).WithBody(&body)
+	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
 	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
 		return out.PrintResult(response.Payload, addFields)
 	}

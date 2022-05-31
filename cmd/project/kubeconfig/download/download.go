@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/kube_config"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -45,7 +45,7 @@ func NewCmdDownload() *cobra.Command {
 }
 
 func downloadRun(opts *DownloadOptions) error {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func downloadRun(opts *DownloadOptions) error {
 		ProjectID: opts.ProjectID,
 	}
 
-	params := kube_config.NewKubeConfigDownloadParams().WithV(api.Version)
+	params := kube_config.NewKubeConfigDownloadParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigDownload(params, apiClient)
@@ -87,12 +87,12 @@ func downloadRun(opts *DownloadOptions) error {
 }
 
 func getKubeconfigName(kubeconfigID int32) (name string, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := kube_config.NewKubeConfigListParams().WithV(api.Version)
+	params := kube_config.NewKubeConfigListParams().WithV(taikungoclient.Version)
 	params = params.WithID(&kubeconfigID)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)

@@ -1,12 +1,12 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/showback/rule/label/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -44,7 +44,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) error {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func addRun(opts *AddOptions) error {
 		Type:              types.GetPrometheusType(showbackRule.Type),
 	}
 
-	params := showback.NewShowbackUpdateRuleParams().WithV(api.Version)
+	params := showback.NewShowbackUpdateRuleParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	if _, err := apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient); err != nil {

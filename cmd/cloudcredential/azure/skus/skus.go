@@ -1,12 +1,12 @@
 package skus
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/offers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/azure"
 	"github.com/spf13/cobra"
 )
@@ -90,12 +90,12 @@ func skusRun(opts *SKUsOptions) (err error) {
 }
 
 func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	params := azure.NewAzureSkusParams().WithV(api.Version)
+	params := azure.NewAzureSkusParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithPublisher(opts.Publisher)
 	params = params.WithOffer(opts.Offer)

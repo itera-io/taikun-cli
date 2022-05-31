@@ -1,13 +1,13 @@
 package list
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/spf13/cobra"
 )
@@ -62,12 +62,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsListParams().WithV(api.Version)
+	params := alerting_integrations.NewAlertingIntegrationsListParams().WithV(taikungoclient.Version)
 	params = params.WithAlertingProfileID(opts.AlertingProfileID)
 
 	response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsList(params, apiClient)

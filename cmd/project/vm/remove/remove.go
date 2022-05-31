@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -54,7 +54,7 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(opts *DeleteOptions) error {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func deleteRun(opts *DeleteOptions) error {
 		body.VMIds = opts.VMIDs
 	}
 
-	params := stand_alone.NewStandAloneDeleteParams().WithV(api.Version)
+	params := stand_alone.NewStandAloneDeleteParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	if _, err = apiClient.Client.StandAlone.StandAloneDelete(params, apiClient); err != nil {

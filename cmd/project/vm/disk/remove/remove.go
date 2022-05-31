@@ -1,10 +1,10 @@
 package remove
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone_vm_disks"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -39,7 +39,7 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(opts *DeleteOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -49,7 +49,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		VMDiskIds:      opts.DiskIDs,
 	}
 
-	params := stand_alone_vm_disks.NewStandAloneVMDisksDeleteParams().WithV(api.Version)
+	params := stand_alone_vm_disks.NewStandAloneVMDisksDeleteParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAloneVMDisks.StandAloneVMDisksDelete(params, apiClient)

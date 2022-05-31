@@ -1,9 +1,9 @@
 package upgrade
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/spf13/cobra"
 )
@@ -32,12 +32,12 @@ func NewCmdUpgrade() *cobra.Command {
 }
 
 func upgradeRun(opts *UpgradeOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := projects.NewProjectsUpgradeParams().WithV(api.Version)
+	params := projects.NewProjectsUpgradeParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	_, err = apiClient.Client.Projects.ProjectsUpgrade(params, apiClient)

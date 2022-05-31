@@ -1,10 +1,10 @@
 package edit
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/project_quotas"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -42,7 +42,7 @@ func NewCmdEdit() *cobra.Command {
 }
 
 func editRun(opts *EditOptions) error {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func editRun(opts *EditOptions) error {
 		body.RAM = types.GiBToB(opts.RAM)
 	}
 
-	params := project_quotas.NewProjectQuotasEditParams().WithV(api.Version).WithBody(body).WithQuotaID(opts.QuotaID)
+	params := project_quotas.NewProjectQuotasEditParams().WithV(taikungoclient.Version).WithBody(body).WithQuotaID(opts.QuotaID)
 
 	if _, err := apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient); err != nil {
 		return err

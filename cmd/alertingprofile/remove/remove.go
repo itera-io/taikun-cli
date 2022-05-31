@@ -1,10 +1,10 @@
 package remove
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -29,14 +29,14 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(alertingProfileID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.DeleteAlertingProfilesCommand{ID: alertingProfileID}
 
-	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(api.Version).WithBody(&body)
+	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(taikungoclient.Version).WithBody(&body)
 
 	_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
 	if err == nil {

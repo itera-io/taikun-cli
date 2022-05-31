@@ -1,10 +1,10 @@
 package bind
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func NewCmdBind() *cobra.Command {
 }
 
 func bindRun(opts *BindOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -47,7 +47,7 @@ func bindRun(opts *BindOptions) (err error) {
 		ProjectID: opts.ProjectID,
 		Flavors:   opts.Flavors,
 	}
-	params := flavors.NewFlavorsBindToProjectParams().WithV(api.Version).WithBody(&body)
+	params := flavors.NewFlavorsBindToProjectParams().WithV(taikungoclient.Version).WithBody(&body)
 
 	_, err = apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
 	if err == nil {

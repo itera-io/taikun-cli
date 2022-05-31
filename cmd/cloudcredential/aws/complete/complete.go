@@ -1,8 +1,8 @@
 package complete
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/aws"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -16,7 +16,7 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) c
 			return
 		}
 
-		apiClient, err := api.NewClient()
+		apiClient, err := taikungoclient.NewClient()
 		if err != nil {
 			return
 		}
@@ -26,7 +26,7 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) c
 			AwsSecretAccessKey: *secretAccessKey,
 		}
 
-		params := aws.NewAwsRegionListParams().WithV(api.Version)
+		params := aws.NewAwsRegionListParams().WithV(taikungoclient.Version)
 		params = params.WithBody(&body)
 
 		result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)

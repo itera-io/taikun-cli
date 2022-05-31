@@ -1,10 +1,10 @@
 package unbind
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/user_projects"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -37,7 +37,7 @@ func NewCmdUnbind() *cobra.Command {
 }
 
 func unbindRun(opts *UnbindOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -52,7 +52,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 		},
 	}
 
-	params := user_projects.NewUserProjectsBindProjectsParams().WithV(api.Version).WithBody(body)
+	params := user_projects.NewUserProjectsBindProjectsParams().WithV(taikungoclient.Version).WithBody(body)
 
 	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
 	if err == nil {

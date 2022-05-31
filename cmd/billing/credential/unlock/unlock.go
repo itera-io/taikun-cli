@@ -1,10 +1,10 @@
 package unlock
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/ops_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -28,7 +28,7 @@ func NewCmdUnlock() *cobra.Command {
 }
 
 func unlockRun(billingCredentialID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -37,7 +37,7 @@ func unlockRun(billingCredentialID int32) (err error) {
 		ID:   billingCredentialID,
 		Mode: types.UnlockedMode,
 	}
-	params := ops_credentials.NewOpsCredentialsLockManagerParams().WithV(api.Version).WithBody(&body)
+	params := ops_credentials.NewOpsCredentialsLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
 
 	_, err = apiClient.Client.OpsCredentials.OpsCredentialsLockManager(params, apiClient)
 	if err == nil {

@@ -1,10 +1,10 @@
 package remove
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -29,13 +29,13 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(showbackCredentialID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.DeleteShowbackCredentialCommand{ID: showbackCredentialID}
-	params := showback.NewShowbackDeleteShowbackCredentialParams().WithV(api.Version)
+	params := showback.NewShowbackDeleteShowbackCredentialParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Showback.ShowbackDeleteShowbackCredential(params, apiClient)

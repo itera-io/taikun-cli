@@ -1,13 +1,13 @@
 package info
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/spf13/cobra"
 )
@@ -148,12 +148,12 @@ func NewCmdInfo() *cobra.Command {
 }
 
 func infoRun(opts *InfoOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := servers.NewServersDetailsParams().WithV(api.Version)
+	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)

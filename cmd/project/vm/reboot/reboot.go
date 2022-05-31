@@ -1,10 +1,10 @@
 package reboot
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone_actions"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -37,7 +37,7 @@ func NewCmdReboot() *cobra.Command {
 }
 
 func rebootRun(opts *RebootOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -47,7 +47,7 @@ func rebootRun(opts *RebootOptions) (err error) {
 		Type: types.GetVMRebootType(opts.HardReboot),
 	}
 
-	params := stand_alone_actions.NewStandAloneActionsRebootParams().WithV(api.Version)
+	params := stand_alone_actions.NewStandAloneActionsRebootParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAloneActions.StandAloneActionsReboot(params, apiClient)

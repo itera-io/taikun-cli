@@ -3,7 +3,6 @@ package images
 import (
 	"errors"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/offers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/skus"
@@ -14,6 +13,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/images"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -108,7 +108,7 @@ func getImages(opts *ImagesOptions) (images interface{}, err error) {
 }
 
 func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 		CloudID: opts.CloudCredentialID,
 	}
 
-	params := images.NewImagesAwsImagesAsPostParams().WithV(api.Version)
+	params := images.NewImagesAwsImagesAsPostParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	images := make([]*models.AwsExtendedImagesListDto, 0)
@@ -152,12 +152,12 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 }
 
 func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	params := images.NewImagesOpenstackImagesParams().WithV(api.Version)
+	params := images.NewImagesOpenstackImagesParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 
 	images := make([]*models.CommonStringBasedDropdownDto, 0)
@@ -196,12 +196,12 @@ func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) 
 		return nil, errors.New(`required flag(s) "google-image-type" not set`)
 	}
 
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	params := images.NewImagesGoogleImagesParams().WithV(api.Version)
+	params := images.NewImagesGoogleImagesParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID).WithType(types.GetGoogleImageType(opts.GoogleImageType))
 
 	images := make([]*models.GoogleImageDto, 0)
@@ -360,12 +360,12 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonS
 }
 
 func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	params := images.NewImagesAzureImagesParams().WithV(api.Version)
+	params := images.NewImagesAzureImagesParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithPublisherName(opts.AzurePublisher)
 	params = params.WithOffer(opts.AzureOffer)

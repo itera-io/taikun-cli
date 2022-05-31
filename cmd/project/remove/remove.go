@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -69,7 +69,7 @@ func deleteMultiple(optsList []*DeleteOptions) error {
 }
 
 func deleteRun(opts *DeleteOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -79,7 +79,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		ProjectID:     opts.ProjectID,
 	}
 
-	params := projects.NewProjectsDeleteParams().WithV(api.Version)
+	params := projects.NewProjectsDeleteParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, _, err = apiClient.Client.Projects.ProjectsDelete(params, apiClient)

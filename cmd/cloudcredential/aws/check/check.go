@@ -1,11 +1,11 @@
 package check
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -43,7 +43,7 @@ func NewCmdCheck() *cobra.Command {
 }
 
 func checkRun(opts *CheckOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -54,7 +54,7 @@ func checkRun(opts *CheckOptions) (err error) {
 		Region:             opts.AWSRegion,
 	}
 
-	params := checker.NewCheckerAwsParams().WithV(api.Version).WithBody(&body)
+	params := checker.NewCheckerAwsParams().WithV(taikungoclient.Version).WithBody(&body)
 
 	_, err = apiClient.Client.Checker.CheckerAws(params, apiClient)
 	if err == nil {

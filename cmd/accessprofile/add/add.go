@@ -1,11 +1,11 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -69,7 +69,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) error {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func addRun(opts *AddOptions) error {
 		NtpServers:     NTPServers,
 	}
 
-	params := access_profiles.NewAccessProfilesCreateParams().WithV(api.Version).WithBody(body)
+	params := access_profiles.NewAccessProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
 
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
 	if err != nil {

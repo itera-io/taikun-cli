@@ -1,12 +1,12 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/slack"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -62,7 +62,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -78,7 +78,7 @@ func addRun(opts *AddOptions) (err error) {
 		body.OrganizationID = opts.OrganizationID
 	}
 
-	params := slack.NewSlackCreateParams().WithV(api.Version)
+	params := slack.NewSlackCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Slack.SlackCreate(params, apiClient)

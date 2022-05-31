@@ -3,12 +3,12 @@ package add
 import (
 	"fmt"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/kube_config"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -106,7 +106,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -119,7 +119,7 @@ func addRun(opts *AddOptions) (err error) {
 		ProjectID:              opts.ProjectID,
 	}
 
-	params := kube_config.NewKubeConfigCreateParams().WithV(api.Version)
+	params := kube_config.NewKubeConfigCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigCreate(params, apiClient)

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -47,12 +47,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func getAlertingProfileWebhooks(alertingProfileID int32) ([]*models.AlertingWebhookDto, error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(api.Version)
+	params := alerting_profiles.NewAlertingProfilesListParams().WithV(taikungoclient.Version)
 	params = params.WithID(&alertingProfileID)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
@@ -96,7 +96,7 @@ func parseAddOptions(opts *AddOptions) (*models.AlertingWebhookDto, error) {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -112,7 +112,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	alertingWebhooks = append(alertingWebhooks, newAlertingWebhook)
-	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(api.Version)
+	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(taikungoclient.Version)
 	params = params.WithID(opts.AlertingProfileID)
 	params = params.WithBody(alertingWebhooks)
 

@@ -1,12 +1,12 @@
 package list
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone"
 	"github.com/spf13/cobra"
 )
@@ -72,12 +72,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := stand_alone.NewStandAloneDetailsParams().WithV(api.Version)
+	params := stand_alone.NewStandAloneDetailsParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(opts.ProjectID).WithID(&opts.StandaloneVMID)
 
 	response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)

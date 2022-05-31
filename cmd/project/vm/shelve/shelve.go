@@ -1,10 +1,10 @@
 package shelve
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone_actions"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -34,13 +34,13 @@ func NewCmdShelve() *cobra.Command {
 }
 
 func shelveRun(opts *ShelveOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.ShelveStandAloneVMCommand{ID: opts.StandaloneVMID}
-	params := stand_alone_actions.NewStandAloneActionsShelveParams().WithV(api.Version)
+	params := stand_alone_actions.NewStandAloneActionsShelveParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAloneActions.StandAloneActionsShelve(params, apiClient)
