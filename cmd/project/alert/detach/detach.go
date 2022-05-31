@@ -1,9 +1,9 @@
 package detach
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -33,7 +33,7 @@ func NewCmdDetach() *cobra.Command {
 }
 
 func detachRun(opts *DetachOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -42,7 +42,7 @@ func detachRun(opts *DetachOptions) (err error) {
 		ProjectID: opts.ProjectID,
 	}
 
-	params := alerting_profiles.NewAlertingProfilesDetachParams().WithV(api.Version)
+	params := alerting_profiles.NewAlertingProfilesDetachParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesDetach(params, apiClient)

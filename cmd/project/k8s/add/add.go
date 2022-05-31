@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
@@ -101,7 +101,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -121,7 +121,7 @@ func addRun(opts *AddOptions) (err error) {
 		}
 	}
 
-	params := servers.NewServersCreateParams().WithV(api.Version)
+	params := servers.NewServersCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
@@ -164,12 +164,12 @@ func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 		return []string{}
 	}
 
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return []string{}
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(&projectID)
 
 	completions := make([]string, 0)

@@ -2,9 +2,6 @@ package api
 
 import "github.com/itera-io/taikun-cli/config"
 
-// API version
-const Version = "1"
-
 // Names of default profiles
 const DefaultAccessProfileName = "default"
 const DefaultAlertingProfileName = "default"

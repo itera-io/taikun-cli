@@ -1,10 +1,10 @@
 package clear
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -28,13 +28,13 @@ func NewCmdClear() *cobra.Command {
 }
 
 func clearRun(alertingProfileID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	emptyWebhookList := make([]*models.AlertingWebhookDto, 0)
-	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(api.Version)
+	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(taikungoclient.Version)
 	params = params.WithID(alertingProfileID).WithBody(emptyWebhookList)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)

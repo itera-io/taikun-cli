@@ -1,10 +1,10 @@
 package unlock
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -28,7 +28,7 @@ func NewCmdUnlock() *cobra.Command {
 }
 
 func unlockRun(alertingProfileID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -37,7 +37,7 @@ func unlockRun(alertingProfileID int32) (err error) {
 		ID:   alertingProfileID,
 		Mode: types.LockedMode,
 	}
-	params := alerting_profiles.NewAlertingProfilesLockManagerParams().WithV(api.Version).WithBody(&body)
+	params := alerting_profiles.NewAlertingProfilesLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesLockManager(params, apiClient)
 	if err == nil {

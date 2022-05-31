@@ -1,10 +1,10 @@
 package attach
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -38,7 +38,7 @@ func NewCmdAttach() *cobra.Command {
 }
 
 func attachRun(opts *AttachOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -48,7 +48,7 @@ func attachRun(opts *AttachOptions) (err error) {
 		ProjectID:         opts.ProjectID,
 	}
 
-	params := alerting_profiles.NewAlertingProfilesAttachParams().WithV(api.Version)
+	params := alerting_profiles.NewAlertingProfilesAttachParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAttach(params, apiClient)

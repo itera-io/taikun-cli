@@ -1,10 +1,10 @@
 package disable
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/backup"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
@@ -40,7 +40,7 @@ func disableRun(opts *DisableOptions) (err error) {
 		return
 	}
 
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -50,7 +50,7 @@ func disableRun(opts *DisableOptions) (err error) {
 		S3CredentialID: backupCredentialID,
 	}
 
-	params := backup.NewBackupDisableBackupParams().WithV(api.Version)
+	params := backup.NewBackupDisableBackupParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Backup.BackupDisableBackup(params, apiClient)
@@ -62,12 +62,12 @@ func disableRun(opts *DisableOptions) (err error) {
 }
 
 func getBackupCredentialID(projectID int32) (id int32, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := servers.NewServersDetailsParams().WithV(api.Version)
+	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(projectID)
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)

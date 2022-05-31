@@ -1,11 +1,11 @@
 package info
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
 )
@@ -33,12 +33,12 @@ func NewCmdInfo() *cobra.Command {
 }
 
 func myInfoRun() (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := users.NewUsersDetailsParams().WithV(api.Version)
+	params := users.NewUsersDetailsParams().WithV(taikungoclient.Version)
 
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
@@ -49,12 +49,12 @@ func myInfoRun() (err error) {
 }
 
 func infoRun(userID string) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := users.NewUsersListParams().WithV(api.Version)
+	params := users.NewUsersListParams().WithV(taikungoclient.Version)
 	params = params.WithID(&userID)
 
 	response, err := apiClient.Client.Users.UsersList(params, apiClient)

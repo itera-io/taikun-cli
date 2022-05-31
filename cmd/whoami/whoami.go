@@ -1,8 +1,8 @@
 package whoami
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
 )
@@ -21,12 +21,12 @@ func NewCmdWhoAmI() *cobra.Command {
 }
 
 func whoAmIRun() (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := users.NewUsersDetailsParams().WithV(api.Version)
+	params := users.NewUsersDetailsParams().WithV(taikungoclient.Version)
 
 	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {

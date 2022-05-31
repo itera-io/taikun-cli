@@ -1,10 +1,10 @@
 package remove
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/spf13/cobra"
 )
@@ -28,12 +28,12 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(backupCredentialID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(api.Version)
+	params := s3_credentials.NewS3CredentialsDeleteParams().WithV(taikungoclient.Version)
 	params = params.WithID(backupCredentialID)
 
 	_, _, err = apiClient.Client.S3Credentials.S3CredentialsDelete(params, apiClient)

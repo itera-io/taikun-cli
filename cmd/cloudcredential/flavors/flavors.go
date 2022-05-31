@@ -10,6 +10,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -93,12 +94,12 @@ func adjustRamUnits(opts *FlavorsOptions) (err error) {
 }
 
 func flavorRun(opts *FlavorsOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(api.Version)
+	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
 

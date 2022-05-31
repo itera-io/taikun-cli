@@ -1,10 +1,10 @@
 package unbind
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -32,7 +32,7 @@ func NewCmdUnbind() *cobra.Command {
 }
 
 func unbindRun(bindings []int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -40,7 +40,7 @@ func unbindRun(bindings []int32) (err error) {
 	body := models.UnbindFlavorFromProjectCommand{
 		Ids: bindings,
 	}
-	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(api.Version).WithBody(&body)
+	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(taikungoclient.Version).WithBody(&body)
 
 	_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
 	if err == nil {

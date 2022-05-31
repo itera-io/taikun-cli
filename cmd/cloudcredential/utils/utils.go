@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 )
 
@@ -14,12 +14,12 @@ const (
 )
 
 func GetCloudType(cloudCredentialID int32) (cloudType int, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(api.Version)
+	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version)
 	params = params.WithID(&cloudCredentialID)
 
 	response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)

@@ -3,11 +3,11 @@ package add
 import (
 	"fmt"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
@@ -99,7 +99,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func backupCredentialIsValid(opts *AddOptions) (bool, error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return false, err
 	}
@@ -110,14 +110,14 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 		S3Endpoint:    opts.S3Endpoint,
 		S3Region:      opts.S3Region,
 	}
-	params := checker.NewCheckerS3Params().WithV(api.Version).WithBody(&body)
+	params := checker.NewCheckerS3Params().WithV(taikungoclient.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
 
 	return err == nil, nil
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -133,7 +133,7 @@ func addRun(opts *AddOptions) (err error) {
 		body.OrganizationID = opts.OrganizationID
 	}
 
-	params := s3_credentials.NewS3CredentialsCreateParams().WithV(api.Version).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
 
 	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
 	if err == nil {

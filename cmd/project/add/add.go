@@ -12,6 +12,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/client/alerting_profiles"
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
@@ -199,10 +200,10 @@ func addRun(opts *AddOptions) (err error) {
 		body.TaikunLBFlavor = opts.TaikunLBFlavor
 	}
 
-	params := projects.NewProjectsCreateParams().WithV(api.Version)
+	params := projects.NewProjectsCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return err
 	}
@@ -248,13 +249,13 @@ func setDefaultAddOptions(opts *AddOptions) (err error) {
 }
 
 func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := access_profiles.NewAccessProfilesAccessProfilesForOrganizationListParams()
-	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
+	params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
 
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesAccessProfilesForOrganizationList(params, apiClient)
 	if err != nil {
@@ -272,13 +273,13 @@ func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
 }
 
 func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := alerting_profiles.NewAlertingProfilesAlertingProfilesForOrganizationListParams()
-	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
+	params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
 
 	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesAlertingProfilesForOrganizationList(params, apiClient)
 	if err != nil {
@@ -296,13 +297,13 @@ func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
 }
 
 func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	params := kubernetes_profiles.NewKubernetesProfilesKubernetesProfilesForOrganizationListParams()
-	params = params.WithV(api.Version).WithOrganizationID(&organizationID)
+	params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
 
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesKubernetesProfilesForOrganizationList(params, apiClient)
 	if err != nil {

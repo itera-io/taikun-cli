@@ -1,11 +1,11 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -93,7 +93,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -111,7 +111,7 @@ func addRun(opts *AddOptions) (err error) {
 		UniqueServiceSelector: opts.UniqueServiceSelector,
 	}
 
-	params := opa_profiles.NewOpaProfilesCreateParams().WithV(api.Version).WithBody(body)
+	params := opa_profiles.NewOpaProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
 
 	response, err := apiClient.Client.OpaProfiles.OpaProfilesCreate(params, apiClient)
 	if err == nil {

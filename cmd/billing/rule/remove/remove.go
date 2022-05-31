@@ -1,10 +1,10 @@
 package remove
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/prometheus"
 	"github.com/spf13/cobra"
 )
@@ -28,12 +28,12 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(billingRuleID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := prometheus.NewPrometheusDeleteParams().WithV(api.Version)
+	params := prometheus.NewPrometheusDeleteParams().WithV(taikungoclient.Version)
 	params = params.WithID(billingRuleID)
 
 	_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)

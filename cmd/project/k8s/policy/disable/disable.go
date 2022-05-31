@@ -1,9 +1,9 @@
 package disable
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/opa_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -33,7 +33,7 @@ func NewCmdDisable() *cobra.Command {
 }
 
 func disableRun(opts *DisableOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -42,7 +42,7 @@ func disableRun(opts *DisableOptions) (err error) {
 		ProjectID: opts.ProjectID,
 	}
 
-	params := opa_profiles.NewOpaProfilesDisableGatekeeperParams().WithV(api.Version)
+	params := opa_profiles.NewOpaProfilesDisableGatekeeperParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.OpaProfiles.OpaProfilesDisableGatekeeper(params, apiClient)

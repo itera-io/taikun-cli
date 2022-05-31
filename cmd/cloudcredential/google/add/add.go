@@ -4,13 +4,13 @@ import (
 	"errors"
 	"os"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/google_cloud"
 	"github.com/spf13/cobra"
 )
@@ -105,7 +105,7 @@ func addRun(opts *AddOptions) (err error) {
 		return err
 	}
 
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -117,7 +117,7 @@ func addRun(opts *AddOptions) (err error) {
 		}
 	}
 
-	params := google_cloud.NewGoogleCloudCreateParams().WithV(api.Version)
+	params := google_cloud.NewGoogleCloudCreateParams().WithV(taikungoclient.Version)
 	params = params.WithConfig(configFile)
 	params = params.WithName(&opts.Name)
 	params = params.WithOrganizationID(&opts.OrganizationID)

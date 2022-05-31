@@ -1,10 +1,10 @@
 package publishers
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/azure"
 	"github.com/spf13/cobra"
 )
@@ -45,12 +45,12 @@ func publishersRun(opts *PublishersOptions) (err error) {
 }
 
 func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	params := azure.NewAzurePublishersParams().WithV(api.Version)
+	params := azure.NewAzurePublishersParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 
 	publishers = make([]string, 0)

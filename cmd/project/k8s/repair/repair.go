@@ -1,9 +1,9 @@
 package repair
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/spf13/cobra"
 )
@@ -32,12 +32,12 @@ func NewCmdRepair() *cobra.Command {
 }
 
 func repairRun(opts *RepairOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := projects.NewProjectsRepairParams().WithV(api.Version)
+	params := projects.NewProjectsRepairParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	_, err = apiClient.Client.Projects.ProjectsRepair(params, apiClient)

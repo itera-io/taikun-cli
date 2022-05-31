@@ -1,13 +1,13 @@
 package list
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/images"
 	"github.com/spf13/cobra"
 )
@@ -76,12 +76,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := images.NewImagesGetSelectedImagesForProjectParams().WithV(api.Version)
+	params := images.NewImagesGetSelectedImagesForProjectParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(&opts.ProjectID)
 
 	response, err := apiClient.Client.Images.ImagesGetSelectedImagesForProject(params, apiClient)

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/spf13/cobra"
 )
@@ -79,12 +79,12 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 }
 
 func getSortingElements(sortType string) (sortingElements []string, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := common.NewCommonGetSortingElementsParams().WithV(api.Version)
+	params := common.NewCommonGetSortingElementsParams().WithV(taikungoclient.Version)
 	params = params.WithType(sortType)
 
 	response, err := apiClient.Client.Common.CommonGetSortingElements(params, apiClient)

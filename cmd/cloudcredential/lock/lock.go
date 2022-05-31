@@ -1,10 +1,10 @@
 package lock
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -28,7 +28,7 @@ func NewCmdLock() *cobra.Command {
 }
 
 func lockRun(cloudCredentialID int32) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -37,7 +37,7 @@ func lockRun(cloudCredentialID int32) (err error) {
 		ID:   cloudCredentialID,
 		Mode: types.LockedMode,
 	}
-	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(api.Version).WithBody(body)
+	params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(taikungoclient.Version).WithBody(body)
 
 	_, err = apiClient.Client.CloudCredentials.CloudCredentialsLockManager(params, apiClient)
 	if err == nil {

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/add/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -149,7 +149,7 @@ func parseTagsOption(tagsOption []string) ([]*models.StandAloneMetaDataDto, erro
 }
 
 func addRun(opts *AddOptions) error {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return err
 	}
@@ -181,7 +181,7 @@ func addRun(opts *AddOptions) error {
 		body.VolumeType = opts.VolumeType
 	}
 
-	params := stand_alone.NewStandAloneCreateParams().WithV(api.Version)
+	params := stand_alone.NewStandAloneCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.StandAlone.StandAloneCreate(params, apiClient)
