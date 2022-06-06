@@ -56,5 +56,5 @@ To get information on how to use a command, type `taikun [command] --help` or
 `taikun [command] -h` for short.
 
 ## Contributing
-Please check out the [contributing page](contributing) for instructions on how
+Please check out the [contributing page](.github/CONTRIBUTING.md) for instructions on how
 to contribute to this project.
