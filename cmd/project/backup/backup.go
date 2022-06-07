@@ -1,15 +1,15 @@
 package backup
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/project/k8s/backup/disable"
-	"github.com/itera-io/taikun-cli/cmd/project/k8s/backup/enable"
+	"github.com/itera-io/taikun-cli/cmd/project/backup/disable"
+	"github.com/itera-io/taikun-cli/cmd/project/backup/enable"
 	"github.com/spf13/cobra"
 )
 
 func NewCmdBackup() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "backup <command>",
-		Short: "Manage Kubernetes servers' backups",
+		Short: "Manage project's backup",
 	}
 
 	cmd.AddCommand(disable.NewCmdDisable())

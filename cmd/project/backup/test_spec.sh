@@ -1,4 +1,4 @@
-Context 'project/k8s/backup'
+Context 'project/backup'
 
   setup() {
     bid=$(taikun backup-credential add $(_rnd_name) -a $AWS_ACCESS_KEY_ID -e $S3_ENDPOINT -r $S3_REGION -s $AWS_SECRET_ACCESS_KEY -I)
@@ -19,7 +19,7 @@ Context 'project/k8s/backup'
   AfterAll 'cleanup'
 
   disable_backup() {
-      taikun project k8s backup disable $pid -q 2>/dev/null || true
+      taikun project backup disable $pid -q 2>/dev/null || true
   }
 
   BeforeEach 'disable_backup'
@@ -30,7 +30,7 @@ Context 'project/k8s/backup'
 
   Context
     enable_backup() {
-      taikun project k8s backup enable $pid -b $bid -q
+      taikun project backup enable $pid -b $bid -q
     }
     Before 'enable_backup'
 
@@ -43,8 +43,8 @@ Context 'project/k8s/backup'
 
   Context
     enable_and_disable_backup() {
-      taikun project k8s backup enable $pid -b $bid -q
-      taikun project k8s backup disable $pid -q
+      taikun project backup enable $pid -b $bid -q
+      taikun project backup disable $pid -q
     }
     Before 'enable_and_disable_backup'
 
@@ -56,7 +56,7 @@ Context 'project/k8s/backup'
   End
 
   Example 'disable backup for project with backup already disabled'
-    When call taikun project k8s backup disable $pid
+    When call taikun project backup disable $pid
     The status should equal 1
     The stderr should equal 'Error: Project backup already disabled'
   End

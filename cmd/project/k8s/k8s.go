@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/k8s/add"
-	"github.com/itera-io/taikun-cli/cmd/project/k8s/backup"
 	"github.com/itera-io/taikun-cli/cmd/project/k8s/commit"
 	"github.com/itera-io/taikun-cli/cmd/project/k8s/list"
 	"github.com/itera-io/taikun-cli/cmd/project/k8s/policy"
@@ -22,7 +21,6 @@ func NewCmdK8s() *cobra.Command {
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
-	cmd.AddCommand(backup.NewCmdBackup())
 	cmd.AddCommand(commit.NewCmdCommit())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(policy.NewCmdPolicy())
