@@ -67,7 +67,7 @@ func addRun(opts *AddOptions) (err error) {
 		return
 	}
 
-	body := models.UpsertSlackConfigurationCommand{
+	body := models.CreateSlackConfigurationCommand{
 		Channel:   opts.Channel,
 		Name:      opts.Name,
 		SlackType: types.GetSlackType(opts.Type),
