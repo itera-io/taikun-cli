@@ -103,8 +103,8 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
 
-	minRAM := int32(opts.MinRAM)
-	maxRAM := int32(opts.MaxRAM)
+	minRAM := opts.MinRAM
+	maxRAM := opts.MaxRAM
 
 	// Temporarily ignore RAM range for Google until units are set to GiB
 	if minRAM != -1 && maxRAM != -1 {

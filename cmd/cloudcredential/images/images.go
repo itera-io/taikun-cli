@@ -204,7 +204,7 @@ func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) 
 	params := images.NewImagesGoogleImagesParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID).WithType(types.GetGoogleImageType(opts.GoogleImageType))
 
-	images := make([]*models.GoogleImageDto, 0)
+	images := make([]*models.CommonStringBasedDropdownDto, 0)
 
 	for {
 		response, err := apiClient.Client.Images.ImagesGoogleImages(params, apiClient)
