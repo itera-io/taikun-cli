@@ -14,6 +14,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/monitoringtoggle"
 	"github.com/itera-io/taikun-cli/cmd/project/quota"
 	"github.com/itera-io/taikun-cli/cmd/project/remove"
+	"github.com/itera-io/taikun-cli/cmd/project/restore"
 	"github.com/itera-io/taikun-cli/cmd/project/unlock"
 	"github.com/itera-io/taikun-cli/cmd/project/vm"
 	"github.com/spf13/cobra"
@@ -40,6 +41,7 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(remove.NewCmdDelete())
 	cmd.AddCommand(unlock.NewCmdUnlock())
 	cmd.AddCommand(vm.NewCmdVm())
+	cmd.AddCommand(restore.NewCmdRestore())
 
 	return cmd
 }
