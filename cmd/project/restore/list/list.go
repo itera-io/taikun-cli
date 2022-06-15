@@ -59,7 +59,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list <project-id>",
-		Short: "List a backup restores of a project",
+		Short: "List a project's backup restores",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])

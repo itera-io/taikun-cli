@@ -39,7 +39,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "add <project-id>",
-		Short: "Add a backup restore",
+		Short: "Add a project's backup restore",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
