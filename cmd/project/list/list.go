@@ -117,7 +117,7 @@ func listRun(opts *ListOptions) (err error) {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
-	var projects = make([]*models.ProjectListForUIDto, 0)
+	var projects = make([]*models.ProjectListDetailDto, 0)
 
 	for {
 		response, err := apiClient.Client.Projects.ProjectsList(params, apiClient)

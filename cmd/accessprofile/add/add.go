@@ -74,22 +74,22 @@ func addRun(opts *AddOptions) error {
 		return err
 	}
 
-	DNSServers := make([]*models.DNSServerListDto, len(opts.DNSServers))
+	DNSServers := make([]*models.DNSServerCreateDto, len(opts.DNSServers))
 	for i, rawDNSServer := range opts.DNSServers {
-		DNSServers[i] = &models.DNSServerListDto{
+		DNSServers[i] = &models.DNSServerCreateDto{
 			Address: rawDNSServer,
 		}
 	}
 
-	NTPServers := make([]*models.NtpServerListDto, len(opts.NTPServers))
+	NTPServers := make([]*models.NtpServerCreateDto, len(opts.NTPServers))
 
 	for i, rawNTPServer := range opts.NTPServers {
-		NTPServers[i] = &models.NtpServerListDto{
+		NTPServers[i] = &models.NtpServerCreateDto{
 			Address: rawNTPServer,
 		}
 	}
 
-	body := &models.UpsertAccessProfileCommand{
+	body := &models.CreateAccessProfileCommand{
 		Name:           opts.Name,
 		HTTPProxy:      opts.HttpProxy,
 		OrganizationID: opts.OrganizationID,
