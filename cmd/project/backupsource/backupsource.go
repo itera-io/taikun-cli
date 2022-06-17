@@ -2,6 +2,7 @@ package backupsource
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/backupsource/add"
+	"github.com/itera-io/taikun-cli/cmd/project/backupsource/list"
 	"github.com/spf13/cobra"
 )
 
@@ -12,5 +13,6 @@ func NewCmdBackupSource() *cobra.Command {
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
+	cmd.AddCommand(list.NewCmdList())
 	return cmd
 }
