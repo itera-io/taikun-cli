@@ -3,6 +3,7 @@ package restore
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/restore/add"
 	"github.com/itera-io/taikun-cli/cmd/project/restore/list"
+	"github.com/itera-io/taikun-cli/cmd/project/restore/remove"
 	"github.com/spf13/cobra"
 )
 
@@ -14,5 +15,6 @@ func NewCmdRestore() *cobra.Command {
 
 	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(remove.NewCmdDelete())
 	return cmd
 }
