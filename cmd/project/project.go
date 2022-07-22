@@ -4,6 +4,8 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/add"
 	"github.com/itera-io/taikun-cli/cmd/project/alert"
 	"github.com/itera-io/taikun-cli/cmd/project/backup"
+	"github.com/itera-io/taikun-cli/cmd/project/disablemonitoring"
+	"github.com/itera-io/taikun-cli/cmd/project/enablemonitoring"
 	"github.com/itera-io/taikun-cli/cmd/project/etc"
 	"github.com/itera-io/taikun-cli/cmd/project/flavor"
 	"github.com/itera-io/taikun-cli/cmd/project/image"
@@ -12,7 +14,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/kubeconfig"
 	"github.com/itera-io/taikun-cli/cmd/project/list"
 	"github.com/itera-io/taikun-cli/cmd/project/lock"
-	"github.com/itera-io/taikun-cli/cmd/project/monitoringtoggle"
 	"github.com/itera-io/taikun-cli/cmd/project/quota"
 	"github.com/itera-io/taikun-cli/cmd/project/remove"
 	"github.com/itera-io/taikun-cli/cmd/project/restore"
@@ -38,7 +39,8 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(kubeconfig.NewCmdKubeconfig())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
-	cmd.AddCommand(monitoringtoggle.NewCmdMonitoringToggle())
+	cmd.AddCommand(enablemonitoring.NewCmdEnableMonitoring())
+	cmd.AddCommand(disablemonitoring.NewCmdDisableMonitoring())
 	cmd.AddCommand(quota.NewCmdQuota())
 	cmd.AddCommand(remove.NewCmdDelete())
 	cmd.AddCommand(unlock.NewCmdUnlock())

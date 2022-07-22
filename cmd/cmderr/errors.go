@@ -49,6 +49,14 @@ var ErrProjectBackupAlreadyDisabled = errors.New(
 	"Project backup already disabled",
 )
 
+var ErrProjectMonitoringAlreadyDisabled = errors.New(
+	"Project monitoring already disabled",
+)
+
+var ErrProjectMonitoringAlreadyEnabled = errors.New(
+	"Project monitoring already enabled",
+)
+
 func ProgramError(functionName string, err error) error {
 	return fmt.Errorf(
 		"%s: %s\n"+
