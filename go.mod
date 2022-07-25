@@ -3,8 +3,8 @@ module github.com/itera-io/taikun-cli
 go 1.17
 
 require (
-	github.com/go-openapi/strfmt v0.21.2
-	github.com/itera-io/taikungoclient v0.0.0-20220609143657-6c29069b134e
+	github.com/go-openapi/strfmt v0.21.3
+	github.com/itera-io/taikungoclient v0.0.0-20220723001131-b6cd2ad9b447
 	github.com/jedib0t/go-pretty/v6 v6.3.1
 	github.com/spf13/cobra v1.4.0
 )
@@ -32,7 +32,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	go.mongodb.org/mongo-driver v1.8.3 // indirect
+	go.mongodb.org/mongo-driver v1.10.0 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
