@@ -8,8 +8,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -73,10 +73,10 @@ func GetShowbackRuleByID(showbackRuleID int32) (showbackRule *models.ShowbackRul
 		return
 	}
 
-	params := showback.NewShowbackRulesListParams().WithV(taikungoclient.Version)
+	params := showback_rules.NewShowbackRulesListParams().WithV(taikungoclient.Version)
 	params = params.WithID(&showbackRuleID)
 
-	response, err := apiClient.Client.Showback.ShowbackRulesList(params, apiClient)
+	response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesList(params, apiClient)
 	if err != nil {
 		return
 	}

@@ -7,8 +7,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -131,7 +131,7 @@ func addRun(opts *AddOptions) error {
 		MetricName:       opts.MetricName,
 		Name:             opts.Name,
 		Price:            opts.Price,
-		Type:             types.GetPrometheusType(opts.Type),
+		Type:             types.GetEPrometheusType(opts.Type),
 	}
 
 	if opts.OrganizationID != 0 {
@@ -146,10 +146,10 @@ func addRun(opts *AddOptions) error {
 		body.ShowbackCredentialID = &opts.ShowbackCredentialID
 	}
 
-	params := showback.NewShowbackCreateRuleParams().WithV(taikungoclient.Version)
+	params := showback_rules.NewShowbackRulesCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
-	response, err := apiClient.Client.Showback.ShowbackCreateRule(params, apiClient)
+	response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesCreate(params, apiClient)
 	if err != nil {
 		return err
 	}

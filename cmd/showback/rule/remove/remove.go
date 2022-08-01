@@ -5,8 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/showback"
-	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -34,11 +33,10 @@ func deleteRun(showbackRuleID int32) (err error) {
 		return
 	}
 
-	body := models.DeleteShowbackRuleCommand{ID: showbackRuleID}
-	params := showback.NewShowbackDeleteRuleParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
+	params := showback_rules.NewShowbackRulesDeleteParams().WithV(taikungoclient.Version)
+	params = params.WithID(showbackRuleID)
 
-	_, err = apiClient.Client.Showback.ShowbackDeleteRule(params, apiClient)
+	_, err = apiClient.ShowbackClient.ShowbackRules.ShowbackRulesDelete(params, apiClient)
 	if err == nil {
 		out.PrintDeleteSuccess("Showback rule", showbackRuleID)
 	}
