@@ -8,7 +8,7 @@ import (
 func NewCmdSet() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "set <command>",
-		Short: "Manage a project's functionalities",
+		Short: "Manage a project's life time",
 	}
 
 	cmd.AddCommand(expiration.NewCmdExpiration())
