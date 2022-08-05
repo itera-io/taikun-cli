@@ -99,6 +99,8 @@ github.com/itera-io/taikungoclient v0.0.0-20220801102644-1ebef24777da h1:EXLy5/a
 github.com/itera-io/taikungoclient v0.0.0-20220801102644-1ebef24777da/go.mod h1:0xw0CLVQs0H1nN3y/Oerdu8pMof4OJengOw/WMO/jAk=
 github.com/itera-io/taikungoclient v0.0.0-20220801133405-f10221ee630a h1:w8XMNrsTV0JorInF8xqBEvkH1a8/mA2wkqg+Maa6h8A=
 github.com/itera-io/taikungoclient v0.0.0-20220801133405-f10221ee630a/go.mod h1:0xw0CLVQs0H1nN3y/Oerdu8pMof4OJengOw/WMO/jAk=
+github.com/itera-io/taikungoclient v0.0.0-20220805072141-5cd54ddc6d76 h1:dCsPV2OAnzkCVCGqyPCNrfGklJdqaI4N/ZBYjUo50vI=
+github.com/itera-io/taikungoclient v0.0.0-20220805072141-5cd54ddc6d76/go.mod h1:0xw0CLVQs0H1nN3y/Oerdu8pMof4OJengOw/WMO/jAk=
 github.com/jedib0t/go-pretty/v6 v6.3.1 h1:aOXiD9oqiuLH8btPQW6SfgtQN5zwhyfzZls8a6sPJ/I=
 github.com/jedib0t/go-pretty/v6 v6.3.1/go.mod h1:FMkOpgGD3EZ91cW8g/96RfxoV7bdeJyzXPYgz1L1ln0=
 github.com/jedib0t/go-pretty/v6 v6.3.5 h1:B6RuZT3Gz0NvFwADctw+gZn3cSA+jIHykXyd72zPgOY=
