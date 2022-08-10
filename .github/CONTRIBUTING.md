@@ -16,7 +16,7 @@ The command's implementation (`NewCmdFoobar()`), must be in
 `cmd/foobar/foobar.go` and the tests in `cmd/foobar/test_spec.sh`.
 
 To add the `foobar` command to the list of subcommands, it must be added in the
-[root command](./cmd/root/root.go) (`taikun`) using the following syntax.
+[root command](../cmd/root/root.go) (`taikun`) using the following syntax.
 ```go
 cmd.AddCommand(foobar.NewCmdFoobar())
 ```
@@ -61,7 +61,7 @@ place the file in the same directory as the command's implementation
 (`cmd/billing/rule/remove/remove.go`).
 
 You can see the entire testing specification of the billing rule deletion
-command [here](./cmd/billing/rule/remove/test_spec.sh).
+command [here](../cmd/billing/rule/remove/test_spec.sh).
 
 We first declare a context for the test cases in
 `cmd/billing/rule/remove/test_spec.sh` with the `Context` keyword and the
@@ -107,7 +107,7 @@ End
 Here we define some useful variables, `name` will be the name of the billing
 rules we create, `cname` is the name of the billing credential of the billing
 rules. We use the helper function `_rnd_name` (defined in
-[spec_helper.sh](.spec/spec_helper.sh)) to generate random names.
+[spec_helper.sh](../.spec/spec_helper.sh)) to generate random names.
 ```sh
     name=$(_rnd_name)
     cname=$(_rnd_name)
