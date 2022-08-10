@@ -12,6 +12,7 @@ on:
       - 'COMMAND_TREE.md'
       - 'GNUmakefile'
       - 'Dockerfile'
+      - '.github/CONTRIBUTING.md'
 
 jobs:
   build:
