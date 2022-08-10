@@ -16,6 +16,7 @@ on:
       - 'apiconfig/**'
       - 'config/**'
       - 'utils/**'
+      - '.github/CONTRIBUTING.md'
 
 jobs:
   update_command_tree:
