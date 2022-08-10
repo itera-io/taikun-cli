@@ -40,7 +40,8 @@ End
 
 ### The context
 
-Suppose we would like to test the `taikun billing-rule delete` command.
+Suppose we would like to test the `taikun billing-rule delete` command defined
+[here](../cmd/billing/rule/remove/remove.go).
 
 Here is its usage menu:
 ```sh
