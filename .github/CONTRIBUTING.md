@@ -82,10 +82,10 @@ starting from the `./cmd` directory (not included). Thus here it is
 
 In order to test the deletion of billing rules, we will first need to create
 some. Billing rules require billing credentials, we will thus need to create
-billing credentials beforehand.
+a billing credential beforehand.
 
 By convention, commands that must be run before the actual test cases are
-called in a `setup` function (functions are declared using `bash` syntax).
+called in a `setup` function (functions are declared using Bash syntax).
 
 We can tell Shellspec to run this `setup` function before all the test
 cases using the `BeforeAll` directive.
@@ -104,9 +104,11 @@ Context 'billing/rule/remove'
 End
 ```
 
-Here we define some useful variables, `name` will be the name of the billing
-rules we create, `cname` is the name of the billing credential of the billing
-rules. We use the helper function `_rnd_name` (defined in
+Here we define some useful variables:
+- `name` will be the name of the billing rules we create
+- `cname` is the name of the billing credential of the billing rules.
+
+We use the helper function `_rnd_name` (defined in
 [spec_helper.sh](../.spec/spec_helper.sh)) to generate random names.
 ```sh
     name=$(_rnd_name)
@@ -117,8 +119,8 @@ rules. We use the helper function `_rnd_name` (defined in
 We then create the billing credential we need for the billing rules and store
 its ID in the `cid` variable. The `-I` flag (or `--id-only`) makes it so only
 the ID of the newly created resource is outputted by `taikun billing credential
-add`. The required Prometheus credentials are defined in the secrets of the test
-action.
+add`. The required Prometheus credentials are defined in the GitHub secrets of
+the test action.
 ```
 cid=$(taikun billing credential add -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
 ```
@@ -127,7 +129,7 @@ cid=$(taikun billing credential add -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -
 Whenever we create resources as dependencies for test cases, we need to delete
 them afterwards, this is done in the `cleanup` function.
 
-In our case, the need to delete the billing credential with the ID stored in
+In our case, we need to delete the billing credential with the ID stored in
 the `cid` variable.
 
 The `AfterAll` directive tells Shellspec to run it after all the test cases
@@ -151,11 +153,13 @@ End
 ```
 
 We use `|| true` so that Shellspec won't consider this a failed test if the
-`taikun billing credential delete` command fails. Here we are only testing
-billing rule deletion, billing credential deletion is tested in another file.
+`taikun billing credential delete` command fails.  As we are only testing
+billing rule deletion in this specification, billing credential deletion should
+not impact the result of this test.  Billing credential deletion is tested in
+its own file.
 
-We also redirect all eventual stderr output using the redirection `2>/dev/null`
-and all stdout output using the `-q` (or `--quiet`) flag.
+We also redirect all eventual error output using the redirection `2>/dev/null`
+and all standard output using the `-q` (or `--quiet`) flag.
 
 ### BeforeEach and AfterEach directives
 We will be testing three cases:
@@ -163,8 +167,8 @@ We will be testing three cases:
 2. Deleting an existing rule should succeed
 3. Deleting an existing rule and a non-existing rule with the same command should fail
 
-As a prerequisite, we need to create a billing rule before each test case and
-to delete it after each test case in case the deletion failed.
+As a prerequisite, we need to create a billing rule before each test and
+to delete it afterwards in case the deletion failed.
 
 We first define the `add_rule` function which creates a billing rule and stores
 its ID in the `id` variable. The `BeforeEach` directive tells Shellspec to run
@@ -202,7 +206,7 @@ Example 'delete nonexistent billing rule'
 End
 ```
 
-Let's take test case 3 as an example: deleting an existing and a nonexistent
+Let's take test case #3 as an example: deleting an existing and a nonexistent
 billing rule in the same command.
 
 The command we are testing is `taikun billing rule delete 0 $id` as no billing rule
@@ -219,7 +223,7 @@ We use the syntax `When call` followed by a command or function.
 
 We can then check the status code, stdout and stderr.
 - The status code should be 1 as `taikun` should fail to delete the billing rule with ID `0`.
-- The standard output (stdout) should include a message of successful deletion for the billing rule `$id`.
+- The standard output (stdout) should include a message of successful deletion for the billing rule with ID `$id`.
 - The error output (stderr) should include a 404 error message.
 
 ```sh
@@ -232,19 +236,19 @@ We can then check the status code, stdout and stderr.
     The stderr should include 'Error: Failed to delete one or more resources'
   End
 ```
-Checks begin with the keyword `The` followed by a subject (`status`, `output`,
+Checks begin with the keyword `The` followed by a _Subject_ (`status`, `output`,
 `stderr` or a variable).
-Following the keyword `should` is a matcher such as `equal` or `include` and
+Following the keyword `should` is a _Matcher_ such as `equal` or `include` and
 one or more arguments such as `1` or `"$id"`.
 
-Modifiers can also be added for more precision. For example, if we expect the
+_Modifiers_ can also be added for more precision. For example, if we expect the
 length of stderr to be exactly 80 characters, we can use the following syntax.
 ```
 The length of stderr should equal 80
 ```
 
 The [Shellspec
-documentation](https://github.com/shellspec/shellspec/blob/master/README.md#dsl-syntax)
+documentation](https://github.com/shellspec/shellspec#dsl-syntax)
 goes further into detail about the DSL syntax.
 
 ## Moving and/or renaming commands
