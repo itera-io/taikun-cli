@@ -36,9 +36,9 @@ Context 'foobar'
 End
 ```
 
-### Testing example
+## A testing example
 
-#### The context
+### The context
 
 Suppose we would like to test the `taikun billing-rule delete` command.
 
@@ -60,6 +60,9 @@ written in a file named `test_spec.sh` in order to be run by `shellspec`. We
 place the file in the same directory as the command's implementation
 (`cmd/billing/rule/remove/remove.go`).
 
+You can see the entire testing specification of the billing rule deletion
+command [here](./cmd/billing/rule/remove/test_spec.sh).
+
 We first declare a context for the test cases in
 `cmd/billing/rule/remove/test_spec.sh` with the `Context` keyword and the
 closing keyword `End`.
@@ -75,7 +78,7 @@ The name of this context is the path of the parent directory of `test_spec.sh`
 starting from the `./cmd` directory (not included). Thus here it is
 `billing/rule/remove`.
 
-#### The setup function
+### The setup function
 
 In order to test the deletion of billing rules, we will first need to create
 some. Billing rules require billing credentials, we will thus need to create
@@ -120,7 +123,7 @@ action.
 cid=$(taikun billing credential add -p $PROMETHEUS_PASSWORD -u $PROMETHEUS_URL -l $PROMETHEUS_USERNAME $cname -I)
 ```
 
-#### The cleanup function
+### The cleanup function
 Whenever we create resources as dependencies for test cases, we need to delete
 them afterwards, this is done in the `cleanup` function.
 
@@ -154,7 +157,7 @@ billing rule deletion, billing credential deletion is tested in another file.
 We also redirect all eventual stderr output using the redirection `2>/dev/null`
 and all stdout output using the `-q` (or `--quiet`) flag.
 
-#### BeforeEach and AfterEach directives
+### BeforeEach and AfterEach directives
 We will be testing three cases:
 1. Deleting a nonexistent rule should fail
 2. Deleting an existing rule should succeed
@@ -188,7 +191,7 @@ polluting our test suite's output. `|| true` ensures that this won't be
 considered a failed test if `taikun billing rule delete $id` fails (in fact, if
 the deletion is properly implemented, we expect it to fail).
 
-#### Defining the test cases
+### Defining the test cases
 We can now define our three test cases.
 
 Test cases are declared using the `Example` keyword followed by a string as a
@@ -243,10 +246,6 @@ The length of stderr should equal 80
 The [Shellspec
 documentation](https://github.com/shellspec/shellspec/blob/master/README.md#dsl-syntax)
 goes further into detail about the DSL syntax.
-
-#### The result
-You can see the entire testing specification of the billing rule deletion
-command [here](./cmd/billing/rule/remove/test_spec.sh).
 
 ## Moving and/or renaming commands
 
