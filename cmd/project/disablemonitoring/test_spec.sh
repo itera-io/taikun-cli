@@ -12,7 +12,7 @@ Context 'project/disablemonitoring'
   AfterAll 'cleanup'
 
 disable_monitoring() {
-      taikun project disable-monitoring $pid -q 2>/dev/null || true
+      taikun project disable-monitoring $id -q 2>/dev/null || true
   }
 
   BeforeEach 'disable_monitoring'
@@ -36,20 +36,20 @@ disable_monitoring() {
 
   Context
     enable_and_disable_monitoring() {
-      taikun project enable-monitoring $pid -q
-      taikun project disable-monitoring $pid -q
+      taikun project enable-monitoring $id -q
+      taikun project disable-monitoring $id -q
     }
     Before 'enable_and_disable_monitoring'
 
     Example 'disable monitoring'
-      When call get_monitoring_status $pid
+      When call get_monitoring_status $id
       The status should equal 0
       The output should include 'No'
     End
   End
 
   Example 'disable monitoring for project with monitoring already disabled'
-    When call taikun project disable-monitoring $pid
+    When call taikun project disable-monitoring $id
     The status should equal 1
     The stderr should equal 'Error: Project monitoring already disabled'
   End
