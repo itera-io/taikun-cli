@@ -83,7 +83,7 @@ func NewCmdAdd() *cobra.Command {
 			if err := cmdutils.CheckFlagValue("kind", opts.Kind, types.ShowbackKinds); err != nil {
 				return err
 			}
-			if err := cmdutils.CheckFlagValue("type", opts.Type, types.PrometheusTypes); err != nil {
+			if err := cmdutils.CheckFlagValue("type", opts.Type, types.EPrometheusTypes); err != nil {
 				return err
 			}
 			return addRun(&opts)
@@ -107,7 +107,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.SetFlagCompletionValues(&cmd, "type", types.PrometheusTypes.Keys()...)
+	cmdutils.SetFlagCompletionValues(&cmd, "type", types.EPrometheusTypes.Keys()...)
 
 	cmd.Flags().Int32Var(&opts.ProjectAlertLimit, "project-alert-limit", 0, "Project alert limit")
 
