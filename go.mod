@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/go-openapi/strfmt v0.21.3
-	github.com/itera-io/taikungoclient v0.0.0-20220810115859-15d4afd992c3
+	github.com/itera-io/taikungoclient v0.0.0-20220815085910-c6c49e8f0db9
 	github.com/jedib0t/go-pretty/v6 v6.3.1
 	github.com/spf13/cobra v1.4.0
 )
@@ -14,7 +14,7 @@ require (
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
 	github.com/go-openapi/analysis v0.21.2 // indirect
-	github.com/go-openapi/errors v0.20.2 // indirect
+	github.com/go-openapi/errors v0.20.3 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/loads v0.21.1 // indirect
