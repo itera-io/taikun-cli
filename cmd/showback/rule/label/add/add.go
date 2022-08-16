@@ -7,8 +7,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -66,13 +66,13 @@ func addRun(opts *AddOptions) error {
 		Name:              showbackRule.Name,
 		Price:             showbackRule.Price,
 		ProjectAlertLimit: showbackRule.ProjectAlertLimit,
-		Type:              types.GetPrometheusType(showbackRule.Type),
+		Type:              types.GetEPrometheusType(showbackRule.Type),
 	}
 
-	params := showback.NewShowbackUpdateRuleParams().WithV(taikungoclient.Version)
+	params := showback_rules.NewShowbackRulesUpdateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
-	if _, err := apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient); err != nil {
+	if _, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesUpdate(params, apiClient); err != nil {
 		return err
 	}
 

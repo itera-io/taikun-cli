@@ -8,8 +8,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_credentials"
 	"github.com/spf13/cobra"
 )
 
@@ -81,7 +81,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := showback.NewShowbackCredentialsListParams().WithV(taikungoclient.Version)
+	params := showback_credentials.NewShowbackCredentialsListParams().WithV(taikungoclient.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
@@ -93,7 +93,7 @@ func listRun(opts *ListOptions) (err error) {
 	var showbackCredentials = make([]*models.ShowbackCredentialsListDto, 0)
 
 	for {
-		response, err := apiClient.Client.Showback.ShowbackCredentialsList(params, apiClient)
+		response, err := apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsList(params, apiClient)
 		if err != nil {
 			return err
 		}

@@ -8,8 +8,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -87,7 +87,7 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
-	params := showback.NewShowbackRulesListParams().WithV(taikungoclient.Version)
+	params := showback_rules.NewShowbackRulesListParams().WithV(taikungoclient.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
@@ -99,7 +99,7 @@ func listRun(opts *ListOptions) (err error) {
 	var showbackRules = make([]*models.ShowbackRulesListDto, 0)
 
 	for {
-		response, err := apiClient.Client.Showback.ShowbackRulesList(params, apiClient)
+		response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesList(params, apiClient)
 		if err != nil {
 			return err
 		}

@@ -124,7 +124,6 @@ func listRun(opts *ListOptions) (err error) {
 		if err != nil {
 			return err
 		}
-
 		projects = append(projects, response.Payload.Data...)
 
 		projectsCount := int32(len(projects))
