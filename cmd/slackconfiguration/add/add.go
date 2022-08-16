@@ -84,7 +84,7 @@ func addRun(opts *AddOptions) (err error) {
 	response, err := apiClient.Client.Slack.SlackCreate(params, apiClient)
 	if err == nil {
 		payload := map[string]interface{}{
-			"id": response.Payload,
+			"id": response.Payload.ID,
 		}
 
 		return out.PrintResult(payload, addFields)

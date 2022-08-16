@@ -7,12 +7,12 @@ import (
 
 var ShowbackKinds = gmap.New(
 	map[string]interface{}{
-		"general":  models.ShowbackType(100),
-		"external": models.ShowbackType(200),
+		"general":  models.EShowbackType(100),
+		"external": models.EShowbackType(200),
 	},
 )
 
-func GetShowbackKind(showbackKind string) models.ShowbackType {
-	model, _ := ShowbackKinds.Get(showbackKind).(models.ShowbackType)
+func GetShowbackKind(showbackKind string) models.EShowbackType {
+	model, _ := ShowbackKinds.Get(showbackKind).(models.EShowbackType)
 	return model
 }

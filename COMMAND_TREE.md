@@ -138,6 +138,7 @@
       * restore (Manage a project's backup restores)
         * add (Add a project's backup restore)
         * list (List a project's backup restores)
+        * delete (Delete a project's backup restore)
       * unlock (Unlock a project)
       * vm (Manage a project's standalone VMs)
         * add (Add a standalone VM to a project)

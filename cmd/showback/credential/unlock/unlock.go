@@ -5,8 +5,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/showback"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_credentials"
 	"github.com/spf13/cobra"
 )
 
@@ -34,10 +34,10 @@ func unlockRun(showbackCredentialID int32) (err error) {
 	}
 
 	body := models.ShowbackCredentialLockCommand{ID: showbackCredentialID, Mode: types.UnlockedMode}
-	params := showback.NewShowbackLockManagerParams().WithV(taikungoclient.Version)
+	params := showback_credentials.NewShowbackCredentialsLockManagerParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
-	_, err = apiClient.Client.Showback.ShowbackLockManager(params, apiClient)
+	_, err = apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()
 	}
