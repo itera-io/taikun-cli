@@ -71,6 +71,9 @@ var addFields = fields.New(
 		field.NewHidden(
 			"CREATED-BY", "createdBy",
 		),
+		field.NewHidden(
+			"CIDR", "cidr",
+		),
 	},
 )
 
@@ -91,6 +94,7 @@ type AddOptions struct {
 	RouterIDEndRange    int32
 	RouterIDStartRange  int32
 	TaikunLBFlavor      string
+	Cidr                string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -144,6 +148,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.RouterIDStartRange, "router-id-start-range", -1, "Router ID start range (required with OpenStack and Taikun load balancer")
 	cmd.Flags().Int32Var(&opts.RouterIDEndRange, "router-id-end-range", -1, "Router ID end range (required with OpenStack and Taikun load balancer")
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
+	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "cidr", "", "Cidr IP")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -198,6 +203,10 @@ func addRun(opts *AddOptions) (err error) {
 
 	if opts.TaikunLBFlavor != "" {
 		body.TaikunLBFlavor = opts.TaikunLBFlavor
+	}
+
+	if opts.Cidr != "" {
+		body.Cidr = opts.Cidr
 	}
 
 	params := projects.NewProjectsCreateParams().WithV(taikungoclient.Version)
