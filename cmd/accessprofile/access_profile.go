@@ -2,6 +2,7 @@ package accessprofile
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/add"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/allowedhost"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/list"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/lock"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/remove"
@@ -22,6 +23,7 @@ func NewCmdAccessProfile() *cobra.Command {
 	cmd.AddCommand(lock.NewCmdLock())
 	cmd.AddCommand(remove.NewCmdDelete())
 	cmd.AddCommand(sshuser.NewCmdSshUser())
+	cmd.AddCommand(allowedhost.NewCmdAllowedHost())
 	cmd.AddCommand(unlock.NewCmdUnlock())
 
 	return cmd
