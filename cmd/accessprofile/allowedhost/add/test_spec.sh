@@ -13,7 +13,7 @@ Context 'accessprofile/allowedhost/add'
 
   Example 'basic allowed host'
     run() {
-      ip=$(192.168.1.1)
+      ip="192.168.1.1"
       host_id=$(taikun access-profile host add $profile_id -ip $ip -m 16 -I)
       taikun access-profile host list | grep $host_id
     }
