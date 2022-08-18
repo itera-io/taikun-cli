@@ -64,7 +64,7 @@ func NewCmdAdd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.IpAddress, "ip-address", "ip", "", "Ip Address (required)")
+	cmd.Flags().StringVarP(&opts.IpAddress, "ip-address", "i", "", "Ip Address (required)")
 	cmdutils.MarkFlagRequired(cmd, "ip-address")
 
 	cmd.Flags().Int32VarP(&opts.MaskBits, "mask-bits", "m", 0, "Mask bits (required)")
