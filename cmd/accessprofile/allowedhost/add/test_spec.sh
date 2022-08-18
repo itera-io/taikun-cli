@@ -14,7 +14,7 @@ Context 'accessprofile/allowedhost/add'
   AfterEach 'cleanup'
 
   Example 'basic allowed host'
-    When call taikun access-profile host list | grep $host_id
+    When call taikun access-profile host list $profile_id | grep $host_id
     The output should include "$ip"
     The status should equal 0
   End
