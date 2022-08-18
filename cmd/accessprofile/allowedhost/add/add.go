@@ -21,10 +21,10 @@ var addFields = fields.New(
 			"ID", "id",
 		),
 		field.NewVisible(
-			"IP-ADDRESS", "ip-address",
+			"IP-ADDRESS", "ipAddress",
 		),
 		field.NewVisible(
-			"MASK-BITS", "mask-bits",
+			"MASK-BITS", "maskBits",
 		),
 		field.NewVisible(
 			"DESCRIPTION", "description",
