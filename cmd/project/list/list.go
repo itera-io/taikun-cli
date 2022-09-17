@@ -63,6 +63,9 @@ var listFields = fields.New(
 		field.NewVisibleWithToStringFunc(
 			"EXPIRES", "expiredAt", out.FormatDateTimeString,
 		),
+		field.NewHidden(
+			"DELETE-ON-EXPIRATION", "deleteOnExpiration",
+		),
 		field.NewVisible(
 			"LOCK", "isLocked",
 		),
