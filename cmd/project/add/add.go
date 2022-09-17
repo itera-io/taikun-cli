@@ -62,6 +62,9 @@ var addFields = fields.New(
 		field.NewVisibleWithToStringFunc(
 			"EXPIRES", "expiredAt", out.FormatDateTimeString,
 		),
+		field.NewVisible(
+			"DELETE-ON-EXPIRATION", "deleteOnExpiration",
+		),
 		field.NewVisibleWithToStringFunc(
 			"LOCK", "isLocked", out.FormatLockStatus,
 		),
@@ -83,6 +86,7 @@ type AddOptions struct {
 	AutoUpgrade         bool
 	BackupCredentialID  int32
 	CloudCredentialID   int32
+	DeleteOnExpiration  bool
 	ExpirationDate      string
 	Flavors             []string
 	KubernetesProfileID int32
@@ -139,6 +143,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.AlertingProfileID, "alerting-profile-id", 0, "Alerting profile ID")
 	cmd.Flags().BoolVarP(&opts.AutoUpgrade, "auto-upgrade", "u", false, "Enable auto upgrade")
 	cmd.Flags().Int32VarP(&opts.BackupCredentialID, "backup-credential-id", "b", 0, "Backup credential ID")
+	cmd.Flags().BoolVarP(&opts.DeleteOnExpiration, "delete-on-expiration", "d", false, "Delete the project on its expiration date")
 	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s", types.ExpectedDateFormat))
 	cmd.Flags().StringSliceVarP(&opts.Flavors, "flavors", "f", []string{}, "Bind flavors to the project")
 	cmd.Flags().Int32VarP(&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0, "Kubernetes profile ID")
@@ -166,6 +171,7 @@ func addRun(opts *AddOptions) (err error) {
 		AccessProfileID:     opts.AccessProfileID,
 		AlertingProfileID:   opts.AlertingProfileID,
 		CloudCredentialID:   opts.CloudCredentialID,
+		DeleteOnExpiration:  opts.DeleteOnExpiration,
 		Flavors:             opts.Flavors,
 		IsAutoUpgrade:       opts.AutoUpgrade,
 		IsKubernetes:        true,
