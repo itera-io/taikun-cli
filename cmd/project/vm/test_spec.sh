@@ -7,9 +7,9 @@ Context 'project/vm'
     img=$(taikun cc images $cc --no-decorate | egrep -i '(ubuntu)|(focal)' | head -1 | cut -d ' ' -f 1)
     profile=$(taikun standalone-profile add $(_rnd_name) --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I)
     taikun project image bind $id --image-ids $img -q
-    vm_onetag=$(taikun project vm add $id --name onetag --flavor $flavor --image-id $img --volume-size 5 --standalone-profile-id $profile --tags foo=bar -I)
-    vm_notags=$(taikun project vm add $id --name notags --flavor $flavor --image-id $img --volume-size 5 --standalone-profile-id $profile -I)
-    vm_manytags=$(taikun project vm add $id --name manytags --flavor $flavor --image-id $img --volume-size 5 --standalone-profile-id $profile --tags foo=bar,editor=vim -I)
+    vm_onetag=$(taikun project vm add $id --name onetag --flavor $flavor --image-id $img --volume-size 8 --standalone-profile-id $profile --tags foo=bar -I)
+    vm_notags=$(taikun project vm add $id --name notags --flavor $flavor --image-id $img --volume-size 8 --standalone-profile-id $profile -I)
+    vm_manytags=$(taikun project vm add $id --name manytags --flavor $flavor --image-id $img --volume-size 8 --standalone-profile-id $profile --tags foo=bar,editor=vim -I)
   }
   BeforeAll 'setup'
 
