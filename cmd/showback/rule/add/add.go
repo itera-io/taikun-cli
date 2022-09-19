@@ -1,14 +1,14 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient/client/showback"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -83,7 +83,7 @@ func NewCmdAdd() *cobra.Command {
 			if err := cmdutils.CheckFlagValue("kind", opts.Kind, types.ShowbackKinds); err != nil {
 				return err
 			}
-			if err := cmdutils.CheckFlagValue("type", opts.Type, types.PrometheusTypes); err != nil {
+			if err := cmdutils.CheckFlagValue("type", opts.Type, types.EPrometheusTypes); err != nil {
 				return err
 			}
 			return addRun(&opts)
@@ -107,7 +107,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Type, "type", "t", "", "Type (required)")
 	cmdutils.MarkFlagRequired(&cmd, "type")
-	cmdutils.SetFlagCompletionValues(&cmd, "type", types.PrometheusTypes.Keys()...)
+	cmdutils.SetFlagCompletionValues(&cmd, "type", types.EPrometheusTypes.Keys()...)
 
 	cmd.Flags().Int32Var(&opts.ProjectAlertLimit, "project-alert-limit", 0, "Project alert limit")
 
@@ -119,10 +119,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+func addRun(opts *AddOptions) error {
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	body := models.CreateShowbackRuleCommand{
@@ -131,7 +131,7 @@ func addRun(opts *AddOptions) (err error) {
 		MetricName:       opts.MetricName,
 		Name:             opts.Name,
 		Price:            opts.Price,
-		Type:             types.GetPrometheusType(opts.Type),
+		Type:             types.GetEPrometheusType(opts.Type),
 	}
 
 	if opts.OrganizationID != 0 {
@@ -146,13 +146,13 @@ func addRun(opts *AddOptions) (err error) {
 		body.ShowbackCredentialID = &opts.ShowbackCredentialID
 	}
 
-	params := showback.NewShowbackCreateRuleParams().WithV(api.Version)
+	params := showback_rules.NewShowbackRulesCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
-	response, err := apiClient.Client.Showback.ShowbackCreateRule(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesCreate(params, apiClient)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }

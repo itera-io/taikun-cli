@@ -3,7 +3,6 @@ package quota
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/quota/edit"
 	"github.com/itera-io/taikun-cli/cmd/project/quota/list"
-
 	"github.com/spf13/cobra"
 )
 

@@ -17,17 +17,21 @@ func prettyPrintJson(data interface{}) error {
 	if err != nil {
 		return cmderr.ProgramError("prettyPrintJson", err)
 	}
+
 	Println(string(jsonEncoding))
+
 	return nil
 }
 
-func getValueFromJsonMap(m map[string]interface{}, compositeKey string) (value interface{}, found bool) {
+func getValueFromJsonMap(jsonMap map[string]interface{}, compositeKey string) (value interface{}, found bool) {
 	keys := strings.Split(compositeKey, "/")
+
 	keyCount := len(keys)
 	if keyCount == 0 {
 		return
 	}
-	value, found = m[keys[0]]
+
+	value, found = jsonMap[keys[0]]
 	for i := 1; i < keyCount && found; i++ {
 		if m, err := jsonObjectToMap(value); err != nil {
 			found = false
@@ -35,6 +39,7 @@ func getValueFromJsonMap(m map[string]interface{}, compositeKey string) (value i
 			value, found = m[keys[i]]
 		}
 	}
+
 	return
 }
 
@@ -42,18 +47,22 @@ func marshalJsonData(data interface{}) ([]byte, error) {
 	if data == nil {
 		data = struct{}{}
 	}
+
 	return json.MarshalIndent(data, prettyPrintPrefix, prettyPrintIndent)
 }
 
-func jsonObjectsToMaps(structs []interface{}) ([]map[string]interface{}, error) {
-	maps := make([]map[string]interface{}, len(structs))
-	for i, s := range structs {
-		m, err := jsonObjectToMap(s)
+func jsonObjectsToMaps(jsonObjects []interface{}) ([]map[string]interface{}, error) {
+	maps := make([]map[string]interface{}, len(jsonObjects))
+
+	for jsonObjectIndex, jsonObject := range jsonObjects {
+		m, err := jsonObjectToMap(jsonObject)
 		if err != nil {
 			return nil, err
 		}
-		maps[i] = m
+
+		maps[jsonObjectIndex] = m
 	}
+
 	return maps, nil
 }
 
@@ -62,5 +71,6 @@ func jsonObjectToMap(data interface{}) (m map[string]interface{}, err error) {
 	if err == nil {
 		err = json.Unmarshal(jsonEncoding, &m)
 	}
+
 	return
 }

@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
@@ -101,7 +101,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -121,7 +121,7 @@ func addRun(opts *AddOptions) (err error) {
 		}
 	}
 
-	params := servers.NewServersCreateParams().WithV(api.Version)
+	params := servers.NewServersCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
@@ -134,56 +134,64 @@ func addRun(opts *AddOptions) (err error) {
 
 func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNodeLabelsDto, error) {
 	labels := make([]*models.KubernetesNodeLabelsDto, len(labelsData))
-	for i, labelData := range labelsData {
+
+	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
 			return nil, errors.New("Invalid empty kubernetes node label")
 		}
+
 		tokens := strings.Split(labelData, "=")
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
 		}
-		labels[i] = &models.KubernetesNodeLabelsDto{
+
+		labels[labelIndex] = &models.KubernetesNodeLabelsDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}
 	}
+
 	return labels, nil
 }
 
-func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
-	completions = make([]string, 0)
-
+func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
 	if len(args) == 0 {
-		return
+		return []string{}
 	}
+
 	projectID, err := types.Atoi32(args[0])
 	if err != nil {
-		return
+		return []string{}
 	}
 
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return []string{}
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(&projectID)
+
+	completions := make([]string, 0)
 
 	for {
 		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
 		if err != nil {
-			return
+			return []string{}
 		}
+
 		for _, flavor := range response.Payload.Data {
 			completions = append(completions, flavor.Name)
 		}
+
 		count := int32(len(completions))
 
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 
-	return
+	return completions
 }

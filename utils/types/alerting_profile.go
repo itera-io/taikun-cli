@@ -19,7 +19,8 @@ var AlertingIntegrationTypes = gmap.New(
 )
 
 func GetAlertingIntegrationType(integrationType string) models.AlertingIntegrationType {
-	return AlertingIntegrationTypes.Get(integrationType).(models.AlertingIntegrationType)
+	model, _ := AlertingIntegrationTypes.Get(integrationType).(models.AlertingIntegrationType)
+	return model
 }
 
 var AlertingReminders = gmap.New(
@@ -32,5 +33,6 @@ var AlertingReminders = gmap.New(
 )
 
 func GetAlertingReminder(reminder string) models.AlertingReminder {
-	return AlertingReminders.Get(reminder).(models.AlertingReminder)
+	model, _ := AlertingReminders.Get(reminder).(models.AlertingReminder)
+	return model
 }

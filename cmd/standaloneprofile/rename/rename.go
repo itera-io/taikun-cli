@@ -1,11 +1,11 @@
 package rename
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone_profile"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -26,7 +26,7 @@ func NewCmdRename() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return renameRun(&opts)
 		},
@@ -39,7 +39,7 @@ func NewCmdRename() *cobra.Command {
 }
 
 func renameRun(opts *RenameOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -49,7 +49,7 @@ func renameRun(opts *RenameOptions) (err error) {
 		Name: opts.Name,
 	}
 
-	params := stand_alone_profile.NewStandAloneProfileEditParams().WithV(api.Version)
+	params := stand_alone_profile.NewStandAloneProfileEditParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAloneProfile.StandAloneProfileEdit(params, apiClient)

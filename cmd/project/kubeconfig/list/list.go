@@ -1,12 +1,12 @@
 package list
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/kube_config"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +17,7 @@ var listFields = fields.New(
 			"ID", "id",
 		),
 		field.NewVisible(
-			"NAME", "serviceAccountName",
+			"NAME", "displayName",
 		),
 		field.NewVisible(
 			"PROJECT", "projectName",
@@ -77,12 +77,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := kube_config.NewKubeConfigListParams().WithV(api.Version)
+	params := kube_config.NewKubeConfigListParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(&opts.ProjectID)
 
 	response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)

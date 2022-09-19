@@ -1,12 +1,11 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/access_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -69,26 +68,28 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+func addRun(opts *AddOptions) error {
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
-	DNSServers := make([]*models.DNSServerListDto, len(opts.DNSServers))
+	DNSServers := make([]*models.DNSServerCreateDto, len(opts.DNSServers))
 	for i, rawDNSServer := range opts.DNSServers {
-		DNSServers[i] = &models.DNSServerListDto{
+		DNSServers[i] = &models.DNSServerCreateDto{
 			Address: rawDNSServer,
 		}
 	}
-	NTPServers := make([]*models.NtpServerListDto, len(opts.NTPServers))
+
+	NTPServers := make([]*models.NtpServerCreateDto, len(opts.NTPServers))
+
 	for i, rawNTPServer := range opts.NTPServers {
-		NTPServers[i] = &models.NtpServerListDto{
+		NTPServers[i] = &models.NtpServerCreateDto{
 			Address: rawNTPServer,
 		}
 	}
 
-	body := &models.UpsertAccessProfileCommand{
+	body := &models.CreateAccessProfileCommand{
 		Name:           opts.Name,
 		HTTPProxy:      opts.HttpProxy,
 		OrganizationID: opts.OrganizationID,
@@ -96,11 +97,12 @@ func addRun(opts *AddOptions) (err error) {
 		NtpServers:     NTPServers,
 	}
 
-	params := access_profiles.NewAccessProfilesCreateParams().WithV(api.Version).WithBody(body)
+	params := access_profiles.NewAccessProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
+
 	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }

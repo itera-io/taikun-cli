@@ -1,14 +1,13 @@
 package list
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/spf13/cobra"
 )
@@ -45,7 +44,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			accessProfileID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AccessProfileID = accessProfileID
 			return listRun(&opts)
@@ -60,18 +59,19 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := ssh_users.NewSSHUsersListParams().WithV(api.Version).WithAccessProfileID(opts.AccessProfileID)
+	params := ssh_users.NewSSHUsersListParams().WithV(taikungoclient.Version).WithAccessProfileID(opts.AccessProfileID)
+
 	response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
 	if err != nil {
 		return err
 	}
-	sshUsers := response.Payload
 
+	sshUsers := response.Payload
 	if opts.Limit != 0 && int32(len(sshUsers)) > opts.Limit {
 		sshUsers = sshUsers[:opts.Limit]
 	}

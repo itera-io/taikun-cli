@@ -1,10 +1,10 @@
 package status
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone_actions"
 	"github.com/spf13/cobra"
 )
@@ -23,7 +23,7 @@ func NewCmdStatus() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.StandaloneVMID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return statusRun(&opts)
 		},
@@ -33,12 +33,12 @@ func NewCmdStatus() *cobra.Command {
 }
 
 func statusRun(opts *StatusOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := stand_alone_actions.NewStandAloneActionsShowStandaloneVMStatusParams().WithV(api.Version)
+	params := stand_alone_actions.NewStandAloneActionsShowStandaloneVMStatusParams().WithV(taikungoclient.Version)
 	params = params.WithID(opts.StandaloneVMID)
 
 	response, err := apiClient.Client.StandAloneActions.StandAloneActionsShowStandaloneVMStatus(params, apiClient)

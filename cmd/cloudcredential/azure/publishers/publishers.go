@@ -1,10 +1,10 @@
 package publishers
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/azure"
 	"github.com/spf13/cobra"
 )
@@ -40,32 +40,38 @@ func publishersRun(opts *PublishersOptions) (err error) {
 	if err == nil {
 		out.PrintStringSlice(publishers)
 	}
+
 	return
 }
 
 func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	params := azure.NewAzurePublishersParams().WithV(api.Version)
+	params := azure.NewAzurePublishersParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 
 	publishers = make([]string, 0)
+
 	for {
 		response, err := apiClient.Client.Azure.AzurePublishers(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		publishers = append(publishers, response.Payload.Data...)
+
 		count := int32(len(publishers))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 
@@ -73,5 +79,5 @@ func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 		publishers = publishers[:opts.Limit]
 	}
 
-	return
+	return publishers, nil
 }

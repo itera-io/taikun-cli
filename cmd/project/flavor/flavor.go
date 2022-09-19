@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/flavor/bind"
 	"github.com/itera-io/taikun-cli/cmd/project/flavor/list"
 	"github.com/itera-io/taikun-cli/cmd/project/flavor/unbind"
-
 	"github.com/spf13/cobra"
 )
 

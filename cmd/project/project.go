@@ -3,7 +3,10 @@ package project
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/add"
 	"github.com/itera-io/taikun-cli/cmd/project/alert"
-	"github.com/itera-io/taikun-cli/cmd/project/delete"
+	"github.com/itera-io/taikun-cli/cmd/project/backup"
+	"github.com/itera-io/taikun-cli/cmd/project/backupsource"
+	"github.com/itera-io/taikun-cli/cmd/project/disablemonitoring"
+	"github.com/itera-io/taikun-cli/cmd/project/enablemonitoring"
 	"github.com/itera-io/taikun-cli/cmd/project/etc"
 	"github.com/itera-io/taikun-cli/cmd/project/flavor"
 	"github.com/itera-io/taikun-cli/cmd/project/image"
@@ -12,11 +15,11 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/kubeconfig"
 	"github.com/itera-io/taikun-cli/cmd/project/list"
 	"github.com/itera-io/taikun-cli/cmd/project/lock"
-	"github.com/itera-io/taikun-cli/cmd/project/monitoringtoggle"
 	"github.com/itera-io/taikun-cli/cmd/project/quota"
+	"github.com/itera-io/taikun-cli/cmd/project/remove"
+	"github.com/itera-io/taikun-cli/cmd/project/restore"
 	"github.com/itera-io/taikun-cli/cmd/project/unlock"
 	"github.com/itera-io/taikun-cli/cmd/project/vm"
-
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +31,7 @@ func NewCmdProject() *cobra.Command {
 
 	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(alert.NewCmdAlert())
-	cmd.AddCommand(delete.NewCmdDelete())
+	cmd.AddCommand(backup.NewCmdBackup())
 	cmd.AddCommand(etc.NewCmdEtc())
 	cmd.AddCommand(flavor.NewCmdFlavor())
 	cmd.AddCommand(image.NewCmdImage())
@@ -37,10 +40,14 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(kubeconfig.NewCmdKubeconfig())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
+	cmd.AddCommand(enablemonitoring.NewCmdEnableMonitoring())
+	cmd.AddCommand(disablemonitoring.NewCmdDisableMonitoring())
 	cmd.AddCommand(quota.NewCmdQuota())
-	cmd.AddCommand(monitoringtoggle.NewCmdMonitoringToggle())
+	cmd.AddCommand(remove.NewCmdDelete())
 	cmd.AddCommand(unlock.NewCmdUnlock())
 	cmd.AddCommand(vm.NewCmdVm())
+	cmd.AddCommand(restore.NewCmdRestore())
+	cmd.AddCommand(backupsource.NewCmdBackupSource())
 
 	return cmd
 }

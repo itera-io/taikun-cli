@@ -1,14 +1,14 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/showback/rule/label/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient/client/showback"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ShowbackRuleID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return addRun(&opts)
 		},
@@ -43,16 +43,17 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+func addRun(opts *AddOptions) error {
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
 	showbackRule, err := list.GetShowbackRuleByID(opts.ShowbackRuleID)
 	if err != nil {
-		return
+		return err
 	}
+
 	newLabel := models.ShowbackLabelCreateDto{Label: opts.Label, Value: opts.Value}
 	showbackRule.Labels = append(showbackRule.Labels, &newLabel)
 
@@ -65,16 +66,17 @@ func addRun(opts *AddOptions) (err error) {
 		Name:              showbackRule.Name,
 		Price:             showbackRule.Price,
 		ProjectAlertLimit: showbackRule.ProjectAlertLimit,
-		Type:              types.GetPrometheusType(showbackRule.Type),
+		Type:              types.GetEPrometheusType(showbackRule.Type),
 	}
 
-	params := showback.NewShowbackUpdateRuleParams().WithV(api.Version)
+	params := showback_rules.NewShowbackRulesUpdateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
-	_, err = apiClient.Client.Showback.ShowbackUpdateRule(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	if _, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesUpdate(params, apiClient); err != nil {
+		return err
 	}
 
-	return
+	out.PrintStandardSuccess()
+
+	return nil
 }

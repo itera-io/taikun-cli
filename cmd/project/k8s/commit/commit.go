@@ -1,9 +1,9 @@
 package commit
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/spf13/cobra"
 )
@@ -32,12 +32,12 @@ func NewCmdCommit() *cobra.Command {
 }
 
 func commitRun(opts *CommitOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := projects.NewProjectsCommitParams().WithV(api.Version)
+	params := projects.NewProjectsCommitParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	_, err = apiClient.Client.Projects.ProjectsCommit(params, apiClient)

@@ -3,13 +3,13 @@ package add
 import (
 	"errors"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone_vm_disks"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -60,7 +60,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.StandaloneVMID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			cloudSpecificOptionsSet := 0
 			if opts.AwsDeviceName != "" {
@@ -101,7 +101,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -120,7 +120,7 @@ func addRun(opts *AddOptions) (err error) {
 		body.VolumeType = opts.OpenStackVolumeType
 	}
 
-	params := stand_alone_vm_disks.NewStandAloneVMDisksCreateParams().WithV(api.Version)
+	params := stand_alone_vm_disks.NewStandAloneVMDisksCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.StandAloneVMDisks.StandAloneVMDisksCreate(params, apiClient)

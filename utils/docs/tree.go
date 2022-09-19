@@ -18,10 +18,13 @@ func PrintCommandTree(cmd *cobra.Command) {
 
 func buildTree(tree list.Writer, cmd *cobra.Command) {
 	cmdDescription := cmd.Name() + " (" + cmd.Short + ")"
+
 	tree.AppendItem(cmdDescription)
 	tree.Indent()
+
 	for _, childCmd := range cmd.Commands() {
 		buildTree(tree, childCmd)
 	}
+
 	tree.UnIndent()
 }

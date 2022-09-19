@@ -1,11 +1,10 @@
 package edit
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/project_quotas"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -28,7 +27,7 @@ func NewCmdEdit() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.QuotaID = id
 			return editRun(&opts)
@@ -42,36 +41,35 @@ func NewCmdEdit() *cobra.Command {
 	return cmd
 }
 
-func editRun(opts *EditOptions) (err error) {
-	apiClient, err := api.NewClient()
+func editRun(opts *EditOptions) error {
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return err
 	}
 
-	body := &models.ProjectQuotaUpdateDto{
-		IsCPUUnlimited:      true,
-		IsDiskSizeUnlimited: true,
-		IsRAMUnlimited:      true,
+	body := &models.UpdateQuotaCommand{
+		QuotaID: opts.QuotaID,
 	}
 
 	if opts.CPU > 0 {
-		body.IsCPUUnlimited = false
-		body.CPU = opts.CPU
+		body.ServerCPU = opts.CPU
 	}
+
 	if opts.DiskSize > 0 {
-		body.IsDiskSizeUnlimited = false
-		body.DiskSize = types.GiBToB(opts.DiskSize)
+		body.ServerDiskSize = types.GiBToB(opts.DiskSize)
 	}
+
 	if opts.RAM > 0 {
-		body.IsRAMUnlimited = false
-		body.RAM = types.GiBToB(opts.RAM)
+		body.ServerRAM = types.GiBToB(opts.RAM)
 	}
 
-	params := project_quotas.NewProjectQuotasEditParams().WithV(api.Version).WithBody(body).WithQuotaID(opts.QuotaID)
-	_, err = apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	params := project_quotas.NewProjectQuotasEditParams().WithV(taikungoclient.Version).WithBody(body)
+
+	if _, err := apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient); err != nil {
+		return err
 	}
 
-	return
+	out.PrintStandardSuccess()
+
+	return nil
 }

@@ -13,9 +13,11 @@ func PrintResult(resource interface{}, fields fields.Fields) error {
 	if config.OutputOnlyID {
 		return printResourceID(resource)
 	}
+
 	if config.OutputFormat == config.OutputFormatJson {
 		return prettyPrintJson(resource)
 	}
+
 	return printApiResponseTable(resource, fields)
 }
 
@@ -24,11 +26,14 @@ func printResourceID(resource interface{}) error {
 	if err != nil {
 		return cmderr.ProgramError("printResourceID", err)
 	}
+
 	id, found := resourceMap["id"]
 	if !found {
 		return errors.New("response doesn't contain ID")
 	}
+
 	Println(resourceIDToString(id))
+
 	return nil
 }
 
@@ -46,28 +51,29 @@ func printApiResponseTable(response interface{}, fields fields.Fields) error {
 		return cmderr.ProgramError("printApiResponseTable", err)
 	}
 
-	t := newTable()
+	tab := newTable()
+
 	for _, field := range fields.VisibleFields() {
 		value, _ := getValueFromJsonMap(resourceMap, field.JsonPropertyName())
-		t.AppendRow([]interface{}{
+		tab.AppendRow([]interface{}{
 			field.Name(),
 			trimCellValue(field.Format(value)),
 		})
 	}
 
-	renderTable(t)
+	renderTable(tab)
+
 	return nil
 }
 
 func getApiResponseResourceMap(response interface{}) (resourceMap map[string]interface{}, err error) {
-	resourceMap, err = jsonObjectToMap(response)
-	if err != nil {
-		return
+	if resourceMap, err = jsonObjectToMap(response); err == nil {
+		if nestedMap, ok := resourceMap[api.ResultField].(map[string]interface{}); ok {
+			resourceMap = nestedMap
+		} else if nestedMap, ok := resourceMap[api.PayloadField].(map[string]interface{}); ok {
+			resourceMap = nestedMap
+		}
 	}
-	if resourceMap[api.ResultField] != nil {
-		resourceMap = resourceMap[api.ResultField].(map[string]interface{})
-	} else if resourceMap[api.PayloadField] != nil {
-		resourceMap = resourceMap[api.PayloadField].(map[string]interface{})
-	}
+
 	return
 }

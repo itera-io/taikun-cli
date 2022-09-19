@@ -16,8 +16,8 @@ install: build
 
 .PHONY: test
 test: install
-	shellspec --format tap ${TESTARGS}
+	shellspec --shell bash --format tap ${TESTARGS} | tee shellspec.log
 
 .PHONY: vimtest
 vimtest:
-	@shellspec --format failures ${TESTARGS}
+	@shellspec --shell bash --format failures ${TESTARGS}

@@ -9,5 +9,6 @@ func PrintResults(slice interface{}, fields fields.Fields) error {
 	if config.OutputFormat == config.OutputFormatJson {
 		return prettyPrintJson(slice)
 	}
+
 	return printTable(slice, fields)
 }

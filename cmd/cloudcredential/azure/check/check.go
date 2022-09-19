@@ -1,11 +1,10 @@
 package check
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -42,7 +41,7 @@ func NewCmdCheck() *cobra.Command {
 }
 
 func checkRun(opts *CheckOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -53,12 +52,13 @@ func checkRun(opts *CheckOptions) (err error) {
 		AzureTenantID:     opts.AzureTenantId,
 	}
 
-	params := checker.NewCheckerAzureParams().WithV(api.Version).WithBody(&body)
+	params := checker.NewCheckerAzureParams().WithV(taikungoclient.Version).WithBody(&body)
+
 	_, err = apiClient.Client.Checker.CheckerAzure(params, apiClient)
 	if err == nil {
 		out.PrintCheckSuccess("Azure cloud credential")
 	} else if _, isValidationProblem := err.(*checker.CheckerAzureBadRequest); isValidationProblem {
-		return cmderr.CheckFailureError("Azure cloud credential")
+		return cmderr.ErrCheckFailure("Azure cloud credential")
 	}
 
 	return

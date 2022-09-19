@@ -13,5 +13,6 @@ var UserRoles = gmap.New(
 )
 
 func GetUserRole(role string) models.UserRole {
-	return UserRoles.Get(role).(models.UserRole)
+	model, _ := UserRoles.Get(role).(models.UserRole)
+	return model
 }

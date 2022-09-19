@@ -9,6 +9,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -121,13 +122,14 @@ func listRun(opts *ListOptions) (err error) {
 }
 
 func ListServers(opts *ListOptions) (projectServers []*models.ServerListDto, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := servers.NewServersDetailsParams().WithV(api.Version)
+	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(opts.ProjectID)
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy)
 		params = params.WithSortDirection(api.GetSortDirection())
@@ -145,14 +147,22 @@ func getFlavorField(servers []*models.ServerListDto) (string, error) {
 	if len(servers) == 0 {
 		return "flavor", nil
 	}
+
 	if servers[0].AwsInstanceType != "" {
 		return "awsInstanceType", nil
 	}
+
 	if servers[0].AzureVMSize != "" {
 		return "azureVmSize", nil
 	}
+
 	if servers[0].OpenstackFlavor != "" {
 		return "openstackFlavor", nil
 	}
-	return "", cmderr.ServerHasNoFlavorError
+
+	if servers[0].GoogleMachineType != "" {
+		return "googleMachineType", nil
+	}
+
+	return "", cmderr.ErrServerHasNoFlavors
 }

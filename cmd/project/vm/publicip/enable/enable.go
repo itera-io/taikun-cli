@@ -1,10 +1,10 @@
 package enable
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -24,7 +24,7 @@ func NewCmdEnable() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.StandaloneVMID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return enableRun(&opts)
 		},
@@ -34,7 +34,7 @@ func NewCmdEnable() *cobra.Command {
 }
 
 func enableRun(opts *EnableOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -44,7 +44,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		Mode: types.EnableVMPublicIP,
 	}
 
-	params := stand_alone.NewStandAloneIPManagementParams().WithV(api.Version)
+	params := stand_alone.NewStandAloneIPManagementParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAlone.StandAloneIPManagement(params, apiClient)

@@ -1,11 +1,10 @@
 package lock
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/s3_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -19,7 +18,7 @@ func NewCmdLock() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			backupCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return lockRun(backupCredentialID)
 		},
@@ -28,17 +27,18 @@ func NewCmdLock() *cobra.Command {
 	return cmd
 }
 
-func lockRun(id int32) (err error) {
-	apiClient, err := api.NewClient()
+func lockRun(backupCredentialID int32) (err error) {
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.BackupLockManagerCommand{
-		ID:   id,
+		ID:   backupCredentialID,
 		Mode: types.LockedMode,
 	}
-	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(api.Version).WithBody(&body)
+	params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
+
 	_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()

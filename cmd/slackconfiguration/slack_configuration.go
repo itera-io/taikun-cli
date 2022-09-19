@@ -2,8 +2,8 @@ package slackconfiguration
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration/add"
-	"github.com/itera-io/taikun-cli/cmd/slackconfiguration/delete"
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration/list"
+	"github.com/itera-io/taikun-cli/cmd/slackconfiguration/remove"
 	"github.com/spf13/cobra"
 )
 
@@ -15,8 +15,8 @@ func NewCmdSlackConfiguration() *cobra.Command {
 	}
 
 	cmd.AddCommand(add.NewCmdAdd())
-	cmd.AddCommand(delete.NewCmdDelete())
 	cmd.AddCommand(list.NewCmdList())
+	cmd.AddCommand(remove.NewCmdDelete())
 
 	return &cmd
 }

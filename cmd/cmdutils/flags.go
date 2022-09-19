@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/spf13/cobra"
 )
@@ -44,11 +44,14 @@ func makeSortByPreRunE(fields fields.Fields) runE {
 		if config.SortBy == "" {
 			return nil
 		}
+
 		jsonPropertyName, found := fields.GetJsonPropertyNameFromName(config.SortBy)
 		if !found {
 			return fmt.Errorf("unknown sorting element '%s'", config.SortBy)
 		}
+
 		config.SortBy = jsonPropertyName
+
 		return nil
 	}
 }
@@ -61,6 +64,7 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 		}
 
 		completions := make([]string, 0)
+
 		for _, jsonPropertyName := range sortingElements {
 			for _, field := range fields.AllFields() {
 				if field.JsonPropertyName() == jsonPropertyName {
@@ -75,12 +79,12 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 }
 
 func getSortingElements(sortType string) (sortingElements []string, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := common.NewCommonGetSortingElementsParams().WithV(api.Version)
+	params := common.NewCommonGetSortingElementsParams().WithV(taikungoclient.Version)
 	params = params.WithType(sortType)
 
 	response, err := apiClient.Client.Common.CommonGetSortingElements(params, apiClient)
@@ -127,6 +131,7 @@ func lowerStringSlice(stringSlice []string) []string {
 	for i, str := range stringSlice {
 		lower[i] = strings.ToLower(str)
 	}
+
 	return lower
 }
 
@@ -135,7 +140,7 @@ func AddLimitFlag(cmd *cobra.Command, limit *int32) {
 	cmd.PreRunE = aggregateRunE(cmd.PreRunE,
 		func(cmd *cobra.Command, args []string) error {
 			if *limit < 0 {
-				return cmderr.NegativeLimitFlagError
+				return cmderr.ErrNegativeLimit
 			}
 			return nil
 		},
@@ -146,5 +151,6 @@ func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) er
 	if !valid.Contains(flagValue) {
 		return cmderr.UnknownFlagValueError(flagName, flagValue, valid.Keys())
 	}
+
 	return nil
 }

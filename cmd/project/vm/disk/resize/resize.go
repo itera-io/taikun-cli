@@ -1,11 +1,11 @@
 package resize
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone_vm_disks"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -26,7 +26,7 @@ func NewCmdResize() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.DiskID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return resizeRun(&opts)
 		},
@@ -39,7 +39,7 @@ func NewCmdResize() *cobra.Command {
 }
 
 func resizeRun(opts *ResizeOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -49,7 +49,7 @@ func resizeRun(opts *ResizeOptions) (err error) {
 		Size: opts.Size,
 	}
 
-	params := stand_alone_vm_disks.NewStandAloneVMDisksUpdateDiskSizeParams().WithV(api.Version)
+	params := stand_alone_vm_disks.NewStandAloneVMDisksUpdateDiskSizeParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAloneVMDisks.StandAloneVMDisksUpdateDiskSize(params, apiClient)

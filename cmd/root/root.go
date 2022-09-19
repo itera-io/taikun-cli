@@ -20,7 +20,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/user"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
-
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +31,7 @@ func NewCmdRoot() *cobra.Command {
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			if !config.OutputFormatIsValid() {
-				return cmderr.OutputFormatInvalidError
+				return cmderr.ErrUnknownOutputFormat
 			}
 			return nil
 		},

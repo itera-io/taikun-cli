@@ -1,11 +1,11 @@
 package offers
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/azure"
 	"github.com/spf13/cobra"
 )
@@ -62,33 +62,39 @@ func offersRun(opts *OffersOptions) (err error) {
 	if err == nil {
 		out.PrintStringSlice(offers)
 	}
+
 	return
 }
 
 func ListOffers(opts *OffersOptions) (offers []string, err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	params := azure.NewAzureOffersParams().WithV(api.Version)
+	params := azure.NewAzureOffersParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithPublisher(opts.Publisher)
 
 	offers = make([]string, 0)
+
 	for {
 		response, err := apiClient.Client.Azure.AzureOffers(params, apiClient)
 		if err != nil {
 			return nil, err
 		}
+
 		offers = append(offers, response.Payload.Data...)
+
 		count := int32(len(offers))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 
@@ -96,5 +102,5 @@ func ListOffers(opts *OffersOptions) (offers []string, err error) {
 		offers = offers[:opts.Limit]
 	}
 
-	return
+	return offers, nil
 }

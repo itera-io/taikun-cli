@@ -4,7 +4,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook/add"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook/clear"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile/webhook/list"
-
 	"github.com/spf13/cobra"
 )
 

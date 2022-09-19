@@ -1,12 +1,11 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
@@ -121,12 +120,12 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.SetFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
 		completions = make([]string, 0)
 
-		apiClient, err := api.NewClient()
+		apiClient, err := taikungoclient.NewClient()
 		if err != nil {
 			return
 		}
 
-		params := common.NewCommonGetCountryListParams().WithV(api.Version)
+		params := common.NewCommonGetCountryListParams().WithV(taikungoclient.Version)
 		result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
 		if err != nil {
 			return
@@ -146,7 +145,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -165,7 +164,8 @@ func addRun(opts *AddOptions) (err error) {
 		VatNumber:                    opts.VatNumber,
 	}
 
-	params := organizations.NewOrganizationsCreateParams().WithV(api.Version).WithBody(&body)
+	params := organizations.NewOrganizationsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
+
 	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

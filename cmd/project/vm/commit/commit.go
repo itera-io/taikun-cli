@@ -1,10 +1,10 @@
 package commit
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -24,7 +24,7 @@ func NewCmdCommit() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return commitRun(&opts)
 		},
@@ -34,13 +34,13 @@ func NewCmdCommit() *cobra.Command {
 }
 
 func commitRun(opts *CommitOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.CommitStandAloneVMCommand{ProjectID: opts.ProjectID}
-	params := stand_alone.NewStandAloneCommitParams().WithV(api.Version)
+	params := stand_alone.NewStandAloneCommitParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.StandAlone.StandAloneCommit(params, apiClient)

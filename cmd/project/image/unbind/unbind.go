@@ -1,10 +1,10 @@
 package unbind
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/images"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -24,7 +24,7 @@ func NewCmdUnbind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ImageBindingIDs, err = cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return unbindRun(&opts)
 		},
@@ -34,7 +34,7 @@ func NewCmdUnbind() *cobra.Command {
 }
 
 func unbindRun(opts *UnbindOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -43,7 +43,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 		Ids: opts.ImageBindingIDs,
 	}
 
-	params := images.NewImagesUnbindImagesFromProjectParams().WithV(api.Version)
+	params := images.NewImagesUnbindImagesFromProjectParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Images.ImagesUnbindImagesFromProject(params, apiClient)

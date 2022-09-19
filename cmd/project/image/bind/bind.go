@@ -1,11 +1,11 @@
 package bind
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/images"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -26,7 +26,7 @@ func NewCmdBind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return bindRun(&opts)
 		},
@@ -39,7 +39,7 @@ func NewCmdBind() *cobra.Command {
 }
 
 func bindRun(opts *BindOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -49,7 +49,7 @@ func bindRun(opts *BindOptions) (err error) {
 		Images:    opts.ImageIDs,
 	}
 
-	params := images.NewImagesBindImagesToProjectParams().WithV(api.Version)
+	params := images.NewImagesBindImagesToProjectParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	_, err = apiClient.Client.Images.ImagesBindImagesToProject(params, apiClient)

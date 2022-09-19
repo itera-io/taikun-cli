@@ -2,6 +2,7 @@ package flavors
 
 import (
 	"github.com/itera-io/taikun-cli/api"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/utils"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -9,7 +10,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -23,8 +24,8 @@ var flavorsFields = fields.New(
 		field.NewVisible(
 			"CPU", "cpu",
 		),
-		field.NewVisible(
-			"RAM", "ram",
+		field.NewVisibleWithToStringFunc(
+			"RAM", "ram", out.FormatRAM,
 		),
 		field.NewHidden(
 			"DESCRIPTION", "description",
@@ -51,9 +52,12 @@ func NewCmdFlavors() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cloudCredentialID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.CloudCredentialID = cloudCredentialID
+			if err = adjustRamUnits(&opts); err != nil {
+				return err
+			}
 			return flavorRun(&opts)
 		},
 	}
@@ -70,36 +74,66 @@ func NewCmdFlavors() *cobra.Command {
 	return &cmd
 }
 
-func flavorRun(opts *FlavorsOptions) (err error) {
-	apiClient, err := api.NewClient()
+func adjustRamUnits(opts *FlavorsOptions) (err error) {
+	cloudType, err := utils.GetCloudType(opts.CloudCredentialID)
 	if err != nil {
 		return
 	}
 
-	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(api.Version)
+	switch cloudType {
+	case utils.GOOGLE:
+		// Temporarily ignore RAM range for Google until units are set to GiB
+		opts.MinRAM = -1
+		opts.MaxRAM = -1
+	default:
+		opts.MinRAM = types.GiBToMiB(opts.MinRAM)
+		opts.MaxRAM = types.GiBToMiB(opts.MaxRAM)
+	}
+
+	return
+}
+
+func flavorRun(opts *FlavorsOptions) (err error) {
+	apiClient, err := taikungoclient.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(taikungoclient.Version)
 	params = params.WithCloudID(opts.CloudCredentialID)
 	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
-	minRAM := types.GiBToMiB(opts.MinRAM)
-	maxRAM := types.GiBToMiB(opts.MaxRAM)
-	params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+
+	minRAM := opts.MinRAM
+	maxRAM := opts.MaxRAM
+
+	// Temporarily ignore RAM range for Google until units are set to GiB
+	if minRAM != -1 && maxRAM != -1 {
+		params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	flavors := []*models.FlavorsListDto{}
+
 	for {
 		response, err := apiClient.Client.CloudCredentials.CloudCredentialsAllFlavors(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		flavors = append(flavors, response.Payload.Data...)
+
 		flavorsCount := int32(len(flavors))
 		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
+
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&flavorsCount)
 	}
 

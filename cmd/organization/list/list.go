@@ -7,7 +7,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -103,30 +103,35 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := organizations.NewOrganizationsListParams().WithV(api.Version)
+	params := organizations.NewOrganizationsListParams().WithV(taikungoclient.Version)
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var organizations = make([]*models.OrganizationDetailsDto, 0)
+
 	for {
 		response, err := apiClient.Client.Organizations.OrganizationsList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		organizations = append(organizations, response.Payload.Data...)
+
 		organizationsCount := int32(len(organizations))
 		if opts.Limit != 0 && organizationsCount >= opts.Limit {
 			break
 		}
+
 		if organizationsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&organizationsCount)
 	}
 

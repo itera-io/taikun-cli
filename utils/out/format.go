@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/itera-io/taikun-cli/config"
+	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/types"
 )
 
@@ -18,9 +19,11 @@ func trimCellValue(value interface{}) interface{} {
 				str = str[:(config.MaxCellWidth - len(trimmedValueSuffix))]
 				str += trimmedValueSuffix
 			}
+
 			return str
 		}
 	}
+
 	return value
 }
 
@@ -28,6 +31,7 @@ func resourceIDToString(id interface{}) string {
 	if str, isString := id.(string); isString {
 		return strings.ReplaceAll(str, "\"", "")
 	}
+
 	return fmt.Sprint(id)
 }
 
@@ -35,14 +39,16 @@ func resourceIDToString(id interface{}) string {
 func FormatDateTimeString(v interface{}) string {
 	if dateTime, ok := v.(string); ok {
 		if dateTime == "" {
-			return "N/A"
+			return field.NotAvailable
 		}
+
 		dateTime = strings.Replace(dateTime, "T", " ", 1)
 		dateTime = strings.Replace(dateTime, "Z", "", 1)
+
 		return dateTime
 	}
-	return "N/A"
 
+	return field.NotAvailable
 }
 
 // Display true/false as Locked/Unlocked
@@ -51,20 +57,24 @@ func FormatLockStatus(v interface{}) string {
 		if lockStatus {
 			return "Locked"
 		}
+
 		return "Unlocked"
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
-// If not availabale, display N/A
+// If not available, display N/A
 func FormatProjectHealth(v interface{}) string {
 	if health, ok := v.(string); ok {
 		if health == "None" {
-			return "N/A"
+			return field.NotAvailable
 		}
+
 		return health
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
 // Capitalize cloud type
@@ -77,9 +87,12 @@ func FormatCloudType(v interface{}) string {
 			return "AWS"
 		case "azure":
 			return "Azure"
+		case "google":
+			return "Google"
 		}
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
 // Format estimated time of completion
@@ -89,11 +102,14 @@ func FormatETC(v interface{}) string {
 			if etcValue == 0 {
 				return "Under a minute"
 			}
+
 			return fmt.Sprintf("%s minutes", etc)
 		}
+
 		return etc
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
 // Format Bytes as GiB
@@ -101,23 +117,27 @@ func FormatBToGiB(v interface{}) string {
 	if bytes, ok := v.(float64); ok {
 		var jsMaxSafeInteger float64 = 9007199254740991
 		if bytes == jsMaxSafeInteger {
-			return "N/A"
+			return field.NotAvailable
 		}
+
 		return fmt.Sprintf("%d GiB", int(bytes/math.Pow(1024, 3)))
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
 // Format number
 func FormatNumber(v interface{}) string {
-	if n, ok := v.(float64); ok {
+	if number, ok := v.(float64); ok {
 		var jsMaxSafeInteger float64 = 9007199254740991
-		if n == jsMaxSafeInteger {
-			return "N/A"
+		if number == jsMaxSafeInteger {
+			return field.NotAvailable
 		}
-		return fmt.Sprint(n)
+
+		return fmt.Sprint(number)
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
 // Format resource ID
@@ -125,7 +145,21 @@ func FormatID(v interface{}) string {
 	if id, ok := v.(string); ok && id != "0" {
 		return id
 	}
-	return "N/A"
+
+	return field.NotAvailable
+}
+
+// Format RAM by dividing by 1024 until RAM is less than 1024
+func FormatRAM(v interface{}) string {
+	if ram, ok := v.(float64); ok {
+		for ram >= 1024 {
+			ram = ram / 1024
+		}
+
+		return fmt.Sprintf("%d GiB", int(ram))
+	}
+
+	return field.NotAvailable
 }
 
 // Format Slack channel
@@ -133,7 +167,8 @@ func FormatSlackChannel(v interface{}) string {
 	if channel, ok := v.(string); ok {
 		return fmt.Sprintf("#%s", channel)
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
 // Format string as all caps
@@ -141,29 +176,36 @@ func FormatStringUpper(v interface{}) string {
 	if str, ok := v.(string); ok {
 		return strings.ToUpper(str)
 	}
-	return "N/A"
+
+	return field.NotAvailable
 }
 
 // Format standalone VM tag list
 func FormatVMTags(v interface{}) (str string) {
-	str = "N/A"
+	str = field.NotAvailable
+
 	if tags, ok := v.([]interface{}); ok {
 		var stringBuilder strings.Builder
+
 		if tagCount := len(tags); tagCount != 0 {
-			tag, ok := formatVMTag(tags[0])
-			if ok {
+			tag, tagFormatIsValid := formatVMTag(tags[0])
+			if tagFormatIsValid {
 				stringBuilder.WriteString(tag)
 			}
-			for i := 1; i < tagCount && ok; i++ {
-				tag, ok = formatVMTag(tags[i])
+
+			for i := 1; i < tagCount && tagFormatIsValid; i++ {
+				tag, tagFormatIsValid = formatVMTag(tags[i])
+
 				stringBuilder.WriteString(",")
 				stringBuilder.WriteString(tag)
 			}
-			if ok {
+
+			if tagFormatIsValid {
 				str = stringBuilder.String()
 			}
 		}
 	}
+
 	return
 }
 
@@ -179,14 +221,15 @@ func formatVMTag(v interface{}) (str string, ok bool) {
 	if !ok {
 		return
 	}
-	stringBuilder.WriteString(key)
 
+	stringBuilder.WriteString(key)
 	stringBuilder.WriteString("=")
 
 	value, ok := getTagValue(tagMap, "value")
 	if !ok {
 		return
 	}
+
 	stringBuilder.WriteString(value)
 
 	str = stringBuilder.String()
@@ -199,5 +242,6 @@ func getTagValue(tagMap map[string]interface{}, key string) (valueString string,
 	if ok {
 		valueString, ok = value.(string)
 	}
+
 	return
 }

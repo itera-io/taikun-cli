@@ -9,7 +9,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/flavors"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -62,7 +62,7 @@ func NewCmdList() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			projectID, err := types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.ProjectID = projectID
 			return listRun(&opts)
@@ -78,32 +78,37 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(api.Version)
+	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(&opts.ProjectID)
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	flavors := []*models.BoundFlavorsForProjectsListDto{}
+
 	for {
 		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		flavors = append(flavors, response.Payload.Data...)
 		flavorsCount := int32(len(flavors))
 
 		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
+
 		if flavorsCount == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&flavorsCount)
 	}
 

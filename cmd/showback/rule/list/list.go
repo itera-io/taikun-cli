@@ -7,8 +7,9 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient/client/showback"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
 	"github.com/spf13/cobra"
 )
 
@@ -81,33 +82,39 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := showback.NewShowbackRulesListParams().WithV(api.Version)
+	params := showback_rules.NewShowbackRulesListParams().WithV(taikungoclient.Version)
 	if opts.OrganizationID != 0 {
 		params = params.WithOrganizationID(&opts.OrganizationID)
 	}
+
 	if config.SortBy != "" {
 		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
 	}
 
 	var showbackRules = make([]*models.ShowbackRulesListDto, 0)
+
 	for {
-		response, err := apiClient.Client.Showback.ShowbackRulesList(params, apiClient)
+		response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesList(params, apiClient)
 		if err != nil {
 			return err
 		}
+
 		showbackRules = append(showbackRules, response.Payload.Data...)
+
 		count := int32(len(showbackRules))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
+
 		if count == response.Payload.TotalCount {
 			break
 		}
+
 		params = params.WithOffset(&count)
 	}
 

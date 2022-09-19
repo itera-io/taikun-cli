@@ -1,13 +1,13 @@
 package info
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/spf13/cobra"
 )
@@ -80,7 +80,7 @@ var infoFields = fields.New(
 		field.NewVisible(
 			"K8S-VERSION", "kubernetesCurrentVersion",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"KUBESPRAY-VERSION", "kubeCurrentVersion",
 		),
 		field.NewVisible(
@@ -136,7 +136,7 @@ func NewCmdInfo() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			return infoRun(&opts)
 		},
@@ -148,12 +148,12 @@ func NewCmdInfo() *cobra.Command {
 }
 
 func infoRun(opts *InfoOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	params := servers.NewServersDetailsParams().WithV(api.Version)
+	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
 	params = params.WithProjectID(opts.ProjectID)
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)

@@ -1,12 +1,11 @@
 package add
 
 import (
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -51,12 +50,13 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	AllowSchedulingOnMaster bool
-	ExposeNodePortOnBastion bool
-	Name                    string
-	OctaviaEnabled          bool
-	OrganizationID          int32
-	TaikunLBEnabled         bool
+	AllowSchedulingOnMaster  bool
+	ExposeNodePortOnBastion  bool
+	Name                     string
+	OctaviaEnabled           bool
+	OrganizationID           int32
+	TaikunLBEnabled          bool
+	DisableUniqueClusterName bool
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -77,6 +77,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.ExposeNodePortOnBastion, "expose-node-port-on-bastion", false, "Expose Node Port on Bastion")
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
+	cmd.Flags().BoolVar(&opts.DisableUniqueClusterName, "disable-unique-cluster-name", false, "Disable unique cluster name, the cluster name will be cluster.local")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -85,7 +86,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -97,9 +98,11 @@ func addRun(opts *AddOptions) (err error) {
 		OctaviaEnabled:          opts.OctaviaEnabled,
 		OrganizationID:          opts.OrganizationID,
 		TaikunLBEnabled:         opts.TaikunLBEnabled,
+		UniqueClusterName:       !opts.DisableUniqueClusterName,
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(api.Version).WithBody(body)
+	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
+
 	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

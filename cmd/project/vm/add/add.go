@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/add/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/stand_alone"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -73,6 +73,7 @@ type AddOptions struct {
 	PublicIP            bool
 	StandAloneProfileID int32
 	Tags                []string
+	Username            string
 	VolumeSize          int64
 	VolumeType          string
 }
@@ -111,6 +112,8 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringSliceVarP(&opts.Tags, "tags", "t", []string{}, `Tags (format: "key=value,key2=value2,...")`)
 
+	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "Username (required)")
+
 	cmd.Flags().Int64Var(&opts.VolumeSize, "volume-size", 0, "Volume size in GiB (required)")
 	cmdutils.MarkFlagRequired(&cmd, "volume-size")
 
@@ -125,59 +128,66 @@ func NewCmdAdd() *cobra.Command {
 
 func parseTagsOption(tagsOption []string) ([]*models.StandAloneMetaDataDto, error) {
 	tags := make([]*models.StandAloneMetaDataDto, len(tagsOption))
-	for i, tag := range tagsOption {
+
+	for tagIndex, tag := range tagsOption {
 		if len(tag) == 0 {
 			return nil, errors.New("Invalid empty VM tag")
 		}
+
 		tokens := strings.Split(tag, "=")
 		if len(tokens) != 2 {
 			return nil, fmt.Errorf("Invalid VM tag format: %s", tag)
 		}
-		tags[i] = &models.StandAloneMetaDataDto{
+
+		tags[tagIndex] = &models.StandAloneMetaDataDto{
 			Key:   tokens[0],
 			Value: tokens[1],
 		}
 	}
+
 	return tags, nil
 }
 
-func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+func addRun(opts *AddOptions) error {
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
-		return
+		return err
+	}
+
+	tags, err := parseTagsOption(opts.Tags)
+	if err != nil {
+		return err
 	}
 
 	body := models.CreateStandAloneVMCommand{
+		CloudInit:           opts.CloudInit,
 		Count:               1,
 		FlavorName:          opts.Flavor,
 		Image:               opts.ImageID,
 		Name:                opts.Name,
 		ProjectID:           opts.ProjectID,
 		PublicIPEnabled:     opts.PublicIP,
+		StandAloneMetaDatas: tags,
 		StandAloneProfileID: opts.StandAloneProfileID,
+		StandAloneVMDisks:   make([]*models.StandAloneVMDiskDto, 0),
 		VolumeSize:          opts.VolumeSize,
 	}
-	if opts.CloudInit != "" {
-		body.CloudInit = opts.CloudInit
+
+	if opts.Username != "" {
+		body.Username = opts.Username
 	}
+
 	if opts.VolumeType != "" {
 		body.VolumeType = opts.VolumeType
 	}
-	if len(opts.Tags) > 0 {
-		tags, err := parseTagsOption(opts.Tags)
-		if err != nil {
-			return err
-		}
-		body.StandAloneMetaDatas = tags
-	}
 
-	params := stand_alone.NewStandAloneCreateParams().WithV(api.Version)
+	params := stand_alone.NewStandAloneCreateParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
 	response, err := apiClient.Client.StandAlone.StandAloneCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	if err != nil {
+		return err
 	}
 
-	return
+	return out.PrintResult(response.Payload, addFields)
 }

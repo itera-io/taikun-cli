@@ -3,13 +3,12 @@ package add
 import (
 	"fmt"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/checker"
 	"github.com/itera-io/taikungoclient/client/ssh_users"
 	"github.com/itera-io/taikungoclient/models"
@@ -74,7 +73,7 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return false, err
 	}
@@ -82,14 +81,14 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	body := models.SSHKeyCommand{
 		SSHPublicKey: sshPublicKey,
 	}
-	params := checker.NewCheckerSSHParams().WithV(api.Version).WithBody(&body)
+	params := checker.NewCheckerSSHParams().WithV(taikungoclient.Version).WithBody(&body)
 	_, err = apiClient.Client.Checker.CheckerSSH(params, apiClient)
 
 	return err == nil, nil
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
@@ -100,7 +99,8 @@ func addRun(opts *AddOptions) (err error) {
 		SSHPublicKey:    opts.PublicKey,
 	}
 
-	params := ssh_users.NewSSHUsersCreateParams().WithV(api.Version).WithBody(&body)
+	params := ssh_users.NewSSHUsersCreateParams().WithV(taikungoclient.Version).WithBody(&body)
+
 	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
 	if err == nil {
 		return out.PrintResult(response.Payload, addFields)

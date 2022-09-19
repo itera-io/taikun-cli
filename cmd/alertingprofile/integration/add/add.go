@@ -3,14 +3,13 @@ package add
 import (
 	"errors"
 
-	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-
+	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/alerting_integrations"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -44,7 +43,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.AlertingProfileID, err = types.Atoi32(args[0])
 			if err != nil {
-				return cmderr.IDArgumentNotANumberError
+				return cmderr.ErrIDArgumentNotANumber
 			}
 			if err := cmdutils.CheckFlagValue("type", opts.Type, types.AlertingIntegrationTypes); err != nil {
 				return err
@@ -72,21 +71,19 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := api.NewClient()
+	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.CreateAlertingIntegrationCommand{
-		AlertingProfileID: opts.AlertingProfileID,
-		AlertingIntegration: &models.AlertingIntegrationDto{
-			URL:                     opts.URL,
-			Token:                   opts.Token,
-			AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
-		},
+		AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
+		Token:                   opts.Token,
+		URL:                     opts.URL,
+		AlertingProfileID:       opts.AlertingProfileID,
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(api.Version).WithBody(&body)
+	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
 	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
 		return out.PrintResult(response.Payload, addFields)
 	}

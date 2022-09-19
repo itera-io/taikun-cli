@@ -14,7 +14,8 @@ var KubeconfigRoles = gmap.New(
 )
 
 func GetKubeconfigRole(role string) int32 {
-	return KubeconfigRoles.Get(role).(int32)
+	value, _ := KubeconfigRoles.Get(role).(int32)
+	return value
 }
 
 const (

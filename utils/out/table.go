@@ -13,7 +13,7 @@ import (
 )
 
 func printTable(data interface{}, fields fields.Fields) error {
-	t := newTable()
+	tab := newTable()
 
 	if config.AllColumns {
 		fields.ShowAll()
@@ -23,7 +23,7 @@ func printTable(data interface{}, fields fields.Fields) error {
 		}
 	}
 
-	appendHeader(t, fields.VisibleNames())
+	appendHeader(tab, fields.VisibleNames())
 
 	resources, err := interfaceToInterfaceSlice(data)
 	if err != nil {
@@ -32,13 +32,16 @@ func printTable(data interface{}, fields fields.Fields) error {
 
 	if parentObjectName, nested := fields.AreNested(); nested {
 		allNestedResources := make([]interface{}, 0)
+
 		for i := range resources {
 			nestedResources, err := getNestedResources(resources[i], parentObjectName)
 			if err != nil {
 				return err
 			}
+
 			allNestedResources = append(allNestedResources, nestedResources...)
 		}
+
 		resources = allNestedResources
 	}
 
@@ -46,28 +49,31 @@ func printTable(data interface{}, fields fields.Fields) error {
 	if err != nil {
 		return cmderr.ProgramError("printTable", err)
 	}
+
 	for _, resourceMap := range resourceMaps {
-		t.AppendRow(resourceMapToRow(resourceMap, fields))
+		tab.AppendRow(resourceMapToRow(resourceMap, fields))
 	}
 
-	renderTable(t)
+	renderTable(tab)
+
 	return nil
 }
 
 func newTable() table.Writer {
-	t := table.NewWriter()
+	tab := table.NewWriter()
 
-	t.SetOutputMirror(os.Stdout)
-	t.SetStyle(table.StyleDefault)
-	t.Style().Format.Header = text.FormatDefault
-	t.Style().Options = table.OptionsNoBorders
+	tab.SetOutputMirror(os.Stdout)
+	tab.SetStyle(table.StyleDefault)
+
+	tab.Style().Format.Header = text.FormatDefault
+	tab.Style().Options = table.OptionsNoBorders
 
 	if config.NoDecorate {
-		t.Style().Options = table.OptionsNoBordersAndSeparators
-		t.Style().Box.PaddingLeft = ""
+		tab.Style().Options = table.OptionsNoBordersAndSeparators
+		tab.Style().Box.PaddingLeft = ""
 	}
 
-	return t
+	return tab
 }
 
 func getNestedResources(resource interface{}, parentObjectName string) (nestedResources []interface{}, err error) {
@@ -75,45 +81,51 @@ func getNestedResources(resource interface{}, parentObjectName string) (nestedRe
 	if err != nil {
 		return nil, cmderr.ProgramError("getNestedResource", err)
 	}
-	nestedData, ok := resourceMap[parentObjectName]
-	if !ok {
+
+	nestedData, nestedDataOk := resourceMap[parentObjectName]
+	if !nestedDataOk {
 		return nil, cmderr.ProgramError("getNestedResource", errors.New("could not find nested resource"))
 	}
-	nestedResources, ok = nestedData.([]interface{})
-	if !ok {
+
+	nestedResources, nestedResourcesOk := nestedData.([]interface{})
+	if !nestedResourcesOk {
 		return nil, cmderr.ProgramError("getNestedResource", errors.New("nested resource is not array"))
 	}
+
 	return
 }
 
 func resourceMapToRow(resourceMap map[string]interface{}, fields fields.Fields) []interface{} {
 	row := make([]interface{}, fields.VisibleSize())
-	for i, field := range fields.VisibleFields() {
+
+	for fieldIndex, field := range fields.VisibleFields() {
 		if value, found := getValueFromJsonMap(resourceMap, field.JsonPropertyName()); found && value != nil {
-			row[i] = field.Format(value)
+			row[fieldIndex] = field.Format(value)
 		} else {
-			row[i] = ""
+			row[fieldIndex] = ""
 		}
-		row[i] = trimCellValue(row[i])
+
+		row[fieldIndex] = trimCellValue(row[fieldIndex])
 	}
+
 	return row
 }
 
-func interfaceToInterfaceSlice(slice interface{}) ([]interface{}, error) {
-	s := reflect.ValueOf(slice)
-	if s.Kind() != reflect.Slice {
+func interfaceToInterfaceSlice(v interface{}) ([]interface{}, error) {
+	slice := reflect.ValueOf(v)
+	if slice.Kind() != reflect.Slice {
 		return nil, errors.New("failed to convert interface to interface slice")
 	}
 
 	// Keep the distinction between nil and empty slice input
-	if s.IsNil() {
+	if slice.IsNil() {
 		return nil, nil
 	}
 
-	ret := make([]interface{}, s.Len())
+	ret := make([]interface{}, slice.Len())
 
-	for i := 0; i < s.Len(); i++ {
-		ret[i] = s.Index(i).Interface()
+	for i := 0; i < slice.Len(); i++ {
+		ret[i] = slice.Index(i).Interface()
 	}
 
 	return ret, nil
@@ -124,6 +136,7 @@ func stringSliceToRow(fields []string) table.Row {
 	for i, field := range fields {
 		row[i] = field
 	}
+
 	return row
 }
 
