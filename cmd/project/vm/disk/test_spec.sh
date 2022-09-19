@@ -7,7 +7,7 @@ Context 'project/vm/disk'
     img=$(taikun cc images $cc --no-decorate | egrep -i '(ubuntu)|(focal)' | head -1 | cut -d ' ' -f 1)
     profile=$(taikun standalone-profile add $(_rnd_name) --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I)
     taikun project image bind $id --image-ids $img -q
-    vm=$(taikun project vm add $id --name foo --flavor $flavor --image-id $img --volume-size 5 --standalone-profile-id $profile -I)
+    vm=$(taikun project vm add $id --name foo --flavor $flavor --image-id $img --volume-size 8 --standalone-profile-id $profile -I)
   }
   BeforeAll 'setup'
 
@@ -28,7 +28,7 @@ Context 'project/vm/disk'
 
   Context
     add() {
-      disk=$(taikun project vm disk add $vm --name 'ext' --size 5 --openstack-volume-type "__DEFAULT__" -I)
+      disk=$(taikun project vm disk add $vm --name 'ext' --size 8 --openstack-volume-type "__DEFAULT__" -I)
     }
     BeforeAll 'add'
 
@@ -42,7 +42,7 @@ Context 'project/vm/disk'
       The status should equal 0
       The lines of output should equal 1
       The output should include 'ext'
-      The output should include '5'
+      The output should include '8'
       The output should include '__DEFAULT__'
     End
 
