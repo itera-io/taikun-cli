@@ -3,16 +3,16 @@ on:
   pull_request:
   push:
     branches:
-      - 'main'
-      - 'dev'
+      - "main"
+      - "dev"
     paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - 'NOTICE'
-      - 'COMMAND_TREE.md'
-      - 'GNUmakefile'
-      - 'Dockerfile'
-      - '.github/CONTRIBUTING.md'
+      - "README.md"
+      - "LICENSE"
+      - "NOTICE"
+      - "COMMAND_TREE.md"
+      - "GNUmakefile"
+      - "Dockerfile"
+      - ".github/CONTRIBUTING.md"
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Checkout
         uses: actions/checkout@v3
