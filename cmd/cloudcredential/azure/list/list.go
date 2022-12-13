@@ -31,7 +31,7 @@ var listFields = fields.New(
 			"LOCATION", "location",
 		),
 		field.NewVisible(
-			"AVAILABILITY-ZONE", "availabilityZone",
+			"AVAILABILITY-ZONES", "availabilityZones",
 		),
 		field.NewHidden(
 			"TENANT-ID", "tenantId",

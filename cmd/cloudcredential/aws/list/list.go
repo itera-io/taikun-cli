@@ -31,7 +31,7 @@ var listFields = fields.New(
 			"REGION", "region",
 		),
 		field.NewVisible(
-			"AVAILABILITY-ZONE", "availabilityZone",
+			"AVAILABILITY-ZONES", "availabilityZones",
 		),
 		field.NewVisible(
 			"DEFAULT", "isDefault",
