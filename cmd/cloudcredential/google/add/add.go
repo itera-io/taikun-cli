@@ -32,9 +32,9 @@ var addFields = fields.New(
 		field.NewVisible(
 			"REGION", "region",
 		),
-		field.NewVisible(
-			"ZONE", "zone",
-		),
+                field.NewVisible(
+                        "AZ-COUNT", "azCount",
+                ),
 	},
 )
 
@@ -46,7 +46,7 @@ type AddOptions struct {
 	Name             string
 	OrganizationID   int32
 	Region           string
-	Zone             string
+        AzCount          int32
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -90,8 +90,8 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Region, "region", "r", "", "Region (required)")
 	cmdutils.MarkFlagRequired(&cmd, "region")
 
-	cmd.Flags().StringVarP(&opts.Zone, "zone", "z", "", "Zone (required)")
-	cmdutils.MarkFlagRequired(&cmd, "zone")
+        cmd.Flags().Int32VarP(&opts.AzCount, "az-count", "z", 0, "Az Count (required)")
+        cmdutils.MarkFlagRequired(&cmd, "az-count")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -121,7 +121,7 @@ func addRun(opts *AddOptions) (err error) {
 	params = params.WithConfig(configFile)
 	params = params.WithName(&opts.Name)
 	params = params.WithOrganizationID(&opts.OrganizationID)
-	params = params.WithRegion(&opts.Region).WithZone(&opts.Zone)
+        params = params.WithRegion(&opts.Region).WithAzCount(&opts.AzCount)
 
 	params = params.WithImportProject(&opts.ImportProject)
 	if !opts.ImportProject {

@@ -43,7 +43,7 @@ var listFields = fields.New(
 			"REGION", "region",
 		),
 		field.NewVisible(
-			"ZONE", "zone",
+			"ZONES", "zones",
 		),
 		field.NewHiddenWithToStringFunc(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,

@@ -25,9 +25,9 @@ var addFields = fields.New(
 		field.NewVisible(
 			"LOCATION", "azureLocation",
 		),
-		field.NewVisible(
-			"AVAILABILITY-ZONE", "azureAvailabilityZone",
-		),
+                field.NewVisible(
+                        "AZ-COUNT", "azCount",
+                ),
 		field.NewHidden(
 			"CLIENT-ID", "azureClientId",
 		),
@@ -53,7 +53,7 @@ type AddOptions struct {
 	AzureClientSecret     string
 	AzureTenantId         string
 	AzureLocation         string
-	AzureAvailabilityZone string
+        AzCount               int32
 	OrganizationID        int32
 }
 
@@ -85,10 +85,10 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.AzureLocation, "location", "l", "", "Azure Location (required)")
 	cmdutils.MarkFlagRequired(&cmd, "location")
 
-	cmd.Flags().StringVarP(&opts.AzureAvailabilityZone, "availability-zone", "a", "", "Azure Availability Zone (required)")
-	cmdutils.MarkFlagRequired(&cmd, "availability-zone")
+        cmd.Flags().Int32VarP(&opts.AzCount, "az-count", "z", 0, "Azure Az Count (required)")
+        cmdutils.MarkFlagRequired(&cmd, "az-count")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+        cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -109,7 +109,7 @@ func addRun(opts *AddOptions) (err error) {
 		AzureClientSecret:     opts.AzureClientSecret,
 		AzureTenantID:         opts.AzureTenantId,
 		AzureLocation:         opts.AzureLocation,
-		AzureAvailabilityZone: opts.AzureAvailabilityZone,
+                AzCount:               opts.AzCount,
 		OrganizationID:        opts.OrganizationID,
 	}
 

@@ -3,16 +3,16 @@ on:
   pull_request:
   push:
     branches:
-      - 'main'
-      - 'dev'
+      - "main"
+      - "dev"
     paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - 'NOTICE'
-      - 'COMMAND_TREE.md'
-      - 'GNUmakefile'
-      - 'Dockerfile'
-      - '.github/CONTRIBUTING.md'
+      - "README.md"
+      - "LICENSE"
+      - "NOTICE"
+      - "COMMAND_TREE.md"
+      - "GNUmakefile"
+      - "Dockerfile"
+      - ".github/CONTRIBUTING.md"
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Lint (golangci-lint)
         uses: golangci/golangci-lint-action@v3.1.0
@@ -60,7 +60,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -80,7 +80,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.17
+          go-version: 1.18
 
       - name: Install shellspec
         run: |
@@ -106,7 +106,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_AVAILABILITY_ZONE: a
+          AWS_AZ_COUNT: 1
           AWS_DEFAULT_REGION: eu-central-1
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -122,8 +122,10 @@ jobs:
           PROMETHEUS_URL: ${{ secrets.PROMETHEUS_URL }}
           PROMETHEUS_USERNAME: ${{ secrets.PROMETHEUS_USERNAME }}
 
-          S3_ENDPOINT: https://s3.eu-west-2.amazonaws.com
-          S3_REGION: eu-west-2
+          S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+          S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+          S3_REGION: ${{ secrets.S3_REGION }}
 
           TAIKUN_API_HOST: ${{ secrets.TAIKUN_API_HOST }}
           TAIKUN_EMAIL: ${{ secrets.TAIKUN_EMAIL }}

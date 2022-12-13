@@ -26,9 +26,9 @@ var addFields = fields.New(
 		field.NewVisible(
 			"REGION", "awsRegion",
 		),
-		field.NewVisible(
-			"AVAILABILITY-ZONE", "awsAvailabilityZone",
-		),
+                field.NewVisible(
+                        "AZ-COUNT", "awsAzCount",
+                ),
 		field.NewHidden(
 			"ACCESS-KEY-ID", "awsAccessKeyId",
 		),
@@ -46,7 +46,7 @@ type AddOptions struct {
 	AWSSecretAccessKey  string
 	AWSAccessKeyID      string
 	AWSRegion           string
-	AWSAvailabilityZone string
+        AWSAzCount          int32
 	OrganizationID      int32
 }
 
@@ -73,8 +73,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "region")
 	cmdutils.SetFlagCompletionFunc(&cmd, "region", complete.MakeAwsRegionCompletionFunc(&opts.AWSAccessKeyID, &opts.AWSSecretAccessKey))
 
-	cmd.Flags().StringVarP(&opts.AWSAvailabilityZone, "availability-zone", "z", "", "AWS Availability Zone")
-	cmdutils.MarkFlagRequired(&cmd, "availability-zone")
+        cmd.Flags().Int32VarP(&opts.AWSAzCount, "az-count", "z", 0, "AWS Az Count (required)")
+        cmdutils.MarkFlagRequired(&cmd, "az-count")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
@@ -95,8 +95,8 @@ func addRun(opts *AddOptions) (err error) {
 		AwsSecretAccessKey:  opts.AWSSecretAccessKey,
 		AwsAccessKeyID:      opts.AWSAccessKeyID,
 		AwsRegion:           opts.AWSRegion,
-		AwsAvailabilityZone: opts.AWSAvailabilityZone,
-		OrganizationID:      opts.OrganizationID,
+		AzCount:             opts.AWSAzCount,
+                OrganizationID:      opts.OrganizationID,
 	}
 
 	params := aws.NewAwsCreateParams().WithV(taikungoclient.Version).WithBody(body)
