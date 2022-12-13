@@ -1,7 +1,7 @@
 Context 'accessprofile/allowedhost/add'
   setup() {
     profile_id=$(taikun access-profile add $(_rnd_name) -I)
-    ip="192.168.1.1"
+    ip="192.168.0.0"
     host_id=$(taikun access-profile host add $profile_id -i $ip -m 16 -I)
   }
 
