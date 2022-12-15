@@ -44,7 +44,7 @@ End
 Context 'project/k8s/add'
 
   setup() {
-    oid=$(taikun organization add $(_rnd_name) -f "g g g g" -I)
+    oid=$(taikun organization add $(_rnd_name) -f $(_rnd_name) -I)
     ccid=$(taikun cloud-credential aws add $(_rnd_name) -a $AWS_ACCESS_KEY_ID -s $AWS_SECRET_ACCESS_KEY -r $AWS_DEFAULT_REGION -z 1 -o $oid -I)
     flavor=$(taikun cloud-credential flavors $ccid --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1)
     pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --flavors $flavor -I)
