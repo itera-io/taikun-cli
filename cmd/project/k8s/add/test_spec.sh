@@ -67,7 +67,7 @@ Context 'project/k8s/add'
     AfterAll 'remove_master'
 
     Example 'add one server with availability zone'
-      When call msid=$(taikun project k8s add $pid -n master --flavor $flavor -r kubemaster -a a)
+      When call taikun project k8s add $pid -n master --flavor $flavor -r kubemaster -a a
       The status should equal 0
     End
   End
