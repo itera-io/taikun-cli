@@ -45,8 +45,8 @@ var addFields = fields.New(
 		field.NewHiddenWithToStringFunc(
 			"CLOUDTYPE", "cloudType", out.FormatCloudType,
 		),
-		field.NewVisible(
-			"AVAILABILITY-ZONE", "availabilityZone",
+		field.NewHiddenWithToStringFunc(
+			"AVAILABILITY-ZONE", "availabilityZone", out.FormatAvailabilityZones,
 		),
 		field.NewHidden(
 			"PROJECT", "projectName",
@@ -86,7 +86,7 @@ func NewCmdAdd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "a", "", "Availability zone (for AWS, GCP and Azure projects)")
+	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "a", "", "Availability zone (only for AWS, GCP and Azure projects)")
 	cmdutils.SetFlagCompletionFunc(&cmd, "availability-zone", availabilityZoneCompletionFunc)
 
 	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")

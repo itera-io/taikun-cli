@@ -140,6 +140,17 @@ func FormatNumber(v interface{}) string {
 	return field.NotAvailable
 }
 
+func FormatAvailabilityZones(v interface{}) string {
+	switch v.(type) {
+	case int:
+		return fmt.Sprint(v)
+	case string:
+		return fmt.Sprint(v)
+	default:
+		return field.NotAvailable
+	}
+}
+
 // Format resource ID
 func FormatID(v interface{}) string {
 	if id, ok := v.(string); ok && id != "0" {
