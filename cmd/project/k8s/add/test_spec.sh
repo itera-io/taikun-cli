@@ -74,7 +74,7 @@ Context 'project/k8s/add'
     End
 
     Example 'add one server with bad availability zone'
-      When call taikun project k8s add $pid -n master --flavor $flavor -r kubemaster -a a
+      When call taikun project k8s add $pid -n master2 --flavor $flavor -r kubemaster -a a
       The status should equal 1
     End
   End

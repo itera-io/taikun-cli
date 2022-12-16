@@ -75,7 +75,7 @@ Context 'project/k8s/list'
     remove_servers() {
       taikun project k8s delete $pid -a -q 2>/dev/null || true
     }
-    AfterAll 'remove_master'
+    AfterAll 'remove_servers'
 
     Example 'project with 3 servers with availability zone'
       When call taikun project k8s list $pid --no-decorate
