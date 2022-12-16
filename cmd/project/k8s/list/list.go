@@ -29,7 +29,7 @@ var listFields = fields.New(
 		field.NewHidden(
 			"CLOUD", "cloudType",
 		),
-		field.NewHiddenWithToStringFunc(
+		field.NewVisibleWithToStringFunc(
 			"AVAILABILITY-ZONE", "availabilityZone", out.FormatAvailabilityZones,
 		),
 		field.NewVisible(

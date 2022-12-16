@@ -69,6 +69,13 @@ Context 'project/k8s/add'
     Example 'add one server with availability zone'
       When call taikun project k8s add $pid -n master --flavor $flavor -r kubemaster -a a
       The status should equal 0
+      The lines of output should equal 7
+      The output should include 'master'
+    End
+
+    Example 'add one server with bad availability zone'
+      When call taikun project k8s add $pid -n master --flavor $flavor -r kubemaster -a a
+      The status should equal 1
     End
   End
 End
