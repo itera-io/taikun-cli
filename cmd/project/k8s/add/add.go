@@ -11,7 +11,9 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
+	"github.com/itera-io/taikungoclient/client/cloud_credentials"
 	"github.com/itera-io/taikungoclient/client/flavors"
+	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
@@ -43,6 +45,9 @@ var addFields = fields.New(
 		field.NewHiddenWithToStringFunc(
 			"CLOUDTYPE", "cloudType", out.FormatCloudType,
 		),
+		field.NewHiddenWithToStringFunc(
+			"AVAILABILITY-ZONE", "availabilityZone", out.FormatAvailabilityZones,
+		),
 		field.NewHidden(
 			"PROJECT", "projectName",
 		),
@@ -53,6 +58,7 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
+	AvailabilityZone     string
 	DiskSize             int
 	Flavor               string
 	KubernetesNodeLabels []string
@@ -79,6 +85,9 @@ func NewCmdAdd() *cobra.Command {
 			return addRun(&opts)
 		},
 	}
+
+	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "a", "", "Availability zone (only for AWS, GCP and Azure projects)")
+	cmdutils.SetFlagCompletionFunc(&cmd, "availability-zone", availabilityZoneCompletionFunc)
 
 	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")
 	cmd.Flags().StringSliceVarP(&opts.KubernetesNodeLabels, "kubernetes-node-labels", "k", []string{}, "Kubernetes node labels (format: \"key=value,key2=value2,...\")")
@@ -107,11 +116,12 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	body := models.ServerForCreateDto{
-		DiskSize:  types.GiBToB(opts.DiskSize),
-		Flavor:    opts.Flavor,
-		Name:      opts.Name,
-		ProjectID: opts.ProjectID,
-		Role:      types.GetServerRole(opts.Role),
+		AvailabilityZone: opts.AvailabilityZone,
+		DiskSize:         types.GiBToB(opts.DiskSize),
+		Flavor:           opts.Flavor,
+		Name:             opts.Name,
+		ProjectID:        opts.ProjectID,
+		Role:             types.GetServerRole(opts.Role),
 	}
 
 	if len(opts.KubernetesNodeLabels) != 0 {
@@ -191,6 +201,73 @@ func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 		}
 
 		params = params.WithOffset(&count)
+	}
+
+	return completions
+}
+
+func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
+
+	if len(args) == 0 {
+		return []string{}
+	}
+
+	projectID, err := types.Atoi32(args[0])
+	if err != nil {
+		return []string{}
+	}
+
+	apiClient, err := taikungoclient.NewClient()
+	if err != nil {
+		return []string{}
+	}
+
+	projectParams := projects.NewProjectsListParams().WithV(taikungoclient.Version)
+	projectParams = projectParams.WithID(&projectID)
+	projectResponse, err := apiClient.Client.Projects.ProjectsList(projectParams, apiClient)
+	if err != nil || len(projectResponse.GetPayload().Data) != 1 {
+		return []string{}
+	}
+
+	projectOrgId := projectResponse.GetPayload().Data[0].OrganizationID
+	ccType := projectResponse.GetPayload().Data[0].CloudType
+	ccName := projectResponse.GetPayload().Data[0].CloudCredentialName
+	if ccType == "OPENSTACK" {
+		return []string{}
+	}
+
+	completions := make([]string, 0)
+
+	ccParams := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version).WithOrganizationID(&projectOrgId)
+	ccResponse, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(ccParams, apiClient)
+	countCC := ccResponse.GetPayload().TotalCountOpenstack + ccResponse.GetPayload().TotalCountAws + ccResponse.GetPayload().TotalCountAzure + ccResponse.GetPayload().TotalCountGoogle
+	if err != nil || countCC == 0 {
+		return []string{}
+	}
+
+	if ccType == "AWS" {
+		amazonCCs := ccResponse.GetPayload().Amazon
+		for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
+			if ccName == amazonCCs[i].Name {
+				completions = append(completions, amazonCCs[i].AvailabilityZones...)
+			}
+		}
+	}
+	if ccType == "AZURE" {
+		azureCCs := ccResponse.GetPayload().Azure
+		for i := 0; i < int(ccResponse.Payload.TotalCountAzure); i++ {
+			if ccName == azureCCs[i].Name {
+				completions = append(completions, azureCCs[i].AvailabilityZones...)
+			}
+		}
+	}
+	if ccType == "GOOGLE" {
+		googleCCs := ccResponse.GetPayload().Google
+		for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
+			if ccName == googleCCs[i].Name {
+				completions = append(completions, googleCCs[i].Zones...)
+			}
+		}
 	}
 
 	return completions

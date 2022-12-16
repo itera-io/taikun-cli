@@ -29,6 +29,9 @@ var listFields = fields.New(
 		field.NewHidden(
 			"CLOUD", "cloudType",
 		),
+		field.NewVisibleWithToStringFunc(
+			"AVAILABILITY-ZONE", "availabilityZone", out.FormatAvailabilityZones,
+		),
 		field.NewVisible(
 			"FLAVOR", "",
 			// JSON property name is set in the listRun function
