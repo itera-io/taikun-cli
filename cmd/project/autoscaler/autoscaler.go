@@ -2,6 +2,7 @@ package autoscaler
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/autoscaler/disable"
+	"github.com/itera-io/taikun-cli/cmd/project/autoscaler/enable"
 	"github.com/spf13/cobra"
 )
 
@@ -12,6 +13,7 @@ func NewCmdAutoscaler() *cobra.Command {
 	}
 
 	cmd.AddCommand(disable.NewCmdDisable())
+	cmd.AddCommand(enable.NewCmdEnable())
 
 	return &cmd
 }
