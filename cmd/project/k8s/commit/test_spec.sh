@@ -10,6 +10,7 @@ Context 'project/commit'
     BeforeAll 'setup'
 
     cleanup() {
+        taikun project k8s delete $pid -a -q 2>/dev/null || true
         if ! taikun project delete $pid -q 2>/dev/null; then
                 taikun project delete --force $pid -q 2>/dev/null || true
             fi
@@ -20,10 +21,10 @@ Context 'project/commit'
     AfterAll 'cleanup'
 
     example_setup() {
-        taikun project k8s add $pid -n master --flavor $flavor -r kubemaster
-        taikun project k8s add $pid -n master2 --flavor $flavor -r kubemaster
-        taikun project k8s add $pid -n bastion --flavor $flavor -r bastion
-        taikun project k8s add $pid -n worker --flavor $flavor -r kubeworker
+        taikun project k8s add $pid -n master --flavor $flavor -r kubemaster -q
+        taikun project k8s add $pid -n master2 --flavor $flavor -r kubemaster -q
+        taikun project k8s add $pid -n bastion --flavor $flavor -r bastion -q
+        taikun project k8s add $pid -n worker --flavor $flavor -r kubeworker -q
         taikun project k8s commit $pid
     }
 
