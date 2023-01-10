@@ -1,10 +1,13 @@
 package disable
 
 import (
+	"errors"
+
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/autoscaling"
+	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
@@ -33,6 +36,11 @@ func NewCmdDisable() *cobra.Command {
 }
 
 func disableRun(opts *DisableOptions) (err error) {
+	_, err = isAutoscalingEnabled(opts.ProjectID)
+	if err != nil {
+		return
+	}
+
 	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
@@ -50,5 +58,24 @@ func disableRun(opts *DisableOptions) (err error) {
 		out.PrintStandardSuccess()
 	}
 
+	return
+}
+
+func isAutoscalingEnabled(projectID int32) (res bool, err error) {
+	apiClient, err := taikungoclient.NewClient()
+	if err != nil {
+		return
+	}
+
+	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
+	params = params.WithProjectID(projectID)
+
+	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
+	if err == nil {
+		res := response.Payload.Project.IsAutoscalingEnabled
+		if !res {
+			err = errors.New("Project autoscaling already disabled.")
+		}
+	}
 	return
 }
