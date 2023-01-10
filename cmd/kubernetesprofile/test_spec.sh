@@ -20,7 +20,7 @@ Context 'kubernetesprofile'
 
   Context 'add/delete'
     add_config() {
-      scid=$(taikun kubernetes-profile add $(_rnd_name) -o $oid -I)
+      scid=$(taikun kubernetes-profile add $(_rnd_name) -o $oid --enable-octavia -I)
     }
 
     Before 'add_config'
