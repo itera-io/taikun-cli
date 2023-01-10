@@ -27,7 +27,7 @@ Context 'project/add'
 
         After 'cleanup'
 
-        Example 'default autoscaler project'
+        Example 'basic autoscaler project'
             When call autoscaler_default_project
             The status should equal 0
         End
