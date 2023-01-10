@@ -16,7 +16,7 @@ Context 'project/add'
 
     Context
         autoscaler_default_project() {
-            pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --autoscaler  --autoscaler-name $(_rnd_name) --autoscaler-flavor "m1.smallest" -I)
+            pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid  -o $oid --autoscaler  --autoscaler-name $(_rnd_name) --autoscaler-flavor "m1.smallest" -I)
         }
 
         cleanup() {
@@ -35,7 +35,7 @@ Context 'project/add'
 
     Context
         autoscaler_project() {
-            pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --autoscaler  --autoscaler-name $(_rnd_name) --autoscaler-flavor "m1.smallest" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
+            pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid -o $oid --autoscaler  --autoscaler-name $(_rnd_name) --autoscaler-flavor "m1.smallest" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
         }
 
         cleanup() {
@@ -54,7 +54,7 @@ Context 'project/add'
 
     Context
         not_autoscaler_project() {
-            pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid  --autoscaler-name $(_rnd_name) --autoscaler-flavor "m1.smallest" -I)
+            pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid -o $oid  --autoscaler-name $(_rnd_name) --autoscaler-flavor "m1.smallest" -I)
             taikun project list -o $oid --limit 1 --format json
             if ! taikun project delete $pid -q 2>/dev/null; then
                 taikun project delete --force $pid -q 2>/dev/null || true

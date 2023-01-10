@@ -178,7 +178,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.AutoscalerName, "autoscaler-name", "", "The autoscaler name")
 	cmd.Flags().Int32Var(&opts.AutoscalerMinSize, "autoscaler-min-size", 1, "The minimum size for the autoscaler")
 	cmd.Flags().Int32Var(&opts.AutoscalerMaxSize, "autoscaler-max-size", 1, "The maximum size for the autoscaler")
-	cmd.Flags().Float64Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", float64(types.GiBToB(30)), "The disk size for the autoscaler in GiB [30 to 8192 GiB]")
+	cmd.Flags().Float64Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB]")
 	cmd.Flags().StringVar(&opts.AutoscalerFlavor, "autoscaler-flavor", "", "The autoscaler flavor")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
