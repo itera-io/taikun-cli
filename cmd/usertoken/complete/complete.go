@@ -1,6 +1,10 @@
 package complete
 
 import (
+	"fmt"
+
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/user_token"
 	"github.com/itera-io/taikungoclient/models"
@@ -64,4 +68,26 @@ func StringToEndpointFormat(endpoint string) *models.AvailableEndpointData {
 
 func EndpointFormatToString(res models.EndpointElements) string {
 	return res.Controller + "/" + res.Method + "/" + res.Path
+}
+
+func CompleteArgsWithUserTokenName(cmd *cobra.Command) {
+	cmdutils.SetArgsCompletionFunc(cmd,
+		func(cmd *cobra.Command, args []string, toComplete string) []string {
+			users, err := list.ListUsers(&list.ListOptions{})
+			if err != nil {
+				return nil
+			}
+
+			completions := make([]string, len(users))
+			for i, user := range users {
+				completions[i] = fmt.Sprintf(
+					"%s\t%s",
+					user.ID,
+					user.Username,
+				)
+			}
+
+			return completions
+		},
+	)
 }
