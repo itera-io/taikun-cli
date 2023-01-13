@@ -1,11 +1,8 @@
 package remove
 
 import (
-	"errors"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/complete"
-	"github.com/itera-io/taikun-cli/cmd/usertoken/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/user_token"
@@ -34,7 +31,7 @@ func deleteRun(userTokenName string) (err error) {
 		return
 	}
 
-	userTokenId, err := UserTokenIDFromUserTokenName(userTokenName)
+	userTokenId, err := complete.UserTokenIDFromUserTokenName(userTokenName)
 	if err != nil {
 		return
 	}
@@ -46,24 +43,5 @@ func deleteRun(userTokenName string) (err error) {
 		out.PrintDeleteSuccess("User Token", userTokenName)
 	}
 
-	return
-}
-
-func UserTokenIDFromUserTokenName(userTokenName string) (userTokenID string, err error) {
-	opts := list.ListOptions{}
-
-	userTokenList, err := list.ListUserTokens(&opts)
-	if err != nil {
-		return
-	}
-
-	for i := 0; i < len(userTokenList); i++ {
-		if userTokenList[i].Name == userTokenName {
-			userTokenID = userTokenList[i].ID
-			return
-		}
-	}
-
-	err = errors.New("No user token found with name '" + userTokenName + "'.")
 	return
 }

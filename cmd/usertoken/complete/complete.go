@@ -1,6 +1,8 @@
 package complete
 
 import (
+	"errors"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/list"
 	"github.com/itera-io/taikungoclient"
@@ -29,6 +31,65 @@ func EndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string)
 		res := response.Payload.Data[i]
 		endpoint := EndpointFormatToString(*res)
 		completions = append(completions, endpoint)
+	}
+
+	return completions
+}
+
+func BindingEndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string) []string {
+	apiClient, err := taikungoclient.NewClient()
+	if err != nil {
+		return []string{}
+	}
+
+	TokenID, err := UserTokenIDFromUserTokenName(args[0])
+	if err != nil {
+		return []string{}
+	}
+
+	limit := int32(2000)
+	params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit).WithID(&TokenID)
+
+	response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
+	if err != nil {
+		return []string{}
+	}
+
+	completions := make([]string, 0)
+
+	for i := 0; i < len(response.GetPayload().Data); i++ {
+		res := response.Payload.Data[i]
+		if res.ID == -1 { // case the endpoint is not bind
+			endpoint := EndpointFormatToString(*res)
+			completions = append(completions, endpoint)
+		}
+	}
+
+	return completions
+}
+
+func UnbindingEndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string) []string {
+	apiClient, err := taikungoclient.NewClient()
+	if err != nil {
+		return []string{}
+	}
+
+	limit := int32(2000)
+	params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit)
+
+	response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
+	if err != nil {
+		return []string{}
+	}
+
+	completions := make([]string, 0)
+
+	for i := 0; i < len(response.GetPayload().Data); i++ {
+		res := response.Payload.Data[i]
+		if res.ID > 0 {
+			endpoint := EndpointFormatToString(*res)
+			completions = append(completions, endpoint)
+		}
 	}
 
 	return completions
@@ -84,4 +145,23 @@ func CompleteArgsWithUserTokenName(cmd *cobra.Command) {
 			return completions
 		},
 	)
+}
+
+func UserTokenIDFromUserTokenName(userTokenName string) (userTokenID string, err error) {
+	opts := list.ListOptions{}
+
+	userTokenList, err := list.ListUserTokens(&opts)
+	if err != nil {
+		return
+	}
+
+	for i := 0; i < len(userTokenList); i++ {
+		if userTokenList[i].Name == userTokenName {
+			userTokenID = userTokenList[i].ID
+			return
+		}
+	}
+
+	err = errors.New("No user token found with name '" + userTokenName + "'.")
+	return
 }
