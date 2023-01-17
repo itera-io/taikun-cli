@@ -76,7 +76,7 @@ Context 'project/k8s/add'
     Example 'add one server with bad availability zone'
       When call taikun project k8s add $pid -n master2 --flavor $flavor -r kubemaster -a f
       The status should equal 1
-      The stderr should include 'There is no f for this cloud credential status'
+      The stderr should include 'There is no f for this cloud credential'
     End
   End
 End

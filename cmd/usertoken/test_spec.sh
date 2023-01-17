@@ -1,7 +1,7 @@
 Context 'usertoken'
 
     setup() {
-        tokenname=$(_rnd_name)
+        tokenname="test-cli-jvndkjbv"
     }
 
     BeforeAll setup
