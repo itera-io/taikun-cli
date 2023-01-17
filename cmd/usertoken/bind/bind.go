@@ -28,7 +28,7 @@ func NewCmdBind() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.TokenID, err = complete.UserTokenIDFromUserTokenName(args[0])
 			if err != nil {
-				errors.New(err.Error())
+				return err
 			}
 			return bindRun(&opts)
 		},
