@@ -7,12 +7,12 @@ Context 'usertoken'
     BeforeAll setup
 
     Example 'create a basic user token'
-        When call taikun usertoken add $tokenname
+        When call taikun usertoken add $tokenname --bind-all
         The status should equal 0
     End
 
     Example 'create a user token with name already existing'
-        When call taikun usertoken add $tokenname
+        When call taikun usertoken add $tokenname --bind-all
         The status should equal 1
         The stderr should include 'already exists'
     End

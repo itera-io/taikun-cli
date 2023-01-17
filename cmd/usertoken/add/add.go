@@ -30,6 +30,7 @@ type AddOptions struct {
 	Name           string
 	ExpirationDate string
 	ReadOnly       bool
+	BindAll        bool
 	Endpoints      []string
 }
 
@@ -48,6 +49,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVar(&opts.ExpirationDate, "expiration-date", "", "The user token expiration date")
 	cmd.Flags().BoolVar(&opts.ReadOnly, "is-read-only", false, "Enable to create a user token with read-only permissions")
+	cmd.Flags().BoolVar(&opts.BindAll, "bind-all", false, "Enable to bind all available endpoints")
 
 	cmd.Flags().StringSliceVar(&opts.Endpoints, "endpoints", []string{}, "Endpoints the user token have access to")
 	cmdutils.SetFlagCompletionFunc(&cmd, "endpoints", complete.EndpointsCompleteFunc)
@@ -63,14 +65,20 @@ func addRun(opts *AddOptions) (err error) {
 
 	body := &models.UserTokenCreateCommand{
 		IsReadonly: opts.ReadOnly,
+		BindALL:    opts.BindAll,
 	}
 
 	if opts.ExpirationDate != "" {
 		expiredAt := types.StrToDateTime(opts.ExpirationDate)
 		body.ExpireDate = &expiredAt
+
 	}
 
-	if len(opts.Endpoints) != 0 {
+	if len(opts.Endpoints) != 0 && opts.BindAll {
+		err = errors.New("Please specify bindAll OR enpoints option.")
+	}
+
+	if len(opts.Endpoints) != 0 && !opts.BindAll {
 		endpoints := []*models.AvailableEndpointData{}
 		for i := 0; i < len(opts.Endpoints); i++ {
 			endpoint := complete.StringToEndpointFormat(opts.Endpoints[i])
