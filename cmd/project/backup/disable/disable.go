@@ -35,19 +35,13 @@ func NewCmdDisable() *cobra.Command {
 }
 
 func disableRun(opts *DisableOptions) (err error) {
-	backupCredentialID, err := getBackupCredentialID(opts.ProjectID)
-	if err != nil {
-		return
-	}
-
 	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
 	body := models.DisableBackupCommand{
-		ProjectID:      opts.ProjectID,
-		S3CredentialID: backupCredentialID,
+		ProjectID: opts.ProjectID,
 	}
 
 	params := backup.NewBackupDisableBackupParams().WithV(taikungoclient.Version)

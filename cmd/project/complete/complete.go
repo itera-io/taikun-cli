@@ -20,5 +20,11 @@ func KubernetesVersionCompletionFunc(cmd *cobra.Command, args []string, toComple
 		return []string{}
 	}
 
-	return response.Payload
+	completions := make([]string, 0)
+
+	for i := 0; i < len(response.Payload); i++ {
+		completions = append(completions, response.Payload[i].Version)
+	}
+
+	return completions
 }
