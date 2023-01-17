@@ -1,12 +1,10 @@
 package disable
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
 	"github.com/itera-io/taikungoclient/client/backup"
-	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
@@ -55,6 +53,7 @@ func disableRun(opts *DisableOptions) (err error) {
 	return
 }
 
+/*
 func getBackupCredentialID(projectID int32) (id int32, err error) {
 	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
@@ -74,3 +73,4 @@ func getBackupCredentialID(projectID int32) (id int32, err error) {
 
 	return
 }
+*/
