@@ -18,10 +18,10 @@ import (
 var addFields = fields.New(
 	[]*field.Field{
 		field.NewVisible(
-			"ACCESS-KEY", "AccessKey",
+			"ACCESS-KEY", "accessKey",
 		),
 		field.NewVisible(
-			"SECRET-KEY", "SecretKey",
+			"SECRET-KEY", "secretKey",
 		),
 	},
 )
@@ -64,6 +64,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	body := &models.UserTokenCreateCommand{
+		Name:       opts.Name,
 		IsReadonly: opts.ReadOnly,
 		BindALL:    opts.BindAll,
 	}
