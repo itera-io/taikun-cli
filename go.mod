@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/go-openapi/strfmt v0.21.3
-	github.com/itera-io/taikungoclient v0.0.0-20230113160120-d43c4287ceff
+	github.com/itera-io/taikungoclient v0.0.0-20230120024327-9ffb1ea884d2
 	github.com/jedib0t/go-pretty/v6 v6.3.1
 	github.com/spf13/cobra v1.4.0
 )
@@ -23,7 +23,7 @@ require (
 	github.com/go-openapi/runtime v0.25.0 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
-	github.com/go-openapi/validate v0.22.0 // indirect
+	github.com/go-openapi/validate v0.22.1 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
