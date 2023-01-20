@@ -1,10 +1,13 @@
 package disable
 
 import (
+	"errors"
+
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/backup"
+	"github.com/itera-io/taikungoclient/client/autoscaling"
+	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +21,7 @@ func NewCmdDisable() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "disable <project-id>",
-		Short: "Disable backup for a project",
+		Short: "Disable the project's autoscaling",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
@@ -33,19 +36,24 @@ func NewCmdDisable() *cobra.Command {
 }
 
 func disableRun(opts *DisableOptions) (err error) {
+	_, err = isAutoscalingEnabled(opts.ProjectID)
+	if err != nil {
+		return
+	}
+
 	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
 	}
 
-	body := models.DisableBackupCommand{
+	body := models.DisableAutoscalingCommand{
 		ProjectID: opts.ProjectID,
 	}
 
-	params := backup.NewBackupDisableBackupParams().WithV(taikungoclient.Version)
+	params := autoscaling.NewAutoscalingDisableAutoscalingParams().WithV(taikungoclient.Version)
 	params = params.WithBody(&body)
 
-	_, err = apiClient.Client.Backup.BackupDisableBackup(params, apiClient)
+	_, err = apiClient.Client.Autoscaling.AutoscalingDisableAutoscaling(params, apiClient)
 	if err == nil {
 		out.PrintStandardSuccess()
 	}
@@ -53,8 +61,7 @@ func disableRun(opts *DisableOptions) (err error) {
 	return
 }
 
-/*
-func getBackupCredentialID(projectID int32) (id int32, err error) {
+func isAutoscalingEnabled(projectID int32) (res bool, err error) {
 	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
 		return
@@ -65,12 +72,10 @@ func getBackupCredentialID(projectID int32) (id int32, err error) {
 
 	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
 	if err == nil {
-		id = response.Payload.Project.S3CredentialID
-		if id == 0 {
-			err = cmderr.ErrProjectBackupAlreadyDisabled
+		res := response.Payload.Project.IsAutoscalingEnabled
+		if !res {
+			err = errors.New("Project autoscaling already disabled.")
 		}
 	}
-
 	return
 }
-*/

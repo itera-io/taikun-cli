@@ -75,7 +75,11 @@ var addFields = fields.New(
 			"CREATED-BY", "createdBy",
 		),
 		field.NewHidden(
+
 			"CIDR", "cidr",
+		),
+		field.NewVisible(
+			"AUTOSCALER", "isAutoscalingEnabled",
 		),
 	},
 )
@@ -99,6 +103,12 @@ type AddOptions struct {
 	RouterIDStartRange  int32
 	TaikunLBFlavor      string
 	Cidr                string
+	IsAutoscaler        bool
+	AutoscalerName      string
+	AutoscalerMinSize   int32
+	AutoscalerMaxSize   int32
+	AutoscalerDiskSize  float64
+	AutoscalerFlavor    string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -129,6 +139,15 @@ func NewCmdAdd() *cobra.Command {
 				}
 			}
 
+			if opts.IsAutoscaler {
+				if opts.AutoscalerName == "" {
+					return cmderr.NoNameAutoscaler
+				}
+				if opts.AutoscalerFlavor == "" {
+					return cmderr.ErrCheckFailure("The autoscaler flavor")
+				}
+			}
+
 			return addRun(&opts)
 		},
 	}
@@ -155,6 +174,13 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "cidr", "", "Cidr IP")
 
+	cmd.Flags().BoolVar(&opts.IsAutoscaler, "autoscaler", false, "Enable autoscaler for the project")
+	cmd.Flags().StringVar(&opts.AutoscalerName, "autoscaler-name", "", "The autoscaler name")
+	cmd.Flags().Int32Var(&opts.AutoscalerMinSize, "autoscaler-min-size", 1, "The minimum size for the autoscaler")
+	cmd.Flags().Int32Var(&opts.AutoscalerMaxSize, "autoscaler-max-size", 1, "The maximum size for the autoscaler")
+	cmd.Flags().Float64Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB]")
+	cmd.Flags().StringVar(&opts.AutoscalerFlavor, "autoscaler-flavor", "", "The autoscaler flavor")
+
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
 
@@ -179,6 +205,7 @@ func addRun(opts *AddOptions) (err error) {
 		IsMonitoringEnabled: opts.Monitoring,
 		Name:                opts.Name,
 		OrganizationID:      opts.OrganizationID,
+		AutoscalingEnabled:  opts.IsAutoscaler,
 	}
 
 	if opts.BackupCredentialID != 0 {
@@ -213,6 +240,14 @@ func addRun(opts *AddOptions) (err error) {
 
 	if opts.Cidr != "" {
 		body.Cidr = opts.Cidr
+	}
+
+	if opts.IsAutoscaler {
+		body.AutoscalingFlavor = opts.AutoscalerFlavor
+		body.AutoscalingGroupName = opts.AutoscalerName
+		body.MinSize = opts.AutoscalerMinSize
+		body.MaxSize = opts.AutoscalerMaxSize
+		body.DiskSize = float64(types.GiBToB(int(opts.AutoscalerDiskSize)))
 	}
 
 	params := projects.NewProjectsCreateParams().WithV(taikungoclient.Version)

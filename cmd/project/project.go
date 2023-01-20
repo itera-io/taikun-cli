@@ -3,6 +3,7 @@ package project
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/add"
 	"github.com/itera-io/taikun-cli/cmd/project/alert"
+	"github.com/itera-io/taikun-cli/cmd/project/autoscaler"
 	"github.com/itera-io/taikun-cli/cmd/project/backup"
 	"github.com/itera-io/taikun-cli/cmd/project/backupsource"
 	"github.com/itera-io/taikun-cli/cmd/project/disablemonitoring"
@@ -48,6 +49,7 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(vm.NewCmdVm())
 	cmd.AddCommand(restore.NewCmdRestore())
 	cmd.AddCommand(backupsource.NewCmdBackupSource())
+	cmd.AddCommand(autoscaler.NewCmdAutoscaler())
 
 	return cmd
 }

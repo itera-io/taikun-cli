@@ -9,6 +9,10 @@ func ErrCheckFailure(name string) error {
 	return fmt.Errorf("%s is not valid.", name)
 }
 
+var NoNameAutoscaler = errors.New(
+	"Please specify a name for the autoscaler.",
+)
+
 var ErrNegativeLimit = errors.New(
 	"The --limit flag must be positive.",
 )

@@ -75,6 +75,9 @@ var listFields = fields.New(
 		field.NewHidden(
 			"LAST-MODIFIED-BY", "lastModifiedBy",
 		),
+		field.NewVisible(
+			"AUTOSCALER", "isAutoscalingEnabled",
+		),
 	},
 )
 
