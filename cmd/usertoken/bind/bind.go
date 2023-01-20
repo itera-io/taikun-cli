@@ -15,6 +15,7 @@ import (
 type BindOptions struct {
 	Endpoints []string
 	TokenID   string
+	BindAll   bool
 }
 
 func NewCmdBind() *cobra.Command {
@@ -37,8 +38,9 @@ func NewCmdBind() *cobra.Command {
 	complete.CompleteArgsWithUserTokenName(&cmd)
 
 	cmd.Flags().StringSliceVar(&opts.Endpoints, "endpoints", []string{}, "Endpoints the user token have access to")
-	cmdutils.MarkFlagRequired(&cmd, "endpoints")
-	cmdutils.SetFlagCompletionFunc(&cmd, "endpoints", complete.BindingEndpointsCompleteFunc)
+	cmdutils.SetFlagCompletionFunc(&cmd, "endpoints", complete.EndpointsCompleteFunc)
+	cmd.Flags().BoolVar(&opts.BindAll, "bind-all", false, "Enable to bind all available endpoints")
+
 	return &cmd
 
 }
@@ -51,6 +53,12 @@ func bindRun(opts *BindOptions) (err error) {
 
 	body := &models.BindUnbindEndpointToTokenCommand{
 		TokenID: opts.TokenID,
+		BindAll: opts.BindAll,
+	}
+
+	if len(opts.Endpoints) != 0 && opts.BindAll {
+		err = errors.New("Please specify bindAll OR enpoints option")
+		return
 	}
 
 	if len(opts.Endpoints) != 0 {

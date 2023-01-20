@@ -38,7 +38,8 @@ func NewCmdUnbind() *cobra.Command {
 
 	cmd.Flags().StringSliceVar(&opts.Endpoints, "endpoints", []string{}, "Endpoints the user token have access to")
 	cmdutils.MarkFlagRequired(&cmd, "endpoints")
-	cmdutils.SetFlagCompletionFunc(&cmd, "endpoints", complete.UnbindingEndpointsCompleteFunc)
+	cmdutils.SetFlagCompletionFunc(&cmd, "endpoints", complete.EndpointsCompleteFunc)
+
 	return &cmd
 
 }

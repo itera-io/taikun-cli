@@ -36,6 +36,8 @@ func EndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string)
 	return completions
 }
 
+// Functions for autocompletion in bin and unbind command. TOFIX
+/*
 func BindingEndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string) []string {
 	apiClient, err := taikungoclient.NewClient()
 	if err != nil {
@@ -94,6 +96,7 @@ func UnbindingEndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplet
 
 	return completions
 }
+*/
 
 func StringToEndpointFormat(endpoint string) *models.AvailableEndpointData {
 	apiClient, err := taikungoclient.NewClient()
