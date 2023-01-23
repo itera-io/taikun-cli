@@ -74,7 +74,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: flag_conflicts
     timeout-minutes: 60
     steps:
@@ -88,7 +88,7 @@ jobs:
           set -o pipefail
           curl -fsSL "https://github.com/shellspec/shellspec/raw/master/install.sh" | sh -s 0.28.1 -y
           JQ=/usr/bin/jq
-          curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
+          curl -sLo $JQ https://stedolan.github.io/jq/download/linux64/jq && chmod +x $JQ
 
       - name: Checkout
         uses: actions/checkout@v3
