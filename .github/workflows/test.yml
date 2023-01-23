@@ -88,7 +88,7 @@ jobs:
           set -o pipefail
           curl -fsSL "https://github.com/shellspec/shellspec/raw/master/install.sh" | sh -s 0.28.1 -y
           JQ=/usr/bin/jq
-          curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
+          sudo curl https://stedolan.github.io/jq/download/linux64/jq > $JQ && chmod +x $JQ
 
       - name: Checkout
         uses: actions/checkout@v3
