@@ -57,6 +57,7 @@ Context 'usertoken'
         The output should include 'token'
         The output should include 'refreshToken'
         The output should include 'refreshTokenExpireTime'
+        The stderr should include ""
     End
 
 End
