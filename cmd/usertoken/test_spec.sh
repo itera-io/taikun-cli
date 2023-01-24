@@ -10,7 +10,7 @@ Context 'usertoken'
         tokenout=$(taikun usertoken add $tokenname --format json)
         accesskey=$(echo $tokenout | jq .accessKey)
         secretkey=$(echo $tokenout | jq .secretKey)
-        curl -X POST "https://api.taikun.dev/api/v1/Auth/login" -H  "accept: application/json" -H  "Content-Type: application/*+json" -d "{  \"mode\": \"token\",  \"accessKey\": \"$accesskey\",  \"secretKey\": \"$secretkey\"}"
+        curl -X POST "https://api.taikun.dev/api/v1/Auth/login" -H  "accept: application/json" -H  "Content-Type: application/*+json" -d "{  \"mode\": \"token\",  \"accessKey\": $accesskey,  \"secretKey\": $secretkey}"
     }
 
     delete() {
