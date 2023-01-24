@@ -83,10 +83,11 @@ jobs:
         with:
           go-version: 1.18
 
-      - name: Install shellspec
+      - name: Install shellspec and jq
         run: |
           set -o pipefail
           curl -fsSL "https://github.com/shellspec/shellspec/raw/master/install.sh" | sh -s 0.28.1 -y
+          sudo apt install -y jq
 
       - name: Checkout
         uses: actions/checkout@v3
