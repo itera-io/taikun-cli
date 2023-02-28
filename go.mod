@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/go-openapi/strfmt v0.21.3
 	github.com/itera-io/taikungoclient v0.0.0-20230120024327-9ffb1ea884d2
-	github.com/jedib0t/go-pretty/v6 v6.3.1
+	github.com/jedib0t/go-pretty/v6 v6.4.6
 	github.com/spf13/cobra v1.4.0
 )
 
@@ -38,7 +38,7 @@ require (
 	go.opentelemetry.io/otel v1.11.1 // indirect
 	go.opentelemetry.io/otel/trace v1.11.1 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
-	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
