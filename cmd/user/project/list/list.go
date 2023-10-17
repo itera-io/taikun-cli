@@ -1,14 +1,14 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/users"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -47,23 +47,16 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
+// listRun calls the API, gets the Users and prints their bound projects.
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.UsersAPI.UsersList(context.TODO()).Id(opts.UserID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	params := users.NewUsersListParams().WithV(taikungoclient.Version)
-	params = params.WithID(&opts.UserID)
-
-	response, err := apiClient.Client.Users.UsersList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	if len(response.Payload.Data) != 1 {
+	// No user with such ID found.
+	if len(data.Data) != 1 {
 		return cmderr.ResourceNotFoundError("User", opts.UserID)
 	}
-
-	return out.PrintResults(response.Payload.Data[0].BoundProjects, listFields)
+	return out.PrintResults(data.Data[0].BoundProjects, listFields)
 }

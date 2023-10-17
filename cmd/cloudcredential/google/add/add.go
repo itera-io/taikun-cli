@@ -1,7 +1,9 @@
 package add
 
 import (
+	"context"
 	"errors"
+	tk "github.com/itera-io/taikungoclient"
 	"os"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -10,8 +12,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/google_cloud"
 	"github.com/spf13/cobra"
 )
 
@@ -32,9 +32,9 @@ var addFields = fields.New(
 		field.NewVisible(
 			"REGION", "region",
 		),
-                field.NewVisible(
-                        "AZ-COUNT", "azCount",
-                ),
+		field.NewVisible(
+			"AZ-COUNT", "azCount",
+		),
 	},
 )
 
@@ -46,7 +46,7 @@ type AddOptions struct {
 	Name             string
 	OrganizationID   int32
 	Region           string
-        AzCount          int32
+	AzCount          int32
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -90,8 +90,8 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Region, "region", "r", "", "Region (required)")
 	cmdutils.MarkFlagRequired(&cmd, "region")
 
-        cmd.Flags().Int32VarP(&opts.AzCount, "az-count", "z", 0, "Az Count (required)")
-        cmdutils.MarkFlagRequired(&cmd, "az-count")
+	cmd.Flags().Int32VarP(&opts.AzCount, "az-count", "z", 0, "Az Count (required)")
+	cmdutils.MarkFlagRequired(&cmd, "az-count")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -105,10 +105,7 @@ func addRun(opts *AddOptions) (err error) {
 		return err
 	}
 
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	myApiClient := tk.NewClient()
 
 	if opts.OrganizationID == 0 {
 		opts.OrganizationID, err = organization.GetDefaultOrganizationID()
@@ -117,22 +114,58 @@ func addRun(opts *AddOptions) (err error) {
 		}
 	}
 
-	params := google_cloud.NewGoogleCloudCreateParams().WithV(taikungoclient.Version)
-	params = params.WithConfig(configFile)
-	params = params.WithName(&opts.Name)
-	params = params.WithOrganizationID(&opts.OrganizationID)
-        params = params.WithRegion(&opts.Region).WithAzCount(&opts.AzCount)
+	myRequest := myApiClient.Client.GoogleAPI.GooglecloudCreate(context.TODO())
+	myRequest = myRequest.Config(configFile)
+	myRequest = myRequest.Name(opts.Name)
+	myRequest = myRequest.OrganizationId(opts.OrganizationID)
+	myRequest = myRequest.Region(opts.Region).AzCount(opts.AzCount)
 
-	params = params.WithImportProject(&opts.ImportProject)
+	myRequest = myRequest.ImportProject(opts.ImportProject)
 	if !opts.ImportProject {
-		params = params.WithBillingAccountID(&opts.BillingAccountID)
-		params = params.WithFolderID(&opts.FolderID)
+		myRequest = myRequest.BillingAccountId(opts.BillingAccountID)
+		myRequest = myRequest.FolderId(opts.FolderID)
 	}
 
-	response, err := apiClient.Client.GoogleCloud.GoogleCloudCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	data, response, err := myRequest.Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, addFields)
+	/*
+			configFile, err := os.Open(opts.ConfigFilePath)
+			if err != nil {
+				return err
+			}
 
-	return
+			apiClient, err := taikungoclient.NewClient()
+			if err != nil {
+				return
+			}
+
+			if opts.OrganizationID == 0 {
+				opts.OrganizationID, err = organization.GetDefaultOrganizationID()
+				if err != nil {
+					return
+				}
+			}
+
+			params := google_cloud.NewGoogleCloudCreateParams().WithV(taikungoclient.Version)
+			params = params.WithConfig(configFile)
+			params = params.WithName(&opts.Name)
+			params = params.WithOrganizationID(&opts.OrganizationID)
+		        params = params.WithRegion(&opts.Region).WithAzCount(&opts.AzCount)
+
+			params = params.WithImportProject(&opts.ImportProject)
+			if !opts.ImportProject {
+				params = params.WithBillingAccountID(&opts.BillingAccountID)
+				params = params.WithFolderID(&opts.FolderID)
+			}
+
+			response, err := apiClient.Client.GoogleCloud.GoogleCloudCreate(params, apiClient)
+			if err == nil {
+				return out.PrintResult(response.Payload, addFields)
+			}
+
+			return
+	*/
 }

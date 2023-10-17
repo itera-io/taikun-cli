@@ -1,13 +1,13 @@
 package skus
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/offers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/azure"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -90,36 +90,27 @@ func skusRun(opts *SKUsOptions) (err error) {
 }
 
 func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
-
-	params := azure.NewAzureSkusParams().WithV(taikungoclient.Version)
-	params = params.WithCloudID(opts.CloudCredentialID)
-	params = params.WithPublisher(opts.Publisher)
-	params = params.WithOffer(opts.Offer)
-
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzureSkus(context.TODO(), opts.CloudCredentialID, opts.Publisher, opts.Offer)
 	skus = make([]string, 0)
-
 	for {
-		response, err := apiClient.Client.Azure.AzureSkus(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return nil, err
+			return nil, tk.CreateError(response, err)
 		}
 
-		skus = append(skus, response.Payload.Data...)
+		skus = append(skus, data.Data...)
 
 		count := int32(len(skus))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(skus)) > opts.Limit {
@@ -127,4 +118,44 @@ func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
 	}
 
 	return skus, nil
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+
+		params := azure.NewAzureSkusParams().WithV(taikungoclient.Version)
+		params = params.WithCloudID(opts.CloudCredentialID)
+		params = params.WithPublisher(opts.Publisher)
+		params = params.WithOffer(opts.Offer)
+
+		skus = make([]string, 0)
+
+		for {
+			response, err := apiClient.Client.Azure.AzureSkus(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			skus = append(skus, response.Payload.Data...)
+
+			count := int32(len(skus))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(skus)) > opts.Limit {
+			skus = skus[:opts.Limit]
+		}
+
+		return skus, nil
+	*/
 }

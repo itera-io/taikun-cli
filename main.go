@@ -1,9 +1,8 @@
 package main
 
 import (
-	"os"
-
 	"github.com/itera-io/taikun-cli/cmd/root"
+	"os"
 )
 
 func main() {

@@ -1,13 +1,14 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/openstack"
-	"github.com/itera-io/taikungoclient/models"
+	"github.com/itera-io/taikun-cli/utils/types"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -32,19 +33,20 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	Name             string
-	Username         string
-	Password         string
-	URL              string
-	Project          string
-	Domain           string
-	Region           string
-	PublicNetwork    string
-	AvailabilityZone string
-	InternalSubnetId string
-	VolumeType       string
-	ImportNetwork    bool
-	OrganizationID   int32
+	Name               string
+	Username           string
+	Password           string
+	URL                string
+	Project            string
+	Domain             string
+	Region             string
+	PublicNetwork      string
+	AvailabilityZone   string
+	InternalSubnetId   string
+	VolumeType         string
+	ImportNetwork      bool
+	OrganizationID     int32
+	OpenStackContinent string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -56,6 +58,11 @@ func NewCmdAdd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
+			if opts.OpenStackContinent != "" {
+				if err := cmdutils.CheckFlagValue("continent", opts.OpenStackContinent, types.OpenstackContinent); err != nil {
+					return err
+				}
+			}
 			return addRun(&opts)
 		},
 	}
@@ -78,6 +85,9 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Region, "region", "r", "", "OpenStack Region (required)")
 	cmdutils.MarkFlagRequired(&cmd, "region")
 
+	cmd.Flags().StringVarP(&opts.OpenStackContinent, "continent", "c", "", "OpenStack Continent [eu,us,as] (required)")
+	cmdutils.SetFlagCompletionValues(&cmd, "continent", types.OpenstackContinent.Keys()...)
+
 	cmd.Flags().StringVar(&opts.PublicNetwork, "public-network", "", "OpenStack Public Network (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-network")
 
@@ -95,33 +105,68 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	importNetwork := opts.ImportNetwork
+	body := taikuncore.CreateOpenstackCloudCommand{
+		Name:                      *taikuncore.NewNullableString(&opts.Name),
+		OpenStackUser:             *taikuncore.NewNullableString(&opts.Username),
+		OpenStackPassword:         *taikuncore.NewNullableString(&opts.Password),
+		OpenStackUrl:              *taikuncore.NewNullableString(&opts.URL),
+		OpenStackProject:          *taikuncore.NewNullableString(&opts.Project),
+		OpenStackPublicNetwork:    *taikuncore.NewNullableString(&opts.PublicNetwork),
+		OpenStackAvailabilityZone: *taikuncore.NewNullableString(&opts.AvailabilityZone),
+		OpenStackDomain:           *taikuncore.NewNullableString(&opts.Domain),
+		OpenStackRegion:           *taikuncore.NewNullableString(&opts.Region),
+		OpenStackVolumeType:       *taikuncore.NewNullableString(&opts.VolumeType),
+		OpenStackImportNetwork:    &importNetwork,
+		OpenStackInternalSubnetId: *taikuncore.NewNullableString(&opts.InternalSubnetId),
+		OrganizationId:            *taikuncore.NewNullableInt32(&opts.OrganizationID),
+	}
+	openstackContinent := types.GetOpenstackContinent(opts.OpenStackContinent)
+	if openstackContinent != nil {
+		body.SetOpenStackContinent(openstackContinent.(string))
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.OpenstackCloudCredentialAPI.OpenstackCreate(context.TODO()).CreateOpenstackCloudCommand(body).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
+	return out.PrintResult(data, addFields)
 
-	body := &models.CreateOpenstackCloudCommand{
-		Name:                      opts.Name,
-		OpenStackAvailabilityZone: opts.AvailabilityZone,
-		OpenStackDomain:           opts.Domain,
-		OpenStackImportNetwork:    opts.ImportNetwork,
-		OpenStackInternalSubnetID: opts.InternalSubnetId,
-		OpenStackPassword:         opts.Password,
-		OpenStackProject:          opts.Project,
-		OpenStackPublicNetwork:    opts.PublicNetwork,
-		OpenStackRegion:           opts.Region,
-		OpenStackURL:              opts.URL,
-		OpenStackUser:             opts.Username,
-		OpenStackVolumeType:       opts.VolumeType,
-		OrganizationID:            opts.OrganizationID,
-	}
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
 
-	params := openstack.NewOpenstackCreateParams().WithV(taikungoclient.Version).WithBody(body)
+		body := &models.CreateOpenstackCloudCommand{
+			Name:                      opts.Name,
+			OpenStackAvailabilityZone: opts.AvailabilityZone,
+			OpenStackDomain:           opts.Domain,
+			OpenStackImportNetwork:    opts.ImportNetwork,
+			OpenStackInternalSubnetID: opts.InternalSubnetId,
+			OpenStackPassword:         opts.Password,
+			OpenStackProject:          opts.Project,
+			OpenStackPublicNetwork:    opts.PublicNetwork,
+			OpenStackRegion:           opts.Region,
+			OpenStackURL:              opts.URL,
+			OpenStackUser:             opts.Username,
+			OpenStackVolumeType:       opts.VolumeType,
+			OrganizationID:            opts.OrganizationID,
+		}
 
-	response, err := apiClient.Client.Openstack.OpenstackCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
+		params := openstack.NewOpenstackCreateParams().WithV(taikungoclient.Version).WithBody(body)
 
-	return
+		response, err := apiClient.Client.Openstack.OpenstackCreate(params, apiClient)
+		if err == nil {
+			return out.PrintResult(response.Payload, addFields)
+		}
+
+		return
+	*/
 }

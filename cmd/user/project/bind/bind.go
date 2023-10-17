@@ -1,18 +1,18 @@
 package bind
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/user_projects"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
 type BindOptions struct {
 	UserID    string
-	ProjectID int
+	ProjectID int32
 }
 
 func NewCmdBind() *cobra.Command {
@@ -30,34 +30,34 @@ func NewCmdBind() *cobra.Command {
 
 	complete.CompleteArgsWithUserID(&cmd)
 
-	cmd.Flags().IntVarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
+	cmd.Flags().Int32VarP(&opts.ProjectID, "project-id", "p", 0, "Project ID (required)")
 	cmdutils.MarkFlagRequired(&cmd, "project-id")
 
 	return &cmd
 }
 
+// bindRun calls the API at /usersprojects/bindprojects and binds a user to a project.
+// Both identified by ID. If user and project are already bound if fails.
 func bindRun(opts *BindOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	myApiClient := tk.NewClient()
 
-	body := &models.BindProjectsCommand{
-		UserID: opts.UserID,
-		Projects: []*models.UpdateUserProjectDto{
+	// Create the body for the request
+	trueBool := true
+	body := taikuncore.BindProjectsCommand{
+		Projects: []taikuncore.UpdateUserProjectDto{
 			{
-				ProjectID: int32(opts.ProjectID),
-				IsBound:   true,
+				Id:      &opts.ProjectID,
+				IsBound: &trueBool,
 			},
 		},
+		UserId: *taikuncore.NewNullableString(&opts.UserID),
 	}
 
-	params := user_projects.NewUserProjectsBindProjectsParams().WithV(taikungoclient.Version).WithBody(body)
-
-	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	// Send the request and process response
+	response, err := myApiClient.Client.UserProjectsAPI.UserprojectsBindProjects(context.TODO()).BindProjectsCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
-
+	out.PrintStandardSuccess()
 	return
 }

@@ -1,17 +1,17 @@
 package add
 
 import (
+	"context"
 	"errors"
+	"github.com/itera-io/taikun-cli/utils/out"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_vm_disks"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -101,32 +101,60 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.CreateStandAloneDiskCommand{
-		Name:           opts.Name,
-		Size:           opts.Size,
-		StandaloneVMID: opts.StandaloneVMID,
+	// Prepare the arguments for the query
+	body := taikuncore.CreateStandAloneDiskCommand{
+		StandaloneVmId: &opts.StandaloneVMID,
+		Name:           *taikuncore.NewNullableString(&opts.Name),
+		Size:           &opts.Size,
 	}
-
 	if opts.AwsDeviceName != "" {
-		body.DeviceName = opts.AwsDeviceName
+		body.SetDeviceName(opts.AwsDeviceName)
 	} else if opts.AzureLunID != 0 {
-		body.LunID = opts.AzureLunID
+		body.SetLunId(opts.AzureLunID)
 	} else if opts.OpenStackVolumeType != "" {
-		body.VolumeType = opts.OpenStackVolumeType
+		body.SetVolumeType(opts.OpenStackVolumeType)
 	}
 
-	params := stand_alone_vm_disks.NewStandAloneVMDisksCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.Client.StandAloneVMDisks.StandAloneVMDisksCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.StandaloneVMDisksAPI.StandalonevmdisksCreate(context.TODO()).CreateStandAloneDiskCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
-	return
+	// Manipulate the gathered data
+	return out.PrintResult(data, addFields)
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.CreateStandAloneDiskCommand{
+			Name:           opts.Name,
+			Size:           opts.Size,
+			StandaloneVMID: opts.StandaloneVMID,
+		}
+
+		if opts.AwsDeviceName != "" {
+			body.DeviceName = opts.AwsDeviceName
+		} else if opts.AzureLunID != 0 {
+			body.LunID = opts.AzureLunID
+		} else if opts.OpenStackVolumeType != "" {
+			body.VolumeType = opts.OpenStackVolumeType
+		}
+
+		params := stand_alone_vm_disks.NewStandAloneVMDisksCreateParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		response, err := apiClient.Client.StandAloneVMDisks.StandAloneVMDisksCreate(params, apiClient)
+		if err == nil {
+			return out.PrintResult(response.Payload, addFields)
+		}
+
+		return
+	*/
 }

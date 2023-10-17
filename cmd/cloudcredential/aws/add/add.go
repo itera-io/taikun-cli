@@ -1,14 +1,14 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/aws"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -26,9 +26,9 @@ var addFields = fields.New(
 		field.NewVisible(
 			"REGION", "awsRegion",
 		),
-                field.NewVisible(
-                        "AZ-COUNT", "awsAzCount",
-                ),
+		field.NewVisible(
+			"AZ-COUNT", "awsAzCount",
+		),
 		field.NewHidden(
 			"ACCESS-KEY-ID", "awsAccessKeyId",
 		),
@@ -42,12 +42,12 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	Name                string
-	AWSSecretAccessKey  string
-	AWSAccessKeyID      string
-	AWSRegion           string
-        AWSAzCount          int32
-	OrganizationID      int32
+	Name               string
+	AWSSecretAccessKey string
+	AWSAccessKeyID     string
+	AWSRegion          string
+	AWSAzCount         int32
+	OrganizationID     int32
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -73,8 +73,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "region")
 	cmdutils.SetFlagCompletionFunc(&cmd, "region", complete.MakeAwsRegionCompletionFunc(&opts.AWSAccessKeyID, &opts.AWSSecretAccessKey))
 
-        cmd.Flags().Int32VarP(&opts.AWSAzCount, "az-count", "z", 0, "AWS Az Count (required)")
-        cmdutils.MarkFlagRequired(&cmd, "az-count")
+	cmd.Flags().Int32VarP(&opts.AWSAzCount, "az-count", "z", 0, "AWS Az Count (required)")
+	cmdutils.MarkFlagRequired(&cmd, "az-count")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
@@ -85,26 +85,49 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CreateAwsCloudCommand{
+		Name:               *taikuncore.NewNullableString(&opts.Name),
+		AwsSecretAccessKey: *taikuncore.NewNullableString(&opts.AWSSecretAccessKey),
+		AwsAccessKeyId:     *taikuncore.NewNullableString(&opts.AWSAccessKeyID),
+		AzCount:            &opts.AWSAzCount,
+		AwsRegion:          *taikuncore.NewNullableString(&opts.AWSRegion),
+		OrganizationId:     *taikuncore.NewNullableInt32(&opts.OrganizationID),
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsCreate(context.TODO()).CreateAwsCloudCommand(body).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
+	return out.PrintResult(data, addFields)
 
-	body := &models.CreateAwsCloudCommand{
-		Name:                opts.Name,
-		AwsSecretAccessKey:  opts.AWSSecretAccessKey,
-		AwsAccessKeyID:      opts.AWSAccessKeyID,
-		AwsRegion:           opts.AWSRegion,
-		AzCount:             opts.AWSAzCount,
-                OrganizationID:      opts.OrganizationID,
-	}
+	/*
+			apiClient, err := taikungoclient.NewClient()
+			if err != nil {
+				return
+			}
 
-	params := aws.NewAwsCreateParams().WithV(taikungoclient.Version).WithBody(body)
+			body := &models.CreateAwsCloudCommand{
+				Name:                opts.Name,
+				AwsSecretAccessKey:  opts.AWSSecretAccessKey,
+				AwsAccessKeyID:      opts.AWSAccessKeyID,
+				AwsRegion:           opts.AWSRegion,
+				AzCount:             opts.AWSAzCount,
+		                OrganizationID:      opts.OrganizationID,
+			}
 
-	response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
+			params := aws.NewAwsCreateParams().WithV(taikungoclient.Version).WithBody(body)
 
-	return
+			response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
+			if err == nil {
+				return out.PrintResult(response.Payload, addFields)
+			}
+
+			return
+	*/
 }

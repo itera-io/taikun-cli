@@ -1,12 +1,12 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/backup"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -38,19 +38,32 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(opts DeleteOption) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.DeleteRestoreCommand{
+		ProjectId: &opts.ProjectID,
+		Name:      *taikuncore.NewNullableString(&opts.Name),
+	}
+	response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteRestore(context.TODO()).DeleteRestoreCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.DeleteRestoreCommand{ProjectID: opts.ProjectID, Name: opts.Name}
-	params := backup.NewBackupDeleteRestoreParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Backup.BackupDeleteRestore(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Restore", opts.Name)
-	}
-
+	out.PrintDeleteSuccess("Restore", opts.Name)
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.DeleteRestoreCommand{ProjectID: opts.ProjectID, Name: opts.Name}
+		params := backup.NewBackupDeleteRestoreParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.Backup.BackupDeleteRestore(params, apiClient)
+		if err == nil {
+			out.PrintDeleteSuccess("Restore", opts.Name)
+		}
+
+		return
+	*/
 }

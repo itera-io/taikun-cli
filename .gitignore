@@ -14,3 +14,6 @@ dist/
 # Shellspec
 report/
 shellspec.log
+
+# Documentation is not versioned so far...
+docs/

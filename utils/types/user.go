@@ -2,17 +2,30 @@ package types
 
 import (
 	"github.com/itera-io/taikun-cli/utils/gmap"
-	"github.com/itera-io/taikungoclient/models"
+	taikuncore "github.com/itera-io/taikungoclient/client"
+	"strings"
 )
 
-var UserRoles = gmap.New(
-	map[string]interface{}{
-		"user":    models.UserRole(400),
-		"manager": models.UserRole(200),
-	},
-)
+//var UserRolesOld = gmap.New(
+//	map[string]interface{}{
+//		"user":    models.UserRole(400),
+//		"manager": models.UserRole(200),
+//	},
+//)
 
-func GetUserRole(role string) models.UserRole {
-	model, _ := UserRoles.Get(role).(models.UserRole)
-	return model
+// Older version, function is used only in user/add
+//func GetUserRoleOld(role string) models.UserRole {
+//	model, _ := UserRoles.Get(role).(models.UserRole)
+//	return model
+//}
+
+func GetUserRoles() gmap.GenericMap {
+	roleEnum := taikuncore.AllowedUserRoleEnumValues
+	roleMap := make(map[string]interface{})
+	for _, value := range roleEnum {
+		roleMap[strings.ToLower(string(value))] = 0
+	}
+	roleGmap := gmap.New(roleMap)
+
+	return roleGmap
 }

@@ -1,8 +1,8 @@
 package add
 
 import (
+	"context"
 	"fmt"
-
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -12,13 +12,10 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/access_profiles"
-	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
-	"github.com/itera-io/taikungoclient/client/projects"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 var addFields = fields.New(
@@ -193,77 +190,143 @@ func addRun(opts *AddOptions) (err error) {
 		return err
 	}
 
-	body := models.CreateProjectCommand{
-		AccessProfileID:     opts.AccessProfileID,
-		AlertingProfileID:   opts.AlertingProfileID,
-		CloudCredentialID:   opts.CloudCredentialID,
-		DeleteOnExpiration:  opts.DeleteOnExpiration,
+	isKubernetes := true
+	body := taikuncore.CreateProjectCommand{
+		AccessProfileId:     *taikuncore.NewNullableInt32(&opts.AccessProfileID),
+		AlertingProfileId:   *taikuncore.NewNullableInt32(&opts.AlertingProfileID),
+		CloudCredentialId:   &opts.CloudCredentialID,
+		DeleteOnExpiration:  &opts.DeleteOnExpiration,
 		Flavors:             opts.Flavors,
-		IsAutoUpgrade:       opts.AutoUpgrade,
-		IsKubernetes:        true,
-		KubernetesProfileID: opts.KubernetesProfileID,
-		IsMonitoringEnabled: opts.Monitoring,
-		Name:                opts.Name,
-		OrganizationID:      opts.OrganizationID,
-		AutoscalingEnabled:  opts.IsAutoscaler,
+		IsAutoUpgrade:       &opts.AutoUpgrade,
+		IsKubernetes:        &isKubernetes, // Looks to be always true in the UI. No API doc cover what this does.
+		KubernetesProfileId: *taikuncore.NewNullableInt32(&opts.KubernetesProfileID),
+		IsMonitoringEnabled: &opts.Monitoring,
+		Name:                *taikuncore.NewNullableString(&opts.Name),
+		OrganizationId:      *taikuncore.NewNullableInt32(&opts.OrganizationID),
+		AutoscalingEnabled:  &opts.IsAutoscaler,
 	}
 
 	if opts.BackupCredentialID != 0 {
-		body.IsBackupEnabled = true
-		body.S3CredentialID = opts.BackupCredentialID
+		body.SetIsBackupEnabled(true)
+		body.SetS3CredentialId(opts.BackupCredentialID)
 	}
 
 	if opts.ExpirationDate != "" {
 		expiredAt := types.StrToDateTime(opts.ExpirationDate)
-		body.ExpiredAt = &expiredAt
+		body.SetExpiredAt(time.Time(expiredAt))
 	}
 
 	if opts.KubernetesVersion != "" {
-		body.KubernetesVersion = opts.KubernetesVersion
+		body.SetKubernetesVersion(opts.KubernetesVersion)
 	}
 
 	if opts.PolicyProfileID != 0 {
-		body.OpaProfileID = opts.PolicyProfileID
+		body.SetOpaProfileId(opts.PolicyProfileID)
 	}
 
 	if opts.RouterIDStartRange != -1 {
-		body.RouterIDStartRange = opts.RouterIDStartRange
+		body.SetRouterIdStartRange(opts.RouterIDStartRange)
 	}
 
 	if opts.RouterIDEndRange != -1 {
-		body.RouterIDEndRange = opts.RouterIDEndRange
+		body.SetRouterIdEndRange(opts.RouterIDEndRange)
 	}
 
 	if opts.TaikunLBFlavor != "" {
-		body.TaikunLBFlavor = opts.TaikunLBFlavor
+		body.SetTaikunLBFlavor(opts.TaikunLBFlavor)
 	}
 
 	if opts.Cidr != "" {
-		body.Cidr = opts.Cidr
+		body.SetCidr(opts.Cidr)
 	}
 
 	if opts.IsAutoscaler {
-		body.AutoscalingFlavor = opts.AutoscalerFlavor
-		body.AutoscalingGroupName = opts.AutoscalerName
-		body.MinSize = opts.AutoscalerMinSize
-		body.MaxSize = opts.AutoscalerMaxSize
-		body.DiskSize = float64(types.GiBToB(int(opts.AutoscalerDiskSize)))
+		body.SetAutoscalingFlavor(opts.AutoscalerFlavor)
+		body.SetAutoscalingGroupName(opts.AutoscalerName)
+		body.SetMinSize(opts.AutoscalerMinSize)
+		body.SetMaxSize(opts.AutoscalerMaxSize)
+		body.SetDiskSize(float64(types.GiBToB(int(opts.AutoscalerDiskSize))))
 	}
 
-	params := projects.NewProjectsCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsCreate(context.TODO()).CreateProjectCommand(body).Execute()
 	if err != nil {
-		return err
+		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, addFields)
+	/*
+		body := models.CreateProjectCommand{
+			AccessProfileID:     opts.AccessProfileID,
+			AlertingProfileID:   opts.AlertingProfileID,
+			CloudCredentialID:   opts.CloudCredentialID,
+			DeleteOnExpiration:  opts.DeleteOnExpiration,
+			Flavors:             opts.Flavors,
+			IsAutoUpgrade:       opts.AutoUpgrade,
+			IsKubernetes:        true,
+			KubernetesProfileID: opts.KubernetesProfileID,
+			IsMonitoringEnabled: opts.Monitoring,
+			Name:                opts.Name,
+			OrganizationID:      opts.OrganizationID,
+			AutoscalingEnabled:  opts.IsAutoscaler,
+		}
 
-	response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
-	if err != nil {
-		return err
-	}
+		if opts.BackupCredentialID != 0 {
+			body.IsBackupEnabled = true
+			body.S3CredentialID = opts.BackupCredentialID
+		}
 
-	return out.PrintResult(response.Payload, addFields)
+		if opts.ExpirationDate != "" {
+			expiredAt := types.StrToDateTime(opts.ExpirationDate)
+			body.ExpiredAt = &expiredAt
+		}
+
+		if opts.KubernetesVersion != "" {
+			body.KubernetesVersion = opts.KubernetesVersion
+		}
+
+		if opts.PolicyProfileID != 0 {
+			body.OpaProfileID = opts.PolicyProfileID
+		}
+
+		if opts.RouterIDStartRange != -1 {
+			body.RouterIDStartRange = opts.RouterIDStartRange
+		}
+
+		if opts.RouterIDEndRange != -1 {
+			body.RouterIDEndRange = opts.RouterIDEndRange
+		}
+
+		if opts.TaikunLBFlavor != "" {
+			body.TaikunLBFlavor = opts.TaikunLBFlavor
+		}
+
+		if opts.Cidr != "" {
+			body.Cidr = opts.Cidr
+		}
+
+		if opts.IsAutoscaler {
+			body.AutoscalingFlavor = opts.AutoscalerFlavor
+			body.AutoscalingGroupName = opts.AutoscalerName
+			body.MinSize = opts.AutoscalerMinSize
+			body.MaxSize = opts.AutoscalerMaxSize
+			body.DiskSize = float64(types.GiBToB(int(opts.AutoscalerDiskSize)))
+		}
+
+		params := projects.NewProjectsCreateParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return err
+		}
+
+		response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
+		if err != nil {
+			return err
+		}
+
+		return out.PrintResult(response.Payload, addFields)
+	*/
 }
 
 func setDefaultAddOptions(opts *AddOptions) (err error) {
@@ -291,7 +354,7 @@ func setDefaultAddOptions(opts *AddOptions) (err error) {
 	if opts.KubernetesProfileID == 0 {
 		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(opts.OrganizationID)
 		if err != nil {
-			return
+			return err
 		}
 	}
 
@@ -299,73 +362,122 @@ func setDefaultAddOptions(opts *AddOptions) (err error) {
 }
 
 func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesList(context.TODO()).OrganizationId(organizationID).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	params := access_profiles.NewAccessProfilesAccessProfilesForOrganizationListParams()
-	params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
-
-	response, err := apiClient.Client.AccessProfiles.AccessProfilesAccessProfilesForOrganizationList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	for _, profile := range response.Payload {
-		if profile.Name == api.DefaultAccessProfileName {
-			id = profile.ID
+	for _, profile := range data.Data {
+		if profile.GetName() == api.DefaultAccessProfileName {
+			id = profile.GetId()
 			return
 		}
 	}
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := access_profiles.NewAccessProfilesAccessProfilesForOrganizationListParams()
+		params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
+
+		response, err := apiClient.Client.AccessProfiles.AccessProfilesAccessProfilesForOrganizationList(params, apiClient)
+		if err != nil {
+			return
+		}
+
+		for _, profile := range response.Payload {
+			if profile.Name == api.DefaultAccessProfileName {
+				id = profile.ID
+				return
+			}
+		}
+
+	*/
 
 	return
 }
 
 func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiclient := tk.NewClient()
+	data, response, err := myApiclient.Client.AlertingProfilesAPI.AlertingprofilesList(context.TODO()).OrganizationId(organizationID).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	params := alerting_profiles.NewAlertingProfilesAlertingProfilesForOrganizationListParams()
-	params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
-
-	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesAlertingProfilesForOrganizationList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	for _, profile := range response.Payload {
-		if profile.Name == api.DefaultAlertingProfileName {
-			id = profile.ID
+	for _, profile := range data.Data {
+		if profile.GetName() == api.DefaultAlertingProfileName {
+			id = profile.GetId()
 			return
 		}
 	}
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := alerting_profiles.NewAlertingProfilesAlertingProfilesForOrganizationListParams()
+		params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
+
+		response, err := apiClient.Client.AlertingProfiles.AlertingProfilesAlertingProfilesForOrganizationList(params, apiClient)
+		if err != nil {
+			return
+		}
+
+		for _, profile := range response.Payload {
+			if profile.Name == api.DefaultAlertingProfileName {
+				id = profile.ID
+				return
+			}
+		}
+	*/
 
 	return
 }
 
 func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesList(context.TODO()).OrganizationId(organizationID).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesKubernetesProfilesForOrganizationListParams()
-	params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
-
-	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesKubernetesProfilesForOrganizationList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	for _, profile := range response.Payload {
-		if profile.Name == api.DefaultKubernetesProfileName {
-			id = profile.ID
+	for _, profile := range data.Data {
+		if profile.GetName() == api.DefaultKubernetesProfileName {
+			id = profile.GetId()
 			return
 		}
 	}
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := kubernetes_profiles.NewKubernetesProfilesKubernetesProfilesForOrganizationListParams()
+		params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
+
+		response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesKubernetesProfilesForOrganizationList(params, apiClient)
+		if err != nil {
+			return
+		}
+
+		for _, profile := range response.Payload {
+			if profile.Name == api.DefaultKubernetesProfileName {
+				id = profile.ID
+				return
+			}
+		}
+	*/
 
 	return
 }

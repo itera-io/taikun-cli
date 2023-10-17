@@ -1,16 +1,16 @@
 package add
 
 import (
+	"context"
 	"fmt"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/kube_config"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -106,26 +106,42 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.CreateKubeConfigCommand{}
+	body.SetName(opts.Name)
+	body.SetProjectId(opts.ProjectID)
+	body.SetIsAccessibleForAll(opts.AccessScope == types.KubeconfigAccessAll)
+	body.SetIsAccessibleForManager(opts.AccessScope == types.KubeconfigAccessManagers)
+	body.SetKubeConfigRoleId(types.GetKubeconfigRole(opts.Role))
+
+	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigCreate(context.TODO()).CreateKubeConfigCommand(body).Execute()
 	if err != nil {
+		return tk.CreateError(response, err)
+	}
+
+	return out.PrintResult(data, addFields)
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.CreateKubeConfigCommand{
+			IsAccessibleForAll:     opts.AccessScope == types.KubeconfigAccessAll,
+			IsAccessibleForManager: opts.AccessScope == types.KubeconfigAccessManagers,
+			KubeConfigRoleID:       types.GetKubeconfigRole(opts.Role),
+			Name:                   opts.Name,
+			ProjectID:              opts.ProjectID,
+		}
+
+		params := kube_config.NewKubeConfigCreateParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		response, err := apiClient.Client.KubeConfig.KubeConfigCreate(params, apiClient)
+		if err == nil {
+			return out.PrintResult(response.Payload, addFields)
+		}
+
 		return
-	}
-
-	body := models.CreateKubeConfigCommand{
-		IsAccessibleForAll:     opts.AccessScope == types.KubeconfigAccessAll,
-		IsAccessibleForManager: opts.AccessScope == types.KubeconfigAccessManagers,
-		KubeConfigRoleID:       types.GetKubeconfigRole(opts.Role),
-		Name:                   opts.Name,
-		ProjectID:              opts.ProjectID,
-	}
-
-	params := kube_config.NewKubeConfigCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.Client.KubeConfig.KubeConfigCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
+	*/
 }

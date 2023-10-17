@@ -2,18 +2,31 @@ package types
 
 import (
 	"github.com/itera-io/taikun-cli/utils/gmap"
-	"github.com/itera-io/taikungoclient/models"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 )
+
+//var ServerRoles = gmap.New(
+//	map[string]interface{}{
+//		"bastion":    models.CloudRole(100),
+//		"kubemaster": models.CloudRole(200),
+//		"kubeworker": models.CloudRole(300),
+//	},
+//)
+
+//func GetServerRole(serverRole string) models.CloudRole {
+//	model, _ := ServerRoles.Get(serverRole).(models.CloudRole)
+//	return model
+//}
 
 var ServerRoles = gmap.New(
 	map[string]interface{}{
-		"bastion":    models.CloudRole(100),
-		"kubemaster": models.CloudRole(200),
-		"kubeworker": models.CloudRole(300),
+		"bastion":    taikuncore.CLOUDROLE_BASTION,
+		"kubemaster": taikuncore.CLOUDROLE_KUBEMASTER,
+		"kubeworker": taikuncore.CLOUDROLE_KUBEWORKER,
 	},
 )
 
-func GetServerRole(serverRole string) models.CloudRole {
-	model, _ := ServerRoles.Get(serverRole).(models.CloudRole)
+func GetServerRole(serverRole string) taikuncore.CloudRole {
+	model, _ := ServerRoles.Get(serverRole).(taikuncore.CloudRole)
 	return model
 }
