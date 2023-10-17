@@ -2,6 +2,7 @@ package cmdutils
 
 import (
 	"context"
+	"fmt"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
@@ -23,7 +24,8 @@ func FlavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 	for {
 		data, response, err := myRequest.Execute()
 		if err != nil {
-			err = tk.CreateError(response, err)
+			//err = tk.CreateError(response, err)
+			fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error())) // This function does not return an error... so just call it. #FIXME
 			return []string{}
 		}
 

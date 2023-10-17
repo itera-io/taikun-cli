@@ -219,7 +219,7 @@ func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplet
 	myApiClient := tk.NewClient()
 	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsList(context.TODO()).Id(projectID).Execute()
 	if err != nil || len(data.GetData()) != 1 {
-		err = tk.CreateError(response, err)
+		fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error()))
 		return []string{}
 	}
 
@@ -234,7 +234,7 @@ func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplet
 
 	dataCC, responseCC, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO()).OrganizationId(projectOrgId).Execute()
 	if err != nil {
-		err = tk.CreateError(responseCC, err)
+		fmt.Println(fmt.Errorf(tk.CreateError(responseCC, err).Error()))
 		return []string{}
 	}
 	countCC := dataCC.GetTotalCountOpenstack() + dataCC.GetTotalCountAws() + dataCC.GetTotalCountAzure() + dataCC.GetTotalCountGoogle()

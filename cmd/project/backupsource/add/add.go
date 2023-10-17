@@ -66,8 +66,8 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// out.PrintResult(response, addFields) // Probably will not work #FIXME
-	out.PrintStandardSuccess()
-	return
+	//out.PrintStandardSuccess()
+	return out.PrintResult(response, addFields)
 	/*
 		apiClient, err := taikungoclient.NewClient()
 		if err != nil {

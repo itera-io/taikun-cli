@@ -118,8 +118,8 @@ func addRun(opts *AddOptions) (err error) {
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
-	out.PrintResult(data, addFields)
-	return
+
+	return out.PrintResult(data, addFields)
 	/*
 		apiClient, err := taikungoclient.NewClient()
 		if err != nil {

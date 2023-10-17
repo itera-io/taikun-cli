@@ -66,8 +66,7 @@ func etcRun(opts *EtcOptions) (err error) {
 	}
 
 	// Manipulate the gathered data
-	out.PrintResult(data, etcFields)
-	return
+	return out.PrintResult(data, etcFields)
 	/*
 		apiClient, err := taikungoclient.NewClient()
 		if err != nil {

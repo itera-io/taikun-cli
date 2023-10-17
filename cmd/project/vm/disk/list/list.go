@@ -82,8 +82,7 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	// Manipulate the gathered data
-	out.PrintResults(data.GetData(), listFields)
-	return
+	return out.PrintResults(data.GetData(), listFields)
 	/*
 		apiClient, err := taikungoclient.NewClient()
 		if err != nil {

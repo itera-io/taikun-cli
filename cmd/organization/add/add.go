@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -122,7 +123,7 @@ func NewCmdAdd() *cobra.Command {
 		myApiClient := tk.NewClient()
 		data, response, err := myApiClient.Client.CommonAPI.CommonCountries(context.TODO()).Execute()
 		if err != nil {
-			tk.CreateError(response, err).Error() // This function does not return an error... so just call it.
+			fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error())) // This function does not return an error... so just call it. #FIXME
 			return
 		}
 		for _, countryListDto := range data {

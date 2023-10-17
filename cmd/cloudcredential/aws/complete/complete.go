@@ -2,6 +2,7 @@ package complete
 
 import (
 	"context"
+	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -25,7 +26,8 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) c
 
 		data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsRegionlist(context.TODO()).RegionListCommand(body).Execute()
 		if err != nil {
-			err = tk.CreateError(response, err)
+			//err = tk.CreateError(response, err)
+			fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error())) // This function does not return an error... so just call it. #FIXME
 			return
 		}
 
