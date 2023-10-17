@@ -2,8 +2,8 @@ package utils
 
 import (
 	"context"
-	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	tk "github.com/itera-io/taikungoclient"
 )
 
 const (

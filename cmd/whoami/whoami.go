@@ -3,7 +3,7 @@ package whoami
 import (
 	"context"
 	"fmt"
-	tk "github.com/Smidra/taikungoclient"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 

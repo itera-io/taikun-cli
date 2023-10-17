@@ -1,8 +1,8 @@
 package types
 
 import (
-	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/utils/gmap"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"strings"
 )
 

@@ -2,9 +2,9 @@ package complete
 
 import (
 	"context"
-	tk "github.com/Smidra/taikungoclient"
-	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/utils/types"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 

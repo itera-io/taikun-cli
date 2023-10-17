@@ -3,7 +3,7 @@ package add
 import (
 	"context"
 	"errors"
-	tk "github.com/Smidra/taikungoclient"
+	tk "github.com/itera-io/taikungoclient"
 	"os"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"

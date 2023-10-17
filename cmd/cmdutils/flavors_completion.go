@@ -2,8 +2,8 @@ package cmdutils
 
 import (
 	"context"
-	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/utils/types"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 

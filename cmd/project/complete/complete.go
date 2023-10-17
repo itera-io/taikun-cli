@@ -2,7 +2,7 @@ package complete
 
 import (
 	"context"
-	tk "github.com/Smidra/taikungoclient"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 

@@ -2,7 +2,7 @@ package cmdutils
 
 //import (
 //	"context"
-//	tk "github.com/Smidra/taikungoclient"
+//	tk "github.com/itera-io/taikungoclient"
 //)
 //
 //func IsAutoscalingEnabled(projectID int32) (autoscalingEnabled bool, err error) {

@@ -3,8 +3,8 @@ package images
 import (
 	"context"
 	"errors"
-	tk "github.com/Smidra/taikungoclient"
-	taikuncore "github.com/Smidra/taikungoclient/client"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/offers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"

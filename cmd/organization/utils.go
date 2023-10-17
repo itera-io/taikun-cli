@@ -2,7 +2,7 @@ package organization
 
 import (
 	"context"
-	tk "github.com/Smidra/taikungoclient"
+	tk "github.com/itera-io/taikungoclient"
 )
 
 func GetDefaultOrganizationID() (id int32, err error) {

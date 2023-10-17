@@ -3,7 +3,7 @@ package cmdutils
 import (
 	"context"
 	"fmt"
-	tk "github.com/Smidra/taikungoclient"
+	tk "github.com/itera-io/taikungoclient"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"

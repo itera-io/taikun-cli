@@ -2,7 +2,7 @@ package cmdutils
 
 import (
 	"context"
-	tk "github.com/Smidra/taikungoclient"
+	tk "github.com/itera-io/taikungoclient"
 )
 
 // #FIXME  - Not tested? You are better than this. I am seriously disappointed in you Radek.

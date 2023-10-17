@@ -3,9 +3,9 @@ package check
 import (
 	"context"
 	"fmt"
-	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 	"os"
 	"strings"
