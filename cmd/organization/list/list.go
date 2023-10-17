@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/organizations"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -102,39 +102,40 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
+// listRun sends multiple queries to the API and returns a list of organizations.
+// Organizations are returned in the UserForListDto structs generated in models.
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := organizations.NewOrganizationsListParams().WithV(taikungoclient.Version)
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.OrganizationsAPI.OrganizationsList(context.TODO())
+	// Set Sorting if set in command line options
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var organizations = make([]*models.OrganizationDetailsDto, 0)
+	var organizations = make([]taikuncore.OrganizationDetailsDto, 0)
 
+	// Execute the request, it returns only 50 lines in one page
+	// then execute it again with an Offset until you have read all of it.
 	for {
-		response, err := apiClient.Client.Organizations.OrganizationsList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
-
-		organizations = append(organizations, response.Payload.Data...)
+		organizations = append(organizations, data.Data...)
 
 		organizationsCount := int32(len(organizations))
 		if opts.Limit != 0 && organizationsCount >= opts.Limit {
 			break
 		}
 
-		if organizationsCount == response.Payload.TotalCount {
+		if organizationsCount == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&organizationsCount)
+		myRequest = myRequest.Offset(organizationsCount)
 	}
 
+	// We have (over)reached the limit, cut it at the limit and break
 	if opts.Limit != 0 && int32(len(organizations)) > opts.Limit {
 		organizations = organizations[:opts.Limit]
 	}

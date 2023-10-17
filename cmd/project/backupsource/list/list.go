@@ -1,6 +1,9 @@
 package list
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -8,9 +11,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/backup"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -69,38 +69,30 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := backup.NewBackupListAllBackupStoragesParams().WithV(taikungoclient.Version)
-	params.WithProjectID(opts.ProjectID)
-
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.BackupPolicyAPI.BackupListAllBackupStorages(context.TODO(), opts.ProjectID)
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var backupRestores = make([]*models.BackupStorageLocationDto, 0)
-
+	var backupRestores = make([]taikuncore.BackupStorageLocationDto, 0)
 	for {
-		response, err := apiClient.Client.Backup.BackupListAllBackupStorages(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		backupRestores = append(backupRestores, response.Payload.Data...)
+		backupRestores = append(backupRestores, data.GetData()...)
 
 		count := int32(len(backupRestores))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
-
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(backupRestores)) > opts.Limit {
@@ -108,4 +100,46 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(backupRestores, listFields)
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := backup.NewBackupListAllBackupStoragesParams().WithV(taikungoclient.Version)
+		params.WithProjectID(opts.ProjectID)
+
+		if config.SortBy != "" {
+			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		}
+
+		var backupRestores = make([]*models.BackupStorageLocationDto, 0)
+
+		for {
+			response, err := apiClient.Client.Backup.BackupListAllBackupStorages(params, apiClient)
+			if err != nil {
+				return err
+			}
+
+			backupRestores = append(backupRestores, response.Payload.Data...)
+
+			count := int32(len(backupRestores))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(backupRestores)) > opts.Limit {
+			backupRestores = backupRestores[:opts.Limit]
+		}
+
+		return out.PrintResults(backupRestores, listFields)
+	*/
 }

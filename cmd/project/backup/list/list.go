@@ -1,13 +1,15 @@
 package list
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/backup"
 	"github.com/spf13/cobra"
 )
 
@@ -65,18 +67,32 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.BackupPolicyAPI.BackupListAllBackups(context.TODO(), opts.ProjectID)
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+
+	data, response, err := myRequest.Execute()
 	if err != nil {
+		return tk.CreateError(response, err)
+	}
+	return out.PrintResults(data.GetData(), listFields) // Are you sure about missing pagination? #FIXME
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := backup.NewBackupListAllBackupsParams().WithV(taikungoclient.Version)
+		params = params.WithProjectID(opts.ProjectID)
+
+		response, err := apiClient.Client.Backup.BackupListAllBackups(params, apiClient)
+		if err == nil {
+			return out.PrintResults(response.Payload.Data, listFields)
+		}
+
 		return
-	}
-
-	params := backup.NewBackupListAllBackupsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
-
-	response, err := apiClient.Client.Backup.BackupListAllBackups(params, apiClient)
-	if err == nil {
-		return out.PrintResults(response.Payload.Data, listFields)
-	}
-
-	return
+	*/
 }

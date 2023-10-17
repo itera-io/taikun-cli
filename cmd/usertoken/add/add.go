@@ -1,18 +1,19 @@
 package add
 
 import (
+	"context"
 	"errors"
-
+	"fmt"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/user_token"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 var addFields = fields.New(
@@ -47,7 +48,7 @@ func NewCmdAdd() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 	}
 
-	cmd.Flags().StringVar(&opts.ExpirationDate, "expiration-date", "", "The user token expiration date")
+	cmd.Flags().StringVar(&opts.ExpirationDate, "expiration-date", "", fmt.Sprintf("Expiration date in the format: %s", types.ExpectedDateFormat))
 	cmd.Flags().BoolVar(&opts.ReadOnly, "is-read-only", false, "Enable to create a user token with read-only permissions")
 	cmd.Flags().BoolVar(&opts.BindAll, "bind-all", false, "Enable to bind all available endpoints")
 
@@ -58,33 +59,32 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Prepare body with arguments for the connection
+	body := taikuncore.UserTokenCreateCommand{}
+	body.SetName(opts.Name)
+	body.SetIsReadonly(opts.ReadOnly)
+	body.SetBindALL(opts.BindAll)
 
-	body := &models.UserTokenCreateCommand{
-		Name:       opts.Name,
-		IsReadonly: opts.ReadOnly,
-		BindALL:    opts.BindAll,
-	}
-
+	// If the expiration date was set by user set it in the request
 	if opts.ExpirationDate != "" {
 		expiredAt := types.StrToDateTime(opts.ExpirationDate)
-		body.ExpireDate = &expiredAt
-
+		body.SetExpireDate(time.Time(expiredAt))
 	}
 
+	// Were some endpoints (or BindAll) set?
 	if len(opts.Endpoints) != 0 && opts.BindAll {
 		err = errors.New("Please specify bindAll OR enpoints option")
 		return
 	}
 
+	// Preparing to set user-specified endpoints
 	if len(opts.Endpoints) != 0 && !opts.BindAll {
-		endpoints := []*models.AvailableEndpointData{}
+		fmt.Println("Setting up some endpoints...")
+		endpoints := []taikuncore.AvailableEndpointData{}
+		//endpoints := []*models.AvailableEndpointData{}
 		for i := 0; i < len(opts.Endpoints); i++ {
-			endpoint := complete.StringToEndpointFormat(opts.Endpoints[i])
-			if endpoint == nil {
+			endpoint := *complete.StringToEndpointFormat(opts.Endpoints[i])
+			if _, ok := endpoint.GetIdOk(); ok {
 				err = errors.New("UserToken: Failed to retrieve endpoint " + opts.Endpoints[i] + ".")
 				break
 			}
@@ -96,11 +96,14 @@ func addRun(opts *AddOptions) (err error) {
 		return
 	}
 
-	params := user_token.NewUserTokenCreateParams().WithV(taikungoclient.Version).WithBody(body)
+	// Set bind all
 
-	response, err := apiClient.Client.UserToken.UserTokenCreate(params, apiClient)
+	// Send the request to the API and parse the incoming data.
+	myApiClient := tk.NewClient()
+	data, _, err := myApiClient.Client.UserTokenAPI.UsertokenCreate(context.TODO()).UserTokenCreateCommand(body).Execute()
 	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+		newMap, _ := data.ToMap()
+		return out.PrintResult(newMap, addFields)
 	}
 
 	return

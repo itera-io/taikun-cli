@@ -1,16 +1,16 @@
 package remove
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/k8s/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -52,14 +52,10 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(opts *DeleteOptions) error {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return err
-	}
-
-	body := models.DeleteServerCommand{
-		ProjectID: opts.ProjectID,
+func deleteRun(opts *DeleteOptions) (err error) {
+	myApiClient := tk.NewClient()
+	body := taikuncore.DeleteServerCommand{
+		ProjectId: &opts.ProjectID,
 	}
 
 	if opts.DeleteAll {
@@ -74,24 +70,63 @@ func deleteRun(opts *DeleteOptions) error {
 
 		allServerIDs := make([]int32, len(allServers))
 		for i, server := range allServers {
-			allServerIDs[i] = server.ID
+			allServerIDs[i] = server.GetId()
 		}
-
-		body.ServerIds = allServerIDs
+		body.SetServerIds(allServerIDs)
 	} else {
-		body.ServerIds = opts.ServerIDs
+		body.SetServerIds(opts.ServerIDs)
 	}
-
-	params := servers.NewServersDeleteParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	if _, _, err := apiClient.Client.Servers.ServersDelete(params, apiClient); err != nil {
-		return err
+	response, err := myApiClient.Client.ServersAPI.ServersDelete(context.TODO()).DeleteServerCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
 	for _, id := range body.ServerIds {
 		out.PrintDeleteSuccess("Server", id)
 	}
+	return
 
-	return nil
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return err
+		}
+
+		body := models.DeleteServerCommand{
+			ProjectID: opts.ProjectID,
+		}
+
+		if opts.DeleteAll {
+			allServers, err := list.ListServers(&list.ListOptions{ProjectID: opts.ProjectID})
+			if err != nil {
+				return err
+			}
+
+			if len(allServers) == 0 {
+				return fmt.Errorf("project %d has no Kubernetes servers", opts.ProjectID)
+			}
+
+			allServerIDs := make([]int32, len(allServers))
+			for i, server := range allServers {
+				allServerIDs[i] = server.ID
+			}
+
+			body.ServerIds = allServerIDs
+		} else {
+			body.ServerIds = opts.ServerIDs
+		}
+
+		params := servers.NewServersDeleteParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		if _, _, err := apiClient.Client.Servers.ServersDelete(params, apiClient); err != nil {
+			return err
+		}
+
+		for _, id := range body.ServerIds {
+			out.PrintDeleteSuccess("Server", id)
+		}
+
+		return nil
+	*/
 }

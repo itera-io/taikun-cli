@@ -1,6 +1,9 @@
 package flavors
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/utils"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -10,9 +13,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/cloud_credentials"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -94,47 +94,39 @@ func adjustRamUnits(opts *FlavorsOptions) (err error) {
 }
 
 func flavorRun(opts *FlavorsOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsAllFlavors(context.TODO(), opts.CloudCredentialID)
+	myRequest = myRequest.StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
-
-	params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(taikungoclient.Version)
-	params = params.WithCloudID(opts.CloudCredentialID)
-	params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
-
 	minRAM := opts.MinRAM
 	maxRAM := opts.MaxRAM
 
 	// Temporarily ignore RAM range for Google until units are set to GiB
 	if minRAM != -1 && maxRAM != -1 {
-		params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+		myRequest = myRequest.StartRam(minRAM).EndRam(maxRAM)
 	}
 
-	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-	}
-
-	flavors := []*models.FlavorsListDto{}
-
+	var flavors = make([]taikuncore.FlavorsListDto, 0)
 	for {
-		response, err := apiClient.Client.CloudCredentials.CloudCredentialsAllFlavors(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		flavors = append(flavors, response.Payload.Data...)
+		flavors = append(flavors, data.GetData()...)
 
 		flavorsCount := int32(len(flavors))
 		if opts.Limit != 0 && flavorsCount >= opts.Limit {
 			break
 		}
 
-		if flavorsCount == response.Payload.TotalCount {
+		if flavorsCount == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&flavorsCount)
+		myRequest = myRequest.Offset(flavorsCount)
 	}
 
 	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
@@ -142,4 +134,55 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	}
 
 	return out.PrintResults(flavors, flavorsFields)
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := cloud_credentials.NewCloudCredentialsAllFlavorsParams().WithV(taikungoclient.Version)
+		params = params.WithCloudID(opts.CloudCredentialID)
+		params = params.WithStartCPU(&opts.MinCPU).WithEndCPU(&opts.MaxCPU)
+
+		minRAM := opts.MinRAM
+		maxRAM := opts.MaxRAM
+
+		// Temporarily ignore RAM range for Google until units are set to GiB
+		if minRAM != -1 && maxRAM != -1 {
+			params = params.WithStartRAM(&minRAM).WithEndRAM(&maxRAM)
+		}
+
+		if config.SortBy != "" {
+			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		}
+
+		flavors := []*models.FlavorsListDto{}
+
+		for {
+			response, err := apiClient.Client.CloudCredentials.CloudCredentialsAllFlavors(params, apiClient)
+			if err != nil {
+				return err
+			}
+
+			flavors = append(flavors, response.Payload.Data...)
+
+			flavorsCount := int32(len(flavors))
+			if opts.Limit != 0 && flavorsCount >= opts.Limit {
+				break
+			}
+
+			if flavorsCount == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&flavorsCount)
+		}
+
+		if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+			flavors = flavors[:opts.Limit]
+		}
+
+		return out.PrintResults(flavors, flavorsFields)
+	*/
 }

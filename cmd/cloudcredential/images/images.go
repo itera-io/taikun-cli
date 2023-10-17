@@ -1,7 +1,10 @@
 package images
 
 import (
+	"context"
 	"errors"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/offers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
@@ -13,9 +16,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/images"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -108,38 +108,34 @@ func getImages(opts *ImagesOptions) (images interface{}, err error) {
 }
 
 func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
+	myApiClient := tk.NewClient()
+	body := taikuncore.AwsImagesPostListCommand{
+		CloudId: &opts.CloudCredentialID,
 	}
 
-	body := models.AwsImagesPostListCommand{
-		CloudID: opts.CloudCredentialID,
-	}
+	myRequest := myApiClient.Client.ImagesAPI.ImagesAwsImagesList(context.TODO())
 
-	params := images.NewImagesAwsImagesAsPostParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	images := make([]*models.AwsExtendedImagesListDto, 0)
+	images := make([]taikuncore.AwsExtendedImagesListDto, 0)
 
 	for {
-		response, err := apiClient.Client.Images.ImagesAwsImagesAsPost(params, apiClient)
-		if err != nil {
-			return nil, err
+		data, response, responseErr := myRequest.AwsImagesPostListCommand(body).Execute()
+		if responseErr != nil {
+			err = tk.CreateError(response, responseErr)
+			return
 		}
 
-		images = append(images, response.Payload.Data...)
+		images = append(images, data.GetData()...)
 
 		count := int32(len(images))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params.Body.Offset = count
+		body.SetOffset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
@@ -149,37 +145,77 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 	awsImages = images
 
 	return awsImages, nil
+
+	/*
+			apiClient, err := taikungoclient.NewClient()
+			if err != nil {
+				return nil, err
+			}
+
+			body := models.AwsImagesPostListCommand{
+				CloudID: opts.CloudCredentialID,
+			}
+
+		params := images.NewImagesAwsImagesAsPostParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		images := make([]*models.AwsExtendedImagesListDto, 0)
+
+		for {
+			response, err := apiClient.Client.Images.ImagesAwsImagesAsPost(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			images = append(images, response.Payload.Data...)
+
+			count := int32(len(images))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params.Body.Offset = count
+		}
+
+		if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+			images = images[:opts.Limit]
+		}
+
+		awsImages = images
+
+		return awsImages, nil
+	*/
 }
 
 func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.ImagesAPI.ImagesOpenstackImages(context.TODO(), opts.CloudCredentialID)
 
-	params := images.NewImagesOpenstackImagesParams().WithV(taikungoclient.Version)
-	params = params.WithCloudID(opts.CloudCredentialID)
-
-	images := make([]*models.CommonStringBasedDropdownDto, 0)
+	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for {
-		response, err := apiClient.Client.Images.ImagesOpenstackImages(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
+			err = tk.CreateError(response, err)
 			return nil, err
 		}
 
-		images = append(images, response.Payload.Data...)
+		images = append(images, data.GetData()...)
 
 		count := int32(len(images))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
@@ -189,6 +225,46 @@ func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err e
 	openStackImages = images
 
 	return openStackImages, nil
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+
+		params := images.NewImagesOpenstackImagesParams().WithV(taikungoclient.Version)
+		params = params.WithCloudID(opts.CloudCredentialID)
+
+		images := make([]*models.CommonStringBasedDropdownDto, 0)
+
+		for {
+			response, err := apiClient.Client.Images.ImagesOpenstackImages(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			images = append(images, response.Payload.Data...)
+
+			count := int32(len(images))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+			images = images[:opts.Limit]
+		}
+
+		openStackImages = images
+
+		return openStackImages, nil
+	*/
 }
 
 func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) {
@@ -196,34 +272,30 @@ func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) 
 		return nil, errors.New(`required flag(s) "google-image-type" not set`)
 	}
 
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.ImagesAPI.ImagesGoogleImages(context.TODO(), opts.CloudCredentialID, opts.GoogleImageType)
 
-	params := images.NewImagesGoogleImagesParams().WithV(taikungoclient.Version)
-	params = params.WithCloudID(opts.CloudCredentialID).WithType(types.GetGoogleImageType(opts.GoogleImageType))
-
-	images := make([]*models.CommonStringBasedDropdownDto, 0)
+	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for {
-		response, err := apiClient.Client.Images.ImagesGoogleImages(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
+			err = tk.CreateError(response, err)
 			return nil, err
 		}
 
-		images = append(images, response.Payload.Data...)
+		images = append(images, data.GetData()...)
 
 		count := int32(len(images))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
@@ -233,6 +305,46 @@ func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) 
 	googleImages = images
 
 	return googleImages, nil
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+
+		params := images.NewImagesGoogleImagesParams().WithV(taikungoclient.Version)
+		params = params.WithCloudID(opts.CloudCredentialID).WithType(types.GetGoogleImageType(opts.GoogleImageType))
+
+		images := make([]*models.CommonStringBasedDropdownDto, 0)
+
+		for {
+			response, err := apiClient.Client.Images.ImagesGoogleImages(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			images = append(images, response.Payload.Data...)
+
+			count := int32(len(images))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+			images = images[:opts.Limit]
+		}
+
+		googleImages = images
+
+		return googleImages, nil
+	*/
 }
 
 func getAzureImages(opts *ImagesOptions) (azureImages interface{}, err error) {
@@ -259,7 +371,7 @@ func getAzureImages(opts *ImagesOptions) (azureImages interface{}, err error) {
 	return getAllAzureImages(opts)
 }
 
-func getAllAzureImages(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
+func getAllAzureImages(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	publishersOptions := publishers.PublishersOptions{CloudCredentialID: opts.CloudCredentialID}
 
 	publishers, err := publishers.ListPublishers(&publishersOptions)
@@ -267,7 +379,7 @@ func getAllAzureImages(opts *ImagesOptions) (azureImages []*models.CommonStringB
 		return nil, err
 	}
 
-	azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
+	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for _, publisher := range publishers {
 		opts.AzurePublisher = publisher
@@ -290,7 +402,7 @@ func getAllAzureImages(opts *ImagesOptions) (azureImages []*models.CommonStringB
 	return azureImages, nil
 }
 
-func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
+func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	offersOptions := offers.OffersOptions{
 		CloudCredentialID: opts.CloudCredentialID,
 		Publisher:         opts.AzurePublisher,
@@ -301,7 +413,7 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []*models.Com
 		return nil, err
 	}
 
-	azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
+	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for _, offer := range offers {
 		opts.AzureOffer = offer
@@ -324,7 +436,7 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []*models.Com
 	return azureImages, nil
 }
 
-func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
+func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	skusOptions := skus.SKUsOptions{
 		CloudCredentialID: opts.CloudCredentialID,
 		Publisher:         opts.AzurePublisher,
@@ -336,7 +448,7 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonS
 		return nil, err
 	}
 
-	azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
+	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for _, sku := range skus {
 		opts.AzureSKU = sku
@@ -359,38 +471,30 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []*models.CommonS
 	return azureImages, nil
 }
 
-func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []*models.CommonStringBasedDropdownDto, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
-
-	params := images.NewImagesAzureImagesParams().WithV(taikungoclient.Version)
-	params = params.WithCloudID(opts.CloudCredentialID)
-	params = params.WithPublisherName(opts.AzurePublisher)
-	params = params.WithOffer(opts.AzureOffer)
-	params = params.WithSku(opts.AzureSKU)
-
-	azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
+func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.ImagesAPI.ImagesAzureImages(context.TODO(), opts.CloudCredentialID, opts.AzurePublisher, opts.AzureOffer, opts.AzureSKU)
+	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for {
-		response, err := apiClient.Client.Images.ImagesAzureImages(params, apiClient)
-		if err != nil {
-			return nil, err
+		data, response, responseErr := myRequest.Execute()
+		if responseErr != nil {
+			err = tk.CreateError(response, responseErr)
+			return
 		}
 
-		azureImages = append(azureImages, response.Payload.Data...)
+		azureImages = append(azureImages, data.GetData()...)
 
 		count := int32(len(azureImages))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(azureImages)) > opts.Limit {
@@ -398,4 +502,44 @@ func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []*models.CommonStr
 	}
 
 	return azureImages, nil
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+
+		params := images.NewImagesAzureImagesParams().WithV(taikungoclient.Version)
+		params = params.WithCloudID(opts.CloudCredentialID)
+		params = params.WithPublisherName(opts.AzurePublisher)
+		params = params.WithOffer(opts.AzureOffer)
+		params = params.WithSku(opts.AzureSKU)
+
+		azureImages = make([]*models.CommonStringBasedDropdownDto, 0)
+
+		for {
+			response, err := apiClient.Client.Images.ImagesAzureImages(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			azureImages = append(azureImages, response.Payload.Data...)
+
+			count := int32(len(azureImages))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(azureImages)) > opts.Limit {
+			azureImages = azureImages[:opts.Limit]
+		}
+
+		return azureImages, nil
+	*/
 }

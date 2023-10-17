@@ -1,8 +1,11 @@
 package add
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -10,12 +13,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/cloud_credentials"
-	"github.com/itera-io/taikungoclient/client/flavors"
-	"github.com/itera-io/taikungoclient/client/projects"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -94,7 +91,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Flavor, "flavor", "f", "", "Flavor (required)")
 	cmdutils.MarkFlagRequired(&cmd, "flavor")
-	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", flavorCompletionFunc)
+	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", cmdutils.FlavorCompletionFunc)
 
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
@@ -110,40 +107,64 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
+	myApiClient := tk.NewClient()
+	diskSizeValue := types.GiBToB(opts.DiskSize)
+	serverRole := types.GetServerRole(opts.Role)
+	body := taikuncore.ServerForCreateDto{
+		AvailabilityZone: *taikuncore.NewNullableString(&opts.AvailabilityZone),
+		DiskSize:         &diskSizeValue,
+		Flavor:           *taikuncore.NewNullableString(&opts.Flavor),
+		Name:             *taikuncore.NewNullableString(&opts.Name),
+		ProjectId:        &opts.ProjectID,
+		Role:             &serverRole,
 	}
-
-	body := models.ServerForCreateDto{
-		AvailabilityZone: opts.AvailabilityZone,
-		DiskSize:         types.GiBToB(opts.DiskSize),
-		Flavor:           opts.Flavor,
-		Name:             opts.Name,
-		ProjectID:        opts.ProjectID,
-		Role:             types.GetServerRole(opts.Role),
-	}
-
 	if len(opts.KubernetesNodeLabels) != 0 {
 		body.KubernetesNodeLabels, err = parseKubernetesNodeLabelsFlag(opts.KubernetesNodeLabels)
 		if err != nil {
 			return
 		}
 	}
-
-	params := servers.NewServersCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	data, response, err := myApiClient.Client.ServersAPI.ServersCreate(context.TODO()).ServerForCreateDto(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, addFields)
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
 
-	return
+		body := models.ServerForCreateDto{
+			AvailabilityZone: opts.AvailabilityZone,
+			DiskSize:         types.GiBToB(opts.DiskSize),
+			Flavor:           opts.Flavor,
+			Name:             opts.Name,
+			ProjectID:        opts.ProjectID,
+			Role:             types.GetServerRole(opts.Role),
+		}
+
+		if len(opts.KubernetesNodeLabels) != 0 {
+			body.KubernetesNodeLabels, err = parseKubernetesNodeLabelsFlag(opts.KubernetesNodeLabels)
+			if err != nil {
+				return
+			}
+		}
+
+		params := servers.NewServersCreateParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
+		if err == nil {
+			return out.PrintResult(response.Payload, addFields)
+		}
+
+		return
+	*/
 }
 
-func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNodeLabelsDto, error) {
-	labels := make([]*models.KubernetesNodeLabelsDto, len(labelsData))
+func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.KubernetesNodeLabelsDto, error) {
+	labels := make([]taikuncore.KubernetesNodeLabelsDto, len(labelsData))
 
 	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
@@ -155,59 +176,37 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNod
 			return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
 		}
 
-		labels[labelIndex] = &models.KubernetesNodeLabelsDto{
-			Key:   tokens[0],
-			Value: tokens[1],
+		labels[labelIndex] = taikuncore.KubernetesNodeLabelsDto{
+			Key:   *taikuncore.NewNullableString(&tokens[0]),
+			Value: *taikuncore.NewNullableString(&tokens[1]),
 		}
 	}
 
 	return labels, nil
-}
+	/*
+		labels := make([]*models.KubernetesNodeLabelsDto, len(labelsData))
 
-func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	if len(args) == 0 {
-		return []string{}
-	}
+		for labelIndex, labelData := range labelsData {
+			if len(labelData) == 0 {
+				return nil, errors.New("Invalid empty kubernetes node label")
+			}
 
-	projectID, err := types.Atoi32(args[0])
-	if err != nil {
-		return []string{}
-	}
+			tokens := strings.Split(labelData, "=")
+			if len(tokens) != 2 {
+				return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
+			}
 
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return []string{}
-	}
-
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(&projectID)
-
-	completions := make([]string, 0)
-
-	for {
-		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
-		if err != nil {
-			return []string{}
+			labels[labelIndex] = &models.KubernetesNodeLabelsDto{
+				Key:   tokens[0],
+				Value: tokens[1],
+			}
 		}
 
-		for _, flavor := range response.Payload.Data {
-			completions = append(completions, flavor.Name)
-		}
-
-		count := int32(len(completions))
-
-		if count == response.Payload.TotalCount {
-			break
-		}
-
-		params = params.WithOffset(&count)
-	}
-
-	return completions
+		return labels, nil
+	*/
 }
 
 func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-
 	if len(args) == 0 {
 		return []string{}
 	}
@@ -217,58 +216,123 @@ func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplet
 		return []string{}
 	}
 
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsList(context.TODO()).Id(projectID).Execute()
+	if err != nil || len(data.GetData()) != 1 {
+		err = tk.CreateError(response, err)
 		return []string{}
 	}
 
-	projectParams := projects.NewProjectsListParams().WithV(taikungoclient.Version)
-	projectParams = projectParams.WithID(&projectID)
-	projectResponse, err := apiClient.Client.Projects.ProjectsList(projectParams, apiClient)
-	if err != nil || len(projectResponse.GetPayload().Data) != 1 {
-		return []string{}
-	}
-
-	projectOrgId := projectResponse.GetPayload().Data[0].OrganizationID
-	ccType := projectResponse.GetPayload().Data[0].CloudType
-	ccName := projectResponse.GetPayload().Data[0].CloudCredentialName
+	projectOrgId := data.Data[0].GetOrganizationId()
+	ccType := data.Data[0].GetCloudType()
+	ccName := data.Data[0].GetCloudCredentialName()
 	if ccType == "OPENSTACK" {
 		return []string{}
 	}
 
 	completions := make([]string, 0)
 
-	ccParams := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version).WithOrganizationID(&projectOrgId)
-	ccResponse, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(ccParams, apiClient)
-	countCC := ccResponse.GetPayload().TotalCountOpenstack + ccResponse.GetPayload().TotalCountAws + ccResponse.GetPayload().TotalCountAzure + ccResponse.GetPayload().TotalCountGoogle
+	dataCC, responseCC, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO()).OrganizationId(projectOrgId).Execute()
+	if err != nil {
+		err = tk.CreateError(responseCC, err)
+		return []string{}
+	}
+	countCC := dataCC.GetTotalCountOpenstack() + dataCC.GetTotalCountAws() + dataCC.GetTotalCountAzure() + dataCC.GetTotalCountGoogle()
+
 	if err != nil || countCC == 0 {
 		return []string{}
 	}
 
 	if ccType == "AWS" {
-		amazonCCs := ccResponse.GetPayload().Amazon
-		for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
-			if ccName == amazonCCs[i].Name {
+		amazonCCs := dataCC.GetAmazon()
+		for i := 0; i < int(dataCC.GetTotalCountAws()); i++ {
+			if ccName == amazonCCs[i].GetName() {
 				completions = append(completions, amazonCCs[i].AvailabilityZones...)
 			}
 		}
 	}
 	if ccType == "AZURE" {
-		azureCCs := ccResponse.GetPayload().Azure
-		for i := 0; i < int(ccResponse.Payload.TotalCountAzure); i++ {
-			if ccName == azureCCs[i].Name {
+		azureCCs := dataCC.GetAzure()
+		for i := 0; i < int(dataCC.GetTotalCountAzure()); i++ {
+			if ccName == azureCCs[i].GetName() {
 				completions = append(completions, azureCCs[i].AvailabilityZones...)
 			}
 		}
 	}
 	if ccType == "GOOGLE" {
-		googleCCs := ccResponse.GetPayload().Google
-		for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
-			if ccName == googleCCs[i].Name {
+		googleCCs := dataCC.GetGoogle()
+		for i := 0; i < int(dataCC.GetTotalCountGoogle()); i++ {
+			if ccName == googleCCs[i].GetName() {
 				completions = append(completions, googleCCs[i].Zones...)
 			}
 		}
 	}
 
 	return completions
+
+	/*
+		if len(args) == 0 {
+			return []string{}
+		}
+
+		projectID, err := types.Atoi32(args[0])
+		if err != nil {
+			return []string{}
+		}
+
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return []string{}
+		}
+
+		projectParams := projects.NewProjectsListParams().WithV(taikungoclient.Version)
+		projectParams = projectParams.WithID(&projectID)
+		projectResponse, err := apiClient.Client.Projects.ProjectsList(projectParams, apiClient)
+		if err != nil || len(projectResponse.GetPayload().Data) != 1 {
+			return []string{}
+		}
+
+		projectOrgId := projectResponse.GetPayload().Data[0].OrganizationID
+		ccType := projectResponse.GetPayload().Data[0].CloudType
+		ccName := projectResponse.GetPayload().Data[0].CloudCredentialName
+		if ccType == "OPENSTACK" {
+			return []string{}
+		}
+
+		completions := make([]string, 0)
+
+		ccParams := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version).WithOrganizationID(&projectOrgId)
+		ccResponse, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(ccParams, apiClient)
+		countCC := ccResponse.GetPayload().TotalCountOpenstack + ccResponse.GetPayload().TotalCountAws + ccResponse.GetPayload().TotalCountAzure + ccResponse.GetPayload().TotalCountGoogle
+		if err != nil || countCC == 0 {
+			return []string{}
+		}
+
+		if ccType == "AWS" {
+			amazonCCs := ccResponse.GetPayload().Amazon
+			for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
+				if ccName == amazonCCs[i].Name {
+					completions = append(completions, amazonCCs[i].AvailabilityZones...)
+				}
+			}
+		}
+		if ccType == "AZURE" {
+			azureCCs := ccResponse.GetPayload().Azure
+			for i := 0; i < int(ccResponse.Payload.TotalCountAzure); i++ {
+				if ccName == azureCCs[i].Name {
+					completions = append(completions, azureCCs[i].AvailabilityZones...)
+				}
+			}
+		}
+		if ccType == "GOOGLE" {
+			googleCCs := ccResponse.GetPayload().Google
+			for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
+				if ccName == googleCCs[i].Name {
+					completions = append(completions, googleCCs[i].Zones...)
+				}
+			}
+		}
+
+		return completions
+	*/
 }

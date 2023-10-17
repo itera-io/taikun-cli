@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/cloud_credentials"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -100,40 +100,37 @@ func listRun(opts *ListOptions) error {
 }
 
 func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
-
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version)
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO())
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var openstackCloudCredentials = make([]*models.OpenstackCredentialsListDto, 0)
+	var openstackCloudCredentials = make([]taikuncore.OpenstackCredentialsListDto, 0)
 
 	for {
-		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
-		if err != nil {
-			return nil, err
+		data, response, newError := myRequest.Execute()
+		if newError != nil {
+			err = tk.CreateError(response, err)
+			return
 		}
 
-		openstackCloudCredentials = append(openstackCloudCredentials, response.Payload.Openstack...)
+		openstackCloudCredentials = append(openstackCloudCredentials, data.Openstack...)
 
 		count := int32(len(openstackCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCountOpenstack {
+		if count == data.GetTotalCountOpenstack() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(openstackCloudCredentials)) > opts.Limit {
@@ -142,8 +139,57 @@ func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}
 
 	credentials = make([]interface{}, len(openstackCloudCredentials))
 	for i, credential := range openstackCloudCredentials {
-		credentials[i] = *credential
+		credentials[i] = credential
 	}
 
 	return credentials, nil
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+
+		params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version)
+		if opts.OrganizationID != 0 {
+			params = params.WithOrganizationID(&opts.OrganizationID)
+		}
+
+		if config.SortBy != "" {
+			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		}
+
+		var openstackCloudCredentials = make([]*models.OpenstackCredentialsListDto, 0)
+
+		for {
+			response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			openstackCloudCredentials = append(openstackCloudCredentials, response.Payload.Openstack...)
+
+			count := int32(len(openstackCloudCredentials))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCountOpenstack {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(openstackCloudCredentials)) > opts.Limit {
+			openstackCloudCredentials = openstackCloudCredentials[:opts.Limit]
+		}
+
+		credentials = make([]interface{}, len(openstackCloudCredentials))
+		for i, credential := range openstackCloudCredentials {
+			credentials[i] = *credential
+		}
+
+		return credentials, nil
+	*/
 }

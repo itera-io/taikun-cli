@@ -1,21 +1,18 @@
 package organization
 
 import (
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/users"
+	"context"
+	tk "github.com/Smidra/taikungoclient"
 )
 
 func GetDefaultOrganizationID() (id int32, err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
 	if err != nil {
-		return
+		return -1, tk.CreateError(response, err)
 	}
-
-	params := users.NewUsersDetailsParams().WithV(taikungoclient.Version)
-
-	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
 	if err == nil {
-		id = response.Payload.Data.OrganizationID
+		id = data.Data.GetOrganizationId()
 	}
 
 	return

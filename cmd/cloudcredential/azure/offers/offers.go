@@ -1,12 +1,12 @@
 package offers
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/azure"
 	"github.com/spf13/cobra"
 )
 
@@ -67,35 +67,28 @@ func offersRun(opts *OffersOptions) (err error) {
 }
 
 func ListOffers(opts *OffersOptions) (offers []string, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
-
-	params := azure.NewAzureOffersParams().WithV(taikungoclient.Version)
-	params = params.WithCloudID(opts.CloudCredentialID)
-	params = params.WithPublisher(opts.Publisher)
-
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzureOffers(context.TODO(), opts.CloudCredentialID, opts.Publisher)
 	offers = make([]string, 0)
-
 	for {
-		response, err := apiClient.Client.Azure.AzureOffers(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
+			err = tk.CreateError(response, err)
 			return nil, err
 		}
 
-		offers = append(offers, response.Payload.Data...)
+		offers = append(offers, data.GetData()...)
 
 		count := int32(len(offers))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(offers)) > opts.Limit {
@@ -103,4 +96,42 @@ func ListOffers(opts *OffersOptions) (offers []string, err error) {
 	}
 
 	return offers, nil
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+
+		params := azure.NewAzureOffersParams().WithV(taikungoclient.Version)
+		params = params.WithCloudID(opts.CloudCredentialID)
+		params = params.WithPublisher(opts.Publisher)
+
+		offers = make([]string, 0)
+
+		for {
+			response, err := apiClient.Client.Azure.AzureOffers(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			offers = append(offers, response.Payload.Data...)
+
+			count := int32(len(offers))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(offers)) > opts.Limit {
+			offers = offers[:opts.Limit]
+		}
+
+		return offers, nil
+	*/
 }

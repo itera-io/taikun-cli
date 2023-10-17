@@ -1,13 +1,14 @@
 package list
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/user_token"
-	"github.com/itera-io/taikungoclient/models"
+
 	"github.com/spf13/cobra"
 )
 
@@ -37,6 +38,7 @@ var ListFields = fields.New(
 type ListOptions struct {
 }
 
+// NewCmdList creates and returns a cobra command for listing user tokens.
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
@@ -50,12 +52,13 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddSortByAndReverseFlags(cmd, "user tokens", ListFields)
+	//cmdutils.AddSortByAndReverseFlags(cmd, "user-tokens", ListFields) // API does not support sorting for this endpoint
 	cmdutils.AddColumnsFlag(cmd, ListFields)
 
 	return cmd
 }
 
+// listRun calls the API, gets the User Tokens and prints them  in a table.
 func listRun(opts *ListOptions) (err error) {
 	usertokens, err := ListUserTokens(opts)
 	if err != nil {
@@ -65,23 +68,24 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(usertokens, ListFields)
 }
 
-func ListUserTokens(opts *ListOptions) (userTokenList []*models.UserTokensListDto, err error) {
-	apiClient, err := taikungoclient.NewClient()
+// ListUserTokens sends a query to the API and returns a list of user tokens.
+// Tokens are returned in the UserTokenListDto structs generated in models.
+// ListUserTokens is exported because it is used in cmd/usertoken/complete
+func ListUserTokens(opts *ListOptions) (userTokenList []*taikuncore.UserTokensListDto, err error) {
+
+	// Connect to the API and retrieve data.
+	myApiClient := tk.NewClient()
+	data, _, err := myApiClient.Client.UserTokenAPI.UsertokenList(context.TODO()).Execute()
 	if err != nil {
 		return nil, err
 	}
 
-	params := user_token.NewUserTokenListParams().WithV(taikungoclient.Version)
+	// Initialise a new, empty slice of UserTokenListDto structs generated in models.
+	userTokenList = make([]*taikuncore.UserTokensListDto, 0)
 
-	userTokenList = make([]*models.UserTokensListDto, 0)
-
-	response, err := apiClient.Client.UserToken.UserTokenList(params, apiClient)
-	if err != nil {
-		return nil, err
-	}
-
-	for i := 0; i < len(response.Payload); i++ {
-		userTokenList = append(userTokenList, response.Payload[i])
+	// For every returned data, create a new line in the fields
+	for i := 0; i < len(data); i++ {
+		userTokenList = append(userTokenList, &data[i])
 	}
 
 	return userTokenList, nil

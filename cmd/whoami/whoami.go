@@ -1,37 +1,36 @@
 package whoami
 
 import (
-	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/users"
+	"context"
+	"fmt"
+	tk "github.com/Smidra/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
-func NewCmdWhoAmI() *cobra.Command {
-	cmd := cobra.Command{
+func NewCmdWhoami() *cobra.Command {
+	cmd := &cobra.Command{
 		Use:   "whoami",
 		Short: "Print username",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return whoAmIRun()
+			return whoamiRun()
 		},
 	}
-
-	return &cmd
+	return cmd
 }
 
-func whoAmIRun() (err error) {
-	apiClient, err := taikungoclient.NewClient()
+func whoamiRun() (err error) {
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, _, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
 	if err != nil {
-		return
+		return err
 	}
 
-	params := users.NewUsersDetailsParams().WithV(taikungoclient.Version)
-
-	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
-	if err == nil {
-		out.Println(response.Payload.Data.Username)
-	}
-
+	// Manipulate the gathered data
+	username := data.Data.GetUsername()
+	fmt.Printf("%s\n", username)
 	return
 }

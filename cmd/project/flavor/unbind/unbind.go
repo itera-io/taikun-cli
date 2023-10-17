@@ -1,12 +1,12 @@
 package unbind
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/flavors"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -32,20 +32,32 @@ func NewCmdUnbind() *cobra.Command {
 }
 
 func unbindRun(bindings []int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	body := models.UnbindFlavorFromProjectCommand{
+	myApiClient := tk.NewClient()
+	body := taikuncore.UnbindFlavorFromProjectCommand{
 		Ids: bindings,
 	}
-	params := flavors.NewFlavorsUnbindFromProjectParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	response, err := myApiClient.Client.FlavorsAPI.FlavorsUnbindFromProject(context.TODO()).UnbindFlavorFromProjectCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
+	out.PrintStandardSuccess()
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.UnbindFlavorFromProjectCommand{
+			Ids: bindings,
+		}
+		params := flavors.NewFlavorsUnbindFromProjectParams().WithV(taikungoclient.Version).WithBody(&body)
+
+		_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+	*/
 
 	return
 }

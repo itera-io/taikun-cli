@@ -1,14 +1,14 @@
 package list
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/images"
 	"github.com/spf13/cobra"
 )
 
@@ -76,18 +76,31 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.ImagesAPI.ImagesSelectedImagesForProject(context.TODO()).ProjectId(opts.ProjectID).Execute()
 	if err != nil {
+		return tk.CreateError(response, err)
+	}
+
+	// Manipulate the gathered data
+	return out.PrintResults(data.GetData(), listFields)
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := images.NewImagesGetSelectedImagesForProjectParams().WithV(taikungoclient.Version)
+		params = params.WithProjectID(&opts.ProjectID)
+
+		response, err := apiClient.Client.Images.ImagesGetSelectedImagesForProject(params, apiClient)
+		if err == nil {
+			return out.PrintResults(response.Payload.Data, listFields)
+		}
+
 		return
-	}
-
-	params := images.NewImagesGetSelectedImagesForProjectParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(&opts.ProjectID)
-
-	response, err := apiClient.Client.Images.ImagesGetSelectedImagesForProject(params, apiClient)
-	if err == nil {
-		return out.PrintResults(response.Payload.Data, listFields)
-	}
-
-	return
+	*/
 }

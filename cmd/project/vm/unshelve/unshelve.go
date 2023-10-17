@@ -1,12 +1,12 @@
 package unshelve
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_actions"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -34,19 +34,37 @@ func NewCmdUnshelve() *cobra.Command {
 }
 
 func unshelveRun(opts *UnshelveOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.UnshelveStandaloneVmCommand{
+		Id: &opts.StandaloneVMID,
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsUnshelve(context.TODO()).UnshelveStandaloneVmCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.UnshelveStandaloneVMCommand{ID: opts.StandaloneVMID}
-	params := stand_alone_actions.NewStandAloneActionsUnshelveParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.StandAloneActions.StandAloneActionsUnshelve(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.UnshelveStandaloneVMCommand{ID: opts.StandaloneVMID}
+		params := stand_alone_actions.NewStandAloneActionsUnshelveParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.StandAloneActions.StandAloneActionsUnshelve(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

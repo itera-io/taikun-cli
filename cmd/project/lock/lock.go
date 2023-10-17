@@ -1,11 +1,12 @@
 package lock
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/projects"
 	"github.com/spf13/cobra"
 )
 
@@ -27,18 +28,37 @@ func NewCmdLock() *cobra.Command {
 }
 
 func lockRun(projectID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	body := taikuncore.ProjectLockManagerCommand{
+		Id:   &projectID,
+		Mode: *taikuncore.NewNullableString(&types.LockedMode),
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsLockManager(context.TODO()).ProjectLockManagerCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := projects.NewProjectsLockManagerParams().WithV(taikungoclient.Version)
-	params = params.WithMode(&types.LockedMode).WithID(&projectID)
-
-	_, err = apiClient.Client.Projects.ProjectsLockManager(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	// Manipulate the gathered data
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := projects.NewProjectsLockManagerParams().WithV(taikungoclient.Version)
+		params = params.WithMode(&types.LockedMode).WithID(&projectID)
+
+		_, err = apiClient.Client.Projects.ProjectsLockManager(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

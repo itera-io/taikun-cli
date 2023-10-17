@@ -1,15 +1,16 @@
 package expiration
 
 import (
+	"context"
 	"fmt"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
+	"github.com/itera-io/taikun-cli/utils/out"
+	"time"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/projects"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -48,25 +49,47 @@ func NewCmdExpiration() *cobra.Command {
 }
 
 func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
+	body := taikuncore.ProjectExtendLifeTimeCommand{
+		ProjectId:          &opts.ProjectID,
+		DeleteOnExpiration: &opts.DeleteOnExpiration,
 	}
-	body := models.ProjectExtendLifeTimeCommand{ProjectID: opts.ProjectID, DeleteOnExpiration: opts.DeleteOnExpiration}
-
 	if opts.ExpirationDate != "" {
 		expiredAt := types.StrToDateTime(opts.ExpirationDate)
-		body.ExpireAt = &expiredAt
+		body.SetExpireAt(time.Time(expiredAt))
 	}
 
-	params := projects.NewProjectsExtendLifeTimeParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Projects.ProjectsExtendLifeTime(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsExtendLifetime(context.TODO()).ProjectExtendLifeTimeCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
+	// Manipulate the gathered data
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+		body := models.ProjectExtendLifeTimeCommand{ProjectID: opts.ProjectID, DeleteOnExpiration: opts.DeleteOnExpiration}
+
+		if opts.ExpirationDate != "" {
+			expiredAt := types.StrToDateTime(opts.ExpirationDate)
+			body.ExpireAt = &expiredAt
+		}
+
+		params := projects.NewProjectsExtendLifeTimeParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.Projects.ProjectsExtendLifeTime(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

@@ -1,10 +1,10 @@
 package complete
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/openstack"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -29,19 +29,39 @@ func VolumeTypeCompletionFunc(cmd *cobra.Command, args []string, toComplete stri
 }
 
 func getOpenStackVolumeTypes(projectID int32) (volumeTypes []string, err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.OpenstackVolumeTypeListQuery{
+		ProjectId: *taikuncore.NewNullableInt32(&projectID),
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.OpenstackCloudCredentialAPI.OpenstackVolumes(context.TODO()).OpenstackVolumeTypeListQuery(body).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	body := models.OpenstackVolumeTypeListQuery{ProjectID: projectID}
-	params := openstack.NewOpenstackVolumeTypesParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
+	// Manipulate the gathered data
+	volumeTypes = data
+	return volumeTypes, nil
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
 
-	response, err := apiClient.Client.Openstack.OpenstackVolumeTypes(params, apiClient)
-	if err == nil {
-		volumeTypes = response.Payload
-	}
+		body := models.OpenstackVolumeTypeListQuery{ProjectID: projectID}
+		params := openstack.NewOpenstackVolumeTypesParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
 
-	return
+		response, err := apiClient.Client.Openstack.OpenstackVolumeTypes(params, apiClient)
+		if err == nil {
+			volumeTypes = response.Payload
+		}
+
+		return
+	*/
 }

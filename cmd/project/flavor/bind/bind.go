@@ -1,12 +1,12 @@
 package bind
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/flavors"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -38,21 +38,32 @@ func NewCmdBind() *cobra.Command {
 }
 
 func bindRun(opts *BindOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	body := models.BindFlavorToProjectCommand{
-		ProjectID: opts.ProjectID,
+	myApiClient := tk.NewClient()
+	body := taikuncore.BindFlavorToProjectCommand{
+		ProjectId: &opts.ProjectID,
 		Flavors:   opts.Flavors,
 	}
-	params := flavors.NewFlavorsBindToProjectParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	_, err = apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	response, err := myApiClient.Client.FlavorsAPI.FlavorsBindToProject(context.TODO()).BindFlavorToProjectCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
-
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.BindFlavorToProjectCommand{
+			ProjectID: opts.ProjectID,
+			Flavors:   opts.Flavors,
+		}
+		params := flavors.NewFlavorsBindToProjectParams().WithV(taikungoclient.Version).WithBody(&body)
+
+		_, err = apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+	*/
 }

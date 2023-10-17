@@ -1,17 +1,15 @@
 package enable
 
 import (
-	"errors"
+	"context"
+	"fmt"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
+	"github.com/itera-io/taikun-cli/utils/out"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/autoscaling"
-	"github.com/itera-io/taikungoclient/client/flavors"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -45,7 +43,7 @@ func NewCmdEnable() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Flavor, "autoscaler-flavor", "f", "", "The autoscaler's flavor (required)")
 	cmdutils.MarkFlagRequired(&cmd, "autoscaler-flavor")
-	cmdutils.SetFlagCompletionFunc(&cmd, "autoscaler-flavor", flavorCompletionFunc)
+	cmdutils.SetFlagCompletionFunc(&cmd, "autoscaler-flavor", cmdutils.FlavorCompletionFunc)
 
 	cmd.Flags().Int32Var(&opts.MaxSize, "max-size", 1, "The autoscaler's maximum size")
 	cmd.Flags().Int32Var(&opts.MaxSize, "min-size", 1, "The autoscaler's minimum size")
@@ -55,92 +53,58 @@ func NewCmdEnable() *cobra.Command {
 }
 
 func enableRun(opts *EnableOptions) (err error) {
-	_, err = isAutoscalingEnabled(opts.ProjectID)
+	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(opts.ProjectID)
 	if err != nil {
-		return
+		return err
+	}
+	if autoscalingEnabled {
+		err = fmt.Errorf("Project autoscaling already enabled")
+		return err
 	}
 
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	diskSize := float64(types.GiBToB(int(opts.DiskSize)))
+	body := taikuncore.EnableAutoscalingCommand{
+		Id:                   &opts.ProjectID,
+		AutoscalingGroupName: *taikuncore.NewNullableString(&opts.AutoscalingGroupName),
+		MinSize:              &opts.MinSize,
+		MaxSize:              &opts.MaxSize,
+		DiskSize:             &diskSize,
+		Flavor:               *taikuncore.NewNullableString(&opts.Flavor),
+	}
+	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEnable(context.TODO()).EnableAutoscalingCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.EnableAutoscalingCommand{
-		ID:                   opts.ProjectID,
-		AutoscalingGroupName: opts.AutoscalingGroupName,
-		Flavor:               opts.Flavor,
-		DiskSize:             float64(types.GiBToB(int(opts.DiskSize))),
-		MaxSize:              opts.MaxSize,
-		MinSize:              opts.MinSize,
-	}
-
-	params := autoscaling.NewAutoscalingEnableAutoscalingParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Autoscaling.AutoscalingEnableAutoscaling(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
+	out.PrintStandardSuccess()
 	return
-}
-
-func isAutoscalingEnabled(projectID int32) (res bool, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(projectID)
-
-	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-	if err == nil {
-		res := response.Payload.Project.IsAutoscalingEnabled
-		if res {
-			err = errors.New("Project autoscaling already enabled.")
-		}
-	}
-	return
-}
-
-func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	if len(args) == 0 {
-		return []string{}
-	}
-
-	projectID, err := types.Atoi32(args[0])
-	if err != nil {
-		return []string{}
-	}
-
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return []string{}
-	}
-
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(&projectID)
-
-	completions := make([]string, 0)
-
-	for {
-		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
+	/*
+		_, err = isAutoscalingEnabled(opts.ProjectID)
 		if err != nil {
-			return []string{}
+			return
 		}
 
-		for _, flavor := range response.Payload.Data {
-			completions = append(completions, flavor.Name)
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
 		}
 
-		count := int32(len(completions))
-
-		if count == response.Payload.TotalCount {
-			break
+		body := models.EnableAutoscalingCommand{
+			ID:                   opts.ProjectID,
+			AutoscalingGroupName: opts.AutoscalingGroupName,
+			Flavor:               opts.Flavor,
+			DiskSize:             float64(types.GiBToB(int(opts.DiskSize))),
+			MaxSize:              opts.MaxSize,
+			MinSize:              opts.MinSize,
 		}
 
-		params = params.WithOffset(&count)
-	}
+		params := autoscaling.NewAutoscalingEnableAutoscalingParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
 
-	return completions
+		_, err = apiClient.Client.Autoscaling.AutoscalingEnableAutoscaling(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+		return
+	*/
 }

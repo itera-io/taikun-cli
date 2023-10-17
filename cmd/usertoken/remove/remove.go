@@ -1,11 +1,11 @@
 package remove
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/user_token"
 	"github.com/spf13/cobra"
 )
 
@@ -19,28 +19,26 @@ func NewCmdDelete() *cobra.Command {
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
-
 	complete.CompleteArgsWithUserTokenName(&cmd)
-
 	return &cmd
 }
 
 func deleteRun(userTokenName string) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
+	// Get usertoken ID from usertoken name
 	userTokenId, err := complete.UserTokenIDFromUserTokenName(userTokenName)
 	if err != nil {
-		return
+		return err
 	}
 
-	params := user_token.NewUserTokenDeleteParams().WithV(taikungoclient.Version).WithID(userTokenId)
-
-	_, err = apiClient.Client.UserToken.UserTokenDelete(params, apiClient)
+	// Execute a query into the API + graceful exit
+	_, err = myApiClient.Client.UserTokenAPI.UsertokenDelete(context.TODO(), userTokenId).Execute()
 	if err == nil {
 		out.PrintDeleteSuccess("User Token", userTokenName)
+	} else {
+		return err
 	}
 
 	return

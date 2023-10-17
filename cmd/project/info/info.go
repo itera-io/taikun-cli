@@ -1,14 +1,14 @@
 package info
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/servers"
 	"github.com/spf13/cobra"
 )
 
@@ -148,18 +148,26 @@ func NewCmdInfo() *cobra.Command {
 }
 
 func infoRun(opts *InfoOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), opts.ProjectID).Execute()
 	if err != nil {
+		return tk.CreateError(response, err)
+	}
+	return out.PrintResult(data.GetProject(), infoFields)
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
+		params = params.WithProjectID(opts.ProjectID)
+
+		response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
+		if err == nil {
+			return out.PrintResult(response.Payload.Project, infoFields)
+		}
 		return
-	}
-
-	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
-
-	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload.Project, infoFields)
-	}
-
-	return
+	*/
 }

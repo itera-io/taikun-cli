@@ -1,37 +1,51 @@
 package complete
 
 import (
+	"context"
 	"errors"
-
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/list"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/user_token"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
 func EndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return []string{}
-	}
-
+	myApiClient := tk.NewClient()
 	limit := int32(2000)
-	params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit)
-
-	response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
+	data, _, err := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit).Execute()
 	if err != nil {
 		return []string{}
 	}
-
 	completions := make([]string, 0)
-
-	for i := 0; i < len(response.GetPayload().Data); i++ {
-		res := response.Payload.Data[i]
-		endpoint := EndpointFormatToString(*res)
+	for i := 0; i < len(data.GetData()); i++ {
+		res := data.GetData()[i]
+		endpoint := EndpointFormatToString(res)
 		completions = append(completions, endpoint)
 	}
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil { // Well this will be a pain to rewrite... -Radek
+			return []string{}
+		}
+
+		limit := int32(2000)
+		params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit)
+
+		response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
+		if err != nil {
+			return []string{}
+		}
+
+		completions := make([]string, 0)
+
+		for i := 0; i < len(response.GetPayload().Data); i++ {
+			res := response.Payload.Data[i]
+			endpoint := EndpointFormatToString(*res)
+			completions = append(completions, endpoint)
+		}
+	*/
 
 	return completions
 }
@@ -98,29 +112,22 @@ func UnbindingEndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplet
 }
 */
 
-func StringToEndpointFormat(endpoint string) *models.AvailableEndpointData {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil
-	}
-
+func StringToEndpointFormat(endpoint string) *taikuncore.AvailableEndpointData {
+	myApiClient := tk.NewClient()
 	limit := int32(2000)
-	params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit)
-
-	response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
+	data, _, err := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit).Execute()
 	if err != nil {
 		return nil
 	}
-
-	for i := 0; i < len(response.GetPayload().Data); i++ {
-		result := response.Payload.Data[i]
-		if endpoint == result.Controller+"/"+result.Method+"/"+result.Path {
-			res := models.AvailableEndpointData{}
-			res.Controller = result.Controller
-			res.Description = result.Description
-			res.ID = result.ID
-			res.Method = result.Method
-			res.Path = result.Path
+	for i := 0; i < len(data.GetData()); i++ {
+		result := data.GetData()[i]
+		if endpoint == result.GetController()+"/"+result.GetMethod()+"/"+result.GetPath() {
+			res := taikuncore.AvailableEndpointData{}
+			res.SetController(result.GetController())
+			res.SetDescription(result.GetDescription())
+			res.SetId(result.GetId())
+			res.SetMethod(result.GetMethod())
+			res.SetPath(result.GetPath())
 			return &res
 		}
 	}
@@ -128,9 +135,13 @@ func StringToEndpointFormat(endpoint string) *models.AvailableEndpointData {
 	return nil
 }
 
-func EndpointFormatToString(res models.EndpointElements) string {
-	return res.Controller + "/" + res.Method + "/" + res.Path
+func EndpointFormatToString(res taikuncore.EndpointElements) string {
+	return res.GetController() + "/" + res.GetMethod() + "/" + res.GetPath()
 }
+
+//func EndpointFormatToString(res models.EndpointElements) string {
+//	return res.Controller + "/" + res.Method + "/" + res.Path
+//}
 
 func CompleteArgsWithUserTokenName(cmd *cobra.Command) {
 	cmdutils.SetArgsCompletionFunc(cmd,
@@ -142,7 +153,7 @@ func CompleteArgsWithUserTokenName(cmd *cobra.Command) {
 
 			completions := make([]string, len(users))
 			for i, usertoken := range users {
-				completions[i] = usertoken.Name
+				completions[i] = usertoken.GetName()
 			}
 
 			return completions
@@ -159,8 +170,8 @@ func UserTokenIDFromUserTokenName(userTokenName string) (userTokenID string, err
 	}
 
 	for i := 0; i < len(userTokenList); i++ {
-		if userTokenList[i].Name == userTokenName {
-			userTokenID = userTokenList[i].ID
+		if userTokenList[i].GetName() == userTokenName {
+			userTokenID = userTokenList[i].GetId()
 			return
 		}
 	}

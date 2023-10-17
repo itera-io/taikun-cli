@@ -1,8 +1,9 @@
 Context 'project/image'
   setup() {
-    cc=$(taikun cloud-credential openstack add $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
+    oid=$(taikun organization add $(_rnd_name) -f $(_rnd_name) -I)
+    cc=$(taikun cloud-credential openstack add $(_rnd_name) -o $oid -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
     sleep 0.1
-    id=$(taikun project add $(_rnd_name) --cloud-credential-id $cc -I)
+    id=$(taikun project add $(_rnd_name) --cloud-credential-id $cc -o $oid -I)
   }
   BeforeAll 'setup'
 
@@ -11,6 +12,7 @@ Context 'project/image'
       taikun project delete --force $id -q 2>/dev/null || true
     fi
     taikun cloud-credential delete $cc -q 2>/dev/null || true
+    taikun organization delete $oid
   }
   AfterAll 'cleanup'
 

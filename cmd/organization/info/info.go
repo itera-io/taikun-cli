@@ -1,13 +1,13 @@
 package info
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/organization/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/organizations"
 	"github.com/spf13/cobra"
 )
 
@@ -39,23 +39,16 @@ func NewCmdInfo() *cobra.Command {
 	return &cmd
 }
 
+// infoRun calls the API and gets an object with information which it prints
 func infoRun(opts *InfoOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsList(context.TODO()).Id(opts.OrganizationID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	params := organizations.NewOrganizationsListParams().WithV(taikungoclient.Version)
-	params = params.WithID(&opts.OrganizationID)
-
-	response, err := apiClient.Client.Organizations.OrganizationsList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	if len(response.Payload.Data) != 1 {
+	if len(data.Data) != 1 {
 		return cmderr.ResourceNotFoundError("Organization", opts.OrganizationID)
 	}
 
-	return out.PrintResult(response.Payload.Data[0], infoFields)
+	return out.PrintResult(data.Data[0], infoFields)
 }

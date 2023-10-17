@@ -1,17 +1,20 @@
 package info
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/users"
 	"github.com/spf13/cobra"
 )
 
 var infoFields = list.ListFields
 
+// NewCmdInfo creates and returns a cobra command for getting more Information on users.
+// When called without an argument it gets the short User Info about the current user
+// When called with one argument (user ID) it gets the long List information about the user with corresponding ID.
 func NewCmdInfo() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "info [user-id]",
@@ -20,10 +23,11 @@ func NewCmdInfo() *cobra.Command {
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
-				return infoRun(args[0])
+				infoFields.ShowAll()    // Long
+				return listRun(args[0]) // List user by ID
 			}
-			infoFields.ShowAll()
-			return myInfoRun()
+			// infoFields.ShowAll()
+			return myInfoRun() // Info about current user
 		},
 	}
 
@@ -32,39 +36,29 @@ func NewCmdInfo() *cobra.Command {
 	return &cmd
 }
 
+// myInfoRun calls the API and gets the info about the current user
 func myInfoRun() (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := users.NewUsersDetailsParams().WithV(taikungoclient.Version)
-
-	response, err := apiClient.Client.Users.UsersDetails(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload.Data, infoFields)
-	}
-
-	return
+	return out.PrintResult(data.Data, infoFields)
 }
 
-func infoRun(userID string) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+// listRun calls the API and gets the info about user with userID
+func listRun(userID string) (err error) {
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.UsersAPI.UsersList(context.TODO()).Id(userID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := users.NewUsersListParams().WithV(taikungoclient.Version)
-	params = params.WithID(&userID)
-
-	response, err := apiClient.Client.Users.UsersList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	if len(response.Payload.Data) != 1 {
+	// User not found
+	if len(data.Data) != 1 {
 		return cmderr.ResourceNotFoundError("User", userID)
 	}
 
-	return out.PrintResult(response.Payload.Data[0], infoFields)
+	return out.PrintResult(data.Data[0], infoFields)
 }

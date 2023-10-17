@@ -20,7 +20,7 @@ func CompleteArgsWithUserID(cmd *cobra.Command) {
 			for i, user := range users {
 				completions[i] = fmt.Sprintf(
 					"%s\t%s",
-					user.ID,
+					user.Id,
 					user.Username,
 				)
 			}

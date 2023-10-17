@@ -1,17 +1,19 @@
 package add
 
 import (
+	"context"
+	tk "github.com/Smidra/taikungoclient"
+	taikuncore "github.com/Smidra/taikungoclient/client"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/users"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
+// addFields defines a slice of fields corresponding to .
+// Some columns are set as visible by default and some are hidden by default.
 var addFields = fields.New(
 	[]*field.Field{
 		field.NewVisible(
@@ -84,7 +86,10 @@ func NewCmdAdd() *cobra.Command {
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Username = args[0]
-			if err := cmdutils.CheckFlagValue("role", opts.Role, types.UserRoles); err != nil {
+
+			// Check if flag is in roles
+			//if err := cmdutils.CheckFlagValue("role", opts.Role, types.UserRoles); err != nil {
+			if err := cmdutils.CheckFlagValue("role", opts.Role, types.GetUserRoles()); err != nil {
 				return err
 			}
 			return addRun(&opts)
@@ -92,15 +97,20 @@ func NewCmdAdd() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 	}
 
+	// Email is a required flag
 	cmd.Flags().StringVarP(&opts.Email, "email", "e", "", "Email (required)")
 	cmdutils.MarkFlagRequired(&cmd, "email")
 
-	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
+	// Role is a required flag
+	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required). [Admin, Manager, Partner, User, Autoscaler]")
 	cmdutils.MarkFlagRequired(&cmd, "role")
-	cmdutils.SetFlagCompletionValues(&cmd, "role", types.UserRoles.Keys()...)
+	cmdutils.SetFlagCompletionValues(&cmd, "role", types.GetUserRoles().Keys()...)
 
+	// Display name optional flag. Default none.
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+
+	// Organization ID optional flag. Default 0.
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID. Default org ID is '0'.")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -108,26 +118,20 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
+// addRun calls the API with a custom body from arguments. It than prints the result.
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.CreateUserCommand{}
+	body.SetDisplayName(opts.DisplayName)
+	body.SetEmail(opts.Email)
+	body.SetOrganizationId(opts.OrganizationID)
+	body.SetUsername(opts.Username)
+	body.SetRole(taikuncore.UserRole(opts.Role))
+
+	data, response, err := myApiClient.Client.UsersAPI.UsersCreate(context.TODO()).CreateUserCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := &models.CreateUserCommand{
-		DisplayName:    opts.DisplayName,
-		Email:          opts.Email,
-		OrganizationID: opts.OrganizationID,
-		Role:           types.GetUserRole(opts.Role),
-		Username:       opts.Username,
-	}
-
-	params := users.NewUsersCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-	response, err := apiClient.Client.Users.UsersCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
+	return out.PrintResult(data, addFields)
 }
