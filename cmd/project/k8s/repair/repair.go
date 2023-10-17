@@ -1,10 +1,10 @@
 package repair
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/projects"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -32,18 +32,28 @@ func NewCmdRepair() *cobra.Command {
 }
 
 func repairRun(opts *RepairOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsRepair(context.TODO(), opts.ProjectID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	params := projects.NewProjectsRepairParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
-
-	_, err = apiClient.Client.Projects.ProjectsRepair(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := projects.NewProjectsRepairParams().WithV(taikungoclient.Version)
+		params = params.WithProjectID(opts.ProjectID)
+
+		_, err = apiClient.Client.Projects.ProjectsRepair(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

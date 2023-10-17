@@ -1,13 +1,13 @@
 package bind
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/images"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -39,23 +39,42 @@ func NewCmdBind() *cobra.Command {
 }
 
 func bindRun(opts *BindOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.BindImageToProjectCommand{
-		ProjectID: opts.ProjectID,
+	// Prepere the arguments for the query
+	body := taikuncore.BindImageToProjectCommand{
+		ProjectId: &opts.ProjectID,
 		Images:    opts.ImageIDs,
 	}
 
-	params := images.NewImagesBindImagesToProjectParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Images.ImagesBindImagesToProject(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.ImagesAPI.ImagesBindImagesToProject(context.TODO()).BindImageToProjectCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.BindImageToProjectCommand{
+			ProjectID: opts.ProjectID,
+			Images:    opts.ImageIDs,
+		}
+
+		params := images.NewImagesBindImagesToProjectParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.Images.ImagesBindImagesToProject(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

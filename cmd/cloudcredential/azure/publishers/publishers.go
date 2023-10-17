@@ -1,11 +1,11 @@
 package publishers
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/azure"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -45,34 +45,27 @@ func publishersRun(opts *PublishersOptions) (err error) {
 }
 
 func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
-
-	params := azure.NewAzurePublishersParams().WithV(taikungoclient.Version)
-	params = params.WithCloudID(opts.CloudCredentialID)
-
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzurePublishers(context.TODO(), opts.CloudCredentialID)
 	publishers = make([]string, 0)
-
 	for {
-		response, err := apiClient.Client.Azure.AzurePublishers(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return nil, err
+			return nil, tk.CreateError(response, err)
 		}
 
-		publishers = append(publishers, response.Payload.Data...)
+		publishers = append(publishers, data.Data...)
 
 		count := int32(len(publishers))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(publishers)) > opts.Limit {
@@ -80,4 +73,42 @@ func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 	}
 
 	return publishers, nil
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+
+		params := azure.NewAzurePublishersParams().WithV(taikungoclient.Version)
+		params = params.WithCloudID(opts.CloudCredentialID)
+
+		publishers = make([]string, 0)
+
+		for {
+			response, err := apiClient.Client.Azure.AzurePublishers(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			publishers = append(publishers, response.Payload.Data...)
+
+			count := int32(len(publishers))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCount {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(publishers)) > opts.Limit {
+			publishers = publishers[:opts.Limit]
+		}
+
+		return publishers, nil
+	*/
 }

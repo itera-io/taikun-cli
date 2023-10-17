@@ -1,10 +1,10 @@
 package commit
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/projects"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -32,18 +32,27 @@ func NewCmdCommit() *cobra.Command {
 }
 
 func commitRun(opts *CommitOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsCommit(context.TODO(), opts.ProjectID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	params := projects.NewProjectsCommitParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
-
-	_, err = apiClient.Client.Projects.ProjectsCommit(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := projects.NewProjectsCommitParams().WithV(taikungoclient.Version)
+		params = params.WithProjectID(opts.ProjectID)
+
+		_, err = apiClient.Client.Projects.ProjectsCommit(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

@@ -1,6 +1,7 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -9,9 +10,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -122,48 +122,79 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return
+	/*
+		projectServers, err := ListServers(opts)
+		if err == nil {
+			flavorJsonPropertyName, err := getFlavorField(projectServers)
+			if err != nil {
+				return err
+			}
+
+			if err := listFields.SetFieldJsonPropertyName("FLAVOR", flavorJsonPropertyName); err != nil {
+				return err
+			}
+
+			return out.PrintResults(projectServers, listFields)
+		}
+
+		return
+	*/
 }
 
-func ListServers(opts *ListOptions) (projectServers []*models.ServerListDto, err error) {
-	apiClient, err := taikungoclient.NewClient()
+func ListServers(opts *ListOptions) (projectServers []taikuncore.ServerListDto, err error) {
+	myApiClient := tk.NewClient()
+	myApiRequest := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), opts.ProjectID)
+	if config.SortBy != "" {
+		myApiRequest = myApiRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+	data, response, err := myApiRequest.Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
-
-	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
-
-	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy)
-		params = params.WithSortDirection(api.GetSortDirection())
-	}
-
-	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-	if err == nil {
-		projectServers = response.Payload.Data
-	}
-
+	projectServers = data.GetData()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
+		params = params.WithProjectID(opts.ProjectID)
+
+		if config.SortBy != "" {
+			params = params.WithSortBy(&config.SortBy)
+			params = params.WithSortDirection(api.GetSortDirection())
+		}
+
+		response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
+		if err == nil {
+			projectServers = response.Payload.Data
+		}
+
+		return
+	*/
 }
 
-func getFlavorField(servers []*models.ServerListDto) (string, error) {
+func getFlavorField(servers []taikuncore.ServerListDto) (string, error) {
 	if len(servers) == 0 {
 		return "flavor", nil
 	}
 
-	if servers[0].AwsInstanceType != "" {
+	if servers[0].GetAwsInstanceType() != "" {
 		return "awsInstanceType", nil
 	}
 
-	if servers[0].AzureVMSize != "" {
+	if servers[0].GetAzureVmSize() != "" {
 		return "azureVmSize", nil
 	}
 
-	if servers[0].OpenstackFlavor != "" {
+	if servers[0].GetOpenstackFlavor() != "" {
 		return "openstackFlavor", nil
 	}
 
-	if servers[0].GoogleMachineType != "" {
+	if servers[0].GetGoogleMachineType() != "" {
 		return "googleMachineType", nil
 	}
 

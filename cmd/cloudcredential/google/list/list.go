@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/cloud_credentials"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -92,50 +92,96 @@ func listRun(opts *ListOptions) (err error) {
 }
 
 func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version)
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO())
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var googleCloudCredentials = make([]*models.GoogleCredentialsListDto, 0)
+	var googlecloudCloudCredentials = make([]taikuncore.GoogleCredentialsListDto, 0)
 
 	for {
-		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
-		if err != nil {
-			return nil, err
+		data, response, newError := myRequest.Execute()
+		if newError != nil {
+			err = tk.CreateError(response, err)
+			return
 		}
 
-		googleCloudCredentials = append(googleCloudCredentials, response.Payload.Google...)
+		googlecloudCloudCredentials = append(googlecloudCloudCredentials, data.Google...)
 
-		count := int32(len(googleCloudCredentials))
+		count := int32(len(googlecloudCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCountGoogle {
+		if count == data.GetTotalCountGoogle() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
-	if opts.Limit != 0 && int32(len(googleCloudCredentials)) > opts.Limit {
-		googleCloudCredentials = googleCloudCredentials[:opts.Limit]
+	if opts.Limit != 0 && int32(len(googlecloudCloudCredentials)) > opts.Limit {
+		googlecloudCloudCredentials = googlecloudCloudCredentials[:opts.Limit]
 	}
 
-	credentials = make([]interface{}, len(googleCloudCredentials))
-	for i, credential := range googleCloudCredentials {
-		credentials[i] = *credential
+	credentials = make([]interface{}, len(googlecloudCloudCredentials))
+	for i, credential := range googlecloudCloudCredentials {
+		credentials[i] = credential
 	}
 
 	return credentials, nil
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version)
+		if opts.OrganizationID != 0 {
+			params = params.WithOrganizationID(&opts.OrganizationID)
+		}
+
+		if config.SortBy != "" {
+			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		}
+
+		var googleCloudCredentials = make([]*models.GoogleCredentialsListDto, 0)
+
+		for {
+			response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
+			if err != nil {
+				return nil, err
+			}
+
+			googleCloudCredentials = append(googleCloudCredentials, response.Payload.Google...)
+
+			count := int32(len(googleCloudCredentials))
+			if opts.Limit != 0 && count >= opts.Limit {
+				break
+			}
+
+			if count == response.Payload.TotalCountGoogle {
+				break
+			}
+
+			params = params.WithOffset(&count)
+		}
+
+		if opts.Limit != 0 && int32(len(googleCloudCredentials)) > opts.Limit {
+			googleCloudCredentials = googleCloudCredentials[:opts.Limit]
+		}
+
+		credentials = make([]interface{}, len(googleCloudCredentials))
+		for i, credential := range googleCloudCredentials {
+			credentials[i] = *credential
+		}
+
+		return credentials, nil
+	*/
 }

@@ -1,17 +1,17 @@
 package remove
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/list"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -54,13 +54,9 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(opts *DeleteOptions) error {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return err
-	}
-
-	body := models.DeleteStandAloneVMCommand{
-		ProjectID: opts.ProjectID,
+	myApiClient := tk.NewClient()
+	body := taikuncore.DeleteStandAloneVmCommand{
+		ProjectId: &opts.ProjectID,
 	}
 
 	if opts.DeleteAll {
@@ -75,24 +71,65 @@ func deleteRun(opts *DeleteOptions) error {
 
 		allVMIDs := make([]int32, len(allVMs))
 		for i, vm := range allVMs {
-			allVMIDs[i] = vm.ID
+			allVMIDs[i] = vm.GetId()
 		}
-
-		body.VMIds = allVMIDs
+		body.VmIds = allVMIDs
 	} else {
-		body.VMIds = opts.VMIDs
+		body.VmIds = opts.VMIDs
 	}
 
-	params := stand_alone.NewStandAloneDeleteParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	if _, err = apiClient.Client.StandAlone.StandAloneDelete(params, apiClient); err != nil {
-		return err
+	response, err := myApiClient.Client.StandaloneAPI.StandaloneDelete(context.TODO()).DeleteStandAloneVmCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
-	for _, id := range body.VMIds {
+	for _, id := range body.VmIds {
 		out.PrintDeleteSuccess("Standalone VM", id)
 	}
 
 	return nil
+
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return err
+		}
+
+		body := models.DeleteStandAloneVMCommand{
+			ProjectID: opts.ProjectID,
+		}
+
+		if opts.DeleteAll {
+			allVMs, err := list.ListVMs(&list.ListOptions{ProjectID: opts.ProjectID})
+			if err != nil {
+				return err
+			}
+
+			if len(allVMs) == 0 {
+				return fmt.Errorf("project %d has no standalone VMs", opts.ProjectID)
+			}
+
+			allVMIDs := make([]int32, len(allVMs))
+			for i, vm := range allVMs {
+				allVMIDs[i] = vm.ID
+			}
+
+			body.VMIds = allVMIDs
+		} else {
+			body.VMIds = opts.VMIDs
+		}
+
+		params := stand_alone.NewStandAloneDeleteParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		if _, err = apiClient.Client.StandAlone.StandAloneDelete(params, apiClient); err != nil {
+			return err
+		}
+
+		for _, id := range body.VMIds {
+			out.PrintDeleteSuccess("Standalone VM", id)
+		}
+
+		return nil
+	*/
 }

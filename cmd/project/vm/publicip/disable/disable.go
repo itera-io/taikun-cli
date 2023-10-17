@@ -1,12 +1,12 @@
 package disable
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -34,23 +34,43 @@ func NewCmdDisable() *cobra.Command {
 }
 
 func disableRun(opts *DisableOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	enableIP := types.DisableVMPublicIP
+	body := taikuncore.StandAloneVmIpManagementCommand{
+		Id:   &opts.StandaloneVMID,
+		Mode: *taikuncore.NewNullableString(&enableIP),
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.StandaloneAPI.StandaloneIpManagement(context.TODO()).StandAloneVmIpManagementCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.StandAloneVMIPManagementCommand{
-		ID:   opts.StandaloneVMID,
-		Mode: types.DisableVMPublicIP,
-	}
-
-	params := stand_alone.NewStandAloneIPManagementParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.StandAlone.StandAloneIPManagement(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.StandAloneVMIPManagementCommand{
+			ID:   opts.StandaloneVMID,
+			Mode: types.DisableVMPublicIP,
+		}
+
+		params := stand_alone.NewStandAloneIPManagementParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.StandAlone.StandAloneIPManagement(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

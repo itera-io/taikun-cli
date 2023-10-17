@@ -1,12 +1,12 @@
 package attach
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -38,23 +38,36 @@ func NewCmdAttach() *cobra.Command {
 }
 
 func attachRun(opts *AttachOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.AttachDetachAlertingProfileCommand{
+		ProjectId:         &opts.ProjectID,
+		AlertingProfileId: *taikuncore.NewNullableInt32(&opts.AlertingProfileID),
+	}
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAttach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.AttachDetachAlertingProfileCommand{
-		AlertingProfileID: opts.AlertingProfileID,
-		ProjectID:         opts.ProjectID,
-	}
-
-	params := alerting_profiles.NewAlertingProfilesAttachParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAttach(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.AttachDetachAlertingProfileCommand{
+			AlertingProfileID: opts.AlertingProfileID,
+			ProjectID:         opts.ProjectID,
+		}
+
+		params := alerting_profiles.NewAlertingProfilesAttachParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAttach(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

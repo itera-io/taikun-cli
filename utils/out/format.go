@@ -140,6 +140,33 @@ func FormatNumber(v interface{}) string {
 	return field.NotAvailable
 }
 
+// Format number as integer
+func FormatNumberInteger(v interface{}) string {
+	if number, ok := v.(float64); ok {
+		var jsMaxSafeInteger float64 = 9007199254740991
+		if number == jsMaxSafeInteger {
+			return field.NotAvailable
+		}
+
+		return fmt.Sprint(int64(number))
+	}
+
+	return field.NotAvailable
+}
+
+func FormatNumberAddGibString(v interface{}) string {
+	if number, ok := v.(float64); ok {
+		var jsMaxSafeInteger float64 = 9007199254740991
+		if number == jsMaxSafeInteger {
+			return field.NotAvailable
+		}
+
+		return fmt.Sprintf("%d Gib", int64(number))
+	}
+
+	return field.NotAvailable
+}
+
 func FormatAvailabilityZones(v interface{}) string {
 	switch v.(type) {
 	case int:

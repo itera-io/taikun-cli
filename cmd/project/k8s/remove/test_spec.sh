@@ -1,9 +1,10 @@
 Context 'project/k8s/remove'
 
   setup() {
-    ccid=$(taikun cloud-credential openstack add $(_rnd_name) -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
+    oid=$(taikun organization add $(_rnd_name) -f $(_rnd_name) -I)
+    ccid=$(taikun cloud-credential openstack add $(_rnd_name) -o $oid -d $OS_USER_DOMAIN_NAME -p $OS_PASSWORD --project $OS_PROJECT_NAME -r $OS_REGION_NAME -u $OS_USERNAME --public-network $OS_INTERFACE --url $OS_AUTH_URL -I)
     flavor=$(taikun cloud-credential flavors $ccid --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1)
-    pid=$(taikun project add $(_rnd_name) --cloud-credential-id $ccid --flavors $flavor -I)
+    pid=$(taikun project add $(_rnd_name) -o $oid --cloud-credential-id $ccid --flavors $flavor -I)
   }
 
   BeforeAll 'setup'
@@ -13,6 +14,7 @@ Context 'project/k8s/remove'
       taikun project delete --force $pid -q 2>/dev/null || true
     fi
     taikun cloud-credential delete $ccid -q 2>/dev/null || true
+    taikun organization delete $oid
   }
 
   AfterAll 'cleanup'

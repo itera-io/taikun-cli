@@ -1,14 +1,13 @@
 package disable
 
 import (
-	"errors"
-
+	"context"
+	"fmt"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/autoscaling"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -36,46 +35,43 @@ func NewCmdDisable() *cobra.Command {
 }
 
 func disableRun(opts *DisableOptions) (err error) {
-	_, err = isAutoscalingEnabled(opts.ProjectID)
+	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(opts.ProjectID)
 	if err != nil {
-		return
+		return err
+	}
+	if !autoscalingEnabled {
+		err = fmt.Errorf("Project autoscaling already disabled")
+		return err
 	}
 
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.DisableAutoscalingCommand{
+		ProjectId: &opts.ProjectID,
+	}
+	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingDisable(context.TODO()).DisableAutoscalingCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.DisableAutoscalingCommand{
-		ProjectID: opts.ProjectID,
-	}
-
-	params := autoscaling.NewAutoscalingDisableAutoscalingParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Autoscaling.AutoscalingDisableAutoscaling(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
-}
-
-func isAutoscalingEnabled(projectID int32) (res bool, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(projectID)
-
-	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-	if err == nil {
-		res := response.Payload.Project.IsAutoscalingEnabled
-		if !res {
-			err = errors.New("Project autoscaling already disabled.")
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
 		}
-	}
-	return
+
+		body := models.DisableAutoscalingCommand{
+			ProjectID: opts.ProjectID,
+		}
+
+		params := autoscaling.NewAutoscalingDisableAutoscalingParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.Autoscaling.AutoscalingDisableAutoscaling(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }

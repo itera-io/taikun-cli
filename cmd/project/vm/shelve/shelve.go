@@ -1,12 +1,12 @@
 package shelve
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_actions"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -34,19 +34,37 @@ func NewCmdShelve() *cobra.Command {
 }
 
 func shelveRun(opts *ShelveOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.ShelveStandAloneVmCommand{
+		Id: &opts.StandaloneVMID,
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsShelve(context.TODO()).ShelveStandAloneVmCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.ShelveStandAloneVMCommand{ID: opts.StandaloneVMID}
-	params := stand_alone_actions.NewStandAloneActionsShelveParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.StandAloneActions.StandAloneActionsShelve(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+	/*
+		apiClient, err := taikungoclient.NewClient()
+		if err != nil {
+			return
+		}
+
+		body := models.ShelveStandAloneVMCommand{ID: opts.StandaloneVMID}
+		params := stand_alone_actions.NewStandAloneActionsShelveParams().WithV(taikungoclient.Version)
+		params = params.WithBody(&body)
+
+		_, err = apiClient.Client.StandAloneActions.StandAloneActionsShelve(params, apiClient)
+		if err == nil {
+			out.PrintStandardSuccess()
+		}
+
+		return
+	*/
 }
