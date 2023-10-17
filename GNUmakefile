@@ -22,3 +22,16 @@ test: install
 .PHONY: vimtest
 vimtest:
 	@shellspec --shell bash --format failures ${TESTARGS}
+
+.PHONY: lint
+lint: install
+	golangci-lint run
+
+.PHONY: release
+release: install
+	goreleaser release --snapshot --clean
+
+.PHONY: ci_local
+ci_local: install lint test
+	echo "======================================"
+	echo "Local mock of the CI pipeline complete"
