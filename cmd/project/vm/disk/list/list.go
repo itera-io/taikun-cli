@@ -76,13 +76,13 @@ func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.StandaloneAPI.StandaloneList(context.TODO()).ProjectId(opts.ProjectID).Id(opts.StandaloneVMID).Execute()
+	data, response, err := myApiClient.Client.StandaloneAPI.StandaloneDetails(context.TODO(), opts.ProjectID).Id(opts.StandaloneVMID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
 
 	// Manipulate the gathered data
-	return out.PrintResults(data.GetData(), listFields)
+	return out.PrintResults(data.Data, listFields)
 	/*
 		apiClient, err := taikungoclient.NewClient()
 		if err != nil {
