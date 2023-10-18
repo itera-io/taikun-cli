@@ -32,6 +32,6 @@ release: install
 	goreleaser release --snapshot --clean
 
 .PHONY: ci_local
-ci_local: install lint test
+ci_local: install lint test release
 	echo "======================================"
 	echo "Local mock of the CI pipeline complete"
