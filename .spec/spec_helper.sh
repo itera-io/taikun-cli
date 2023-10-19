@@ -4,9 +4,9 @@ _rnd_name() {
   echo tk-cli-test-$(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')
 }
 
-# Radom number is created from numbers 1-9, beccause trailing zero can cause problems in prints
+# Radom number is created from numbers 1-9, because trailing zero can cause problems in prints
 _rnd_number() {
-  echo $(shuf --echo --repeat --head-count=6 {1..9} | tr -d '\n')
+  shuf --echo --repeat --head-count=6 {1..9} | tr -d '\n'
 }
 
 spec_helper_precheck() {

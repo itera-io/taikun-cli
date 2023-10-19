@@ -1,18 +1,18 @@
 #Context 'project/disablemonitoring'
 #  setup() {
-#    cc=$(taikun cloud-credential aws add $(_rnd_name) --access-key-id $AWS_ACCESS_KEY_ID --secret-access-key $AWS_SECRET_ACCESS_KEY --region $AWS_DEFAULT_REGION --az-count $AWS_AZ_COUNT -I)
-#    id=$(taikun project add $(_rnd_name) --cloud-credential-id $cc -I)
+#    cc=$(taikun cloud-credential aws add "$(_rnd_name)" --access-key-id $AWS_ACCESS_KEY_ID --secret-access-key $AWS_SECRET_ACCESS_KEY --region $AWS_DEFAULT_REGION --az-count $AWS_AZ_COUNT -I)
+#    id=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$cc" -I)
 #  }
 #  BeforeAll 'setup'
 #
 #  cleanup() {
-#    taikun project delete $id -q
-#    taikun cloud-credential delete $cc -q
+#    taikun project delete "$id" -q
+#    taikun cloud-credential delete "$cc" -q
 #  }
 #  AfterAll 'cleanup'
 #
 #disable_monitoring() {
-#      taikun project disable-monitoring $id -q 2>/dev/null || true
+#      taikun project disable-monitoring "$id" -q 2>/dev/null || true
 #  }
 #
 #  BeforeEach 'disable_monitoring'
@@ -23,12 +23,12 @@
 #
 #  Context
 #    enablemonitoring() {
-#      taikun project enable-monitoring $id -q
+#      taikun project enable-monitoring "$id" -q
 #    }
 #    Before 'enablemonitoring'
 #
 #    Example 'enable monitoring'
-#      When call taikun project info $id --columns monitoring
+#      When call taikun project info "$id" --columns monitoring
 #      The status should equal 0
 #      The output should include 'Yes'
 #    End
@@ -36,8 +36,8 @@
 #
 #  Context
 #    enable_and_disable_monitoring() {
-#      taikun project enable-monitoring $id -q
-#      taikun project disable-monitoring $id -q
+#      taikun project enable-monitoring "$id" -q
+#      taikun project disable-monitoring "$id" -q
 #    }
 #    Before 'enable_and_disable_monitoring'
 #

@@ -13,7 +13,7 @@ if [[ ! -d ./cmd ]]; then
 fi
 
 logfile="$1"
-fctx=$(grep FAILED $logfile | cut -d '-' -f 2 | cut -d ' ' -f 2 | uniq)
+fctx=$(grep FAILED "$logfile" | cut -d '-' -f 2 | cut -d ' ' -f 2 | uniq)
 
 if [[ -z $fctx ]]; then
   echo "No tests failed"
@@ -27,7 +27,7 @@ for context in $fctx; do
     echo "Error: invalid context $context, please fix context name"
     exit 1
   fi
-  if ! shellspec --shell bash --format tap --jobs $(nproc) ./cmd/$context; then
+  if ! shellspec --shell bash --format tap --jobs "$(nproc)" ./cmd/$context; then
     failures=$((failures+1))
   fi
 done

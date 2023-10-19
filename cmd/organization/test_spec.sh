@@ -1,14 +1,14 @@
 Context 'organization'
     add_org(){
-      orgname=$(_rnd_name)
-      orgnamefull=$(_rnd_name)
-      oid=$(taikun organization add $orgname --full-name $orgnamefull -I)
-      fakeoid=$(_rnd_number)
+      orgname="$(_rnd_name)"
+      orgnamefull="$(_rnd_name)"
+      oid=$(taikun organization add "$orgname" --full-name "$orgnamefull" -I)
+      fakeoid="$(_rnd_number)"
     }
     BeforeAll add_org
 
     del_org(){
-      taikun organization delete $oid -q 2>/dev/null || true
+      taikun organization delete "$oid" -q 2>/dev/null || true
     }
     AfterAll del_org
 
