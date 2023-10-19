@@ -80,7 +80,7 @@ func addRun(opts *AddOptions) (err error) {
 	// Preparing to set user-specified endpoints
 	if len(opts.Endpoints) != 0 && !opts.BindAll {
 		fmt.Println("Setting up some endpoints...")
-		endpoints := []taikuncore.AvailableEndpointData{}
+		var endpoints []taikuncore.AvailableEndpointData
 		//endpoints := []*models.AvailableEndpointData{}
 		for i := 0; i < len(opts.Endpoints); i++ {
 			endpoint := *complete.StringToEndpointFormat(opts.Endpoints[i])

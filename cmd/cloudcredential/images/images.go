@@ -374,14 +374,14 @@ func getAzureImages(opts *ImagesOptions) (azureImages interface{}, err error) {
 func getAllAzureImages(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	publishersOptions := publishers.PublishersOptions{CloudCredentialID: opts.CloudCredentialID}
 
-	publishers, err := publishers.ListPublishers(&publishersOptions)
+	myPublishers, err := publishers.ListPublishers(&publishersOptions)
 	if err != nil {
 		return nil, err
 	}
 
 	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
-	for _, publisher := range publishers {
+	for _, publisher := range myPublishers {
 		opts.AzurePublisher = publisher
 
 		moreImages, err := getAzureImagesWithPublisher(opts)
@@ -408,14 +408,14 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []taikuncore.
 		Publisher:         opts.AzurePublisher,
 	}
 
-	offers, err := offers.ListOffers(&offersOptions)
+	myOffers, err := offers.ListOffers(&offersOptions)
 	if err != nil {
 		return nil, err
 	}
 
 	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
-	for _, offer := range offers {
+	for _, offer := range myOffers {
 		opts.AzureOffer = offer
 
 		moreImages, err := getAzureImagesWithOffer(opts)
@@ -443,14 +443,14 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []taikuncore.Comm
 		Offer:             opts.AzureOffer,
 	}
 
-	skus, err := skus.ListSKUs(&skusOptions)
+	mySkus, err := skus.ListSKUs(&skusOptions)
 	if err != nil {
 		return nil, err
 	}
 
 	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
-	for _, sku := range skus {
+	for _, sku := range mySkus {
 		opts.AzureSKU = sku
 
 		moreImages, err := getAzureImagesWithSKU(opts)

@@ -11,9 +11,9 @@ const ExpectedDateFormat = "dd.mm.yyyy"
 // Convert string in the format dd.mm.yyyy to a strfmt.DateTime struct
 func StrToDateTime(str string) strfmt.DateTime {
 	dateInRfc3339Format := strToRfc3339DateTime(str)
-	time, _ := time.Parse(time.RFC3339, dateInRfc3339Format)
+	myTime, _ := time.Parse(time.RFC3339, dateInRfc3339Format)
 
-	return strfmt.DateTime(time)
+	return strfmt.DateTime(myTime)
 }
 
 // Convert string to RFC 3339 datetime format
