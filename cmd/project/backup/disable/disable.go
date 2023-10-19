@@ -2,6 +2,7 @@ package disable
 
 import (
 	"context"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
@@ -37,9 +38,10 @@ func disableRun(opts *DisableOptions) (err error) {
 	body := taikuncore.DisableBackupCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupDisableBackup(context.TODO()).DisableBackupCommand(body).Execute()
+	_, err = myApiClient.Client.BackupPolicyAPI.BackupDisableBackup(context.TODO()).DisableBackupCommand(body).Execute()
 	if err != nil {
-		return tk.CreateError(response, err)
+		//return tk.CreateError(response, err)
+		return cmderr.ErrProjectBackupAlreadyDisabled
 	}
 	out.PrintStandardSuccess()
 	return
