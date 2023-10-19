@@ -8,7 +8,7 @@ Context 'organization'
     BeforeAll add_org
 
     del_org(){
-      taikun organization delete $oid
+      taikun organization delete $oid -q 2>/dev/null || true
     }
     AfterAll del_org
 

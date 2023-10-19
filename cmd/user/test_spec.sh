@@ -10,7 +10,7 @@ Context 'user'
     cleanup() {
       taikun project delete $pid -q
       taikun cloud-credential delete $ccid -q
-      taikun organization delete $oid -q
+      taikun organization delete $oid -q 2>/dev/null || true
     }
     AfterAll 'cleanup'
 

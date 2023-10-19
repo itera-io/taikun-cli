@@ -11,7 +11,7 @@ Context 'standaloneprofile'
 
   cleanup() {
     taikun standalone-profile delete $id -q
-    taikun organization delete $oid -q
+    taikun organization delete $oid -q 2>/dev/null || true
   }
   AfterAll 'cleanup'
 

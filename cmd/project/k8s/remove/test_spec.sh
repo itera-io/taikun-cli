@@ -14,7 +14,7 @@ Context 'project/k8s/remove'
       taikun project delete --force $pid -q 2>/dev/null || true
     fi
     taikun cloud-credential delete $ccid -q 2>/dev/null || true
-    taikun organization delete $oid
+    taikun organization delete $oid -q 2>/dev/null || true
   }
 
   AfterAll 'cleanup'

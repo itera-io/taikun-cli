@@ -12,7 +12,7 @@ Context 'project/image'
       taikun project delete --force $id -q 2>/dev/null || true
     fi
     taikun cloud-credential delete $cc -q 2>/dev/null || true
-    taikun organization delete $oid
+    taikun organization delete $oid -q 2>/dev/null || true
   }
   AfterAll 'cleanup'
 
