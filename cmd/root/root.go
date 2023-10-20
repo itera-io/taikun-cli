@@ -2,11 +2,15 @@ package root
 
 import (
 	"fmt"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile"
+	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
+	"github.com/itera-io/taikun-cli/cmd/backupcredential"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/cmd/project"
+	"github.com/itera-io/taikun-cli/cmd/standaloneprofile"
 	"github.com/itera-io/taikun-cli/cmd/user"
 	"github.com/itera-io/taikun-cli/cmd/usertoken"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
@@ -30,9 +34,9 @@ func NewCmdRoot() *cobra.Command {
 
 	setPersistentFlags(cmd)
 
-	//cmd.AddCommand(accessprofile.NewCmdAccessProfile())
-	//cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
-	//cmd.AddCommand(backupcredential.NewCmdBackupCredential())
+	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
+	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
+	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
 	//cmd.AddCommand(billing.NewCmdBilling())
 	cmd.AddCommand(cloudcredential.NewCmdCloudCredential())
 	//cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile())
@@ -41,7 +45,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(project.NewCmdProject())
 	//cmd.AddCommand(showback.NewCmdShowback())
 	//cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration())
-	//cmd.AddCommand(standaloneprofile.NewCmdStandaloneProfile())
+	cmd.AddCommand(standaloneprofile.NewCmdStandaloneProfile())
 	cmd.AddCommand(user.NewCmdUser())
 	cmd.AddCommand(usertoken.NewCmdUserToken())
 	//cmd.AddCommand(usertoken2.NewCmdUserToken2())

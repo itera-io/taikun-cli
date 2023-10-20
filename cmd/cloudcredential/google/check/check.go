@@ -42,7 +42,7 @@ func checkRun(opts *CheckOptions) (err error) {
 		out.PrintCheckSuccess("Google Cloud Platform credential")
 	}
 
-	// Did it fail because the request failed (eg cannot connect to Taikun) or because the credentials are not valid?
+	// Did it fail because the request failed (e.g. cannot connect to Taikun) or because the credentials are not valid?
 	if err != nil {
 		myError := tk.CreateError(response, err)
 		myStringError := fmt.Sprint(myError)
