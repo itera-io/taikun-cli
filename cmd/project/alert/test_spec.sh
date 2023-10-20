@@ -15,7 +15,6 @@ Context 'project/alert'
       taikun project delete --force "$pid" -q 2>/dev/null || true
     fi
     taikun cloud-credential delete "$ccid" -q 2>/dev/null || true
-    taikun backup-credential delete $bid -q 2>/dev/null || true
     taikun alerting-profile delete $apid -q 2>/dev/null || true
     taikun organization delete "$oid" -q 2>/dev/null || true
   }
