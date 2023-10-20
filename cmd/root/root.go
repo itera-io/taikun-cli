@@ -2,6 +2,7 @@ package root
 
 import (
 	"fmt"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
@@ -33,7 +34,7 @@ func NewCmdRoot() *cobra.Command {
 
 	setPersistentFlags(cmd)
 
-	//cmd.AddCommand(accessprofile.NewCmdAccessProfile())
+	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
 	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
 	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
 	//cmd.AddCommand(billing.NewCmdBilling())
