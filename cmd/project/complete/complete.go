@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Returns list of Taikun supported Kubernetes versions for a project
+// KubernetesVersionCompletionFunc Returns list of Taikun supported Kubernetes versions for a project
 func KubernetesVersionCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()

@@ -1,3 +1,3 @@
 package config
 
-var OutputOnlyID bool = false
+var OutputOnlyID = false

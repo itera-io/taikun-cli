@@ -48,14 +48,18 @@ var infoFields = fields.New(
 			"CLOUD-CREDENTIAL-ID", "cloudId",
 		),
 		field.NewVisible(
-			"HAS-ALERTING-PROFILE", "hasAlertingProfile",
+			"ALERTING-PROFILE", "alertingProfileName",
+		),
+		field.NewVisible(
+			"ALERTING-PROFILE-ID", "alertingProfileId",
 		),
 		field.NewVisible(
 			"AUTO-UPGRADES", "isAutoUpgrade",
 		),
-		field.NewVisible(
-			"UPGRADABLE", "hasNextVersion",
-		),
+		// No longer in the API
+		//field.NewVisible(
+		//	"UPGRADABLE", "hasNextVersion",
+		//),
 		field.NewVisible(
 			"HAS-FLAVORS", "hasSelectedFlavors",
 		),
@@ -92,17 +96,18 @@ var infoFields = fields.New(
 		field.NewVisible(
 			"QUOTA-ID", "quotaId",
 		),
-		field.NewVisible(
-			"REVISIONS", "projectRevision",
-		),
-		field.NewVisible(
-			"SERVERS", "totalCount",
-		),
+		// Removed from the API
+		//field.NewVisible(
+		//	"REVISIONS", "projectRevision",
+		//),
+		//field.NewVisible(
+		//	"SERVERS", "totalCount",
+		//),
 		field.NewVisible(
 			"BASTIONS", "bastion",
 		),
 		field.NewVisible(
-			"KUBEMASTERS", "master",
+			"KUBEMASTERS", "masterReady",
 		),
 		field.NewVisible(
 			"KUBEWORKERS", "worker",
@@ -110,11 +115,11 @@ var infoFields = fields.New(
 		field.NewVisible(
 			"TOTAL-CPU", "usedCpu",
 		),
-		field.NewVisibleWithToStringFunc(
-			"TOTAL-DISK", "usedDiskSize", out.FormatBToGiB,
+		field.NewVisible(
+			"TOTAL-DISK", "usedDiskSize",
 		),
-		field.NewVisibleWithToStringFunc(
-			"TOTAL-RAM", "usedRam", out.FormatBToGiB,
+		field.NewVisible(
+			"TOTAL-RAM", "usedRam",
 		),
 		field.NewVisibleWithToStringFunc(
 			"LOCK", "isLocked", out.FormatLockStatus,
@@ -153,7 +158,9 @@ func infoRun(opts *InfoOptions) (err error) {
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
-	return out.PrintResult(data.GetProject(), infoFields)
+
+	myProject := data.GetProject()
+	return out.PrintResult(myProject, infoFields)
 
 	/*
 		apiClient, err := taikungoclient.NewClient()
