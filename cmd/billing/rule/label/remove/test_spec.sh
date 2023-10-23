@@ -63,8 +63,8 @@ Context 'billing/rule/label/remove'
     When call taikun billing rule label delete "$edit_lid" "$lang_lid" "$edit_lid" "$lang_lid" --billing-rule-id "$id"
     The status should equal 1
     The output should include 'was deleted successfully'
-    The output should include "$edit_id"
-    The output should include "$lang_id"
+    The output should include "edit_lid"
+    The output should include "lang_lid"
     The stderr should include 'Error: Failed to delete one or more resources'
   End
 End

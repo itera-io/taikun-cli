@@ -5,12 +5,12 @@ import (
 	taikuncore "github.com/itera-io/taikungoclient/client"
 )
 
-var EPrometheusTypes = gmap.New(
-	map[string]interface{}{
-		"count": taikuncore.PROMETHEUSTYPE_COUNT,
-		"sum":   taikuncore.PROMETHEUSTYPE_SUM,
-	},
-)
+//var EPrometheusTypes = gmap.New(
+//	map[string]interface{}{
+//		"count": taikuncore.PROMETHEUSTYPE_COUNT,
+//		"sum":   taikuncore.PROMETHEUSTYPE_SUM,
+//	},
+//)
 
 var PrometheusTypes = gmap.New(
 	map[string]interface{}{
