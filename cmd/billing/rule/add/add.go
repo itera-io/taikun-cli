@@ -106,6 +106,11 @@ func addRun(opts *AddOptions) (err error) {
 		RuleDiscountRate:      *taikuncore.NewNullableInt32(&opts.PriceRate),
 	}
 
+	body.Labels, err = parseLabelsFlag(opts.Labels)
+	if err != nil {
+		return
+	}
+
 	// Execute a query into the API + graceful exit
 	data, response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesCreate(context.TODO()).RuleCreateCommand(body).Execute()
 	if err != nil {
