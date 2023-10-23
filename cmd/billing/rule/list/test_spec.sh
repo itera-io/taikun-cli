@@ -8,8 +8,8 @@ Context 'billing/rule/list'
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
     name1="$(_rnd_name)"
     name2="$(_rnd_name)"
-    id1=$(taikun billing rule add "$name1" "$flags" -I)
-    id2=$(taikun billing rule add "$name2" "$flags" -I)
+    id1=$(taikun billing rule add "$name1" $flags -I)
+    id2=$(taikun billing rule add "$name2" $flags -I)
   }
   BeforeAll 'setup'
 

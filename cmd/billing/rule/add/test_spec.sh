@@ -6,7 +6,7 @@ Context 'billing/rule/add'
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     cid=$(taikun billing credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -o "$oid" -I | xargs)
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
-    id=$(taikun billing rule add "$name" "$flags" -I | xargs)
+    id=$(taikun billing rule add "$name" $flags -I | xargs)
   }
   BeforeAll 'setup'
 
@@ -24,7 +24,7 @@ Context 'billing/rule/add'
   End
 
   Example 'duplicate name causes error'
-    When call taikun billing rule add "$name" "$flags"
+    When call taikun billing rule add "$name" $flags
     The status should equal 1
     The stderr should include '400'
     The stderr should include 'Duplicate rule occured'

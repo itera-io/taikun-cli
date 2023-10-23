@@ -17,7 +17,7 @@ Context 'billing/rule/remove'
   AfterAll 'cleanup'
 
   add_rule() {
-    id=$(taikun billing rule add "$name" "$flags" -I)
+    id=$(taikun billing rule add "$name" $flags -I)
   }
   BeforeEach 'add_rule'
 
