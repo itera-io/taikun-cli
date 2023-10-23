@@ -2,7 +2,8 @@ Context 'billing/rule/list'
 
   setup() {
     cname="$(_rnd_name)"
-    cid=$(taikun billing credential add -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" "$cname" -I)
+    oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
+    cid=$(taikun billing credential add -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -o "$oid" "$cname" -I)
 
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
     name1="$(_rnd_name)"
@@ -16,6 +17,7 @@ Context 'billing/rule/list'
     taikun billing rule delete "$id1" -q 2>/dev/null || true
     taikun billing rule delete "$id2" -q 2>/dev/null || true
     taikun billing credential delete "$cid" -q 2>/dev/null || true
+    taikun organization delete "$oid" -q 2>/dev/null || true
   }
   AfterAll 'cleanup'
 

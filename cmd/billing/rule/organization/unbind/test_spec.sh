@@ -7,7 +7,7 @@ Context 'billing/rule/organization/unbind'
     user="$PROMETHEUS_USERNAME"
 
     oid=$(taikun organization add "$name" --full-name "$name" -I)
-    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -I)
+    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid" -I)
     id=$(taikun billing rule add "$name" -b "$cid" -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
   }
 

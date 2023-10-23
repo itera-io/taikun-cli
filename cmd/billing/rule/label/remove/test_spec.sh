@@ -6,12 +6,14 @@ Context 'billing/rule/label/remove'
     url="$PROMETHEUS_URL"
     user="$PROMETHEUS_USERNAME"
 
-    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -I)
+    oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
+    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid" -I | xargs)
   }
   BeforeAll 'setup'
 
   cleanup() {
     taikun billing credential delete "$cid" -q 2>/dev/null || true
+    taikun organization delete "$oid" -q 2>/dev/null || true
   }
   AfterAll 'cleanup'
 
