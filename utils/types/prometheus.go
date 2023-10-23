@@ -1,5 +1,34 @@
 package types
 
+import (
+	"github.com/itera-io/taikun-cli/utils/gmap"
+	taikuncore "github.com/itera-io/taikungoclient/client"
+)
+
+var EPrometheusTypes = gmap.New(
+	map[string]interface{}{
+		"count": taikuncore.PROMETHEUSTYPE_COUNT,
+		"sum":   taikuncore.PROMETHEUSTYPE_SUM,
+	},
+)
+
+var PrometheusTypes = gmap.New(
+	map[string]interface{}{
+		"count": taikuncore.PROMETHEUSTYPE_COUNT,
+		"sum":   taikuncore.PROMETHEUSTYPE_SUM,
+	},
+)
+
+//func GetEPrometheusType(showbackType string) taikuncore.prometheustype {
+//	model, _ := EPrometheusTypes.Get(showbackType).(taikuncore.PrometheusType)
+//	return model
+//}
+
+func GetPrometheusType(showbackType string) taikuncore.PrometheusType {
+	model, _ := PrometheusTypes.Get(showbackType).(taikuncore.PrometheusType)
+	return model
+}
+
 //import (
 //	"github.com/itera-io/taikun-cli/utils/gmap"
 //	"github.com/itera-io/taikungoclient/models"
