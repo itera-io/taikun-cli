@@ -39,21 +39,5 @@ func deleteRun(kubeconfigID int32) (err error) {
 	}
 	out.PrintDeleteSuccess("Kubeconfig", kubeconfigID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteKubeConfigCommand{ID: kubeconfigID}
-		params := kube_config.NewKubeConfigDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.KubeConfig.KubeConfigDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Kubeconfig", kubeconfigID)
-		}
-
-		return
-	*/
 }

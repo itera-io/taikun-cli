@@ -56,25 +56,5 @@ func bindRun(opts *BindOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.BindImageToProjectCommand{
-			ProjectID: opts.ProjectID,
-			Images:    opts.ImageIDs,
-		}
-
-		params := images.NewImagesBindImagesToProjectParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Images.ImagesBindImagesToProject(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

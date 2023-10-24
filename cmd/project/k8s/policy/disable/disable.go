@@ -41,24 +41,5 @@ func disableRun(opts *DisableOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DisableGatekeeperCommand{
-			ProjectID: opts.ProjectID,
-		}
-
-		params := opa_profiles.NewOpaProfilesDisableGatekeeperParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.OpaProfiles.OpaProfilesDisableGatekeeper(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

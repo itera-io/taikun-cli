@@ -57,28 +57,5 @@ func deleteRun(billingRuleID int32, labelID int32) (err error) {
 
 	out.PrintDeleteSuccess("Billing rule label", labelID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.RuleForUpdateDto{
-			LabelsToDelete: []*models.PrometheusLabelDeleteDto{
-				{
-					ID: labelID,
-				},
-			},
-		}
-
-		params := prometheus.NewPrometheusUpdateParams().WithV(taikungoclient.Version)
-		params.WithID(billingRuleID).WithBody(&body)
-
-		_, err = apiClient.Client.Prometheus.PrometheusUpdate(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Billing rule label", labelID)
-		}
-
-		return
-	*/
 }

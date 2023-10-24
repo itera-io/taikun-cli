@@ -63,30 +63,5 @@ func editRun(opts *EditOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		_, err = cmdutils.IsAutoscalingEnabled(opts.ProjectID)
-		if err != nil {
-			return
-		}
 
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.EditAutoscalingCommand{
-			ProjectID: opts.ProjectID,
-			MaxSize:   opts.MaxSize,
-			MinSize:   opts.MinSize,
-		}
-
-		params := autoscaling.NewAutoscalingEditAutoscalingParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Autoscaling.AutoscalingEditAutoscaling(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-		return
-	*/
 }

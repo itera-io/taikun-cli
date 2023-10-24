@@ -70,26 +70,5 @@ func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
 	// Manipulate the gathered data
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-		body := models.ProjectExtendLifeTimeCommand{ProjectID: opts.ProjectID, DeleteOnExpiration: opts.DeleteOnExpiration}
 
-		if opts.ExpirationDate != "" {
-			expiredAt := types.StrToDateTime(opts.ExpirationDate)
-			body.ExpireAt = &expiredAt
-		}
-
-		params := projects.NewProjectsExtendLifeTimeParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Projects.ProjectsExtendLifeTime(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

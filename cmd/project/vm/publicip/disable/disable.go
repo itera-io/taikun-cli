@@ -52,25 +52,5 @@ func disableRun(opts *DisableOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.StandAloneVMIPManagementCommand{
-			ID:   opts.StandaloneVMID,
-			Mode: types.DisableVMPublicIP,
-		}
-
-		params := stand_alone.NewStandAloneIPManagementParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAlone.StandAloneIPManagement(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

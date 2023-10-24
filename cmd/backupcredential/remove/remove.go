@@ -39,20 +39,5 @@ func deleteRun(backupCredentialID int32) (err error) {
 
 	out.PrintDeleteSuccess("Backup credential", backupCredentialID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := s3_credentials.NewS3CredentialsDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithID(backupCredentialID)
-
-		_, _, err = apiClient.Client.S3Credentials.S3CredentialsDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Backup credential", backupCredentialID)
-		}
-
-		return
-	*/
 }

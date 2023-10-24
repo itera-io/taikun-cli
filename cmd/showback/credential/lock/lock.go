@@ -45,21 +45,5 @@ func lockRun(showbackCredentialID int32) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.ShowbackCredentialLockCommand{ID: showbackCredentialID, Mode: types.LockedMode}
-		params := showback_credentials.NewShowbackCredentialsLockManagerParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -112,47 +112,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(accessProfiles, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := access_profiles.NewAccessProfilesListParams().WithV(taikungoclient.Version)
-		if opts.OrganizationID != 0 {
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		}
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		var accessProfiles = make([]*models.AccessProfilesListDto, 0)
-
-		for {
-			response, err := apiClient.Client.AccessProfiles.AccessProfilesList(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			accessProfiles = append(accessProfiles, response.Payload.Data...)
-
-			count := int32(len(accessProfiles))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(accessProfiles)) > opts.Limit {
-			accessProfiles = accessProfiles[:opts.Limit]
-		}
-
-		return out.PrintResults(accessProfiles, listFields)
-	*/
 }

@@ -57,25 +57,5 @@ func rebootRun(opts *RebootOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.RebootStandAloneVMCommand{
-			ID:   opts.StandaloneVMID,
-			Type: types.GetVMRebootType(opts.HardReboot),
-		}
-
-		params := stand_alone_actions.NewStandAloneActionsRebootParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneActions.StandAloneActionsReboot(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -40,20 +40,5 @@ func deleteRun(billingRuleID int32) (err error) {
 	// Manipulate the gathered data
 	out.PrintDeleteSuccess("Billing rule", billingRuleID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := prometheus.NewPrometheusDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithID(billingRuleID)
-
-		_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Billing rule", billingRuleID)
-		}
-
-		return
-	*/
 }

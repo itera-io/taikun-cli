@@ -80,25 +80,5 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	}
 	out.PrintDeleteSuccess("Project", opts.ProjectID)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.DeleteProjectCommand{
-			IsForceDelete: opts.Force,
-			ProjectID:     opts.ProjectID,
-		}
-
-		params := projects.NewProjectsDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, _, err = apiClient.Client.Projects.ProjectsDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Project", opts.ProjectID)
-		}
-	*/
-
 	return
 }

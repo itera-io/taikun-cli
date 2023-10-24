@@ -83,20 +83,5 @@ func listRun(opts *ListOptions) (err error) {
 
 	// Manipulate the gathered data
 	return out.PrintResults(data.Data, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := stand_alone.NewStandAloneDetailsParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(opts.ProjectID).WithID(&opts.StandaloneVMID)
-
-		response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)
-		if err == nil {
-			return out.PrintResults(response.Payload.Data, listFields)
-		}
-
-		return
-	*/
 }

@@ -111,45 +111,4 @@ func listRun(opts *ListOptions) (err error) {
 
 	return out.PrintResults(backupRestores, listFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := backup.NewBackupListAllRestoresParams().WithV(taikungoclient.Version)
-		params.WithProjectID(opts.ProjectID)
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		var backupRestores = make([]*models.CRestoreDto, 0)
-
-		for {
-			response, err := apiClient.Client.Backup.BackupListAllRestores(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			backupRestores = append(backupRestores, response.Payload.Data...)
-
-			count := int32(len(backupRestores))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(backupRestores)) > opts.Limit {
-			backupRestores = backupRestores[:opts.Limit]
-		}
-
-		return out.PrintResults(backupRestores, listFields)
-	*/
 }

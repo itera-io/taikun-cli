@@ -127,34 +127,4 @@ func addRun(opts *AddOptions) (err error) {
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.CreateStandAloneDiskCommand{
-			Name:           opts.Name,
-			Size:           opts.Size,
-			StandaloneVMID: opts.StandaloneVMID,
-		}
-
-		if opts.AwsDeviceName != "" {
-			body.DeviceName = opts.AwsDeviceName
-		} else if opts.AzureLunID != 0 {
-			body.LunID = opts.AzureLunID
-		} else if opts.OpenStackVolumeType != "" {
-			body.VolumeType = opts.OpenStackVolumeType
-		}
-
-		params := stand_alone_vm_disks.NewStandAloneVMDisksCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.StandAloneVMDisks.StandAloneVMDisksCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

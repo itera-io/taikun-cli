@@ -153,41 +153,4 @@ func addRun(opts *AddOptions) error {
 
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		body := models.CreateShowbackRuleCommand{
-			GlobalAlertLimit: opts.GlobalAlertLimit,
-			Kind:             types.GetShowbackKind(opts.Kind),
-			MetricName:       opts.MetricName,
-			Name:             opts.Name,
-			Price:            opts.Price,
-			Type:             types.GetEPrometheusType(opts.Type),
-		}
-
-		if opts.OrganizationID != 0 {
-			body.OrganizationID = opts.OrganizationID
-		}
-
-		if opts.ProjectAlertLimit != 0 {
-			body.ProjectAlertLimit = opts.ProjectAlertLimit
-		}
-
-		if opts.ShowbackCredentialID != 0 {
-			body.ShowbackCredentialID = &opts.ShowbackCredentialID
-		}
-
-		params := showback_rules.NewShowbackRulesCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesCreate(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		return out.PrintResult(response.Payload, addFields)
-	*/
 }

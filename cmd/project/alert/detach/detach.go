@@ -43,24 +43,5 @@ func detachRun(opts *DetachOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.AttachDetachAlertingProfileCommand{
-			ProjectID: opts.ProjectID,
-		}
-
-		params := alerting_profiles.NewAlertingProfilesDetachParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.AlertingProfiles.AlertingProfilesDetach(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

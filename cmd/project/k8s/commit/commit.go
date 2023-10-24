@@ -39,20 +39,5 @@ func commitRun(opts *CommitOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := projects.NewProjectsCommitParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(opts.ProjectID)
-
-		_, err = apiClient.Client.Projects.ProjectsCommit(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

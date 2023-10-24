@@ -254,79 +254,7 @@ func addRun(opts *AddOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 	return out.PrintResult(data, addFields)
-	/*
-		body := models.CreateProjectCommand{
-			AccessProfileID:     opts.AccessProfileID,
-			AlertingProfileID:   opts.AlertingProfileID,
-			CloudCredentialID:   opts.CloudCredentialID,
-			DeleteOnExpiration:  opts.DeleteOnExpiration,
-			Flavors:             opts.Flavors,
-			IsAutoUpgrade:       opts.AutoUpgrade,
-			IsKubernetes:        true,
-			KubernetesProfileID: opts.KubernetesProfileID,
-			IsMonitoringEnabled: opts.Monitoring,
-			Name:                opts.Name,
-			OrganizationID:      opts.OrganizationID,
-			AutoscalingEnabled:  opts.IsAutoscaler,
-		}
 
-		if opts.BackupCredentialID != 0 {
-			body.IsBackupEnabled = true
-			body.S3CredentialID = opts.BackupCredentialID
-		}
-
-		if opts.ExpirationDate != "" {
-			expiredAt := types.StrToDateTime(opts.ExpirationDate)
-			body.ExpiredAt = &expiredAt
-		}
-
-		if opts.KubernetesVersion != "" {
-			body.KubernetesVersion = opts.KubernetesVersion
-		}
-
-		if opts.PolicyProfileID != 0 {
-			body.OpaProfileID = opts.PolicyProfileID
-		}
-
-		if opts.RouterIDStartRange != -1 {
-			body.RouterIDStartRange = opts.RouterIDStartRange
-		}
-
-		if opts.RouterIDEndRange != -1 {
-			body.RouterIDEndRange = opts.RouterIDEndRange
-		}
-
-		if opts.TaikunLBFlavor != "" {
-			body.TaikunLBFlavor = opts.TaikunLBFlavor
-		}
-
-		if opts.Cidr != "" {
-			body.Cidr = opts.Cidr
-		}
-
-		if opts.IsAutoscaler {
-			body.AutoscalingFlavor = opts.AutoscalerFlavor
-			body.AutoscalingGroupName = opts.AutoscalerName
-			body.MinSize = opts.AutoscalerMinSize
-			body.MaxSize = opts.AutoscalerMaxSize
-			body.DiskSize = float64(types.GiBToB(int(opts.AutoscalerDiskSize)))
-		}
-
-		params := projects.NewProjectsCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		response, err := apiClient.Client.Projects.ProjectsCreate(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		return out.PrintResult(response.Payload, addFields)
-	*/
 }
 
 func setDefaultAddOptions(opts *AddOptions) (err error) {
@@ -376,29 +304,6 @@ func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
 		}
 	}
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := access_profiles.NewAccessProfilesAccessProfilesForOrganizationListParams()
-		params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
-
-		response, err := apiClient.Client.AccessProfiles.AccessProfilesAccessProfilesForOrganizationList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		for _, profile := range response.Payload {
-			if profile.Name == api.DefaultAccessProfileName {
-				id = profile.ID
-				return
-			}
-		}
-
-	*/
-
 	return
 }
 
@@ -417,28 +322,6 @@ func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
 		}
 	}
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := alerting_profiles.NewAlertingProfilesAlertingProfilesForOrganizationListParams()
-		params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
-
-		response, err := apiClient.Client.AlertingProfiles.AlertingProfilesAlertingProfilesForOrganizationList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		for _, profile := range response.Payload {
-			if profile.Name == api.DefaultAlertingProfileName {
-				id = profile.ID
-				return
-			}
-		}
-	*/
-
 	return
 }
 
@@ -456,28 +339,6 @@ func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
 			return
 		}
 	}
-
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := kubernetes_profiles.NewKubernetesProfilesKubernetesProfilesForOrganizationListParams()
-		params = params.WithV(taikungoclient.Version).WithOrganizationID(&organizationID)
-
-		response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesKubernetesProfilesForOrganizationList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		for _, profile := range response.Payload {
-			if profile.Name == api.DefaultKubernetesProfileName {
-				id = profile.ID
-				return
-			}
-		}
-	*/
 
 	return
 }

@@ -119,43 +119,4 @@ func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
 
 	return skus, nil
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return nil, err
-		}
-
-		params := azure.NewAzureSkusParams().WithV(taikungoclient.Version)
-		params = params.WithCloudID(opts.CloudCredentialID)
-		params = params.WithPublisher(opts.Publisher)
-		params = params.WithOffer(opts.Offer)
-
-		skus = make([]string, 0)
-
-		for {
-			response, err := apiClient.Client.Azure.AzureSkus(params, apiClient)
-			if err != nil {
-				return nil, err
-			}
-
-			skus = append(skus, response.Payload.Data...)
-
-			count := int32(len(skus))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(skus)) > opts.Limit {
-			skus = skus[:opts.Limit]
-		}
-
-		return skus, nil
-	*/
 }

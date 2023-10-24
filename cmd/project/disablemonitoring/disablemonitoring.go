@@ -60,21 +60,4 @@ func disableMonitoringRun(opts *DisableMonitoringOptions) (err error) {
 	out.PrintStandardSuccess()
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.MonitoringOperationsCommand{ProjectID: opts.ProjectID}
-		params := projects.NewProjectsMonitoringOperationsParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Projects.ProjectsMonitoringOperations(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

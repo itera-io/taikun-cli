@@ -40,20 +40,5 @@ func deleteRun(policyProfileID int32) (err error) {
 
 	out.PrintDeleteSuccess("Policy profile", policyProfileID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := &models.DeleteOpaProfileCommand{ID: policyProfileID}
-		params := opa_profiles.NewOpaProfilesDeleteParams().WithV(taikungoclient.Version).WithBody(body)
-
-		_, err = apiClient.Client.OpaProfiles.OpaProfilesDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Policy profile", policyProfileID)
-		}
-
-		return
-	*/
 }

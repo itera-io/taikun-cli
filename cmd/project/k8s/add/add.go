@@ -129,38 +129,7 @@ func addRun(opts *AddOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.ServerForCreateDto{
-			AvailabilityZone: opts.AvailabilityZone,
-			DiskSize:         types.GiBToB(opts.DiskSize),
-			Flavor:           opts.Flavor,
-			Name:             opts.Name,
-			ProjectID:        opts.ProjectID,
-			Role:             types.GetServerRole(opts.Role),
-		}
-
-		if len(opts.KubernetesNodeLabels) != 0 {
-			body.KubernetesNodeLabels, err = parseKubernetesNodeLabelsFlag(opts.KubernetesNodeLabels)
-			if err != nil {
-				return
-			}
-		}
-
-		params := servers.NewServersCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }
 
 func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.KubernetesNodeLabelsDto, error) {
@@ -183,27 +152,7 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.Kubernetes
 	}
 
 	return labels, nil
-	/*
-		labels := make([]*models.KubernetesNodeLabelsDto, len(labelsData))
 
-		for labelIndex, labelData := range labelsData {
-			if len(labelData) == 0 {
-				return nil, errors.New("Invalid empty kubernetes node label")
-			}
-
-			tokens := strings.Split(labelData, "=")
-			if len(tokens) != 2 {
-				return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
-			}
-
-			labels[labelIndex] = &models.KubernetesNodeLabelsDto{
-				Key:   tokens[0],
-				Value: tokens[1],
-			}
-		}
-
-		return labels, nil
-	*/
 }
 
 func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
@@ -270,69 +219,4 @@ func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplet
 
 	return completions
 
-	/*
-		if len(args) == 0 {
-			return []string{}
-		}
-
-		projectID, err := types.Atoi32(args[0])
-		if err != nil {
-			return []string{}
-		}
-
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return []string{}
-		}
-
-		projectParams := projects.NewProjectsListParams().WithV(taikungoclient.Version)
-		projectParams = projectParams.WithID(&projectID)
-		projectResponse, err := apiClient.Client.Projects.ProjectsList(projectParams, apiClient)
-		if err != nil || len(projectResponse.GetPayload().Data) != 1 {
-			return []string{}
-		}
-
-		projectOrgId := projectResponse.GetPayload().Data[0].OrganizationID
-		ccType := projectResponse.GetPayload().Data[0].CloudType
-		ccName := projectResponse.GetPayload().Data[0].CloudCredentialName
-		if ccType == "OPENSTACK" {
-			return []string{}
-		}
-
-		completions := make([]string, 0)
-
-		ccParams := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version).WithOrganizationID(&projectOrgId)
-		ccResponse, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(ccParams, apiClient)
-		countCC := ccResponse.GetPayload().TotalCountOpenstack + ccResponse.GetPayload().TotalCountAws + ccResponse.GetPayload().TotalCountAzure + ccResponse.GetPayload().TotalCountGoogle
-		if err != nil || countCC == 0 {
-			return []string{}
-		}
-
-		if ccType == "AWS" {
-			amazonCCs := ccResponse.GetPayload().Amazon
-			for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
-				if ccName == amazonCCs[i].Name {
-					completions = append(completions, amazonCCs[i].AvailabilityZones...)
-				}
-			}
-		}
-		if ccType == "AZURE" {
-			azureCCs := ccResponse.GetPayload().Azure
-			for i := 0; i < int(ccResponse.Payload.TotalCountAzure); i++ {
-				if ccName == azureCCs[i].Name {
-					completions = append(completions, azureCCs[i].AvailabilityZones...)
-				}
-			}
-		}
-		if ccType == "GOOGLE" {
-			googleCCs := ccResponse.GetPayload().Google
-			for i := 0; i < int(ccResponse.Payload.TotalCountGoogle); i++ {
-				if ccName == googleCCs[i].Name {
-					completions = append(completions, googleCCs[i].Zones...)
-				}
-			}
-		}
-
-		return completions
-	*/
 }

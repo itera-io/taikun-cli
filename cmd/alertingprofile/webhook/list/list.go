@@ -72,30 +72,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(alertingWebhooks, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := alerting_profiles.NewAlertingProfilesListParams().WithV(taikungoclient.Version)
-		params = params.WithID(&opts.AlertingProfileID)
-
-		response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		if len(response.Payload.Data) != 1 {
-			return fmt.Errorf("Alerting profile with ID %d not found.", opts.AlertingProfileID)
-		}
-
-		alertingWebhooks := response.Payload.Data[0].Webhooks
-
-		if opts.Limit != 0 && int32(len(alertingWebhooks)) > opts.Limit {
-			alertingWebhooks = alertingWebhooks[:opts.Limit]
-		}
-
-		return out.PrintResults(alertingWebhooks, listFields)
-	*/
 }

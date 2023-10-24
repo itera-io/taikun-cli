@@ -40,21 +40,4 @@ func deleteRun(alertingProfileID int32) (err error) {
 	out.PrintDeleteSuccess("Alerting profile", alertingProfileID)
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.DeleteAlertingProfilesCommand{ID: alertingProfileID}
-
-		params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Alerting profile", alertingProfileID)
-		}
-
-		return
-	*/
 }

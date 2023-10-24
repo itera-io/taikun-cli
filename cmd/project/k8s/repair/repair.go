@@ -40,20 +40,4 @@ func repairRun(opts *RepairOptions) (err error) {
 	out.PrintStandardSuccess()
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := projects.NewProjectsRepairParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(opts.ProjectID)
-
-		_, err = apiClient.Client.Projects.ProjectsRepair(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -63,29 +63,5 @@ func addRun(opts *AddOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
 
-		body := models.RuleForUpdateDto{
-			LabelsToAdd: []*models.PrometheusLabelListDto{
-				{
-					Label: opts.Label,
-					Value: opts.Value,
-				},
-			},
-		}
-
-		params := prometheus.NewPrometheusUpdateParams().WithV(taikungoclient.Version)
-		params = params.WithID(opts.BillingRuleID).WithBody(&body)
-
-		_, err = apiClient.Client.Prometheus.PrometheusUpdate(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

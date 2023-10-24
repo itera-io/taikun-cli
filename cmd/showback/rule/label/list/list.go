@@ -84,26 +84,5 @@ func GetShowbackRuleByID(showbackRuleID int32) (showbackRule *taikunshowback.Sho
 
 	showbackRule = &data.Data[0]
 	return showbackRule, nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := showback_rules.NewShowbackRulesListParams().WithV(taikungoclient.Version)
-		params = params.WithID(&showbackRuleID)
-
-		response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		if len(response.Payload.Data) != 1 {
-			return nil, cmderr.ResourceNotFoundError("Showback rule", showbackRuleID)
-		}
-
-		showbackRule = response.Payload.Data[0]
-
-		return
-	*/
 }

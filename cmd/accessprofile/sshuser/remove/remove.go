@@ -44,22 +44,5 @@ func deleteRun(sshUserID int32) (err error) {
 	}
 	out.PrintDeleteSuccess("SSH user", sshUserID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteSSHUserCommand{
-			ID: sshUserID,
-		}
-		params := ssh_users.NewSSHUsersDeleteParams().WithV(taikungoclient.Version).WithBody(&body)
-		_, err = apiClient.Client.SSHUsers.SSHUsersDelete(params, apiClient)
-
-		if err == nil {
-			out.PrintDeleteSuccess("SSH user", sshUserID)
-		}
-
-		return
-	*/
 }

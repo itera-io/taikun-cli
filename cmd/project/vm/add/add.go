@@ -191,47 +191,4 @@ func addRun(opts *AddOptions) error {
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		tags, err := parseTagsOption(opts.Tags)
-		if err != nil {
-			return err
-		}
-
-		body := models.CreateStandAloneVMCommand{
-			CloudInit:           opts.CloudInit,
-			Count:               1,
-			FlavorName:          opts.Flavor,
-			Image:               opts.ImageID,
-			Name:                opts.Name,
-			ProjectID:           opts.ProjectID,
-			PublicIPEnabled:     opts.PublicIP,
-			StandAloneMetaDatas: tags,
-			StandAloneProfileID: opts.StandAloneProfileID,
-			StandAloneVMDisks:   make([]*models.StandAloneVMDiskDto, 0),
-			VolumeSize:          opts.VolumeSize,
-		}
-
-		if opts.Username != "" {
-			body.Username = opts.Username
-		}
-
-		if opts.VolumeType != "" {
-			body.VolumeType = opts.VolumeType
-		}
-
-		params := stand_alone.NewStandAloneCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.StandAlone.StandAloneCreate(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		return out.PrintResult(response.Payload, addFields)
-	*/
 }

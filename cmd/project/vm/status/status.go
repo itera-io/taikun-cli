@@ -45,20 +45,5 @@ func statusRun(opts *StatusOptions) (err error) {
 	// Manipulate the gathered data
 	out.Println(data)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := stand_alone_actions.NewStandAloneActionsShowStandaloneVMStatusParams().WithV(taikungoclient.Version)
-		params = params.WithID(opts.StandaloneVMID)
-
-		response, err := apiClient.Client.StandAloneActions.StandAloneActionsShowStandaloneVMStatus(params, apiClient)
-		if err == nil {
-			out.Println(response.Payload)
-		}
-
-		return
-	*/
 }

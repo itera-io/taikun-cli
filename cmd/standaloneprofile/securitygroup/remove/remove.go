@@ -39,21 +39,5 @@ func deleteRun(securityGroupID int32) (err error) {
 
 	out.PrintDeleteSuccess("Security group", securityGroupID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteSecurityGroupCommand{ID: securityGroupID}
-		params := security_group.NewSecurityGroupDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.SecurityGroup.SecurityGroupDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Security group", securityGroupID)
-		}
-
-		return
-	*/
 }

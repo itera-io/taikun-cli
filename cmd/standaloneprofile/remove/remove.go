@@ -46,21 +46,5 @@ func deleteRun(standaloneProfileID int32) (err error) {
 	// Manipulate the gathered data
 	out.PrintDeleteSuccess("Standalone profile", standaloneProfileID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteStandAloneProfileCommand{ID: standaloneProfileID}
-		params := stand_alone_profile.NewStandAloneProfileDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneProfile.StandAloneProfileDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Standalone profile", standaloneProfileID)
-		}
-
-		return
-	*/
 }

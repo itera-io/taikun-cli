@@ -87,20 +87,5 @@ func listRun(opts *ListOptions) (err error) {
 
 	// Manipulate the gathered data
 	return out.PrintResults(data.GetData(), listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := images.NewImagesGetSelectedImagesForProjectParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(&opts.ProjectID)
-
-		response, err := apiClient.Client.Images.ImagesGetSelectedImagesForProject(params, apiClient)
-		if err == nil {
-			return out.PrintResults(response.Payload.Data, listFields)
-		}
-
-		return
-	*/
 }

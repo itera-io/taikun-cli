@@ -50,21 +50,5 @@ func shelveRun(opts *ShelveOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.ShelveStandAloneVMCommand{ID: opts.StandaloneVMID}
-		params := stand_alone_actions.NewStandAloneActionsShelveParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneActions.StandAloneActionsShelve(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

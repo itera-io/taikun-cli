@@ -56,25 +56,5 @@ func renameRun(opts *RenameOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.StandAloneProfileUpdateCommand{
-			ID:   opts.ID,
-			Name: opts.Name,
-		}
-
-		params := stand_alone_profile.NewStandAloneProfileEditParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneProfile.StandAloneProfileEdit(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

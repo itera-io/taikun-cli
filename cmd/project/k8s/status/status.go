@@ -39,19 +39,5 @@ func statusRun(opts *StatusOptions) (err error) {
 	}
 	out.Println(data)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := servers.NewServersShowServerStatusParams().WithV(taikungoclient.Version)
-		params = params.WithServerID(opts.ServerID)
-
-		response, err := apiClient.Client.Servers.ServersShowServerStatus(params, apiClient)
-		if err == nil {
-			out.Println(response.Payload)
-		}
-
-		return*/
 }

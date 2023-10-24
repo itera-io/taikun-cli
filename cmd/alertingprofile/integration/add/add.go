@@ -90,24 +90,4 @@ func addRun(opts *AddOptions) (err error) {
 
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.CreateAlertingIntegrationCommand{
-			AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
-			Token:                   opts.Token,
-			URL:                     opts.URL,
-			AlertingProfileID:       opts.AlertingProfileID,
-		}
-
-		params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-		if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

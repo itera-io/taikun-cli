@@ -45,23 +45,5 @@ func unlockRun(billingCredentialID int32) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.OperationCredentialLockManagerCommand{
-			ID:   billingCredentialID,
-			Mode: types.UnlockedMode,
-		}
-		params := ops_credentials.NewOpsCredentialsLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.OpsCredentials.OpsCredentialsLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -47,21 +47,5 @@ func getOpenStackVolumeTypes(projectID int32) (volumeTypes []string, err error) 
 	// Manipulate the gathered data
 	volumeTypes = data
 	return volumeTypes, nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.OpenstackVolumeTypeListQuery{ProjectID: projectID}
-		params := openstack.NewOpenstackVolumeTypesParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.Openstack.OpenstackVolumeTypes(params, apiClient)
-		if err == nil {
-			volumeTypes = response.Payload
-		}
-
-		return
-	*/
 }

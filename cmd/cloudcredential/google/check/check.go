@@ -57,27 +57,4 @@ func checkRun(opts *CheckOptions) (err error) {
 
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		configFile, err := os.Open(opts.ConfigFilePath)
-		if err != nil {
-			return err
-		}
-
-		params := checker.NewCheckerGoogleParams().WithV(taikungoclient.Version)
-		params = params.WithConfig(configFile)
-
-		_, err = apiClient.Client.Checker.CheckerGoogle(params, apiClient)
-		if err == nil {
-			out.PrintCheckSuccess("Google Cloud Platform credential")
-		} else if _, isValidationProblem := err.(*checker.CheckerGoogleBadRequest); isValidationProblem {
-			return cmderr.ErrCheckFailure("Google Cloud Platform credential")
-		}
-
-		return
-	*/
 }

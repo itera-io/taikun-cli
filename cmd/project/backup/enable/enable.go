@@ -54,25 +54,5 @@ func enableRun(opts *EnableOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.EnableBackupCommand{
-			ProjectID:      opts.ProjectID,
-			S3CredentialID: opts.BackupCredentialID,
-		}
-
-		params := backup.NewBackupEnableBackupParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Backup.BackupEnableBackup(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

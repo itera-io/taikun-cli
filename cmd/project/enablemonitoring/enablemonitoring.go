@@ -60,21 +60,5 @@ func enableMonitoringRun(opts *EnableMonitoringOptions) (err error) {
 	// Manipulate the gathered data
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.MonitoringOperationsCommand{ProjectID: opts.ProjectID}
-		params := projects.NewProjectsMonitoringOperationsParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Projects.ProjectsMonitoringOperations(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

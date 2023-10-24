@@ -52,25 +52,4 @@ func lockRun(opts *LockOptions) (err error) {
 	out.PrintStandardSuccess()
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.StandAloneProfileLockManagementCommand{
-			ID:   opts.ID,
-			Mode: types.LockedMode,
-		}
-
-		params := stand_alone_profile.NewStandAloneProfileLockManagementParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneProfile.StandAloneProfileLockManagement(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

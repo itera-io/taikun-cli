@@ -111,47 +111,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(kubernetesProfiles, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := kubernetes_profiles.NewKubernetesProfilesListParams().WithV(taikungoclient.Version)
-		if opts.OrganizationID != 0 {
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		}
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		var kubernetesProfiles = make([]*models.KubernetesProfilesListDto, 0)
-
-		for {
-			response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesList(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			kubernetesProfiles = append(kubernetesProfiles, response.Payload.Data...)
-
-			count := int32(len(kubernetesProfiles))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(kubernetesProfiles)) > opts.Limit {
-			kubernetesProfiles = kubernetesProfiles[:opts.Limit]
-		}
-
-		return out.PrintResults(kubernetesProfiles, listFields)
-	*/
 }

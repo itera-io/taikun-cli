@@ -111,29 +111,4 @@ func addRun(opts *AddOptions) (err error) {
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := &models.CreateKubernetesProfileCommand{
-			AllowSchedulingOnMaster: opts.AllowSchedulingOnMaster,
-			ExposeNodePortOnBastion: opts.ExposeNodePortOnBastion,
-			Name:                    opts.Name,
-			OctaviaEnabled:          opts.OctaviaEnabled,
-			OrganizationID:          opts.OrganizationID,
-			TaikunLBEnabled:         opts.TaikunLBEnabled,
-			UniqueClusterName:       !opts.DisableUniqueClusterName,
-		}
-
-		params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-		response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

@@ -51,24 +51,5 @@ func rebootRun(opts *RebootOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.RebootServerCommand{
-			ServerID: opts.ServerID,
-		}
-
-		params := servers.NewServersRebootParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Servers.ServersReboot(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

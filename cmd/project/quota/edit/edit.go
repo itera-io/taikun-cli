@@ -77,36 +77,4 @@ func editRun(opts *EditOptions) (err error) {
 	out.PrintStandardSuccess()
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		body := &models.UpdateQuotaCommand{
-			QuotaID: opts.QuotaID,
-		}
-
-		if opts.CPU > 0 {
-			body.ServerCPU = opts.CPU
-		}
-
-		if opts.DiskSize > 0 {
-			body.ServerDiskSize = types.GiBToB(opts.DiskSize)
-		}
-
-		if opts.RAM > 0 {
-			body.ServerRAM = types.GiBToB(opts.RAM)
-		}
-
-		params := project_quotas.NewProjectQuotasEditParams().WithV(taikungoclient.Version).WithBody(body)
-
-		if _, err := apiClient.Client.ProjectQuotas.ProjectQuotasEdit(params, apiClient); err != nil {
-			return err
-		}
-
-		out.PrintStandardSuccess()
-
-		return nil
-	*/
 }

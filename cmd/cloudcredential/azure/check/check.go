@@ -75,27 +75,5 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CheckAzureCommand{
-			AzureClientID:     opts.AzureClientId,
-			AzureClientSecret: opts.AzureClientSecret,
-			AzureTenantID:     opts.AzureTenantId,
-		}
-
-		params := checker.NewCheckerAzureParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.Checker.CheckerAzure(params, apiClient)
-		if err == nil {
-			out.PrintCheckSuccess("Azure cloud credential")
-		} else if _, isValidationProblem := err.(*checker.CheckerAzureBadRequest); isValidationProblem {
-			return cmderr.ErrCheckFailure("Azure cloud credential")
-		}
-
-		return
-	*/
 }

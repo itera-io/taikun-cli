@@ -92,24 +92,7 @@ func getSortingElements(sortType string) (sortingElements []string, err error) {
 
 	// Manipulate the gathered data
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := common.NewCommonGetSortingElementsParams().WithV(taikungoclient.Version)
-		params = params.WithType(sortType)
-
-		response, err := apiClient.Client.Common.CommonGetSortingElements(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		sortingElements = response.Payload
-
-		return
-	*/
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {

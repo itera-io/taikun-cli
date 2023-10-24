@@ -118,29 +118,5 @@ func addRun(opts *AddOptions) (err error) {
 
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CreateSecurityGroupCommand{
-			Name:                opts.Name,
-			PortMaxRange:        opts.MaxPort,
-			PortMinRange:        opts.MinPort,
-			Protocol:            types.GetSecurityGroupProtocol(opts.Protocol),
-			RemoteIPPrefix:      opts.RemoteIpPrefix,
-			StandAloneProfileID: opts.StandAloneProfileID,
-		}
-
-		params := security_group.NewSecurityGroupCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.SecurityGroup.SecurityGroupCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

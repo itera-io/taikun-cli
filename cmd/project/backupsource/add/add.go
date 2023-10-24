@@ -68,24 +68,5 @@ func addRun(opts *AddOptions) (err error) {
 	// out.PrintResult(response, addFields) // Probably will not work #FIXME
 	//out.PrintStandardSuccess()
 	return out.PrintResult(response, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.ImportBackupStorageLocationCommand{
-			TargetProjectID: opts.TargetProjectId,
-			SourceProjectID: opts.SourceProjectId,
-		}
-
-		params := backup.NewBackupImportBackupStorageParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		response, err := apiClient.Client.Backup.BackupImportBackupStorage(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

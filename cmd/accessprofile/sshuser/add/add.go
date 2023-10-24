@@ -86,20 +86,7 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 		return false, tk.CreateError(response, err)
 	}
 	return err == nil, nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return false, err
-		}
 
-		body := models.SSHKeyCommand{
-			SSHPublicKey: sshPublicKey,
-		}
-		params := checker.NewCheckerSSHParams().WithV(taikungoclient.Version).WithBody(&body)
-		_, err = apiClient.Client.Checker.CheckerSSH(params, apiClient)
-
-		return err == nil, nil
-	*/
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -119,25 +106,5 @@ func addRun(opts *AddOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CreateSSHUserCommand{
-			AccessProfileID: opts.AccessProfileID,
-			Name:            opts.Name,
-			SSHPublicKey:    opts.PublicKey,
-		}
-
-		params := ssh_users.NewSSHUsersCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

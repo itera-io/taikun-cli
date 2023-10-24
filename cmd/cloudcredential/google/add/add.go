@@ -131,41 +131,5 @@ func addRun(opts *AddOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 	return out.PrintResult(data, addFields)
-	/*
-			configFile, err := os.Open(opts.ConfigFilePath)
-			if err != nil {
-				return err
-			}
 
-			apiClient, err := taikungoclient.NewClient()
-			if err != nil {
-				return
-			}
-
-			if opts.OrganizationID == 0 {
-				opts.OrganizationID, err = organization.GetDefaultOrganizationID()
-				if err != nil {
-					return
-				}
-			}
-
-			params := google_cloud.NewGoogleCloudCreateParams().WithV(taikungoclient.Version)
-			params = params.WithConfig(configFile)
-			params = params.WithName(&opts.Name)
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		        params = params.WithRegion(&opts.Region).WithAzCount(&opts.AzCount)
-
-			params = params.WithImportProject(&opts.ImportProject)
-			if !opts.ImportProject {
-				params = params.WithBillingAccountID(&opts.BillingAccountID)
-				params = params.WithFolderID(&opts.FolderID)
-			}
-
-			response, err := apiClient.Client.GoogleCloud.GoogleCloudCreate(params, apiClient)
-			if err == nil {
-				return out.PrintResult(response.Payload, addFields)
-			}
-
-			return
-	*/
 }

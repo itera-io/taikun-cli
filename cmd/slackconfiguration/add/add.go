@@ -91,35 +91,5 @@ func addRun(opts *AddOptions) (err error) {
 		return out.PrintResult(payload, addFields)
 	}
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CreateSlackConfigurationCommand{
-			Channel:   opts.Channel,
-			Name:      opts.Name,
-			SlackType: types.GetSlackType(opts.Type),
-			URL:       opts.URL,
-		}
-
-		if opts.OrganizationID != 0 {
-			body.OrganizationID = opts.OrganizationID
-		}
-
-		params := slack.NewSlackCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.Slack.SlackCreate(params, apiClient)
-		if err == nil {
-			payload := map[string]interface{}{
-				"id": response.Payload.ID,
-			}
-
-			return out.PrintResult(payload, addFields)
-		}
-
-		return
-	*/
 }

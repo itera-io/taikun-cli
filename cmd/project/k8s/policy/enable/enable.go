@@ -49,25 +49,5 @@ func enableRun(opts *EnableOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.EnableGatekeeperCommand{
-			OpaProfileID: opts.PolicyProfileID,
-			ProjectID:    opts.ProjectID,
-		}
-
-		params := opa_profiles.NewOpaProfilesEnableGatekeeperParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.OpaProfiles.OpaProfilesEnableGatekeeper(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

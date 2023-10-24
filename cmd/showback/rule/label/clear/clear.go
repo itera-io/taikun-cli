@@ -63,40 +63,5 @@ func clearRun(opts *ClearOptions) error {
 
 	out.PrintStandardSuccess()
 	return nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
 
-		showbackRule, err := list.GetShowbackRuleByID(opts.ShowbackRuleID)
-		if err != nil {
-			return err
-		}
-
-		emptyLabels := make([]*models.ShowbackLabelCreateDto, 0)
-
-		body := models.UpdateShowbackRuleCommand{
-			GlobalAlertLimit:  showbackRule.GlobalAlertLimit,
-			ID:                opts.ShowbackRuleID,
-			Kind:              types.GetShowbackKind(showbackRule.Kind),
-			Labels:            emptyLabels,
-			MetricName:        showbackRule.MetricName,
-			Name:              showbackRule.Name,
-			Price:             showbackRule.Price,
-			ProjectAlertLimit: showbackRule.ProjectAlertLimit,
-			Type:              types.GetEPrometheusType(showbackRule.Type),
-		}
-
-		params := showback_rules.NewShowbackRulesUpdateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		if _, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesUpdate(params, apiClient); err != nil {
-			return err
-		}
-
-		out.PrintStandardSuccess()
-
-		return nil
-	*/
 }

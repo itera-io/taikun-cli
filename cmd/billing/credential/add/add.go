@@ -104,27 +104,5 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := &models.OperationCredentialsCreateCommand{
-			Name:               opts.Name,
-			PrometheusUsername: opts.PrometheusUsername,
-			PrometheusPassword: opts.PrometheusPassword,
-			PrometheusURL:      opts.PrometheusURL,
-			OrganizationID:     opts.OrganizationID,
-		}
-
-		params := ops_credentials.NewOpsCredentialsCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-		response, err := apiClient.Client.OpsCredentials.OpsCredentialsCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

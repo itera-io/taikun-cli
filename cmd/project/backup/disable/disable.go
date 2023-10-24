@@ -45,26 +45,7 @@ func disableRun(opts *DisableOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DisableBackupCommand{
-			ProjectID: opts.ProjectID,
-		}
-
-		params := backup.NewBackupDisableBackupParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Backup.BackupDisableBackup(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }
 
 /*

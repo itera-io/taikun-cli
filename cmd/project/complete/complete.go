@@ -26,25 +26,4 @@ func KubernetesVersionCompletionFunc(cmd *cobra.Command, args []string, toComple
 
 	return completions
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return []string{}
-		}
-
-		params := kubernetes.NewKubernetesGetSupportedListParams().WithV(taikungoclient.Version)
-
-		response, err := apiClient.Client.Kubernetes.KubernetesGetSupportedList(params, apiClient)
-		if err != nil {
-			return []string{}
-		}
-
-		completions := make([]string, 0)
-
-		for i := 0; i < len(response.Payload); i++ {
-			completions = append(completions, response.Payload[i].Version)
-		}
-
-		return completions
-	*/
 }

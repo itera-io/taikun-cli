@@ -36,20 +36,4 @@ func deleteRun(orgID int32) (err error) {
 	out.PrintDeleteSuccess("Organization", orgID)
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := organizations.NewOrganizationsDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithOrganizationID(orgID)
-
-		_, _, err = apiClient.Client.Organizations.OrganizationsDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Organization", orgID)
-		}
-
-		return
-	*/
 }

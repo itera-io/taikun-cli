@@ -104,42 +104,4 @@ func addRun(opts *AddOptions) error {
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		DNSServers := make([]*models.DNSServerCreateDto, len(opts.DNSServers))
-		for i, rawDNSServer := range opts.DNSServers {
-			DNSServers[i] = &models.DNSServerCreateDto{
-				Address: rawDNSServer,
-			}
-		}
-
-		NTPServers := make([]*models.NtpServerCreateDto, len(opts.NTPServers))
-
-		for i, rawNTPServer := range opts.NTPServers {
-			NTPServers[i] = &models.NtpServerCreateDto{
-				Address: rawNTPServer,
-			}
-		}
-
-		body := &models.CreateAccessProfileCommand{
-			Name:           opts.Name,
-			HTTPProxy:      opts.HttpProxy,
-			OrganizationID: opts.OrganizationID,
-			DNSServers:     DNSServers,
-			NtpServers:     NTPServers,
-		}
-
-		params := access_profiles.NewAccessProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-		response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		return out.PrintResult(response.Payload, addFields)
-	*/
 }

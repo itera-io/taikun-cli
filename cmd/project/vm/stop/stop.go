@@ -50,21 +50,5 @@ func stopRun(opts *StopOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.StopStandaloneVMCommand{ID: opts.StandaloneVMID}
-		params := stand_alone_actions.NewStandAloneActionsStopParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneActions.StandAloneActionsStop(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

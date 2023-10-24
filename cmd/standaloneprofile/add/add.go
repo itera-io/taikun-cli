@@ -77,29 +77,4 @@ func addRun(opts *AddOptions) (err error) {
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.StandAloneProfileCreateCommand{
-			Name:      opts.Name,
-			PublicKey: opts.PublicKey,
-		}
-
-		if opts.OrganizationID != 0 {
-			body.OrganizationID = opts.OrganizationID
-		}
-
-		params := stand_alone_profile.NewStandAloneProfileCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.StandAloneProfile.StandAloneProfileCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

@@ -117,36 +117,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.RuleCreateCommand{
-			MetricName:            opts.MetricName,
-			Name:                  opts.Name,
-			OperationCredentialID: opts.BillingCredentialID,
-			Price:                 opts.Price,
-			RuleDiscountRate:      opts.PriceRate,
-			Type:                  types.GetPrometheusType(opts.Type),
-		}
-
-		body.Labels, err = parseLabelsFlag(opts.Labels)
-		if err != nil {
-			return
-		}
-
-		params := prometheus.NewPrometheusCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.Prometheus.PrometheusCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }
 
 func parseLabelsFlag(labelsData []string) ([]taikuncore.PrometheusLabelListDto, error) {
@@ -169,25 +140,5 @@ func parseLabelsFlag(labelsData []string) ([]taikuncore.PrometheusLabelListDto, 
 	}
 
 	return labels, nil
-	/*
-		labels := make([]*models.PrometheusLabelListDto, len(labelsData))
 
-		for labelIndex, labelData := range labelsData {
-			if len(labelData) == 0 {
-				return nil, errors.New("Invalid empty billing rule label")
-			}
-
-			tokens := strings.Split(labelData, "=")
-			if len(tokens) != 2 {
-				return nil, fmt.Errorf("Invalid billing rule label format: %s", labelData)
-			}
-
-			labels[labelIndex] = &models.PrometheusLabelListDto{
-				Label: tokens[0],
-				Value: tokens[1],
-			}
-		}
-
-		return labels, nil
-	*/
 }

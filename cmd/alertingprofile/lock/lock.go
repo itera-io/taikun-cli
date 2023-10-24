@@ -45,23 +45,5 @@ func lockRun(alertingProfileID int32) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.AlertingProfilesLockManagerCommand{
-			ID:   alertingProfileID,
-			Mode: types.LockedMode,
-		}
-		params := alerting_profiles.NewAlertingProfilesLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.AlertingProfiles.AlertingProfilesLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

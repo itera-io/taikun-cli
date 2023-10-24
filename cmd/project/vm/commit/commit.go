@@ -50,21 +50,5 @@ func commitRun(opts *CommitOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CommitStandAloneVMCommand{ProjectID: opts.ProjectID}
-		params := stand_alone.NewStandAloneCommitParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAlone.StandAloneCommit(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

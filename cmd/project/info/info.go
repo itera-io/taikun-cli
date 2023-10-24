@@ -162,19 +162,4 @@ func infoRun(opts *InfoOptions) (err error) {
 	myProject := data.GetProject()
 	return out.PrintResult(myProject, infoFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(opts.ProjectID)
-
-		response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload.Project, infoFields)
-		}
-		return
-	*/
 }

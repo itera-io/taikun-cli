@@ -67,24 +67,5 @@ func etcRun(opts *EtcOptions) (err error) {
 
 	// Manipulate the gathered data
 	return out.PrintResult(data, etcFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.GetProjectOperationCommand{
-			ProjectID: opts.ProjectID,
-		}
-
-		params := notifications.NewNotificationsGetProjectOperationMessagesParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.Notifications.NotificationsGetProjectOperationMessages(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response, etcFields)
-		}
-
-		return
-	*/
 }

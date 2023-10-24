@@ -54,24 +54,5 @@ func disableRun(opts *DisableOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DisableAutoscalingCommand{
-			ProjectID: opts.ProjectID,
-		}
-
-		params := autoscaling.NewAutoscalingDisableAutoscalingParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Autoscaling.AutoscalingDisableAutoscaling(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

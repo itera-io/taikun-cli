@@ -40,19 +40,4 @@ func deleteRun(showbackCredentialID int32) (err error) {
 	out.PrintDeleteSuccess("Showback credential", showbackCredentialID)
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := showback_credentials.NewShowbackCredentialsDeleteParams().WithV(taikungoclient.Version).WithID(showbackCredentialID)
-
-		_, _, err = apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Showback credential", showbackCredentialID)
-		}
-
-		return
-	*/
 }

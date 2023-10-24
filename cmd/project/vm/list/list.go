@@ -127,24 +127,5 @@ func ListVMs(opts *ListOptions) (vms []taikuncore.StandaloneVmsListForDetailsDto
 	// Manipulate the gathered data
 	vms = data.GetData()
 	return vms, nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := stand_alone.NewStandAloneDetailsParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(opts.ProjectID)
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)
-		if err == nil {
-			vms = response.Payload.Data
-		}
-
-		return
-	*/
 }

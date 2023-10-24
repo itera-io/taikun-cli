@@ -74,41 +74,4 @@ func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 
 	return publishers, nil
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return nil, err
-		}
-
-		params := azure.NewAzurePublishersParams().WithV(taikungoclient.Version)
-		params = params.WithCloudID(opts.CloudCredentialID)
-
-		publishers = make([]string, 0)
-
-		for {
-			response, err := apiClient.Client.Azure.AzurePublishers(params, apiClient)
-			if err != nil {
-				return nil, err
-			}
-
-			publishers = append(publishers, response.Payload.Data...)
-
-			count := int32(len(publishers))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(publishers)) > opts.Limit {
-			publishers = publishers[:opts.Limit]
-		}
-
-		return publishers, nil
-	*/
 }

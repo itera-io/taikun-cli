@@ -39,20 +39,5 @@ func upgradeRun(opts *UpgradeOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := projects.NewProjectsUpgradeParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(opts.ProjectID)
-
-		_, err = apiClient.Client.Projects.ProjectsUpgrade(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

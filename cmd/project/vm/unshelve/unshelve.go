@@ -50,21 +50,5 @@ func unshelveRun(opts *UnshelveOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.UnshelveStandaloneVMCommand{ID: opts.StandaloneVMID}
-		params := stand_alone_actions.NewStandAloneActionsUnshelveParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneActions.StandAloneActionsUnshelve(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

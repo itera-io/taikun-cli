@@ -49,25 +49,5 @@ func attachRun(opts *AttachOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.AttachDetachAlertingProfileCommand{
-			AlertingProfileID: opts.AlertingProfileID,
-			ProjectID:         opts.ProjectID,
-		}
-
-		params := alerting_profiles.NewAlertingProfilesAttachParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAttach(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

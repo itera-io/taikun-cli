@@ -122,23 +122,7 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return
-	/*
-		projectServers, err := ListServers(opts)
-		if err == nil {
-			flavorJsonPropertyName, err := getFlavorField(projectServers)
-			if err != nil {
-				return err
-			}
 
-			if err := listFields.SetFieldJsonPropertyName("FLAVOR", flavorJsonPropertyName); err != nil {
-				return err
-			}
-
-			return out.PrintResults(projectServers, listFields)
-		}
-
-		return
-	*/
 }
 
 func ListServers(opts *ListOptions) (projectServers []taikuncore.ServerListDto, err error) {
@@ -154,27 +138,7 @@ func ListServers(opts *ListOptions) (projectServers []taikuncore.ServerListDto, 
 	}
 	projectServers = data.GetData()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(opts.ProjectID)
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy)
-			params = params.WithSortDirection(api.GetSortDirection())
-		}
-
-		response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-		if err == nil {
-			projectServers = response.Payload.Data
-		}
-
-		return
-	*/
 }
 
 func getFlavorField(servers []taikuncore.ServerListDto) (string, error) {

@@ -39,19 +39,5 @@ func deleteRun(billingCredentialID int32) (err error) {
 
 	out.PrintDeleteSuccess("Billing credential", billingCredentialID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := ops_credentials.NewOpsCredentialsDeleteParams().WithV(taikungoclient.Version).WithID(billingCredentialID)
-
-		_, _, err = apiClient.Client.OpsCredentials.OpsCredentialsDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Billing credential", billingCredentialID)
-		}
-
-		return
-	*/
 }

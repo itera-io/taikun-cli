@@ -60,26 +60,7 @@ func getAlertingProfileWebhooks(alertingProfileID int32) ([]taikuncore.AlertingW
 	}
 
 	return data.Data[0].Webhooks, nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return nil, err
-		}
 
-		params := alerting_profiles.NewAlertingProfilesListParams().WithV(taikungoclient.Version)
-		params = params.WithID(&alertingProfileID)
-
-		response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(response.Payload.Data) != 1 {
-			return nil, fmt.Errorf("Alerting profile with ID %d not found.", alertingProfileID)
-		}
-
-		return response.Payload.Data[0].Webhooks, nil
-	*/
 }
 
 func parseAddOptions(opts *AddOptions) (*taikuncore.AlertingWebhookDto, error) {
@@ -107,33 +88,7 @@ func parseAddOptions(opts *AddOptions) (*taikuncore.AlertingWebhookDto, error) {
 	alertingWebhook.Headers = headers
 
 	return alertingWebhook, nil
-	/*
-		alertingWebhook := &taikuncore.AlertingWebhookDto{
-			URL: opts.URL,
-		}
 
-		headers := make([]*models.WebhookHeaderDto, len(opts.Headers))
-
-		for headerIndex, header := range opts.Headers {
-			if len(header) == 0 {
-				return nil, errors.New("Invalid empty webhook header")
-			}
-
-			tokens := strings.Split(header, "=")
-			if len(tokens) != 2 {
-				return nil, fmt.Errorf("Invalid webhook header format: %s", header)
-			}
-
-			headers[headerIndex] = &models.WebhookHeaderDto{
-				Key:   tokens[0],
-				Value: tokens[1],
-			}
-		}
-
-		alertingWebhook.Headers = headers
-
-		return alertingWebhook, nil
-	*/
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -158,32 +113,5 @@ func addRun(opts *AddOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		alertingWebhooks, err := getAlertingProfileWebhooks(opts.AlertingProfileID)
-		if err != nil {
-			return
-		}
-
-		newAlertingWebhook, err := parseAddOptions(opts)
-		if err != nil {
-			return
-		}
-
-		alertingWebhooks = append(alertingWebhooks, newAlertingWebhook)
-		params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(taikungoclient.Version)
-		params = params.WithID(opts.AlertingProfileID)
-		params = params.WithBody(alertingWebhooks)
-
-		_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

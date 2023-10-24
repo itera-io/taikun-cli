@@ -115,43 +115,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(billingCredentials, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := ops_credentials.NewOpsCredentialsListParams().WithV(taikungoclient.Version)
-		if opts.OrganizationID != 0 {
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		}
-
-		var billingCredentials = make([]*models.OperationCredentialsListDto, 0)
-
-		for {
-			response, err := apiClient.Client.OpsCredentials.OpsCredentialsList(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			billingCredentials = append(billingCredentials, response.Payload.Data...)
-
-			count := int32(len(billingCredentials))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(billingCredentials)) > opts.Limit {
-			billingCredentials = billingCredentials[:opts.Limit]
-		}
-
-		return out.PrintResults(billingCredentials, listFields)
-	*/
 }

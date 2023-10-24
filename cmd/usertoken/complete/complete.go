@@ -24,29 +24,6 @@ func EndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string)
 		completions = append(completions, endpoint)
 	}
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil { // Well this will be a pain to rewrite... -Radek
-			return []string{}
-		}
-
-		limit := int32(2000)
-		params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit)
-
-		response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
-		if err != nil {
-			return []string{}
-		}
-
-		completions := make([]string, 0)
-
-		for i := 0; i < len(response.GetPayload().Data); i++ {
-			res := response.Payload.Data[i]
-			endpoint := EndpointFormatToString(*res)
-			completions = append(completions, endpoint)
-		}
-	*/
-
 	return completions
 }
 

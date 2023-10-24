@@ -50,21 +50,5 @@ func repairRun(opts *RepairOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.RepairStandAloneVMCommand{ProjectID: opts.ProjectID}
-		params := stand_alone.NewStandAloneRepairParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAlone.StandAloneRepair(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -50,24 +50,5 @@ func unbindRun(opts *UnbindOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteImageFromProjectCommand{
-			Ids: opts.ImageBindingIDs,
-		}
-
-		params := images.NewImagesUnbindImagesFromProjectParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Images.ImagesUnbindImagesFromProject(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

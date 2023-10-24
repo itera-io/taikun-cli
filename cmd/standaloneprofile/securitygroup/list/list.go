@@ -76,20 +76,4 @@ func listRun(opts *ListOptions) (err error) {
 	// Manipulate the gathered data
 	return out.PrintResults(data, listFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := security_group.NewSecurityGroupListParams().WithV(taikungoclient.Version)
-		params = params.WithStandAloneProfileID(opts.StandAloneProfileID)
-
-		response, err := apiClient.Client.SecurityGroup.SecurityGroupList(params, apiClient)
-		if err == nil {
-			return out.PrintResults(response.Payload, listFields)
-		}
-
-		return
-	*/
 }

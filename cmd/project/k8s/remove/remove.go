@@ -86,47 +86,4 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	}
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		body := models.DeleteServerCommand{
-			ProjectID: opts.ProjectID,
-		}
-
-		if opts.DeleteAll {
-			allServers, err := list.ListServers(&list.ListOptions{ProjectID: opts.ProjectID})
-			if err != nil {
-				return err
-			}
-
-			if len(allServers) == 0 {
-				return fmt.Errorf("project %d has no Kubernetes servers", opts.ProjectID)
-			}
-
-			allServerIDs := make([]int32, len(allServers))
-			for i, server := range allServers {
-				allServerIDs[i] = server.ID
-			}
-
-			body.ServerIds = allServerIDs
-		} else {
-			body.ServerIds = opts.ServerIDs
-		}
-
-		params := servers.NewServersDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		if _, _, err := apiClient.Client.Servers.ServersDelete(params, apiClient); err != nil {
-			return err
-		}
-
-		for _, id := range body.ServerIds {
-			out.PrintDeleteSuccess("Server", id)
-		}
-
-		return nil
-	*/
 }

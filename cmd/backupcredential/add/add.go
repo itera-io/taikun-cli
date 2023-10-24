@@ -116,23 +116,7 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 	}
 
 	return err == nil, nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return false, err
-		}
 
-		body := models.CheckS3Command{
-			S3AccessKeyID: opts.S3AccessKey,
-			S3SecretKey:   opts.S3SecretKey,
-			S3Endpoint:    opts.S3Endpoint,
-			S3Region:      opts.S3Region,
-		}
-		params := checker.NewCheckerS3Params().WithV(taikungoclient.Version).WithBody(&body)
-		_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
-
-		return err == nil, nil
-	*/
 }
 
 func addRun(opts *AddOptions) (err error) {
@@ -157,30 +141,5 @@ func addRun(opts *AddOptions) (err error) {
 
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.BackupCredentialsCreateCommand{
-			S3AccessKeyID: opts.S3AccessKey,
-			S3Endpoint:    opts.S3Endpoint,
-			S3Name:        opts.S3Name,
-			S3Region:      opts.S3Region,
-			S3SecretKey:   opts.S3SecretKey,
-		}
-		if opts.OrganizationID != 0 {
-			body.OrganizationID = opts.OrganizationID
-		}
-
-		params := s3_credentials.NewS3CredentialsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

@@ -49,21 +49,5 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.BindFlavorToProjectCommand{
-			ProjectID: opts.ProjectID,
-			Flavors:   opts.Flavors,
-		}
-		params := flavors.NewFlavorsBindToProjectParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.Flavors.FlavorsBindToProject(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-	*/
 }

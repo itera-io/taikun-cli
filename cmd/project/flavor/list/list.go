@@ -112,45 +112,4 @@ func listRun(opts *ListOptions) (err error) {
 
 	return out.PrintResults(flavors, listFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(&opts.ProjectID)
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		flavors := []*models.BoundFlavorsForProjectsListDto{}
-
-		for {
-			response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			flavors = append(flavors, response.Payload.Data...)
-			flavorsCount := int32(len(flavors))
-
-			if opts.Limit != 0 && flavorsCount >= opts.Limit {
-				break
-			}
-
-			if flavorsCount == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&flavorsCount)
-		}
-
-		if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
-			flavors = flavors[:opts.Limit]
-		}
-
-		return out.PrintResults(flavors, listFields)
-	*/
 }

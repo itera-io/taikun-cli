@@ -111,47 +111,4 @@ func listRun(opts *ListOptions) (err error) {
 
 	return out.PrintResults(projectQuotas, listFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := project_quotas.NewProjectQuotasListParams().WithV(taikungoclient.Version)
-		if opts.OrganizationID != 0 {
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		}
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		var projectQuotas = make([]*models.ProjectQuotaListDto, 0)
-
-		for {
-			response, err := apiClient.Client.ProjectQuotas.ProjectQuotasList(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			projectQuotas = append(projectQuotas, response.Payload.Data...)
-
-			count := int32(len(projectQuotas))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(projectQuotas)) > opts.Limit {
-			projectQuotas = projectQuotas[:opts.Limit]
-		}
-
-		return out.PrintResults(projectQuotas, listFields)
-	*/
 }

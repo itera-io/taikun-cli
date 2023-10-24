@@ -110,43 +110,4 @@ func listRun(opts *ListOptions) (err error) {
 
 	return out.PrintResults(billingRules, listFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := prometheus.NewPrometheusListOfRulesParams().WithV(taikungoclient.Version)
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		var billingRules = make([]*models.PrometheusRuleListDto, 0)
-
-		for {
-			response, err := apiClient.Client.Prometheus.PrometheusListOfRules(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			billingRules = append(billingRules, response.Payload.Data...)
-
-			count := int32(len(billingRules))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(billingRules)) > opts.Limit {
-			billingRules = billingRules[:opts.Limit]
-		}
-
-		return out.PrintResults(billingRules, listFields)
-	*/
 }

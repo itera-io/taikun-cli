@@ -50,21 +50,5 @@ func startRun(opts *StartOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.StartStandaloneVMCommand{ID: opts.StandaloneVMID}
-		params := stand_alone_actions.NewStandAloneActionsStartParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneActions.StandAloneActionsStart(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

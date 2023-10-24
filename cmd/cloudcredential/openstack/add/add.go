@@ -138,35 +138,4 @@ func addRun(opts *AddOptions) (err error) {
 	}
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := &models.CreateOpenstackCloudCommand{
-			Name:                      opts.Name,
-			OpenStackAvailabilityZone: opts.AvailabilityZone,
-			OpenStackDomain:           opts.Domain,
-			OpenStackImportNetwork:    opts.ImportNetwork,
-			OpenStackInternalSubnetID: opts.InternalSubnetId,
-			OpenStackPassword:         opts.Password,
-			OpenStackProject:          opts.Project,
-			OpenStackPublicNetwork:    opts.PublicNetwork,
-			OpenStackRegion:           opts.Region,
-			OpenStackURL:              opts.URL,
-			OpenStackUser:             opts.Username,
-			OpenStackVolumeType:       opts.VolumeType,
-			OrganizationID:            opts.OrganizationID,
-		}
-
-		params := openstack.NewOpenstackCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-		response, err := apiClient.Client.Openstack.OpenstackCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

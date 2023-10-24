@@ -77,27 +77,5 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CheckAwsCommand{
-			AwsSecretAccessKey: opts.AWSSecretAccessKey,
-			AwsAccessKeyID:     opts.AWSAccessKeyID,
-			Region:             opts.AWSRegion,
-		}
-
-		params := checker.NewCheckerAwsParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.Checker.CheckerAws(params, apiClient)
-		if err == nil {
-			out.PrintCheckSuccess("AWS cloud credential")
-		} else if _, isValidationProblem := err.(*checker.CheckerAwsBadRequest); isValidationProblem {
-			return cmderr.ErrCheckFailure("AWS cloud credential")
-		}
-
-		return
-	*/
 }

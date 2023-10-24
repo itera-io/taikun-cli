@@ -70,47 +70,6 @@ func downloadRun(opts *DownloadOptions) (err error) {
 
 	return os.WriteFile(opts.OutputFile, content, 0644)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		if opts.OutputFile == "" {
-			kubeconfigName, err := getKubeconfigName(opts.KubeconfigID)
-			if err != nil {
-				return err
-			}
-
-			opts.OutputFile = fmt.Sprintf(
-				"taikun-%d-%s.yaml",
-				opts.ProjectID,
-				kubeconfigName,
-			)
-		}
-
-		body := models.DownloadKubeConfigCommand{
-			ID:        opts.KubeconfigID,
-			ProjectID: opts.ProjectID,
-		}
-
-		params := kube_config.NewKubeConfigDownloadParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.KubeConfig.KubeConfigDownload(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		payload, payloadOk := response.Payload.(string)
-		if !payloadOk {
-			return cmderr.ProgramError("downloadRun", errors.New("failed to convert payload to string"))
-		}
-
-		content := []byte(payload)
-
-		return os.WriteFile(opts.OutputFile, content, 0644)
-	*/
 }
 
 func getKubeconfigName(opts *DownloadOptions) (name string, err error) {
@@ -130,26 +89,4 @@ func getKubeconfigName(opts *DownloadOptions) (name string, err error) {
 
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := kube_config.NewKubeConfigListParams().WithV(taikungoclient.Version)
-		params = params.WithID(&kubeconfigID)
-
-		response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		if len(response.Payload.Data) != 1 {
-			return "", cmderr.ResourceNotFoundError("Kubeconfig", kubeconfigID)
-		}
-
-		name = response.Payload.Data[0].DisplayName
-
-		return
-	*/
 }

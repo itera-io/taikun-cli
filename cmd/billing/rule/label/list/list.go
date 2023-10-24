@@ -76,30 +76,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(labels, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := prometheus.NewPrometheusListOfRulesParams().WithV(taikungoclient.Version)
-		params = params.WithID(&opts.BillingRuleID)
-
-		response, err := apiClient.Client.Prometheus.PrometheusListOfRules(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		if len(response.Payload.Data) != 1 {
-			return cmderr.ResourceNotFoundError("Billing rule", opts.BillingRuleID)
-		}
-
-		labels := response.Payload.Data[0].Labels
-
-		if opts.Limit != 0 && int32(len(labels)) > opts.Limit {
-			labels = labels[:opts.Limit]
-		}
-
-		return out.PrintResults(labels, listFields)
-	*/
 }

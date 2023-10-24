@@ -39,19 +39,5 @@ func deleteRun(alertingIntegrationID int32) (err error) {
 
 	out.PrintDeleteSuccess("Alerting integration", alertingIntegrationID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(taikungoclient.Version).WithID(alertingIntegrationID)
-
-		_, _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Alerting integration", alertingIntegrationID)
-		}
-
-		return
-	*/
 }

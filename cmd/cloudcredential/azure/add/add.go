@@ -120,30 +120,4 @@ func addRun(opts *AddOptions) (err error) {
 	}
 	return out.PrintResult(data, addFields)
 
-	/*
-			apiClient, err := taikungoclient.NewClient()
-			if err != nil {
-				return
-			}
-
-			body := &models.CreateAzureCloudCommand{
-				Name:                  opts.Name,
-				AzureSubscriptionID:   opts.AzureSubscriptionId,
-				AzureClientID:         opts.AzureClientId,
-				AzureClientSecret:     opts.AzureClientSecret,
-				AzureTenantID:         opts.AzureTenantId,
-				AzureLocation:         opts.AzureLocation,
-		                AzCount:               opts.AzCount,
-				OrganizationID:        opts.OrganizationID,
-			}
-
-			params := azure.NewAzureCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-			response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
-			if err == nil {
-				return out.PrintResult(response.Payload, addFields)
-			}
-
-			return
-	*/
 }

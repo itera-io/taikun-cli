@@ -46,23 +46,4 @@ func unlockRun(policyProfileID int32) (err error) {
 	out.PrintStandardSuccess()
 	return
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.OpaProfileLockManagerCommand{
-			ID:   policyProfileID,
-			Mode: types.LockedMode,
-		}
-		params := opa_profiles.NewOpaProfilesLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.OpaProfiles.OpaProfilesLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

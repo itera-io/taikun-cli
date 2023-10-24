@@ -45,23 +45,5 @@ func lockRun(cloudCredentialID int32) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := &models.CloudLockManagerCommand{
-			ID:   cloudCredentialID,
-			Mode: types.LockedMode,
-		}
-		params := cloud_credentials.NewCloudCredentialsLockManagerParams().WithV(taikungoclient.Version).WithBody(body)
-
-		_, err = apiClient.Client.CloudCredentials.CloudCredentialsLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -45,23 +45,5 @@ func lockRun(backupCredentialID int32) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.BackupLockManagerCommand{
-			ID:   backupCredentialID,
-			Mode: types.LockedMode,
-		}
-		params := s3_credentials.NewS3CredentialsLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.S3Credentials.S3CredentialsLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

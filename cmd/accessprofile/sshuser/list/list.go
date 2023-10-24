@@ -75,24 +75,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(sshUsers, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := ssh_users.NewSSHUsersListParams().WithV(taikungoclient.Version).WithAccessProfileID(opts.AccessProfileID)
-
-		response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		sshUsers := response.Payload
-		if opts.Limit != 0 && int32(len(sshUsers)) > opts.Limit {
-			sshUsers = sshUsers[:opts.Limit]
-		}
-
-		return out.PrintResults(sshUsers, listFields)
-	*/
 }

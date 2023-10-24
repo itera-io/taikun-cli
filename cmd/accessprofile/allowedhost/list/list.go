@@ -78,24 +78,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(allowedHosts, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := allowed_host.NewAllowedHostListParams().WithV(taikungoclient.Version).WithAccessProfileID(opts.AccessProfileID)
-
-		response, err := apiClient.Client.AllowedHost.AllowedHostList(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		allowedHosts := response.Payload.Data
-		if opts.Limit != 0 && int32(len(allowedHosts)) > opts.Limit {
-			allowedHosts = allowedHosts[:opts.Limit]
-		}
-
-		return out.PrintResults(allowedHosts, listFields)
-	*/
 }

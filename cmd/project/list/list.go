@@ -145,46 +145,4 @@ func listRun(opts *ListOptions) (err error) {
 
 	return out.PrintResults(projects, listFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := projects.NewProjectsListParams().WithV(taikungoclient.Version)
-		if opts.OrganizationID != 0 {
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		}
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		var projects = make([]*models.ProjectListDetailDto, 0)
-
-		for {
-			response, err := apiClient.Client.Projects.ProjectsList(params, apiClient)
-			if err != nil {
-				return err
-			}
-			projects = append(projects, response.Payload.Data...)
-
-			projectsCount := int32(len(projects))
-			if opts.Limit != 0 && projectsCount >= opts.Limit {
-				break
-			}
-
-			if projectsCount == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&projectsCount)
-		}
-
-		if opts.Limit != 0 && int32(len(projects)) > opts.Limit {
-			projects = projects[:opts.Limit]
-		}
-
-		return out.PrintResults(projects, listFields)
-	*/
 }

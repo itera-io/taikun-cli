@@ -46,22 +46,5 @@ func deleteRun(slackConfigID int32) (err error) {
 	// Manipulate the gathered data
 	out.PrintDeleteSuccess("Slack configuration", slackConfigID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteSlackConfigCommand{}
-		body.Ids = append(body.Ids, slackConfigID)
-		params := slack.NewSlackDeleteMultipleParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Slack.SlackDeleteMultiple(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Slack configuration", slackConfigID)
-		}
-
-		return
-	*/
 }

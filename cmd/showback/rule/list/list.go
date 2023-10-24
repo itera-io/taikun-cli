@@ -122,47 +122,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(showbackRules, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := showback_rules.NewShowbackRulesListParams().WithV(taikungoclient.Version)
-		if opts.OrganizationID != 0 {
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		}
-
-		if config.SortBy != "" {
-			params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
-		}
-
-		var showbackRules = make([]*models.ShowbackRulesListDto, 0)
-
-		for {
-			response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesList(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			showbackRules = append(showbackRules, response.Payload.Data...)
-
-			count := int32(len(showbackRules))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(showbackRules)) > opts.Limit {
-			showbackRules = showbackRules[:opts.Limit]
-		}
-
-		return out.PrintResults(showbackRules, listFields)
-	*/
 }

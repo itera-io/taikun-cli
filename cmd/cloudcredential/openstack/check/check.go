@@ -80,28 +80,5 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CheckOpenstackCommand{
-			OpenStackDomain:   opts.Domain,
-			OpenStackPassword: opts.Password,
-			OpenStackURL:      opts.URL,
-			OpenStackUser:     opts.Username,
-		}
-
-		params := checker.NewCheckerOpenstackParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.Checker.CheckerOpenstack(params, apiClient)
-		if err == nil {
-			out.PrintCheckSuccess("OpenStack cloud credential")
-		} else if _, isValidationProblem := err.(*checker.CheckerOpenstackBadRequest); isValidationProblem {
-			return cmderr.ErrCheckFailure("OpenStack cloud credential")
-		}
-
-		return
-	*/
 }

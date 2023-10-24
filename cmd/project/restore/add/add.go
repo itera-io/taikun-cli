@@ -78,27 +78,4 @@ func addRun(opts *AddOptions) (err error) {
 	// out.PrintStandardSuccess()
 	return out.PrintResult(response, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.RestoreBackupCommand{
-			ProjectID:         opts.ProjectID,
-			BackupName:        opts.BackupName,
-			RestoreName:       opts.RestoreName,
-			IncludeNamespaces: opts.IncludeNamespaces,
-			ExcludeNamespaces: opts.ExcludeNamespaces,
-		}
-
-		params := backup.NewBackupRestoreBackupParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		response, err := apiClient.Client.Backup.BackupRestoreBackup(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

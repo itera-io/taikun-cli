@@ -76,41 +76,5 @@ func addRun(opts *AddOptions) error {
 
 	out.PrintStandardSuccess()
 	return nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
 
-		showbackRule, err := list.GetShowbackRuleByID(opts.ShowbackRuleID)
-		if err != nil {
-			return err
-		}
-
-		newLabel := models.ShowbackLabelCreateDto{Label: opts.Label, Value: opts.Value}
-		showbackRule.Labels = append(showbackRule.Labels, &newLabel)
-
-		body := models.UpdateShowbackRuleCommand{
-			GlobalAlertLimit:  showbackRule.GlobalAlertLimit,
-			ID:                opts.ShowbackRuleID,
-			Kind:              types.GetShowbackKind(showbackRule.Kind),
-			Labels:            showbackRule.Labels,
-			MetricName:        showbackRule.MetricName,
-			Name:              showbackRule.Name,
-			Price:             showbackRule.Price,
-			ProjectAlertLimit: showbackRule.ProjectAlertLimit,
-			Type:              types.GetEPrometheusType(showbackRule.Type),
-		}
-
-		params := showback_rules.NewShowbackRulesUpdateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		if _, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesUpdate(params, apiClient); err != nil {
-			return err
-		}
-
-		out.PrintStandardSuccess()
-
-		return nil
-	*/
 }

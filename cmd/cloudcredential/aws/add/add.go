@@ -106,28 +106,4 @@ func addRun(opts *AddOptions) (err error) {
 	}
 	return out.PrintResult(data, addFields)
 
-	/*
-			apiClient, err := taikungoclient.NewClient()
-			if err != nil {
-				return
-			}
-
-			body := &models.CreateAwsCloudCommand{
-				Name:                opts.Name,
-				AwsSecretAccessKey:  opts.AWSSecretAccessKey,
-				AwsAccessKeyID:      opts.AWSAccessKeyID,
-				AwsRegion:           opts.AWSRegion,
-				AzCount:             opts.AWSAzCount,
-		                OrganizationID:      opts.OrganizationID,
-			}
-
-			params := aws.NewAwsCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-			response, err := apiClient.Client.Aws.AwsCreate(params, apiClient)
-			if err == nil {
-				return out.PrintResult(response.Payload, addFields)
-			}
-
-			return
-	*/
 }

@@ -40,19 +40,5 @@ func deleteRun(kubernetesProfileID int32) (err error) {
 
 	out.PrintDeleteSuccess("Kubernetes profile", kubernetesProfileID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(taikungoclient.Version).WithID(kubernetesProfileID)
-
-		_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Kubernetes profile", kubernetesProfileID)
-		}
-
-		return
-	*/
 }

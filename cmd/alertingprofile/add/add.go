@@ -105,35 +105,5 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CreateAlertingProfileCommand{
-			Name:                 opts.Name,
-			OrganizationID:       opts.OrganizationID,
-			Reminder:             types.GetAlertingReminder(opts.Reminder),
-			SlackConfigurationID: opts.SlackConfigurationID,
-		}
-
-		if len(opts.Emails) != 0 {
-			emails := make([]*models.AlertingEmailDto, len(opts.Emails))
-			for i, email := range opts.Emails {
-				emails[i] = &models.AlertingEmailDto{Email: email}
-			}
-
-			body.Emails = emails
-		}
-
-		params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

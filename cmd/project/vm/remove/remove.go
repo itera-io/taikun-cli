@@ -89,47 +89,4 @@ func deleteRun(opts *DeleteOptions) error {
 
 	return nil
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return err
-		}
-
-		body := models.DeleteStandAloneVMCommand{
-			ProjectID: opts.ProjectID,
-		}
-
-		if opts.DeleteAll {
-			allVMs, err := list.ListVMs(&list.ListOptions{ProjectID: opts.ProjectID})
-			if err != nil {
-				return err
-			}
-
-			if len(allVMs) == 0 {
-				return fmt.Errorf("project %d has no standalone VMs", opts.ProjectID)
-			}
-
-			allVMIDs := make([]int32, len(allVMs))
-			for i, vm := range allVMs {
-				allVMIDs[i] = vm.ID
-			}
-
-			body.VMIds = allVMIDs
-		} else {
-			body.VMIds = opts.VMIDs
-		}
-
-		params := stand_alone.NewStandAloneDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		if _, err = apiClient.Client.StandAlone.StandAloneDelete(params, apiClient); err != nil {
-			return err
-		}
-
-		for _, id := range body.VMIds {
-			out.PrintDeleteSuccess("Standalone VM", id)
-		}
-
-		return nil
-	*/
 }

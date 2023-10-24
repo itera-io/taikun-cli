@@ -39,20 +39,5 @@ func deleteRun(showbackRuleID int32) (err error) {
 
 	out.PrintDeleteSuccess("Showback rule", showbackRuleID)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := showback_rules.NewShowbackRulesDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithID(showbackRuleID)
-
-		_, _, err = apiClient.ShowbackClient.ShowbackRules.ShowbackRulesDelete(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Showback rule", showbackRuleID)
-		}
-
-		return
-	*/
 }

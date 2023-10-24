@@ -39,23 +39,5 @@ func unlockRun(accessProfileID int32) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.AccessProfilesLockManagementCommand{
-			ID:   accessProfileID,
-			Mode: types.UnlockedMode,
-		}
-		params := access_profiles.NewAccessProfilesLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.AccessProfiles.AccessProfilesLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

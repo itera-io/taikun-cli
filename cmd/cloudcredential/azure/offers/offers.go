@@ -96,42 +96,5 @@ func ListOffers(opts *OffersOptions) (offers []string, err error) {
 	}
 
 	return offers, nil
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return nil, err
-		}
 
-		params := azure.NewAzureOffersParams().WithV(taikungoclient.Version)
-		params = params.WithCloudID(opts.CloudCredentialID)
-		params = params.WithPublisher(opts.Publisher)
-
-		offers = make([]string, 0)
-
-		for {
-			response, err := apiClient.Client.Azure.AzureOffers(params, apiClient)
-			if err != nil {
-				return nil, err
-			}
-
-			offers = append(offers, response.Payload.Data...)
-
-			count := int32(len(offers))
-			if opts.Limit != 0 && count >= opts.Limit {
-				break
-			}
-
-			if count == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&count)
-		}
-
-		if opts.Limit != 0 && int32(len(offers)) > opts.Limit {
-			offers = offers[:opts.Limit]
-		}
-
-		return offers, nil
-	*/
 }

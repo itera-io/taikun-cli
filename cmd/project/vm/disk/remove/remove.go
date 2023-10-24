@@ -58,27 +58,5 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		out.PrintDeleteSuccess("Standalone VM disk", id)
 	}
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteStandAloneVMDiskCommand{
-			StandaloneVMID: opts.StandaloneVMID,
-			VMDiskIds:      opts.DiskIDs,
-		}
-
-		params := stand_alone_vm_disks.NewStandAloneVMDisksDeleteParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneVMDisks.StandAloneVMDisksDelete(params, apiClient)
-		if err == nil {
-			for _, id := range body.VMDiskIds {
-				out.PrintDeleteSuccess("Standalone VM disk", id)
-			}
-		}
-
-		return
-	*/
 }

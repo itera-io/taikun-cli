@@ -56,25 +56,5 @@ func resizeRun(opts *ResizeOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.UpdateStandaloneVMDiskSizeCommand{
-			ID:   opts.DiskID,
-			Size: opts.Size,
-		}
-
-		params := stand_alone_vm_disks.NewStandAloneVMDisksUpdateDiskSizeParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.StandAloneVMDisks.StandAloneVMDisksUpdateDiskSize(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -120,28 +120,5 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CreateKubeConfigCommand{
-			IsAccessibleForAll:     opts.AccessScope == types.KubeconfigAccessAll,
-			IsAccessibleForManager: opts.AccessScope == types.KubeconfigAccessManagers,
-			KubeConfigRoleID:       types.GetKubeconfigRole(opts.Role),
-			Name:                   opts.Name,
-			ProjectID:              opts.ProjectID,
-		}
-
-		params := kube_config.NewKubeConfigCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.Client.KubeConfig.KubeConfigCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

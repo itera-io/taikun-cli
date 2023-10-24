@@ -46,23 +46,5 @@ func lockRun(kubernetesProfileID int32) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.KubernetesProfilesLockManagerCommand{
-			ID:   kubernetesProfileID,
-			Mode: types.LockedMode,
-		}
-		params := kubernetes_profiles.NewKubernetesProfilesLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

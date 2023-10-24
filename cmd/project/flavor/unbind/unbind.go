@@ -42,22 +42,5 @@ func unbindRun(bindings []int32) (err error) {
 	}
 	out.PrintStandardSuccess()
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.UnbindFlavorFromProjectCommand{
-			Ids: bindings,
-		}
-		params := flavors.NewFlavorsUnbindFromProjectParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		_, err = apiClient.Client.Flavors.FlavorsUnbindFromProject(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-	*/
-
 	return
 }

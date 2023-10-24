@@ -104,28 +104,5 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CreateShowbackCredentialCommand{
-			Name:           opts.Name,
-			OrganizationID: opts.OrganizationID,
-			Password:       opts.Password,
-			URL:            opts.URL,
-			Username:       opts.Username,
-		}
-
-		params := showback_credentials.NewShowbackCredentialsCreateParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		response, err := apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

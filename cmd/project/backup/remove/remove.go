@@ -49,21 +49,5 @@ func deleteRun(opts DeleteOption) (err error) {
 	}
 	out.PrintDeleteSuccess("Backup", opts.Name)
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.DeleteBackupCommand{ProjectID: opts.ProjectID, Name: opts.Name}
-		params := backup.NewBackupDeleteBackupParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Backup.BackupDeleteBackup(params, apiClient)
-		if err == nil {
-			out.PrintDeleteSuccess("Backup", opts.Name)
-		}
-
-		return
-	*/
 }

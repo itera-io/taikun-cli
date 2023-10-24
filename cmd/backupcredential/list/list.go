@@ -112,43 +112,4 @@ func listRun(opts *ListOptions) (err error) {
 
 	return out.PrintResults(backupCredentials, listFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		params := s3_credentials.NewS3CredentialsListParams().WithV(taikungoclient.Version)
-		if opts.OrganizationID != 0 {
-			params = params.WithOrganizationID(&opts.OrganizationID)
-		}
-
-		backupCredentials := []*models.BackupCredentialsListDto{}
-
-		for {
-			response, err := apiClient.Client.S3Credentials.S3CredentialsList(params, apiClient)
-			if err != nil {
-				return err
-			}
-
-			backupCredentials = append(backupCredentials, response.Payload.Data...)
-			backupCredentialsCount := int32(len(backupCredentials))
-
-			if opts.Limit != 0 && backupCredentialsCount >= opts.Limit {
-				break
-			}
-
-			if backupCredentialsCount == response.Payload.TotalCount {
-				break
-			}
-
-			params = params.WithOffset(&backupCredentialsCount)
-		}
-
-		if opts.Limit != 0 && int32(len(backupCredentials)) > opts.Limit {
-			backupCredentials = backupCredentials[:opts.Limit]
-		}
-
-		return out.PrintResults(backupCredentials, listFields)
-	*/
 }

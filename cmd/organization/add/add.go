@@ -175,33 +175,4 @@ func addRun(opts *AddOptions) (err error) {
 	}
 	return out.PrintResult(data, addFields)
 
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.OrganizationCreateCommand{
-			Address:                      opts.Address,
-			BillingEmail:                 opts.BillingEmail,
-			City:                         opts.City,
-			Country:                      opts.Country,
-			DiscountRate:                 opts.DiscountRate,
-			Email:                        opts.Email,
-			FullName:                     opts.FullName,
-			IsEligibleUpdateSubscription: opts.IsEligibleUpdateSubscription,
-			Name:                         opts.Name,
-			Phone:                        opts.Phone,
-			VatNumber:                    opts.VatNumber,
-		}
-
-		params := organizations.NewOrganizationsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

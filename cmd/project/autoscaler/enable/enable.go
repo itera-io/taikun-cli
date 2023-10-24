@@ -78,33 +78,5 @@ func enableRun(opts *EnableOptions) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		_, err = isAutoscalingEnabled(opts.ProjectID)
-		if err != nil {
-			return
-		}
 
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := models.EnableAutoscalingCommand{
-			ID:                   opts.ProjectID,
-			AutoscalingGroupName: opts.AutoscalingGroupName,
-			Flavor:               opts.Flavor,
-			DiskSize:             float64(types.GiBToB(int(opts.DiskSize))),
-			MaxSize:              opts.MaxSize,
-			MinSize:              opts.MinSize,
-		}
-
-		params := autoscaling.NewAutoscalingEnableAutoscalingParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		_, err = apiClient.Client.Autoscaling.AutoscalingEnableAutoscaling(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-		return
-	*/
 }

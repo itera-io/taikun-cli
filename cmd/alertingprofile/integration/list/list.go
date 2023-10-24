@@ -77,25 +77,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(alertingIntegrations, listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := alerting_integrations.NewAlertingIntegrationsListParams().WithV(taikungoclient.Version)
-		params = params.WithAlertingProfileID(opts.AlertingProfileID)
-
-		response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsList(params, apiClient)
-		if err != nil {
-			return err
-		}
-
-		alertingIntegrations := response.Payload
-		if opts.Limit != 0 && int32(len(alertingIntegrations)) > opts.Limit {
-			alertingIntegrations = alertingIntegrations[:opts.Limit]
-		}
-
-		return out.PrintResults(alertingIntegrations, listFields)
-	*/
 }

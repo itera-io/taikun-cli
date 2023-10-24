@@ -83,20 +83,5 @@ func listRun(opts *ListOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 	return out.PrintResults(data.GetData(), listFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := kube_config.NewKubeConfigListParams().WithV(taikungoclient.Version)
-		params = params.WithProjectID(&opts.ProjectID)
-
-		response, err := apiClient.Client.KubeConfig.KubeConfigList(params, apiClient)
-		if err == nil {
-			return out.PrintResults(response.Payload.Data, listFields)
-		}
-
-		return
-	*/
 }

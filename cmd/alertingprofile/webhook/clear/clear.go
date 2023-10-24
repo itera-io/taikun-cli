@@ -37,21 +37,5 @@ func clearRun(alertingProfileID int32) (err error) {
 	}
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		emptyWebhookList := make([]*models.AlertingWebhookDto, 0)
-		params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(taikungoclient.Version)
-		params = params.WithID(alertingProfileID).WithBody(emptyWebhookList)
-
-		_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

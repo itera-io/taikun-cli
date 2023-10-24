@@ -96,26 +96,5 @@ func addRun(opts *AddOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := models.CreateAllowedHostCommand{
-			AccessProfileID: opts.AccessProfileID,
-			IPAddress:       opts.IpAddress,
-			MaskBits:        opts.MaskBits,
-			Description:     opts.Description,
-		}
-
-		params := allowed_host.NewAllowedHostCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-		response, err := apiClient.Client.AllowedHost.AllowedHostCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }

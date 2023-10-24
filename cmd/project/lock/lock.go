@@ -45,20 +45,5 @@ func lockRun(projectID int32) (err error) {
 	// Manipulate the gathered data
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		params := projects.NewProjectsLockManagerParams().WithV(taikungoclient.Version)
-		params = params.WithMode(&types.LockedMode).WithID(&projectID)
-
-		_, err = apiClient.Client.Projects.ProjectsLockManager(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

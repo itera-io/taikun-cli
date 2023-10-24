@@ -119,32 +119,5 @@ func addRun(opts *AddOptions) (err error) {
 
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
 
-		body := &models.CreateOpaProfileCommand{
-			AllowedRepo:           opts.AllowedRepo,
-			ForbidHTTPIngress:     opts.ForbidHTTPIngress,
-			ForbidNodePort:        opts.ForbidNodePort,
-			ForbidSpecificTags:    opts.ForbidSpecificTags,
-			IngressWhitelist:      opts.IngressWhitelist,
-			Name:                  opts.Name,
-			OrganizationID:        opts.OrganizationID,
-			RequireProbe:          opts.RequireProbe,
-			UniqueIngresses:       opts.UniqueIngresses,
-			UniqueServiceSelector: opts.UniqueServiceSelector,
-		}
-
-		params := opa_profiles.NewOpaProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-		response, err := apiClient.Client.OpaProfiles.OpaProfilesCreate(params, apiClient)
-		if err == nil {
-			return out.PrintResult(response.Payload, addFields)
-		}
-
-		return
-	*/
 }
