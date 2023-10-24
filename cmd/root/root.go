@@ -5,6 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
+	"github.com/itera-io/taikun-cli/cmd/billing"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -40,7 +41,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(accessprofile.NewCmdAccessProfile())
 	cmd.AddCommand(alertingprofile.NewCmdAlertingProfile())
 	cmd.AddCommand(backupcredential.NewCmdBackupCredential())
-	//cmd.AddCommand(billing.NewCmdBilling())
+	cmd.AddCommand(billing.NewCmdBilling())
 	cmd.AddCommand(cloudcredential.NewCmdCloudCredential())
 	cmd.AddCommand(kubernetesprofile.NewCmdKubernetesProfile())
 	cmd.AddCommand(organization.NewCmdOrganization())
@@ -51,7 +52,6 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(standaloneprofile.NewCmdStandaloneProfile())
 	cmd.AddCommand(user.NewCmdUser())
 	cmd.AddCommand(usertoken.NewCmdUserToken())
-	//cmd.AddCommand(usertoken2.NewCmdUserToken2())
 	cmd.AddCommand(whoami.NewCmdWhoami())
 
 	return cmd
