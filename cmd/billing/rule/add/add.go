@@ -96,11 +96,10 @@ func addRun(opts *AddOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	prometheusType := types.GetPrometheusType(opts.Type)
 	body := taikuncore.RuleCreateCommand{
 		Name:                  *taikuncore.NewNullableString(&opts.Name),
 		MetricName:            *taikuncore.NewNullableString(&opts.MetricName),
-		Type:                  &prometheusType,
+		Type:                  types.GetPrometheusType(opts.Type),
 		Price:                 &opts.Price,
 		OperationCredentialId: &opts.BillingCredentialID,
 		RuleDiscountRate:      *taikuncore.NewNullableInt32(&opts.PriceRate),
