@@ -40,7 +40,7 @@ Context 'billing/rule/organization/bind'
   Example 'bind a nonexistent organization'
     When call taikun billing rule organization bind "$id" -o 0 -d 42 -q
     The status should equal 1
-    The stderr should include 'Can not find organization'
+    The stderr should include 'Failed to bind prometheus rule'
     The stderr should include '400'
   End
 End

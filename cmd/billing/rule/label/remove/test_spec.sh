@@ -19,8 +19,8 @@ Context 'billing/rule/label/remove'
 
   add_rule() {
     id=$(taikun billing rule add "$name" -b "$cid" -l edit=vim,lang=rust -m abc --price 1 --price-rate 1 --type count -I)
-    edit_lid=$(taikun billing rule label list "$id" --no-decorate -C id,label | grep edit | cut -d ' ' -f 1)
-    lang_lid=$(taikun billing rule label list "$id" --no-decorate -C id,label | grep lang | cut -d ' ' -f 1)
+    edit_lid=$(taikun billing rule label list "$id" --no-decorate -C id,label | grep edit | cut -d ' ' -f 1 | xargs )
+    lang_lid=$(taikun billing rule label list "$id" --no-decorate -C id,label | grep lang | cut -d ' ' -f 1 | xargs )
   }
   BeforeEach 'add_rule'
 
@@ -65,8 +65,8 @@ Context 'billing/rule/label/remove'
     When call taikun billing rule label delete "$edit_lid" "$lang_lid" "$edit_lid" "$lang_lid" --billing-rule-id "$id"
     The status should equal 1
     The output should include 'was deleted successfully'
-    The output should include "edit_lid"
-    The output should include "lang_lid"
+    The output should include "$edit_lid"
+    The output should include "$lang_lid"
     The stderr should include 'Error: Failed to delete one or more resources'
   End
 End

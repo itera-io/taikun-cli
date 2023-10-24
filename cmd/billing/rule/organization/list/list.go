@@ -15,10 +15,10 @@ import (
 var listFields = fields.New(
 	[]*field.Field{
 		field.NewVisible(
-			"ORG", "organizationName",
+			"ORG", "name",
 		),
 		field.NewVisible(
-			"ORG-ID", "organizationId",
+			"ORG-ID", "id",
 		),
 		field.NewVisible(
 			"DISCOUNT-RATE", "ruleDiscountRate",

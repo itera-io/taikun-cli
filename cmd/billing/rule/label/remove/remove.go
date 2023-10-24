@@ -44,7 +44,7 @@ func deleteRun(billingRuleID int32, labelID int32) (err error) {
 	body := taikuncore.RuleForUpdateDto{
 		LabelsToDelete: []taikuncore.PrometheusLabelDeleteDto{
 			{
-				Id: &billingRuleID,
+				Id: &labelID,
 			},
 		},
 	}

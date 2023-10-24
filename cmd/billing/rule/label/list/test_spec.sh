@@ -8,7 +8,7 @@ Context 'billing/rule/label/list'
 
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid" -I | xargs)
-    id=$(taikun billing rule add "$name" -b "$cid" -l ed=vim -m abc --price 1 --price-rate 1 --type count -I | xargs)
+    id=$(taikun billing rule add "$name" -b "$cid" -l ed=vim,lang=rust -m abc --price 1 --price-rate 1 --type count -I | xargs)
   }
   BeforeAll 'setup'
 
