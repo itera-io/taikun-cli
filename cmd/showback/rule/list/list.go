@@ -2,6 +2,7 @@ package list
 
 import (
 	"context"
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -87,8 +88,7 @@ func listRun(opts *ListOptions) (err error) {
 	// Prepare the arguments for the query
 	myRequest := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesList(context.TODO())
 	if config.SortBy != "" {
-		// myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection()) // #TODO Arzu needs to fix backend for descending to work.
-		myRequest = myRequest.SortBy(config.SortBy)
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
