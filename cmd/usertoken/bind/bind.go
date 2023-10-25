@@ -51,7 +51,7 @@ func bindRun(opts *BindOptions) (err error) {
 	// Prepare the arguments for the query
 	body := taikuncore.BindUnbindEndpointToTokenCommand{
 		TokenId: *taikuncore.NewNullableString(&opts.TokenID),
-		BindAll: &opts.BindAll,
+		//BindAll: &opts.BindAll,
 	}
 
 	if len(opts.Endpoints) != 0 && opts.BindAll {
@@ -70,14 +70,16 @@ func bindRun(opts *BindOptions) (err error) {
 			endpoints = append(endpoints, *endpoint)
 		}
 		body.Endpoints = endpoints
-		//fmt.Println("-------------------------")
-		//fmt.Println(opts.TokenID)
-		//fmt.Println(endpoints[0].GetId())
-		//fmt.Println(endpoints[0].GetController())
-		//fmt.Println(endpoints[0].GetDescription())
-		//fmt.Println(endpoints[0].GetMethod())
-		//fmt.Println(endpoints[0].GetPath())
-		//fmt.Println("-------------------------")
+	}
+
+	if opts.BindAll == true {
+		// Get all bound endpoints
+		allEndpoints, endpointsError := complete.GetAllBindingEndpoints(opts.TokenID, true) // Get all unbound endpoints
+		if endpointsError != nil {
+			return endpointsError
+		}
+		// Insert them inside the body
+		body.Endpoints = allEndpoints
 	}
 
 	// Execute a query into the API + graceful exit
@@ -88,45 +90,4 @@ func bindRun(opts *BindOptions) (err error) {
 
 	out.PrintStandardSuccess()
 	return
-	/*
-		apiClient, err := taikungoclient.NewClient()
-		if err != nil {
-			return
-		}
-
-		body := &models.BindUnbindEndpointToTokenCommand{
-			TokenID: opts.TokenID,
-			BindAll: opts.BindAll,
-		}
-
-		if len(opts.Endpoints) != 0 && opts.BindAll {
-			err = errors.New("Please specify bindAll OR enpoints option")
-			return
-		}
-
-		if len(opts.Endpoints) != 0 {
-			endpoints := []*models.AvailableEndpointData{}
-			for i := 0; i < len(opts.Endpoints); i++ {
-				endpoint := complete.StringToEndpointFormat(opts.Endpoints[i])
-				if endpoint == nil {
-					err = errors.New("UserToken: Failed to retrieve endpoint " + opts.Endpoints[i] + ".")
-					break
-				}
-				endpoints = append(endpoints, endpoint)
-			}
-			body.Endpoints = endpoints
-		}
-		if err != nil {
-			return
-		}
-
-		params := user_token.NewUserTokenBindUnbindParams().WithV(taikungoclient.Version).WithBody(body)
-
-		_, err = apiClient.Client.UserToken.UserTokenBindUnbind(params, apiClient)
-		if err == nil {
-			out.PrintStandardSuccess()
-		}
-
-		return
-	*/
 }

@@ -28,10 +28,12 @@ func EndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string)
 	return completions
 }
 
+// GetAllEndpoints gets all endpoints. Tf tokenID is present, it returns all endpoints bound to that ID.
 func GetAllEndpoints() ([]taikuncore.AvailableEndpointData, error) {
 	myApiClient := tk.NewClient()
 	limit := int32(2000)
-	data, response, err := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit).Execute()
+	myRequest := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit)
+	data, response, err := myRequest.Execute()
 	if err != nil {
 		return nil, tk.CreateError(response, err)
 	}
@@ -49,77 +51,43 @@ func GetAllEndpoints() ([]taikuncore.AvailableEndpointData, error) {
 
 		endpoints = append(endpoints, endpoint)
 	}
-	//completions := make([]string, 0)
-	//for i := 0; i < len(data.GetData()); i++ {
-	//	res := data.GetData()[i]
-	//	endpoint := EndpointFormatToString(res)
-	//	completions = append(completions, endpoint)
-	//}
 
 	return endpoints, nil
 }
 
-// Functions for autocompletion in bind and unbind command. TOFIX
-/*
-func BindingEndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return []string{}
-	}
-
-	TokenID, err := UserTokenIDFromUserTokenName(args[0])
-	if err != nil {
-		return []string{}
-	}
-
+// GetAllBindingEndpoints gets all endpoints for
+func GetAllBindingEndpoints(tokenId string, unboundEndpoints bool) ([]taikuncore.AvailableEndpointData, error) {
+	myApiClient := tk.NewClient()
 	limit := int32(2000)
-	params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit).WithID(&TokenID)
-
-	response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
+	myRequest := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit).Id(tokenId)
+	if unboundEndpoints == true {
+		// Get only unbound endpoints (for binding)
+		myRequest = myRequest.IsAdd(true)
+	} else {
+		// Get only bound endpoints (for unbinding)
+		myRequest = myRequest.IsAdd(false)
+	}
+	data, response, err := myRequest.Execute()
 	if err != nil {
-		return []string{}
+		return nil, tk.CreateError(response, err)
 	}
 
-	completions := make([]string, 0)
-
-	for i := 0; i < len(response.GetPayload().Data); i++ {
-		res := response.Payload.Data[i]
-		if res.ID == -1 { // case the endpoint is not bind
-			endpoint := EndpointFormatToString(*res)
-			completions = append(completions, endpoint)
+	endpoints := make([]taikuncore.AvailableEndpointData, 0)
+	for i := 0; i < len(data.GetData()); i++ {
+		res := data.GetData()[i]
+		endpoint := taikuncore.AvailableEndpointData{
+			Id:          res.Id,
+			Path:        res.Path,
+			Method:      res.Method,
+			Description: res.Description,
+			Controller:  res.Controller,
 		}
+
+		endpoints = append(endpoints, endpoint)
 	}
 
-	return completions
+	return endpoints, nil
 }
-
-func UnbindingEndpointsCompleteFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return []string{}
-	}
-
-	limit := int32(2000)
-	params := user_token.NewUserTokenAvailableEndpointListParams().WithV(taikungoclient.Version).WithLimit(&limit)
-
-	response, err := apiClient.Client.UserToken.UserTokenAvailableEndpointList(params, apiClient)
-	if err != nil {
-		return []string{}
-	}
-
-	completions := make([]string, 0)
-
-	for i := 0; i < len(response.GetPayload().Data); i++ {
-		res := response.Payload.Data[i]
-		if res.ID > 0 {
-			endpoint := EndpointFormatToString(*res)
-			completions = append(completions, endpoint)
-		}
-	}
-
-	return completions
-}
-*/
 
 func StringToEndpointFormat(endpoint string) (*taikuncore.AvailableEndpointData, error) {
 	myApiClient := tk.NewClient()
