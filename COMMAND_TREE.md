@@ -203,6 +203,8 @@
         * unbind (Unbind a user from a project)
     * usertoken (Manage user tokens)
       * add (Add an user token)
+      * bind (Bind endpoints to an user token)
       * delete (Delete one or more user tokens)
       * list (List user tokens)
+      * unbind (Unbind endpoints to an user token)
     * whoami (Print username)
