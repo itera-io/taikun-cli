@@ -77,34 +77,37 @@ func addRun(opts *AddOptions) (err error) {
 		return
 	}
 
-	// Preparing to set user-specified endpoints
+	// Setting user-specified endpoints
 	if len(opts.Endpoints) != 0 && !opts.BindAll {
-		fmt.Println("Setting up some endpoints...")
 		var endpoints []taikuncore.AvailableEndpointData
-		//endpoints := []*models.AvailableEndpointData{}
 		for i := 0; i < len(opts.Endpoints); i++ {
-			endpoint := *complete.StringToEndpointFormat(opts.Endpoints[i])
-			if _, ok := endpoint.GetIdOk(); ok {
-				err = errors.New("UserToken: Failed to retrieve endpoint " + opts.Endpoints[i] + ".")
-				break
+			// Find each endpoint from string
+			endpoint, stringToEndpointError := complete.StringToEndpointFormat(opts.Endpoints[i])
+			if stringToEndpointError != nil {
+				return stringToEndpointError
 			}
-			endpoints = append(endpoints, endpoint)
+			endpoints = append(endpoints, *endpoint)
 		}
 		body.Endpoints = endpoints
 	}
-	if err != nil {
-		return
-	}
 
-	// Set bind all
+	// Setting all endpoints
+	if opts.BindAll == true {
+		// Get all endpoints
+		allEndpoints, endpointsError := complete.GetAllEndpoints()
+		if endpointsError != nil {
+			return endpointsError
+		}
+		// Insert them inside the body
+		body.Endpoints = allEndpoints
+	}
 
 	// Send the request to the API and parse the incoming data.
 	myApiClient := tk.NewClient()
-	data, _, err := myApiClient.Client.UserTokenAPI.UsertokenCreate(context.TODO()).UserTokenCreateCommand(body).Execute()
-	if err == nil {
-		newMap, _ := data.ToMap()
-		return out.PrintResult(newMap, addFields)
+	data, response, err := myApiClient.Client.UserTokenAPI.UsertokenCreate(context.TODO()).UserTokenCreateCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
-
-	return
+	newMap, _ := data.ToMap()
+	return out.PrintResult(newMap, addFields)
 }
