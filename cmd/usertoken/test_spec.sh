@@ -14,7 +14,7 @@ Context 'usertoken'
     }
 
     delete() {
-        taikun usertoken delete "$tokenname"
+        taikun usertoken delete "$tokenname" -q
     }
 
     AfterAll delete
@@ -60,4 +60,73 @@ Context 'usertoken'
         The stderr should include ""
     End
 
+End
+
+Context 'usertokenbinding'
+      setup() {
+          tokenname="$(_rnd_name)"
+          taikun usertoken add "$tokenname" -q
+          taikun usertoken bind "$tokenname" --endpoints Kubernetes/POST/cli
+      }
+      BeforeAll setup
+
+      delete() {
+          taikun usertoken delete "$tokenname" -q
+      }
+      AfterAll delete
+
+      Example 'show bound endpoints of token'
+        When call taikun usertoken show-endpoints "$tokenname"
+        The status should equal 0
+        The output should include 'DESCRIPTION'
+        The output should include 'CONTROLLER'
+        The output should include 'METHOD'
+        The output should include 'PATH'
+        The output should include 'ID'
+        The output should include 'Kubernetes'
+        The output should include 'POST'
+        The output should include 'cli'
+        The output should include 'Execute k8s web socket namespaced pod'
+      End
+
+      Example 'show unbound endpoints of token'
+        When call taikun usertoken show-endpoints "$tokenname" --unbound
+        The status should equal 0
+        The output should include 'DESCRIPTION'
+        The output should include 'CONTROLLER'
+        The output should include 'METHOD'
+        The output should include 'PATH'
+        The output should include 'ID'
+        The output should include 'GET'
+        The output should not include 'Execute k8s web socket namespaced pod'
+      End
+End
+
+Context 'usertokenunbinding'
+      setup() {
+          tokenname="$(_rnd_name)"
+          taikun usertoken add "$tokenname" --bind-all -q
+          taikun usertoken unbind "$tokenname" --endpoints Kubernetes/POST/cli
+      }
+      BeforeAll setup
+
+      delete() {
+          taikun usertoken delete "$tokenname" -q
+      }
+      AfterAll delete
+
+      Example 'did the token unbind?'
+        When call taikun usertoken show-endpoints "$tokenname"
+        The status should equal 0
+        The output should include 'DESCRIPTION'
+        The output should include 'Kubernetes'
+        The output should include 'POST'
+        The output should not include 'Execute k8s web socket namespaced pod'
+      End
+
+      Example 'bind unbound endpoint'
+        When call taikun usertoken bind "$tokenname" --endpoints Kubernetes/POST/cli
+        The status should equal 0
+        The output should include 'Operation was successful.'
+      End
 End
