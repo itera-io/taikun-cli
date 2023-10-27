@@ -18,8 +18,8 @@ var infoFields = list.ListFields
 func NewCmdInfo() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "info [user-id]",
-		Short: "Retrieve a user's information",
-		Long:  "Retrieve a user's information (yours if no user ID is specified)",
+		Short: "Retrieve information about usertoken",
+		Long:  "Retrieve information about usertoken (shows all the bound endpoints)",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
