@@ -38,7 +38,6 @@ func NewCmdUnbind() *cobra.Command {
 	complete.CompleteArgsWithUserTokenName(&cmd)
 
 	cmd.Flags().StringSliceVar(&opts.Endpoints, "endpoints", []string{}, "Endpoints the user token have access to")
-	//cmdutils.MarkFlagRequired(&cmd, "endpoints")
 	cmdutils.SetFlagCompletionFunc(&cmd, "endpoints", complete.EndpointsCompleteFunc)
 	cmd.Flags().BoolVar(&opts.UnBindAll, "unbind-all", false, "Enable to unbind all available endpoints")
 
@@ -64,7 +63,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 		var endpoints []taikuncore.AvailableEndpointData
 		for i := 0; i < len(opts.Endpoints); i++ {
 			// Find each endpoint from string
-			endpoint, stringToEndpointError := complete.StringToEndpointRemoveFormat(opts.Endpoints[i], opts.TokenID)
+			endpoint, stringToEndpointError := complete.StringToEndpointFormat(opts.Endpoints[i], opts.TokenID)
 			if stringToEndpointError != nil {
 				return stringToEndpointError
 			}
@@ -74,7 +73,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 		body.Endpoints = endpoints
 	}
 
-	if opts.UnBindAll == true {
+	if opts.UnBindAll {
 		// Get all bound endpoints
 		allEndpoints, endpointsError := complete.GetAllBindingEndpoints(opts.TokenID, false) // Get all bound endpoints
 		if endpointsError != nil {

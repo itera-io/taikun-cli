@@ -82,7 +82,7 @@ func addRun(opts *AddOptions) (err error) {
 		var endpoints []taikuncore.AvailableEndpointData
 		for i := 0; i < len(opts.Endpoints); i++ {
 			// Find each endpoint from string
-			endpoint, stringToEndpointError := complete.StringToEndpointFormat(opts.Endpoints[i])
+			endpoint, stringToEndpointError := complete.StringToEndpointFormat(opts.Endpoints[i], "")
 			if stringToEndpointError != nil {
 				return stringToEndpointError
 			}
@@ -92,7 +92,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Setting all endpoints
-	if opts.BindAll == true {
+	if opts.BindAll {
 		// Get all endpoints
 		allEndpoints, endpointsError := complete.GetAllEndpoints()
 		if endpointsError != nil {

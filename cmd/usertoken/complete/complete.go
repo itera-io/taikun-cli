@@ -60,7 +60,7 @@ func GetAllBindingEndpoints(tokenId string, unboundEndpoints bool) ([]taikuncore
 	myApiClient := tk.NewClient()
 	limit := int32(2000)
 	myRequest := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit).Id(tokenId)
-	if unboundEndpoints == true {
+	if unboundEndpoints {
 		// Get only unbound endpoints (for binding)
 		myRequest = myRequest.IsAdd(true)
 	} else {
@@ -89,39 +89,25 @@ func GetAllBindingEndpoints(tokenId string, unboundEndpoints bool) ([]taikuncore
 	return endpoints, nil
 }
 
-func StringToEndpointFormat(endpoint string) (*taikuncore.AvailableEndpointData, error) {
+func StringToEndpointFormat(endpoint string, usertokenId string) (*taikuncore.AvailableEndpointData, error) {
 	myApiClient := tk.NewClient()
 	limit := int32(2000)
-	data, response, err := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit).Execute()
+	myRequest := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).IsAdd(false).Limit(limit)
+
+	// When unbinding I need to get only one specific token.
+	if usertokenId != "" {
+		myRequest = myRequest.Id(usertokenId)
+	}
+
+	// Send request
+	data, response, err := myRequest.Execute()
 	if err != nil {
 		return nil, tk.CreateError(response, err)
 	}
+
+	// Search all tokens got for the input string
 	for i := 0; i < len(data.GetData()); i++ {
 		result := data.GetData()[i]
-		if endpoint == result.GetController()+"/"+result.GetMethod()+"/"+result.GetPath() {
-			res := taikuncore.AvailableEndpointData{}
-			res.SetController(result.GetController())
-			res.SetDescription(result.GetDescription())
-			res.SetId(-1)
-			res.SetMethod(result.GetMethod())
-			res.SetPath(result.GetPath())
-			return &res, nil
-		}
-	}
-
-	return nil, fmt.Errorf("Endpoint '%s' was malformed and could not be parsed.", endpoint)
-}
-
-func StringToEndpointRemoveFormat(endpoint string, usertokenId string) (*taikuncore.AvailableEndpointData, error) {
-	myApiClient := tk.NewClient()
-	limit := int32(2000)
-	data, response, err := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).IsAdd(false).Id(usertokenId).Limit(limit).Execute()
-	if err != nil {
-		return nil, tk.CreateError(response, err)
-	}
-	for i := 0; i < len(data.GetData()); i++ {
-		result := data.GetData()[i]
-		//fmt.Println(result.GetController(), result.GetMethod(), result.GetPath())
 		if endpoint == result.GetController()+"/"+result.GetMethod()+"/"+result.GetPath() {
 			res := taikuncore.AvailableEndpointData{}
 			res.SetController(result.GetController())
@@ -133,39 +119,12 @@ func StringToEndpointRemoveFormat(endpoint string, usertokenId string) (*taikunc
 		}
 	}
 
-	return nil, fmt.Errorf("Endpoint '%s' was malformed and could not be parsed or this endpoint is already unbound.", endpoint)
-}
-
-func StringToEndpointBindFormat(endpoint string) (*taikuncore.AvailableEndpointData, error) {
-	myApiClient := tk.NewClient()
-	limit := int32(2000)
-	data, response, err := myApiClient.Client.UserTokenAPI.UsertokenAvailableEndpoints(context.TODO()).Limit(limit).Execute()
-	if err != nil {
-		return nil, tk.CreateError(response, err)
-	}
-	for i := 0; i < len(data.GetData()); i++ {
-		result := data.GetData()[i]
-		if endpoint == result.GetController()+"/"+result.GetMethod()+"/"+result.GetPath() {
-			res := taikuncore.AvailableEndpointData{}
-			res.SetController(result.GetController())
-			res.SetDescription(result.GetDescription())
-			res.SetId(-1)
-			res.SetMethod(result.GetMethod())
-			res.SetPath(result.GetPath())
-			return &res, nil
-		}
-	}
-
-	return nil, fmt.Errorf("Endpoint '%s' was malformed and could not be parsed or this endpoint is already bound.", endpoint)
+	return nil, fmt.Errorf("Endpoint '%s' was malformed and could not be parsed or this endpoint is already bound/unbound.", endpoint)
 }
 
 func EndpointFormatToString(res taikuncore.EndpointElements) string {
 	return res.GetController() + "/" + res.GetMethod() + "/" + res.GetPath()
 }
-
-//func EndpointFormatToString(res models.EndpointElements) string {
-//	return res.Controller + "/" + res.Method + "/" + res.Path
-//}
 
 func CompleteArgsWithUserTokenName(cmd *cobra.Command) {
 	cmdutils.SetArgsCompletionFunc(cmd,

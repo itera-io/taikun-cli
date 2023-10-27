@@ -63,7 +63,7 @@ func bindRun(opts *BindOptions) (err error) {
 		var endpoints []taikuncore.AvailableEndpointData
 		for i := 0; i < len(opts.Endpoints); i++ {
 			// Find each endpoint from string
-			endpoint, stringToEndpointError := complete.StringToEndpointBindFormat(opts.Endpoints[i])
+			endpoint, stringToEndpointError := complete.StringToEndpointFormat(opts.Endpoints[i], "")
 			if stringToEndpointError != nil {
 				return stringToEndpointError
 			}
@@ -72,7 +72,7 @@ func bindRun(opts *BindOptions) (err error) {
 		body.Endpoints = endpoints
 	}
 
-	if opts.BindAll == true {
+	if opts.BindAll {
 		// Get all bound endpoints
 		allEndpoints, endpointsError := complete.GetAllBindingEndpoints(opts.TokenID, true) // Get all unbound endpoints
 		if endpointsError != nil {
