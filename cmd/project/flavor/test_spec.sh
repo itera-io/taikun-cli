@@ -42,11 +42,11 @@ Context 'project/flavor'
       The status should equal 0
       The lines of output should equal 3
       The output should include "OPENSTACK"
-      The output should include "$flavor"
+      The output should include "$flavors"
     End
 
     Example 'unbind flavor'
-      When call taikun project flavor unbound $(taikun project flavor list "$pid" --no-decorate | cut -d' ' -f1 | xargs)
+      When call taikun project flavor unbind $(taikun project flavor list "$pid" --no-decorate | cut -d' ' -f1 | xargs)
       The status should equal 0
       The lines of output should equal 1
       The output should include "Operation was successful."
