@@ -9,6 +9,9 @@ _rnd_number() {
   shuf --echo --repeat --head-count=6 {1..9} | tr -d '\n'
 }
 
+# Autoscaler flavor
+AUTOSCALER_FLAVOR="m1.extra_tiny"
+
 spec_helper_precheck() {
   : minimum_version "0.28.1"
 }
