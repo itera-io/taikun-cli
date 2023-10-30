@@ -65,8 +65,6 @@ func addRun(opts *AddOptions) (err error) {
 		return tk.CreateError(response, err)
 	}
 
-	// out.PrintResult(response, addFields) // Probably will not work #FIXME
-	//out.PrintStandardSuccess()
-	return out.PrintResult(response, addFields)
-
+	out.PrintStandardSuccess()
+	return
 }

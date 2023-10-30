@@ -10,6 +10,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -41,6 +42,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	ProjectID int32
+	Limit     int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -60,6 +62,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "backups", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -69,14 +72,36 @@ func NewCmdList() *cobra.Command {
 func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.BackupPolicyAPI.BackupListAllBackups(context.TODO(), opts.ProjectID)
+
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	data, response, err := myRequest.Execute()
-	if err != nil {
-		return tk.CreateError(response, err)
+	var backups = make([]taikuncore.CBackupDto, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		backups = append(backups, data.GetData()...)
+
+		count := int32(len(backups))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
+
+		if count == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(count)
 	}
-	return out.PrintResults(data.GetData(), listFields) // Are you sure about missing pagination? #FIXME
+
+	if opts.Limit != 0 && int32(len(backups)) > opts.Limit {
+		backups = backups[:opts.Limit]
+	}
+
+	return out.PrintResults(backups, listFields)
 
 }
