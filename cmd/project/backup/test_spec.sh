@@ -32,7 +32,7 @@ Context 'project/backup'
 
   Context
     enable_backup() {
-      $(taikun project backup enable "$pid" -b $bid -q)
+      taikun project backup enable "$pid" -b $bid -q
     }
     Before 'enable_backup'
 
@@ -45,7 +45,7 @@ Context 'project/backup'
 
   Context
     enable_and_disable_backup() {
-      $(taikun project backup enable "$pid" -b $bid -q)
+      taikun project backup enable "$pid" -b $bid -q
       taikun project backup disable "$pid" -q
     }
     Before 'enable_and_disable_backup'
