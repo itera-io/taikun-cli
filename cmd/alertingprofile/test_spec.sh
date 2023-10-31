@@ -47,7 +47,7 @@ Context 'alertingprofile'
       add_profile() {
         name="$(_rnd_name)"
         apid=$(taikun alerting-profile add "$name" --reminder daily -o "$oid" -I | xargs)
-        taikun alerting-profile lock "$apid"
+        taikun alerting-profile lock "$apid" -q
       }
       BeforeAll 'add_profile'
 
