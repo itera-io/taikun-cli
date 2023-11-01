@@ -14,8 +14,8 @@ Context 'accessprofile/add'
 
   Example 'basic access profile'
     run() {
-      id=$(taikun access-profile add "$name" -o "$oid" -I | xargs)
-      taikun access-profile list | grep "$id"
+      taikun access-profile add "$name" -o "$oid" -q
+      taikun access-profile list
     }
 
     When call run
@@ -25,7 +25,7 @@ Context 'accessprofile/add'
 
   Context
     add_access_profile() {
-      id=$(taikun access-profile add "$name" -o "$oid" -I | xargs)
+      taikun access-profile add "$name" -o "$oid" -q
     }
     Before 'add_access_profile'
 

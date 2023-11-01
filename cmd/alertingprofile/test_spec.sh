@@ -57,7 +57,7 @@ Context 'alertingprofile'
       AfterAll 'del_profile'
 
       list_profile(){
-        taikun alerting-profile list -o "$oid" --columns id,name,reminder,lock --no-decorate | grep "$pid"
+        taikun alerting-profile list -o "$oid" --columns id,name,reminder,lock --no-decorate
       }
 
       Example 'list locked'

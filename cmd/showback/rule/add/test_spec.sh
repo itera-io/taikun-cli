@@ -25,7 +25,7 @@ Context 'showback/rule/add'
 
     Example 'basic showback rule'
       list() {
-        taikun showback rule list | grep "$id"
+        taikun showback rule list -o "$oid" --no-decorate
       }
 
       When call list

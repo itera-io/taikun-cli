@@ -14,7 +14,7 @@ Context 'showback/credential'
   AfterAll 'cleanup'
 
   list_cred(){
-    taikun showback credential list | grep "$cname"
+    taikun showback credential list -o "$oid" --no-decorate
   }
 
   Example 'lock already locked'

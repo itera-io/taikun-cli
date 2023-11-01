@@ -17,7 +17,7 @@ Context 'project/set/expiration'
     AfterAll 'cleanup'
 
     list_project(){
-      taikun project list -o "$oid" -C id,name,org,expires,delete-on-expiration | grep "$projectname"
+      taikun project list -o "$oid" -C id,name,org,expires,delete-on-expiration --no-decorate
     }
 
     Example 'list no expiration'

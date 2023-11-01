@@ -23,7 +23,7 @@ Context 'project/quota'
   AfterAll 'cleanup'
 
   list_project(){
-    taikun project quota list | grep "$pid"
+    taikun project quota list -o "$oid" --no-decorate
   }
 
   Example 'list quota for my project'
