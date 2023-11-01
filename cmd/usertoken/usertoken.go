@@ -2,6 +2,7 @@ package usertoken
 
 import (
 	"github.com/itera-io/taikun-cli/cmd/usertoken/add"
+	"github.com/itera-io/taikun-cli/cmd/usertoken/bearer"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/bind"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/list"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/remove"
@@ -22,6 +23,7 @@ func NewCmdUserToken() *cobra.Command {
 	cmd.AddCommand(bind.NewCmdBind())
 	cmd.AddCommand(unbind.NewCmdUnbind())
 	cmd.AddCommand(showendpoints.NewCmdShowendpoints())
+	cmd.AddCommand(bearer.NewCmdBearer())
 
 	return cmd
 }

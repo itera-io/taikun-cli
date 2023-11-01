@@ -4,17 +4,12 @@ go 1.17
 
 require (
 	github.com/go-openapi/strfmt v0.21.7
-	github.com/itera-io/taikungoclient v0.0.0-20231024102014-2547653104f9
-	github.com/itera-io/taikungoclient/client v0.0.0-20231024102014-2547653104f9
-	github.com/itera-io/taikungoclient/showbackclient v0.0.0-20231024102014-2547653104f9
+	github.com/itera-io/taikungoclient v0.0.0-20231101094350-b236691906eb
+	github.com/itera-io/taikungoclient/client v0.0.0-20231101094350-b236691906eb
+	github.com/itera-io/taikungoclient/showbackclient v0.0.0-20231101094350-b236691906eb
 	github.com/jedib0t/go-pretty/v6 v6.4.8
 	github.com/spf13/cobra v1.7.0
 )
-
-//replace github.com/itera-io/taikungoclient => /home/radek/taikun/taikun-cli/taikungoclient-radek-repo
-//replace github.com/itera-io/taikungoclient => /home/radek/taikun/taikun-cli/taikungoclient-official
-//replace github.com/itera-io/taikungoclient/client => /home/radek/taikun/taikun-cli/taikungoclient-official/client
-//replace github.com/itera-io/taikungoclient/showbackclient => /home/radek/taikun/taikun-cli/taikungoclient-official/showbackclient
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
