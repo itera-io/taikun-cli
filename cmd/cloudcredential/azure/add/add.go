@@ -25,9 +25,6 @@ var addFields = fields.New(
 		field.NewVisible(
 			"LOCATION", "azureLocation",
 		),
-		field.NewVisible(
-			"AZ-COUNT", "azCount",
-		),
 		field.NewHidden(
 			"CLIENT-ID", "azureClientId",
 		),
