@@ -14,28 +14,34 @@ Context 'project/add'
 
     AfterAll 'cleanup'
 
-    Context
+    Context 'with autoscaler default'
         autoscaler_default_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "m1.extra_tiny" -I)
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I | xargs )
         }
+        BeforeAll 'autoscaler_default_project'
 
-        cleanup() {
+        cleanup_project() {
             if ! taikun project delete "$pid" -q 2>/dev/null; then
                 taikun project delete --force "$pid" -q 2>/dev/null || true
             fi
         }
+        AfterAll 'cleanup_project'
 
-        After 'cleanup'
-
-        Example 'basic autoscaler project'
-            When call autoscaler_default_project
+        Example 'test project info command'
+            When call taikun project info "$pid"
             The status should equal 0
+            The lines of output should equal 31
+            The output should include "K8S-PROFILE"
+            The output should include "NAME"
+            The output should include "$oid"
+            The output should include "Unlocked"
         End
+
     End
 
-    Context
+    Context 'with autoscaler'
         autoscaler_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --autoscaler  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "m1.extra_tiny" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --autoscaler  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
         }
 
         cleanup() {
@@ -52,9 +58,9 @@ Context 'project/add'
         End
     End
 
-    Context
+    Context 'without autoscaler'
         not_autoscaler_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid"  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "m1.extra_tiny" -I)
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid"  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I)
             taikun project list -o "$oid" --limit 1 --format json
             if ! taikun project delete "$pid" -q 2>/dev/null; then
                 taikun project delete --force "$pid" -q 2>/dev/null || true

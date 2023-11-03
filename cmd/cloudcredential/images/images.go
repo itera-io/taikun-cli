@@ -109,8 +109,21 @@ func getImages(opts *ImagesOptions) (images interface{}, err error) {
 
 func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 	myApiClient := tk.NewClient()
+
+	// Get owners
+	data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsOwners(context.TODO()).Execute()
+	if err != nil {
+		return nil, tk.CreateError(response, err)
+	}
+	owners := make([]string, 0)
+	for i := 0; i < len(data); i++ {
+		owners = append(owners, data[i].GetId())
+	}
+
+	// Get images
 	body := taikuncore.AwsImagesPostListCommand{
 		CloudId: &opts.CloudCredentialID,
+		Owners:  owners,
 	}
 
 	myRequest := myApiClient.Client.ImagesAPI.ImagesAwsImagesList(context.TODO())

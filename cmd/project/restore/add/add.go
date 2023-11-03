@@ -4,27 +4,26 @@ import (
 	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikun-cli/utils/out/field"
-	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
-var addFields = fields.New(
-	[]*field.Field{
-		field.NewVisible(
-			"ID", "projectId",
-		),
-		field.NewVisible(
-			"BACKUP-NAME", "backupName",
-		),
-		field.NewVisible(
-			"RESTORE-NAME", "restoreName",
-		),
-	},
-)
+// New generated api client does not return data
+//var addFields = fields.New(
+//	[]*field.Field{
+//		field.NewVisible(
+//			"ID", "projectId",
+//		),
+//		field.NewVisible(
+//			"BACKUP-NAME", "backupName",
+//		),
+//		field.NewVisible(
+//			"RESTORE-NAME", "restoreName",
+//		),
+//	},
+//)
 
 type AddOptions struct {
 	IncludeNamespaces []string
@@ -74,8 +73,7 @@ func addRun(opts *AddOptions) (err error) {
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
-	//out.PrintResult(response, addFields) // Probably will not work. Come back and #FIXME
-	// out.PrintStandardSuccess()
-	return out.PrintResult(response, addFields)
 
+	out.PrintStandardSuccess()
+	return
 }

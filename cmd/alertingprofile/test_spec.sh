@@ -43,4 +43,54 @@ Context 'alertingprofile'
       End
     End
 
+    Context 'lock and unlock'
+      add_profile() {
+        name="$(_rnd_name)"
+        apid=$(taikun alerting-profile add "$name" --reminder daily -o "$oid" -I | xargs)
+        taikun alerting-profile lock "$apid" -q
+      }
+      BeforeAll 'add_profile'
+
+      del_profile() {
+        taikun alerting-profile delete "$apid" -q
+      }
+      AfterAll 'del_profile'
+
+      list_profile(){
+        taikun alerting-profile list -o "$oid" --columns id,name,reminder,lock --no-decorate
+      }
+
+      Example 'list locked'
+        When call list_profile
+        The status should equal 0
+        The lines of output should equal 2 # counting the default
+        The output should include "$name"
+        The output should include "Daily"
+        The output should include "Locked"
+        The output should include "Unlocked" # Default in Unlocked
+      End
+
+      Example 'lock with already locked'
+        When call taikun alerting-profile lock "$apid"
+        The status should equal 1
+        The stderr should include "Alerting profile already lock"
+      End
+
+      Example 'unlock'
+        When call taikun alerting-profile unlock "$apid"
+        The status should equal 0
+        The output should include "Operation was successful"
+      End
+
+      Example 'list unlocked'
+        When call list_profile
+        The status should equal 0
+        The lines of output should equal 2 # counting the default
+        The output should include "$name"
+        The output should include "Daily"
+        The output should include "Unlocked"
+        The output should not include "Locked"
+      End
+
+    End
 End

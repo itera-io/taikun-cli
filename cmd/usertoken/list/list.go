@@ -75,9 +75,9 @@ func ListUserTokens(opts *ListOptions) (userTokenList []*taikuncore.UserTokensLi
 
 	// Connect to the API and retrieve data.
 	myApiClient := tk.NewClient()
-	data, _, err := myApiClient.Client.UserTokenAPI.UsertokenList(context.TODO()).Execute()
+	data, response, err := myApiClient.Client.UserTokenAPI.UsertokenList(context.TODO()).Execute()
 	if err != nil {
-		return nil, err
+		return nil, tk.CreateError(response, err)
 	}
 
 	// Initialise a new, empty slice of UserTokenListDto structs generated in models.

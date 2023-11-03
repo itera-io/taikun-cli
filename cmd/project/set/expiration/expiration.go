@@ -3,21 +3,20 @@ package expiration
 import (
 	"context"
 	"fmt"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
-	"time"
-
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/types"
 	"github.com/spf13/cobra"
+	"time"
 )
 
 type ExtendLifetimeOptions struct {
 	ProjectID          int32
 	ExpirationDate     string
 	DeleteOnExpiration bool
+	RemoveExpiration   bool
 }
 
 func NewCmdExpiration() *cobra.Command {
@@ -41,8 +40,8 @@ func NewCmdExpiration() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVarP(&opts.DeleteOnExpiration, "delete-on-expiration", "del", false, "Delete on expiration (required)")
-	cmdutils.MarkFlagRequired(&cmd, "delete-on-expiration")
+	cmd.Flags().BoolVarP(&opts.RemoveExpiration, "remove-expiration", "r", false, "Clear expiration date - project never expires.")
+	cmd.Flags().BoolVarP(&opts.DeleteOnExpiration, "delete-on-expiration", "d", false, "Delete project on expiration")
 	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s", types.ExpectedDateFormat))
 
 	return &cmd
@@ -52,13 +51,19 @@ func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
-	body := taikuncore.ProjectExtendLifeTimeCommand{
-		ProjectId:          &opts.ProjectID,
-		DeleteOnExpiration: &opts.DeleteOnExpiration,
+	body := taikuncore.ProjectExtendLifeTimeCommand{}
+	body.SetProjectId(opts.ProjectID)
+
+	if (opts.RemoveExpiration && opts.ExpirationDate != "") || (!opts.RemoveExpiration && opts.ExpirationDate == "") {
+		return fmt.Errorf("specify one --remove-expiration (-r) or --expiration-date (-e). Flags mutually exclusive.")
 	}
-	if opts.ExpirationDate != "" {
+
+	if opts.RemoveExpiration { // Remove expiration
+		body.SetDeleteOnExpiration(opts.DeleteOnExpiration)
+	} else { // Set expiration
 		expiredAt := types.StrToDateTime(opts.ExpirationDate)
 		body.SetExpireAt(time.Time(expiredAt))
+		body.SetDeleteOnExpiration(opts.DeleteOnExpiration)
 	}
 
 	// Execute a query into the API + graceful exit

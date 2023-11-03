@@ -27,7 +27,6 @@ Context 'billing/rule/organization/bind'
     }
 
     Before 'bind_org'
-
     Example 'bind an organization'
       When call taikun billing rule organization list "$id" --no-decorate
       The status should equal 0
