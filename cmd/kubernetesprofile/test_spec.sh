@@ -42,7 +42,7 @@ Context 'kubernetesprofile'
     Context 'lock/unlock'
       add_config() {
         ppid=$(taikun kubernetes-profile add "$(_rnd_name)" -o "$oid" --enable-octavia -I)
-        taikun kubernetes-profile lock "$ppid"
+        taikun kubernetes-profile lock "$ppid" -q
       }
 
       Before 'add_config'

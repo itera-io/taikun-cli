@@ -3,7 +3,7 @@ Context 'billing/credential'
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     cid=$(taikun billing credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -o "$oid" -I | xargs)
-    taikun billing credential lock "$cid"
+    taikun billing credential lock "$cid" -q
   }
   BeforeAll 'setup'
 

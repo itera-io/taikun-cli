@@ -41,7 +41,7 @@ Context 'policyprofile'
   Context 'lock/unlock'
     add_config() {
       ppid=$(taikun policy-profile add "$(_rnd_name)" -o "$oid" -I)
-      taikun policy-profile lock "$ppid"
+      taikun policy-profile lock "$ppid" -q
     }
 
     Before 'add_config'

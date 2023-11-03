@@ -66,7 +66,7 @@ Context 'usertokenbinding'
       setup() {
           tokenname="$(_rnd_name)"
           taikun usertoken add "$tokenname" -q
-          taikun usertoken bind "$tokenname" --endpoints Kubernetes/POST/cli
+          taikun usertoken bind "$tokenname" --endpoints Kubernetes/POST/cli -q
       }
       BeforeAll setup
 
@@ -106,7 +106,7 @@ Context 'usertokenunbinding'
       setup() {
           tokenname="$(_rnd_name)"
           taikun usertoken add "$tokenname" --bind-all -q
-          taikun usertoken unbind "$tokenname" --endpoints Kubernetes/POST/cli
+          taikun usertoken unbind "$tokenname" --endpoints Kubernetes/POST/cli -q
       }
       BeforeAll setup
 

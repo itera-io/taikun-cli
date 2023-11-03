@@ -3,7 +3,7 @@ Context 'backupcredential /credential'
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     cid=$(taikun backup-credential add "$cname" --s3-access-key "$S3_ACCESS_KEY_ID" --s3-endpoint "$S3_ENDPOINT" --s3-region "$S3_REGION" --s3-secret-key "$S3_SECRET_ACCESS_KEY" -o "$oid" -I | xargs)
-    taikun backup-credential lock "$cid"
+    taikun backup-credential lock "$cid" -q
   }
   BeforeAll 'setup'
 
