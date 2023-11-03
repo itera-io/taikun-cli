@@ -60,6 +60,13 @@ jobs:
           AWS_DEFAULT_REGION: eu-central-1
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
+          AZURE_TENANT: ${{ secrets.AZURE_TENANT }}
+          AZURE_SUBSCRIPTION: ${{ secrets.AZURE_SUBSCRIPTION }}
+          AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
+          AZ_COUNT: 1
+
           OS_AUTH_URL: ${{ secrets.OS_AUTH_URL }}
           OS_INTERFACE: ${{ secrets.OS_INTERFACE }}
           OS_PASSWORD: ${{ secrets.OS_PASSWORD }}
