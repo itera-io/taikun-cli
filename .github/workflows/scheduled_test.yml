@@ -16,7 +16,7 @@ jobs:
           go-version: 1.18
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         run: |
@@ -39,7 +39,7 @@ jobs:
           sudo apt install -y jq
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build
         run: |
