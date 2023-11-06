@@ -8,6 +8,7 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every weekday
       interval: "daily"
+      time: "16:15"
     target-branch: "dev"
 
   # Maintain dependencies for Go modules
@@ -16,4 +17,5 @@ updates:
     schedule:
       # Check for updates to Go modules every weekday
       interval: "daily"
+      time: "16:15"
     target-branch: "dev"
