@@ -7,7 +7,7 @@ require (
 	github.com/itera-io/taikungoclient v0.0.0-20231101094350-b236691906eb
 	github.com/itera-io/taikungoclient/client v0.0.0-20231101094350-b236691906eb
 	github.com/itera-io/taikungoclient/showbackclient v0.0.0-20231101094350-b236691906eb
-	github.com/jedib0t/go-pretty/v6 v6.4.8
+	github.com/jedib0t/go-pretty/v6 v6.4.9
 	github.com/spf13/cobra v1.8.0
 )
 
