@@ -1,4 +1,4 @@
-Context 'usertoken'
+Context 'usertoken/create'
 
     setup() {
         tokenname="$(_rnd_name)"
@@ -62,7 +62,7 @@ Context 'usertoken'
 
 End
 
-Context 'usertokenbinding'
+Context 'usertoken/binding'
       setup() {
           tokenname="$(_rnd_name)"
           taikun usertoken add "$tokenname" -q
@@ -102,7 +102,7 @@ Context 'usertokenbinding'
       End
 End
 
-Context 'usertokenunbinding'
+Context 'usertoken/unbinding'
       setup() {
           tokenname="$(_rnd_name)"
           taikun usertoken add "$tokenname" --bind-all -q
