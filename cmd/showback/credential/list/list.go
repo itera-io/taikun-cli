@@ -33,9 +33,6 @@ var listFields = fields.New(
 		field.NewVisible(
 			"USERNAME", "username",
 		),
-		field.NewHidden(
-			"PASSWORD", "password",
-		),
 		field.NewVisible(
 			"LOCK", "isLocked",
 		),

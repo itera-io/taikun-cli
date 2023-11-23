@@ -30,9 +30,6 @@ var listFields = fields.New(
 		field.NewVisible(
 			"USERNAME", "prometheusUsername",
 		),
-		field.NewHidden(
-			"PASSWORD", "prometheusPassword",
-		),
 		field.NewVisible(
 			"URL", "prometheusUrl",
 		),
