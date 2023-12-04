@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/go-openapi/strfmt v0.21.7
-	github.com/itera-io/taikungoclient v0.0.0-20231201074746-81c9548ae10c
+	github.com/itera-io/taikungoclient v0.0.0-20231202000304-2bb372392a43
 	github.com/jedib0t/go-pretty/v6 v6.4.9
 	github.com/spf13/cobra v1.8.0
 )
