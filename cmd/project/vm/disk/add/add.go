@@ -2,7 +2,6 @@ package add
 
 import (
 	"context"
-	"errors"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -42,8 +41,6 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	AwsDeviceName       string
-	AzureLunID          int32
 	Name                string
 	OpenStackVolumeType string
 	Size                int64
@@ -62,29 +59,9 @@ func NewCmdAdd() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			cloudSpecificOptionsSet := 0
-			if opts.AwsDeviceName != "" {
-				cloudSpecificOptionsSet++
-			}
-			if opts.AzureLunID != 0 {
-				cloudSpecificOptionsSet++
-			}
-			if opts.OpenStackVolumeType != "" {
-				cloudSpecificOptionsSet++
-			}
-			if cloudSpecificOptionsSet == 0 {
-				return errors.New("must set one of --aws-device-name, --azure-lun-id and --openstack-volume-type")
-			}
-			if cloudSpecificOptionsSet > 1 {
-				return errors.New("must set only one of --aws-device-name, --azure-lun-id and --openstack-volume-type")
-			}
 			return addRun(&opts)
 		},
 	}
-
-	cmd.Flags().StringVarP(&opts.AwsDeviceName, "aws-device-name", "d", "", "Device name (for AWS only")
-
-	cmd.Flags().Int32VarP(&opts.AzureLunID, "azure-lun-id", "l", 0, "LUN ID (for Azure only)")
 
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
@@ -110,11 +87,7 @@ func addRun(opts *AddOptions) (err error) {
 		Name:           *taikuncore.NewNullableString(&opts.Name),
 		Size:           &opts.Size,
 	}
-	if opts.AwsDeviceName != "" {
-		body.SetDeviceName(opts.AwsDeviceName)
-	} else if opts.AzureLunID != 0 {
-		body.SetLunId(opts.AzureLunID)
-	} else if opts.OpenStackVolumeType != "" {
+	if opts.OpenStackVolumeType != "" {
 		body.SetVolumeType(opts.OpenStackVolumeType)
 	}
 
