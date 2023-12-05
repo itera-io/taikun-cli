@@ -6,7 +6,6 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      # Check for updates to GitHub Actions every weekday
       interval: "weekly"
       day: "thursday"
       time: "03:00"
@@ -16,7 +15,6 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      # Check for updates to Go modules every weekday
       interval: "weekly"
       day: "thursday"
       time: "03:00"
