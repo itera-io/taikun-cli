@@ -2,7 +2,7 @@ name: Scheduled Tests
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 21 * * 0,3
+    - cron: 0 2 * * 5
 
 jobs:
   build:
