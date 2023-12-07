@@ -59,6 +59,7 @@ jobs:
           AWS_AZ_COUNT: 1
           AWS_DEFAULT_REGION: eu-central-1
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_ENDPOINT: ${{ secrets.AWS_S3_ENDPOINT }}
 
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
