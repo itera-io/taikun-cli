@@ -45,6 +45,9 @@ var listFields = fields.New(
 		field.NewHidden(
 			"CREATED-BY", "createdBy",
 		),
+		field.NewVisible(
+			"NVIDIA-GPU", "nvidiaGpuOperatorEnabled",
+		),
 	},
 )
 

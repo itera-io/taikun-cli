@@ -46,6 +46,9 @@ var addFields = fields.New(
 		field.NewHidden(
 			"CREATED-BY", "createdBy",
 		),
+		field.NewVisible(
+			"NVIDIA-GPU", "nvidiaGpuOperatorEnabled",
+		),
 	},
 )
 
@@ -57,6 +60,7 @@ type AddOptions struct {
 	OrganizationID           int32
 	TaikunLBEnabled          bool
 	DisableUniqueClusterName bool
+	NvidiaGpuOperatorEnabled bool
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -78,6 +82,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
 	cmd.Flags().BoolVar(&opts.DisableUniqueClusterName, "disable-unique-cluster-name", false, "Disable unique cluster name, the cluster name will be cluster.local")
+	cmd.Flags().BoolVar(&opts.NvidiaGpuOperatorEnabled, "gpu", false, "Enable support for Nvidia GPU operator")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -90,7 +95,6 @@ func addRun(opts *AddOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	useUniqueName := !opts.DisableUniqueClusterName
 	body := taikuncore.CreateKubernetesProfileCommand{
 		Name:                    *taikuncore.NewNullableString(&opts.Name),
 		OctaviaEnabled:          &opts.OctaviaEnabled,
@@ -99,6 +103,13 @@ func addRun(opts *AddOptions) (err error) {
 		TaikunLBEnabled:         &opts.TaikunLBEnabled,
 		AllowSchedulingOnMaster: &opts.AllowSchedulingOnMaster,
 		UniqueClusterName:       &useUniqueName,
+		Name:                     *taikuncore.NewNullableString(&opts.Name),
+		OctaviaEnabled:           &opts.OctaviaEnabled,
+		ExposeNodePortOnBastion:  &opts.ExposeNodePortOnBastion,
+		OrganizationId:           *taikuncore.NewNullableInt32(&opts.OrganizationID),
+		TaikunLBEnabled:          &opts.TaikunLBEnabled,
+		AllowSchedulingOnMaster:  &opts.AllowSchedulingOnMaster,
+		NvidiaGpuOperatorEnabled: &opts.NvidiaGpuOperatorEnabled,
 	}
 
 	// Execute a query into the API + graceful exit
