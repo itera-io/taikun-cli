@@ -59,7 +59,7 @@ type AddOptions struct {
 	OctaviaEnabled           bool
 	OrganizationID           int32
 	TaikunLBEnabled          bool
-	DisableUniqueClusterName bool
+	UniqueClusterNameEnabled bool
 	NvidiaGpuOperatorEnabled bool
 }
 
@@ -81,7 +81,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.ExposeNodePortOnBastion, "expose-node-port-on-bastion", false, "Expose Node Port on Bastion")
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
-	cmd.Flags().BoolVar(&opts.DisableUniqueClusterName, "disable-unique-cluster-name", false, "Disable unique cluster name, the cluster name will be cluster.local")
+	cmd.Flags().BoolVar(&opts.UniqueClusterNameEnabled, "unique-cluster-name", false, "Enable unique cluster name, the cluster name will not be cluster.local")
 	cmd.Flags().BoolVar(&opts.NvidiaGpuOperatorEnabled, "gpu", false, "Enable support for Nvidia GPU operator")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
@@ -96,19 +96,13 @@ func addRun(opts *AddOptions) (err error) {
 
 	// Prepare the arguments for the query
 	body := taikuncore.CreateKubernetesProfileCommand{
-		Name:                    *taikuncore.NewNullableString(&opts.Name),
-		OctaviaEnabled:          &opts.OctaviaEnabled,
-		ExposeNodePortOnBastion: &opts.ExposeNodePortOnBastion,
-		OrganizationId:          *taikuncore.NewNullableInt32(&opts.OrganizationID),
-		TaikunLBEnabled:         &opts.TaikunLBEnabled,
-		AllowSchedulingOnMaster: &opts.AllowSchedulingOnMaster,
-		UniqueClusterName:       &useUniqueName,
 		Name:                     *taikuncore.NewNullableString(&opts.Name),
 		OctaviaEnabled:           &opts.OctaviaEnabled,
 		ExposeNodePortOnBastion:  &opts.ExposeNodePortOnBastion,
 		OrganizationId:           *taikuncore.NewNullableInt32(&opts.OrganizationID),
 		TaikunLBEnabled:          &opts.TaikunLBEnabled,
 		AllowSchedulingOnMaster:  &opts.AllowSchedulingOnMaster,
+		UniqueClusterName:        &opts.UniqueClusterNameEnabled,
 		NvidiaGpuOperatorEnabled: &opts.NvidiaGpuOperatorEnabled,
 	}
 
