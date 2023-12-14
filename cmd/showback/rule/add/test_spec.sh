@@ -23,6 +23,11 @@ Context 'showback/rule/add'
     }
     BeforeAll 'add_rule'
 
+    delete_rule() {
+      taikun showback rule delete "$id" -q 2>/dev/null
+    }
+    AfterAll 'delete_rule'
+
     Example 'basic showback rule'
       list() {
         taikun showback rule list -o "$oid" --no-decorate
