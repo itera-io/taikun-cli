@@ -128,7 +128,7 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 
 	myRequest := myApiClient.Client.ImagesAPI.ImagesAwsImagesList(context.TODO())
 
-	images := make([]taikuncore.AwsExtendedImagesListDto, 0)
+	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for {
 		data, response, responseErr := myRequest.AwsImagesPostListCommand(body).Execute()
