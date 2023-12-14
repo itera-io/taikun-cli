@@ -51,6 +51,9 @@ var addFields = fields.New(
 		field.NewHidden(
 			"PROJECT-ID", "projectId",
 		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
+		),
 	},
 )
 
@@ -62,6 +65,7 @@ type AddOptions struct {
 	Name                 string
 	ProjectID            int32
 	Role                 string
+	WasmEnabled          bool
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -93,6 +97,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "flavor")
 	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", cmdutils.FlavorCompletionFunc)
 
+	cmd.Flags().BoolVar(&opts.WasmEnabled, "enable-wasm", false, "Enable support for WASM")
+
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
 
@@ -117,6 +123,7 @@ func addRun(opts *AddOptions) (err error) {
 		Name:             *taikuncore.NewNullableString(&opts.Name),
 		ProjectId:        &opts.ProjectID,
 		Role:             &serverRole,
+		WasmEnabled:      &opts.WasmEnabled,
 	}
 	if len(opts.KubernetesNodeLabels) != 0 {
 		body.KubernetesNodeLabels, err = parseKubernetesNodeLabelsFlag(opts.KubernetesNodeLabels)

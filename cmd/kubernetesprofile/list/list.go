@@ -48,6 +48,9 @@ var listFields = fields.New(
 		field.NewVisible(
 			"NVIDIA-GPU", "nvidiaGpuOperatorEnabled",
 		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
+		),
 	},
 )
 

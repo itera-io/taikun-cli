@@ -49,6 +49,9 @@ var addFields = fields.New(
 		field.NewVisible(
 			"NVIDIA-GPU", "nvidiaGpuOperatorEnabled",
 		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
+		),
 	},
 )
 
@@ -61,6 +64,7 @@ type AddOptions struct {
 	TaikunLBEnabled          bool
 	UniqueClusterNameEnabled bool
 	NvidiaGpuOperatorEnabled bool
+	WasmEnabled              bool
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -82,7 +86,8 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
 	cmd.Flags().BoolVar(&opts.UniqueClusterNameEnabled, "unique-cluster-name", false, "Enable unique cluster name, the cluster name will not be cluster.local")
-	cmd.Flags().BoolVar(&opts.NvidiaGpuOperatorEnabled, "gpu", false, "Enable support for Nvidia GPU operator")
+	cmd.Flags().BoolVar(&opts.NvidiaGpuOperatorEnabled, "enable-gpu", false, "Enable support for Nvidia GPU operator")
+	cmd.Flags().BoolVar(&opts.WasmEnabled, "enable-wasm", false, "Enable support for WASM")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -104,6 +109,7 @@ func addRun(opts *AddOptions) (err error) {
 		AllowSchedulingOnMaster:  &opts.AllowSchedulingOnMaster,
 		UniqueClusterName:        &opts.UniqueClusterNameEnabled,
 		NvidiaGpuOperatorEnabled: &opts.NvidiaGpuOperatorEnabled,
+		WasmEnabled:              &opts.WasmEnabled,
 	}
 
 	// Execute a query into the API + graceful exit

@@ -4,7 +4,9 @@ Context 'project/k8s/add'
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs )
     ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I | xargs)
     flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
-    pid=$(taikun project add "$(_rnd_name)" -o "$oid" --cloud-credential-id "$ccid" --flavors "$flavor" -I | xargs)
+    profilename="$(_rnd_name)"
+    kid=$(taikun kubernetes-profile add "$profilename" -o "$oid" --enable-wasm --enable-octavia -I)
+    pid=$(taikun project add "$(_rnd_name)" -o "$oid" --cloud-credential-id "$ccid" --flavors "$flavor" --kubernetes-profile-id "$kid" -I | xargs)
   }
   BeforeAll 'setup'
 
@@ -12,6 +14,7 @@ Context 'project/k8s/add'
     if ! taikun project delete "$pid" -q 2>/dev/null; then
       taikun project delete --force "$pid" -q 2>/dev/null || true
     fi
+    taikun kubernetes-profile delete "$kid" -q 2>/dev/null || true
     taikun cloud-credential delete "$ccid" -q 2>/dev/null || true
     taikun organization delete "$oid" -q 2>/dev/null || true
   }
@@ -19,7 +22,7 @@ Context 'project/k8s/add'
 
   Context
     add_master() {
-      msid=$(taikun project k8s add "$pid" --name master -r kubemaster -k foo=bar,bar=foo -f "$flavor" -I | xargs)
+      msid=$(taikun project k8s add "$pid" --name tk-cli-master -r kubemaster -k foo=bar,bar=foo -f "$flavor" --enable-wasm -I | xargs)
     }
     BeforeAll 'add_master'
 
@@ -28,6 +31,14 @@ Context 'project/k8s/add'
     }
     AfterAll 'remove_master'
 
+    getwasm(){
+      taikun project k8s list "$pid" --columns wasm
+    }
+
+    add_wasm_bastion() {
+      taikun project k8s add "$pid" --name tk-cli-bastion -r bastion -f "$flavor" --enable-wasm
+    }
+
     Example 'add one server'
       When call taikun project k8s list "$pid" --no-decorate
       The status should equal 0
@@ -35,11 +46,29 @@ Context 'project/k8s/add'
       The output should include 'master'
     End
 
+    Example 'See if wasm was enabled'
+      When call getwasm
+      The status should equal 0
+      The lines of output should equal 3
+      The output should include 'WASM'
+      The output should include 'Yes'
+    End
+
     Example 'add two servers with the same name'
-      When call taikun project k8s add "$pid" --name master -r kubemaster -f "$flavor"
+      When call taikun project k8s add "$pid" --name tk-cli-master -r kubemaster -f "$flavor"
       The status should equal 1
       The stderr should include 'Duplicate name occured'
     End
+
+    Example 'Try to add wasm enabled bastion'
+      When call add_wasm_bastion
+      The status should equal 1
+      The lines of output should equal 0
+      The lines of stderr should equal 1
+      The stderr should include "Wasm not available for bastion"
+      The stderr should include "400"
+    End
+
   End
 End
 
@@ -72,7 +101,7 @@ Context 'project/k8s/add'
     Example 'add one server with availability zone'
       When call taikun project k8s add "$pid" -n master --flavor "$flavor" -r kubemaster -a a
       The status should equal 0
-      The lines of output should equal 7
+      The lines of output should equal 8
       The output should include 'master'
     End
 
