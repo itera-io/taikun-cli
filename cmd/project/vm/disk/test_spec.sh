@@ -14,6 +14,7 @@ Context 'project/vm/disk'
 
   cleanup() {
     taikun project vm delete "$id" --vm-ids "$vm" -q
+    taikun standalone-profile delete "$profile" -q 2>/dev/null || true
     if ! taikun project delete "$id" -q 2>/dev/null; then
       taikun project delete --force "$id" -q 2>/dev/null || true
     fi
