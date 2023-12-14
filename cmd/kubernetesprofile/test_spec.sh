@@ -20,7 +20,8 @@ Context 'kubernetesprofile'
 
   Context 'add/delete'
     add_config() {
-      scid=$(taikun kubernetes-profile add "$(_rnd_name)" -o "$oid" --enable-octavia -I)
+      profile_name="$(_rnd_name)"
+      scid=$(taikun kubernetes-profile add "$profile_name" -o "$oid" --enable-octavia --enable-gpu --enable-wasm -I)
     }
 
     Before 'add_config'
@@ -35,6 +36,22 @@ Context 'kubernetesprofile'
       When call taikun kubernetes-profile list -o "$oid" --no-decorate
       The status should equal 0
       The lines of output should equal 2 # counting the default
+      The output should include "$scid"
+      The output should include "$profile_name"
+    End
+
+    Example 'Check if GPU got enabled'
+      When call taikun kubernetes-profile list -o "$oid" --columns=nvidia-gpu --no-decorate
+      The status should equal 0
+      The lines of output should equal 2 # counting the default
+      The output should include "Yes"
+    End
+
+    Example 'Check if Wasm got enabled'
+      When call taikun kubernetes-profile list -o "$oid" --columns=wasm --no-decorate
+      The status should equal 0
+      The lines of output should equal 2 # counting the default
+      The output should include "Yes"
     End
   End
 

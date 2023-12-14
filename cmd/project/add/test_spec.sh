@@ -30,7 +30,7 @@ Context 'project/add'
         Example 'test project info command'
             When call taikun project info "$pid"
             The status should equal 0
-            The lines of output should equal 31
+            The lines of output should equal 32
             The output should include "K8S-PROFILE"
             The output should include "NAME"
             The output should include "$oid"

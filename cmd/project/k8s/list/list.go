@@ -76,6 +76,9 @@ var listFields = fields.New(
 		field.NewHidden(
 			"LAST-MODIFIED-BY", "lastModifiedBy",
 		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
+		),
 	},
 )
 

@@ -124,6 +124,9 @@ var infoFields = fields.New(
 		field.NewVisibleWithToStringFunc(
 			"LOCK", "isLocked", out.FormatLockStatus,
 		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
+		),
 	},
 )
 
