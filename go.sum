@@ -6,13 +6,14 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-openapi/errors v0.21.0 h1:FhChC/duCnfoLj1gZ0BgaBmzhJC2SL/sJr8a2vAobSY=
 github.com/go-openapi/errors v0.21.0/go.mod h1:jxNTMUxRCKj65yb/okJGEtahVd7uvWnuWfj53bse4ho=
-github.com/go-openapi/strfmt v0.21.10 h1:JIsly3KXZB/Qf4UzvzJpg4OELH/0ASDQsyk//TTBDDk=
-github.com/go-openapi/strfmt v0.21.10/go.mod h1:vNDMwbilnl7xKiO/Ve/8H8Bb2JIInBnH+lqiw6QWgis=
+github.com/go-openapi/strfmt v0.22.0 h1:Ew9PnEYc246TwrEspvBdDHS4BVKXy/AOVsfqGDgAcaI=
+github.com/go-openapi/strfmt v0.22.0/go.mod h1:HzJ9kokGIju3/K6ap8jL+OlGAbjpSv27135Yr9OivU4=
 github.com/golang/snappy v0.0.1/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/google/go-cmp v0.5.2/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/google/uuid v1.4.0 h1:MtMxsa51/r9yyhkyLsVeVt0B+BGQZzpQiTQ4eHZ8bc4=
+github.com/google/uuid v1.5.0 h1:1p67kYwdtXjb0gL0BPiP1Av9wiZPo5A8z2cWkTZ+eyU=
+github.com/google/uuid v1.5.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/itera-io/taikungoclient v0.0.0-20231214000308-be3bd09681b2 h1:+Ou24g/aXWXc/+oqU2HVZeSfc83Ta4wIy1mlNV/SLMA=
