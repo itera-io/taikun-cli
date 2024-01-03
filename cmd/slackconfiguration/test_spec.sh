@@ -27,7 +27,7 @@ Context 'slackconfiguration'
     End
   End
 
-  Context 'add/delete'
+  Context 'add/delete, channel name with dash'
     add_config() {
       name="$(_rnd_name)"
       scid=$(taikun slack-configuration add "$name" -c cli-test -u "$SLACK_WEBHOOK" -t alert -o "$oid" -I)
@@ -48,4 +48,25 @@ Context 'slackconfiguration'
       The output should include "$name"
     End
   End
+
+  Context 'add/delete, channel name with number'
+    add_config() {
+      name="$(_rnd_name)"
+      scid=$(taikun slack-configuration add "$name" -c 4aaa -u "$SLACK_WEBHOOK" -t alert -o "$oid" -I)
+    }
+    Before 'add_config'
+
+    delete_config() {
+      taikun slack-configuration delete "$scid" -q
+    }
+    After 'delete_config'
+
+    Example 'add then delete slack config'
+      When call taikun slack-configuration list -o "$oid" --no-decorate
+      The status should equal 0
+      The lines of output should equal 1
+      The output should include "$name"
+    End
+  End
+
 End
