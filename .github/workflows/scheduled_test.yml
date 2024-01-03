@@ -97,4 +97,4 @@ jobs:
           echo $CI_JOB_URL
           shellspec --shell bash --format tap --jobs $(nproc) | tee shellspec.log
           echo 'Rerunning failed tests:'
-          if ./scripts/tests/rerun_failed_tests.sh shellspec.log; then curl -i -X POST -H "Content-Type: application/json" -d '{"username":"CLI-TEST", "text":"CLI tests PASSED SUCCESSFULLY"}' $SLACK_WEBHOOK_FEEDBACK; exit 0; else curl -i -X POST -H "Content-Type: application/json" -d '{"username":"CLI-TEST", "text":"CLI tests FAILED\n'"$CI_JOB_URL"'"}' $SLACK_WEBHOOK_FEEDBACK; exit 1; fi
+          if ./scripts/tests/rerun_failed_tests.sh shellspec.log; then exit 0; else curl -i -X POST -H "Content-Type: application/json" -d '{"username":"CLI-TEST", "text":"CLI tests FAILED\n'"$CI_JOB_URL"'"}' $SLACK_WEBHOOK_FEEDBACK; exit 1; fi
