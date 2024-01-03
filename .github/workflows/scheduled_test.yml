@@ -90,10 +90,11 @@ jobs:
           TAIKUN_PASSWORD: ${{ secrets.TAIKUN_PASSWORD }}
 
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_FEEDBACK: ${{ secrets.SLACK_WEBHOOK_FEEDBACK }}
           CI_JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
         run: |
           echo $CI_JOB_URL
           shellspec --shell bash --format tap --jobs $(nproc) | tee shellspec.log
           echo 'Rerunning failed tests:'
-          if ./scripts/tests/rerun_failed_tests.sh shellspec.log; then curl -i -X POST --data-urlencode 'payload={"channel":"dev", "username":"CLI-TEST", "text":"CLI tests PASSED SUCCESSFULLY"}' $SLACK_WEBHOOK; else curl -i -X POST --data-urlencode 'payload={"channel":"dev", "username":"CLI-TEST", "text":"CLI tests FAILED\n'"$CI_JOB_URL"'"}' $SLACK_WEBHOOK; fi
+          if ./scripts/tests/rerun_failed_tests.sh shellspec.log; then curl -i -X POST -H "Content-Type: application/json" -d '{"username":"CLI-TEST", "text":"CLI tests PASSED SUCCESSFULLY"}' $SLACK_WEBHOOK_FEEDBACK; else curl -i -X POST -H "Content-Type: application/json" -d '{"username":"CLI-TEST", "text":"CLI tests FAILED\n'"$CI_JOB_URL"'"}' $SLACK_WEBHOOK_FEEDBACK; fi
