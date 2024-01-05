@@ -52,7 +52,6 @@ func checkRun(opts *CheckOptions) (err error) {
 	body := taikuncore.CheckAwsCommand{
 		AwsAccessKeyId:     *taikuncore.NewNullableString(&opts.AWSAccessKeyID),
 		AwsSecretAccessKey: *taikuncore.NewNullableString(&opts.AWSSecretAccessKey),
-		Region:             *taikuncore.NewNullableString(&opts.AWSRegion),
 	}
 
 	// Execute a query into the API + graceful exit
