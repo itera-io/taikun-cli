@@ -5,8 +5,8 @@ on:
     - cron: 0 2 * * 5
 
 jobs:
-  call-workflow-1-in-local-repo:
-    uses: ./tests_reusable.yml
+  tests-scheduled:
+    uses: ./.github/workflows/tests_reusable.yml
     with:
       branch: dev # Scheduled tests always run from dev branch
     secrets:

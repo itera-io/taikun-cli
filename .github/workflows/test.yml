@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-workflow-1-in-local-repo:
-    uses: ./tests_reusable.yml
+  tests:
+    uses: ./.github/workflows/tests_reusable.yml
     with:
       branch: ${{ github.ref }} # Run on the branch of this PR
     secrets:
