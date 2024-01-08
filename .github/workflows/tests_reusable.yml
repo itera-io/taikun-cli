@@ -14,7 +14,6 @@ on:
 
 env:
   GO_VERSION: '1.20'
-  BRANCH: ${{ inputs.branch }}
 
 jobs:
   # CLI must build without failure
@@ -31,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.BRANCH }}
+          ref: ${{ inputs.BRANCH }}
 
       - name: Build
         run: |
@@ -46,7 +45,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.BRANCH }}
+          ref: ${{ inputs.BRANCH }}
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -69,7 +68,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.BRANCH }}
+          ref: ${{ inputs.BRANCH }}
       - name: Check for flag conflicts
         run: |
           ./scripts/docs/gen_markdown.sh
@@ -95,7 +94,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.BRANCH }}
+          ref: ${{ inputs.BRANCH }}
 
       - name: Build
         run: |
