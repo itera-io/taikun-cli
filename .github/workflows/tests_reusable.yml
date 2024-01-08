@@ -78,7 +78,7 @@ jobs:
   test:
     name: Test
     runs-on: self-hosted
-    needs: build
+    needs: [build,golangci,flag_conflicts]
     timeout-minutes: 60
     steps:
       - name: Set up Go
