@@ -104,9 +104,9 @@ jobs:
       - name: Run shellspec
         env:
           # Endpoint and login, set by parent workflow.
-          TAIKUN_API_HOST: ${{ secrets.USE_API_HOST }}
-          TAIKUN_EMAIL: ${{ secrets.USE_EMAIL }}
-          TAIKUN_PASSWORD: ${{ secrets.USE_PASSWORD }}
+          TAIKUN_API_HOST: ${{ (inputs.endpoint == 'staging') && secrets.TAIKUN_STAGING_API_HOST || secrets.TAIKUN_API_HOST }}
+          TAIKUN_EMAIL: ${{ (inputs.endpoint == 'staging') && secrets.TAIKUN_STAGING_EMAIL || secrets.TAIKUN_EMAIL }}
+          TAIKUN_PASSWORD: ${{ (inputs.endpoint == 'staging') && secrets.TAIKUN_STAGING_PASSWORD || secrets.TAIKUN_PASSWORD }}
 
           # Set in secrets in GitHub
           ARM_AZ_COUNT: 1

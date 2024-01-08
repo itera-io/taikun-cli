@@ -8,9 +8,5 @@ jobs:
     uses: ./.github/workflows/tests_reusable.yml
     with:
       branch: ${{ github.ref }} # Run on the branch of this PR
-    secrets:
-      # Run against dev taikun endpoint
-      USE_API_HOST: ${{ secrets.TAIKUN_API_HOST }}
-      USE_EMAIL: ${{ secrets.TAIKUN_EMAIL }}
-      USE_PASSWORD: ${{ secrets.TAIKUN_PASSWORD }}
-      inherit: true
+      endpoint: "dev"           # Run against dev taikun endpoint
+    secrets: inherit

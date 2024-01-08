@@ -6,10 +6,6 @@ jobs:
   tests-staging:
     uses: ./.github/workflows/tests_reusable.yml
     with:
-      branch: staging # Staging tests always run from staging branch
-    secrets:
-    # Run against STAGING taikun endpoint, HIC SVNT LEONES
-      USE_API_HOST: ${{ secrets.TAIKUN_STAGING)API_HOST }}
-      USE_EMAIL: ${{ secrets.TAIKUN_STAGING_EMAIL }}
-      USE_PASSWORD: ${{ secrets.TAIKUN_STAGING_PASSWORD }}
-      inherit: true
+      branch: "staging"   # Staging tests always run from staging branch
+      endpoint: "staging" # Run against STAGING taikun endpoint, HIC SVNT LEONES
+    secrets: inherit
