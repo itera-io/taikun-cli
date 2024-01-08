@@ -4,13 +4,9 @@ on:
       branch:
         required: true
         type: string
-    secrets:
-      USE_EMAIL:
+      endpoint:
         required: true
-      USE_API_HOST:
-        required: true
-      USE_PASSWORD:
-        required: true
+        type: string
 
 env:
   GO_VERSION: '1.20'
