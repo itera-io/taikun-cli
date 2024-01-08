@@ -5,7 +5,7 @@ on:
 
 jobs:
   call-workflow-1-in-local-repo:
-    uses: ./.github/workflows/tests_reusable.yml
+    uses: ./tests_reusable.yml
     with:
       branch: ${{ github.ref }} # Run on the branch of this PR
     secrets:
