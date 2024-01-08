@@ -14,7 +14,7 @@ on:
 
 env:
   GO_VERSION: '1.20'
-  BRANCH: ${{ input.branch }}
+  BRANCH: ${{ inputs.branch }}
 
 jobs:
   # CLI must build without failure
