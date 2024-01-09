@@ -115,7 +115,7 @@ Context 'usertoken/unbinding'
       }
       AfterAll delete
 
-      Example 'did the token unbind?'
+      Example 'check if token unbinded'
         When call taikun usertoken show-endpoints "$tokenname"
         The status should equal 0
         The output should include 'DESCRIPTION'
