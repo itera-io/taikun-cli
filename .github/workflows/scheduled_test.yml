@@ -1,4 +1,4 @@
-name: Scheduled Tests
+name: Tests Scheduled
 on:
   workflow_dispatch:
   schedule:
