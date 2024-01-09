@@ -1,4 +1,4 @@
-name: Tests Scheduled
+name: ":arrows_counterclockwise: Tests Scheduled"
 on:
   workflow_dispatch:
   schedule:

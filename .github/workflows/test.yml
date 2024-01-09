@@ -1,4 +1,4 @@
-name: Tests
+name: ":new: Tests"
 on:
   pull_request:
   workflow_dispatch:
