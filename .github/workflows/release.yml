@@ -1,4 +1,4 @@
-name: ":rocket: Release"
+name: "🚀 Release"
 on:
   push:
     tags:

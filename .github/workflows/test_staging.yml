@@ -1,4 +1,4 @@
-name: ":ok: Tests Staging"
+name: "🆗 Tests Staging"
 on:
   workflow_dispatch:
 

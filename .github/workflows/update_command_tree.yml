@@ -1,4 +1,4 @@
-name: ":books: Update command tree"
+name: "📚 Update command tree"
 on:
   push:
     branches:
