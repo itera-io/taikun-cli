@@ -1,4 +1,4 @@
-# Taikun Cli Go
+# Taikun Command line interface (CLI)
 Manage resources in [Taikun](https://taikun.cloud) from the command line.
 
 ## Getting started
