@@ -1,12 +1,12 @@
 package unlock
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/models"
-	"github.com/itera-io/taikungoclient/showbackclient/showback_credentials"
+	tk "github.com/itera-io/taikungoclient"
+	taikunshowback "github.com/itera-io/taikungoclient/showbackclient"
 	"github.com/spf13/cobra"
 )
 
@@ -28,19 +28,22 @@ func NewCmdUnlock() *cobra.Command {
 }
 
 func unlockRun(showbackCredentialID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikunshowback.ShowbackCredentialLockCommand{
+		Id:   &showbackCredentialID,
+		Mode: *taikunshowback.NewNullableString(&types.UnlockedMode),
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.ShowbackClient.ShowbackCredentialsAPI.ShowbackcredentialsLockManagement(context.TODO()).ShowbackCredentialLockCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.ShowbackCredentialLockCommand{ID: showbackCredentialID, Mode: types.UnlockedMode}
-	params := showback_credentials.NewShowbackCredentialsLockManagerParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsLockManager(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
 }

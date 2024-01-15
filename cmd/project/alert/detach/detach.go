@@ -1,11 +1,11 @@
 package detach
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -33,22 +33,15 @@ func NewCmdDetach() *cobra.Command {
 }
 
 func detachRun(opts *DetachOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.AttachDetachAlertingProfileCommand{
+		ProjectId: &opts.ProjectID,
+	}
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesDetach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.AttachDetachAlertingProfileCommand{
-		ProjectID: opts.ProjectID,
-	}
-
-	params := alerting_profiles.NewAlertingProfilesDetachParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesDetach(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
 }

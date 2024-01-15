@@ -1,6 +1,7 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -8,9 +9,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -109,23 +109,23 @@ func listRun(opts *ListOptions) (err error) {
 	return
 }
 
-func ListVMs(opts *ListOptions) (vms []*models.StandaloneVmsListForDetailsDto, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+func ListVMs(opts *ListOptions) (vms []taikuncore.StandaloneVmsListForDetailsDto, err error) {
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	params := stand_alone.NewStandAloneDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
-
+	myRequest := myApiClient.Client.StandaloneAPI.StandaloneDetails(context.TODO(), opts.ProjectID)
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)
-	if err == nil {
-		vms = response.Payload.Data
+	// Execute a query into the API + graceful exit
+	data, response, err := myRequest.Execute()
+	if err != nil {
+		err = tk.CreateError(response, err)
+		return nil, err
 	}
+	// Manipulate the gathered data
+	vms = data.GetData()
+	return vms, nil
 
-	return
 }

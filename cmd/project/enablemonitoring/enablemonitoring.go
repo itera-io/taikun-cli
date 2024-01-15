@@ -1,13 +1,13 @@
 package enablemonitoring
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/projects"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +35,7 @@ func NewCmdEnableMonitoring() *cobra.Command {
 }
 
 func enableMonitoringRun(opts *EnableMonitoringOptions) (err error) {
-	isMonitoringEnabled, err := getMonitoringState(opts.ProjectID)
+	isMonitoringEnabled, err := cmdutils.IsMonitoringEnabled(opts.ProjectID)
 	if err != nil {
 		return
 	}
@@ -43,37 +43,22 @@ func enableMonitoringRun(opts *EnableMonitoringOptions) (err error) {
 		err = cmderr.ErrProjectMonitoringAlreadyEnabled
 		return
 	}
-	apiClient, err := taikungoclient.NewClient()
+
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	body := taikuncore.MonitoringOperationsCommand{
+		ProjectId: &opts.ProjectID,
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsMonitoring(context.TODO()).MonitoringOperationsCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.MonitoringOperationsCommand{ProjectID: opts.ProjectID}
-	params := projects.NewProjectsMonitoringOperationsParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Projects.ProjectsMonitoringOperations(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	// Manipulate the gathered data
+	out.PrintStandardSuccess()
 	return
-}
 
-func getMonitoringState(projectID int32) (isMonitoringEnabled bool, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(projectID)
-
-	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-	if err != nil {
-		return
-	}
-	isMonitoringEnabled = response.Payload.Project.IsMonitoringEnabled
-
-	return
 }

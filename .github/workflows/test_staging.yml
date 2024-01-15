@@ -1,0 +1,15 @@
+name: "🆗 Tests Staging"
+on:
+  workflow_dispatch:
+  # Trigger on all pull requests to staging branch
+  pull_request:
+    branches:
+      - staging
+
+jobs:
+  tests-staging:
+    uses: ./.github/workflows/tests_reusable.yml
+    with:
+      branch: ${{ github.ref }} # Run on the branch of this PR
+      endpoint: "staging" # Run against STAGING taikun endpoint, HIC SVNT LEONES
+    secrets: inherit

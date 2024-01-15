@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/access_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -73,40 +73,38 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	params := access_profiles.NewAccessProfilesListParams().WithV(taikungoclient.Version)
+	// Prepare the arguments for the query
+	myRequest := myApiClient.Client.AccessProfilesAPI.AccessprofilesList(context.TODO())
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
-
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var accessProfiles = make([]*models.AccessProfilesListDto, 0)
-
+	var accessProfiles = make([]taikuncore.AccessProfilesListDto, 0)
+	// Send the query and move offset until you get all the data
 	for {
-		response, err := apiClient.Client.AccessProfiles.AccessProfilesList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		accessProfiles = append(accessProfiles, response.Payload.Data...)
+		accessProfiles = append(accessProfiles, data.GetData()...)
 
 		count := int32(len(accessProfiles))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(accessProfiles)) > opts.Limit {
@@ -114,4 +112,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(accessProfiles, listFields)
+
 }

@@ -1,11 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/access_profiles"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -28,17 +28,12 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(accessProfileID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesDelete(context.TODO(), accessProfileID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	params := access_profiles.NewAccessProfilesDeleteParams().WithV(taikungoclient.Version).WithID(accessProfileID)
-
-	_, _, err = apiClient.Client.AccessProfiles.AccessProfilesDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Access profile", accessProfileID)
-	}
-
+	out.PrintDeleteSuccess("Access profile", accessProfileID)
 	return
+
 }

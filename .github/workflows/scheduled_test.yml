@@ -1,0 +1,13 @@
+name: "🔄 Tests Scheduled"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 2 * * 5
+
+jobs:
+  tests-scheduled:
+    uses: ./.github/workflows/tests_reusable.yml
+    with:
+      branch: "dev"       # Scheduled tests always run from dev branch
+      endpoint: "dev"     # Run against dev taikun endpoint
+    secrets: inherit

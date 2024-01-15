@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/models"
-	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
+	tk "github.com/itera-io/taikungoclient"
+	taikunshowback "github.com/itera-io/taikungoclient/showbackclient"
 	"github.com/spf13/cobra"
 )
 
@@ -67,25 +67,22 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(labels, listFields)
 }
 
-func GetShowbackRuleByID(showbackRuleID int32) (showbackRule *models.ShowbackRulesListDto, err error) {
-	apiClient, err := taikungoclient.NewClient()
+func GetShowbackRuleByID(showbackRuleID int32) (showbackRule *taikunshowback.ShowbackRulesListDto, err error) {
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesList(context.TODO()).Id(showbackRuleID).Execute()
 	if err != nil {
-		return
+		return nil, tk.CreateError(response, err)
 	}
 
-	params := showback_rules.NewShowbackRulesListParams().WithV(taikungoclient.Version)
-	params = params.WithID(&showbackRuleID)
-
-	response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesList(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	if len(response.Payload.Data) != 1 {
+	// Manipulate the gathered data
+	if len(data.GetData()) != 1 {
 		return nil, cmderr.ResourceNotFoundError("Showback rule", showbackRuleID)
 	}
 
-	showbackRule = response.Payload.Data[0]
+	showbackRule = &data.Data[0]
+	return showbackRule, nil
 
-	return
 }

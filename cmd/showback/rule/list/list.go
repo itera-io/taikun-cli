@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/models"
-	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
+	tk "github.com/itera-io/taikungoclient"
+	taikunshowback "github.com/itera-io/taikungoclient/showbackclient"
 	"github.com/spf13/cobra"
 )
 
@@ -82,40 +82,39 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	params := showback_rules.NewShowbackRulesListParams().WithV(taikungoclient.Version)
-	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
-	}
-
+	// Prepare the arguments for the query
+	myRequest := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesList(context.TODO())
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+	if opts.OrganizationID != 0 {
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
-	var showbackRules = make([]*models.ShowbackRulesListDto, 0)
+	var showbackRules = make([]taikunshowback.ShowbackRulesListDto, 0)
 
+	// Send the query and move offset until you get all the data
 	for {
-		response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		showbackRules = append(showbackRules, response.Payload.Data...)
+		showbackRules = append(showbackRules, data.GetData()...)
 
 		count := int32(len(showbackRules))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(showbackRules)) > opts.Limit {
@@ -123,4 +122,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(showbackRules, listFields)
+
 }

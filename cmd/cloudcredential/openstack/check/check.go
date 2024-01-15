@@ -1,13 +1,15 @@
 package check
 
 import (
+	"context"
+	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/checker"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 type CheckOptions struct {
@@ -45,26 +47,38 @@ func NewCmdCheck() *cobra.Command {
 }
 
 func checkRun(opts *CheckOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CheckOpenstackCommand{
+		OpenStackUser:     *taikuncore.NewNullableString(&opts.Username),
+		OpenStackPassword: *taikuncore.NewNullableString(&opts.Password),
+		OpenStackUrl:      *taikuncore.NewNullableString(&opts.URL),
+		OpenStackDomain:   *taikuncore.NewNullableString(&opts.Domain),
+	}
+
+	// Execute a query into the API + graceful exit
+	myRequest := myApiClient.Client.CheckerAPI.CheckerOpenstack(context.TODO()).CheckOpenstackCommand(body)
+	response, err := myRequest.Execute()
+
+	if err == nil {
+		out.PrintCheckSuccess("OpenStack cloud credential")
+	}
+
+	// Did it fail because the request failed (e.g. cannot connect to Taikun) or because the credentials are not valid?
 	if err != nil {
+		myError := tk.CreateError(response, err)
+		myStringError := fmt.Sprint(myError)
+		if strings.Contains(myStringError, "Failed to validate") {
+			err = cmderr.ErrCheckFailure("OpenStack cloud credential") // Taikun responded that credentials are not valid.
+		} else {
+			err = tk.CreateError(response, err) // Something else happened
+		}
+
 		return
 	}
 
-	body := models.CheckOpenstackCommand{
-		OpenStackDomain:   opts.Domain,
-		OpenStackPassword: opts.Password,
-		OpenStackURL:      opts.URL,
-		OpenStackUser:     opts.Username,
-	}
-
-	params := checker.NewCheckerOpenstackParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	_, err = apiClient.Client.Checker.CheckerOpenstack(params, apiClient)
-	if err == nil {
-		out.PrintCheckSuccess("OpenStack cloud credential")
-	} else if _, isValidationProblem := err.(*checker.CheckerOpenstackBadRequest); isValidationProblem {
-		return cmderr.ErrCheckFailure("OpenStack cloud credential")
-	}
-
 	return
+
 }

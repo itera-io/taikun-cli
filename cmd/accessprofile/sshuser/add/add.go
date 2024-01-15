@@ -1,17 +1,16 @@
 package add
 
 import (
+	"context"
 	"fmt"
+	"github.com/itera-io/taikun-cli/utils/out"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/checker"
-	"github.com/itera-io/taikungoclient/client/ssh_users"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -73,38 +72,39 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.SshKeyCommand{
+		SshPublicKey: *taikuncore.NewNullableString(&sshPublicKey),
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.CheckerAPI.CheckerSsh(context.TODO()).SshKeyCommand(body).Execute()
 	if err != nil {
-		return false, err
+		return false, tk.CreateError(response, err)
 	}
-
-	body := models.SSHKeyCommand{
-		SSHPublicKey: sshPublicKey,
-	}
-	params := checker.NewCheckerSSHParams().WithV(taikungoclient.Version).WithBody(&body)
-	_, err = apiClient.Client.Checker.CheckerSSH(params, apiClient)
-
 	return err == nil, nil
+
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CreateSshUserCommand{
+		Name:            *taikuncore.NewNullableString(&opts.Name),
+		SshPublicKey:    *taikuncore.NewNullableString(&opts.PublicKey),
+		AccessProfileId: &opts.AccessProfileID,
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.SshUsersAPI.SshusersCreate(context.TODO()).CreateSshUserCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, addFields)
 
-	body := models.CreateSSHUserCommand{
-		AccessProfileID: opts.AccessProfileID,
-		Name:            opts.Name,
-		SSHPublicKey:    opts.PublicKey,
-	}
-
-	params := ssh_users.NewSSHUsersCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	response, err := apiClient.Client.SSHUsers.SSHUsersCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

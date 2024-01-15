@@ -1,13 +1,15 @@
 package list
 
 import (
+	"context"
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/ops_credentials"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -27,9 +29,6 @@ var listFields = fields.New(
 		),
 		field.NewVisible(
 			"USERNAME", "prometheusUsername",
-		),
-		field.NewHidden(
-			"PASSWORD", "prometheusPassword",
 		),
 		field.NewVisible(
 			"URL", "prometheusUrl",
@@ -64,6 +63,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
+	cmdutils.AddSortByAndReverseFlags(&cmd, "billing-credentials", listFields)
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
@@ -72,36 +72,39 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	params := ops_credentials.NewOpsCredentialsListParams().WithV(taikungoclient.Version)
+	// Prepare the arguments for the query
+	myRequest := myApiClient.Client.OperationCredentialsAPI.OpscredentialsList(context.TODO())
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
-	var billingCredentials = make([]*models.OperationCredentialsListDto, 0)
+	var billingCredentials = make([]taikuncore.OperationCredentialsListDto, 0)
 
+	// Send the query and move offset until you get all the data
 	for {
-		response, err := apiClient.Client.OpsCredentials.OpsCredentialsList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		billingCredentials = append(billingCredentials, response.Payload.Data...)
+		billingCredentials = append(billingCredentials, data.GetData()...)
 
 		count := int32(len(billingCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(billingCredentials)) > opts.Limit {
@@ -109,4 +112,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(billingCredentials, listFields)
+
 }

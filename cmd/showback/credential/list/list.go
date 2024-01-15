@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/models"
-	"github.com/itera-io/taikungoclient/showbackclient/showback_credentials"
+	tk "github.com/itera-io/taikungoclient"
+	taikunshowback "github.com/itera-io/taikungoclient/showbackclient"
 	"github.com/spf13/cobra"
 )
 
@@ -32,9 +32,6 @@ var listFields = fields.New(
 		),
 		field.NewVisible(
 			"USERNAME", "username",
-		),
-		field.NewHidden(
-			"PASSWORD", "password",
 		),
 		field.NewVisible(
 			"LOCK", "isLocked",
@@ -76,40 +73,38 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	params := showback_credentials.NewShowbackCredentialsListParams().WithV(taikungoclient.Version)
-	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
-	}
-
+	// Prepare the arguments for the query
+	myRequest := myApiClient.ShowbackClient.ShowbackCredentialsAPI.ShowbackcredentialsList(context.TODO())
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+	if opts.OrganizationID != 0 {
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
-	var showbackCredentials = make([]*models.ShowbackCredentialsListDto, 0)
-
+	var showbackCredentials = make([]taikunshowback.ShowbackCredentialsListDto, 0)
+	// Send the query and move offset until you get all the data
 	for {
-		response, err := apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		showbackCredentials = append(showbackCredentials, response.Payload.Data...)
+		showbackCredentials = append(showbackCredentials, data.GetData()...)
 		showbackCredentialsCount := int32(len(showbackCredentials))
 
 		if opts.Limit != 0 && showbackCredentialsCount >= opts.Limit {
 			break
 		}
 
-		if showbackCredentialsCount == response.Payload.TotalCount {
+		if showbackCredentialsCount == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&showbackCredentialsCount)
+		myRequest = myRequest.Offset(showbackCredentialsCount)
 	}
 
 	if opts.Limit != 0 && int32(len(showbackCredentials)) > opts.Limit {
@@ -117,4 +112,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(showbackCredentials, listFields)
+
 }

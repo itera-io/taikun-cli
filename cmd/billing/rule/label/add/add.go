@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/prometheus"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -42,27 +42,26 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return err
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.RuleForUpdateDto{
-		LabelsToAdd: []*models.PrometheusLabelListDto{
+	// Prepare the arguments for the query
+	body := taikuncore.RuleForUpdateDto{
+		LabelsToAdd: []taikuncore.PrometheusLabelListDto{
 			{
-				Label: opts.Label,
-				Value: opts.Value,
+				Label: *taikuncore.NewNullableString(&opts.Label),
+				Value: *taikuncore.NewNullableString(&opts.Value),
 			},
 		},
 	}
 
-	params := prometheus.NewPrometheusUpdateParams().WithV(taikungoclient.Version)
-	params = params.WithID(opts.BillingRuleID).WithBody(&body)
-
-	_, err = apiClient.Client.Prometheus.PrometheusUpdate(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesUpdate(context.TODO(), opts.BillingRuleID).RuleForUpdateDto(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
+	out.PrintStandardSuccess()
 	return
+
 }

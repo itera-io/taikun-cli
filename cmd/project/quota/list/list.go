@@ -1,46 +1,46 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/project_quotas"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
 var listFields = fields.New(
 	[]*field.Field{
+		//field.NewVisible(
+		//	"ID", "id",
+		//),
 		field.NewVisible(
-			"ID", "id",
+			"PROJECT-ID", "projectId",
 		),
 		field.NewVisible(
 			"PROJECT", "projectName",
 		),
-		field.NewHidden(
-			"PROJECT-ID", "projectId",
+		field.NewVisibleWithToStringFunc(
+			"CPU", "serverCpu", out.FormatNumberInteger,
 		),
 		field.NewVisibleWithToStringFunc(
-			"CPU", "cpu", out.FormatNumber,
-		),
-		field.NewVisible(
-			"UNLIMITED-CPU", "isCpuUnlimited",
+			"RAM", "serverRam", out.FormatBToGiB,
 		),
 		field.NewVisibleWithToStringFunc(
-			"DISK", "diskSize", out.FormatBToGiB,
-		),
-		field.NewVisible(
-			"UNLIMITED-DISK", "isDiskSizeUnlimited",
+			"DISK", "serverDiskSize", out.FormatBToGiB,
 		),
 		field.NewVisibleWithToStringFunc(
-			"RAM", "ram", out.FormatBToGiB,
+			"VM-CPU", "vmCpu", out.FormatNumberInteger,
 		),
-		field.NewVisible(
-			"UNLIMITED-RAM", "isRamUnlimited",
+		field.NewVisibleWithToStringFunc(
+			"VM-RAM", "vmRam", out.FormatBToGiB,
+		),
+		field.NewVisibleWithToStringFunc(
+			"VM-VOLUME-SIZE", "vmVolumeSize", out.FormatNumberAddGibString, // No conversion needed. API takes GBs
 		),
 	},
 )
@@ -73,40 +73,36 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := project_quotas.NewProjectQuotasListParams().WithV(taikungoclient.Version)
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.ProjectQuotasAPI.ProjectquotasList(context.TODO())
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var projectQuotas = make([]*models.ProjectQuotaListDto, 0)
+	projectQuotas := make([]taikuncore.ProjectQuotaListDto, 0)
 
 	for {
-		response, err := apiClient.Client.ProjectQuotas.ProjectQuotasList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		projectQuotas = append(projectQuotas, response.Payload.Data...)
+		projectQuotas = append(projectQuotas, data.GetData()...)
 
 		count := int32(len(projectQuotas))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(projectQuotas)) > opts.Limit {
@@ -114,4 +110,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(projectQuotas, listFields)
+
 }

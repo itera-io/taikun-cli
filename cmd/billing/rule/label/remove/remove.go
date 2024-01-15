@@ -1,12 +1,12 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/prometheus"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -37,26 +37,25 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(billingRuleID int32, labelID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.RuleForUpdateDto{
-		LabelsToDelete: []*models.PrometheusLabelDeleteDto{
+	// Prepare the arguments for the query
+	body := taikuncore.RuleForUpdateDto{
+		LabelsToDelete: []taikuncore.PrometheusLabelDeleteDto{
 			{
-				ID: labelID,
+				Id: &labelID,
 			},
 		},
 	}
 
-	params := prometheus.NewPrometheusUpdateParams().WithV(taikungoclient.Version)
-	params.WithID(billingRuleID).WithBody(&body)
-
-	_, err = apiClient.Client.Prometheus.PrometheusUpdate(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Billing rule label", labelID)
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesUpdate(context.TODO(), billingRuleID).RuleForUpdateDto(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
+	out.PrintDeleteSuccess("Billing rule label", labelID)
 	return
+
 }

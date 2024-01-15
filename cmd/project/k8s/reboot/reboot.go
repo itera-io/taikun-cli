@@ -1,16 +1,17 @@
 package reboot
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
 type RebootOptions struct {
-	ServerID int32
+	ServerID   int32
+	RebootType bool
 }
 
 func NewCmdReboot() *cobra.Command {
@@ -28,27 +29,27 @@ func NewCmdReboot() *cobra.Command {
 			return rebootRun(&opts)
 		},
 	}
+	cmd.Flags().BoolVarP(&opts.RebootType, "hard", "f", false, "Force hard reboot of server")
 
 	return &cmd
 }
 
 func rebootRun(opts *RebootOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+
+	body := taikuncore.RebootServerCommand{}
+	body.SetServerId(opts.ServerID)
+	if opts.RebootType {
+		body.SetType("hard")
+	} else {
+		body.SetType("soft")
+	}
+
+	response, err := myApiClient.Client.ServersAPI.ServersReboot(context.TODO()).RebootServerCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.RebootServerCommand{
-		ServerID: opts.ServerID,
-	}
-
-	params := servers.NewServersRebootParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Servers.ServersReboot(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
 }

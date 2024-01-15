@@ -1,24 +1,29 @@
 package complete
 
 import (
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/kubernetes"
+	"context"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
-// Returns list of Taikun supported Kubernetes versions for a project
+// KubernetesVersionCompletionFunc Returns list of Taikun supported Kubernetes versions for a project
 func KubernetesVersionCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, _, err := myApiClient.Client.KubernetesAPI.KubernetesGetSupportedList(context.TODO()).Execute()
 	if err != nil {
 		return []string{}
 	}
 
-	params := kubernetes.NewKubernetesGetSupportedListParams().WithV(taikungoclient.Version)
+	// Manipulate the gathered data
+	completions := make([]string, 0)
 
-	response, err := apiClient.Client.Kubernetes.KubernetesGetSupportedList(params, apiClient)
-	if err != nil {
-		return []string{}
+	for i := 0; i < len(data); i++ {
+		completions = append(completions, data[i].GetVersion())
 	}
 
-	return response.Payload
+	return completions
+
 }

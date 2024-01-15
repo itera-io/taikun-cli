@@ -75,7 +75,7 @@ func (f Fields) SetFieldJsonPropertyName(name string, jsonPropertyName string) e
 	return cmderr.ProgramError("SetFieldJsonPropertyName", fmt.Errorf("unknown field name: %s", name))
 }
 
-// Returns whether or not the field's name is valid
+// Returns whether the field's name is valid
 func fieldNameIsValid(name string) bool {
 	maxFieldNameLength := config.MaxCellWidth
 	if len(name) == 0 || len(name) > maxFieldNameLength {

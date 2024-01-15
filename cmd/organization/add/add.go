@@ -1,14 +1,14 @@
 package add
 
 import (
+	"context"
+	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/common"
-	"github.com/itera-io/taikungoclient/client/organizations"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -120,22 +120,32 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.SetFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
 		completions = make([]string, 0)
 
-		apiClient, err := taikungoclient.NewClient()
+		myApiClient := tk.NewClient()
+		data, response, err := myApiClient.Client.CommonAPI.CommonCountries(context.TODO()).Execute()
 		if err != nil {
+			fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error())) // This function does not return an error... so just call it. #FIXME
 			return
 		}
-
-		params := common.NewCommonGetCountryListParams().WithV(taikungoclient.Version)
-		result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		for _, countryListDto := range result.Payload {
-			completions = append(completions, countryListDto.Name)
+		for _, countryListDto := range data {
+			completions = append(completions, countryListDto.GetName())
 		}
 
 		return
+
+		//apiClient, err := taikungoclient.NewClient()
+		//if err != nil {
+		//	return
+		//}
+		//params := common.NewCommonGetCountryListParams().WithV(taikungoclient.Version)
+		//result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
+		//if err != nil {
+		//	return
+		//}
+		//for _, countryListDto := range result.Payload {
+		//	completions = append(completions, countryListDto.Name)
+		//}
+		//
+		//return
 	})
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
@@ -145,31 +155,24 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.OrganizationCreateCommand{
+		Name:                         *taikuncore.NewNullableString(&opts.Name),
+		FullName:                     *taikuncore.NewNullableString(&opts.FullName),
+		Phone:                        *taikuncore.NewNullableString(&opts.Phone),
+		Email:                        *taikuncore.NewNullableString(&opts.Email),
+		BillingEmail:                 *taikuncore.NewNullableString(&opts.BillingEmail),
+		Address:                      *taikuncore.NewNullableString(&opts.Address),
+		Country:                      *taikuncore.NewNullableString(&opts.Country),
+		City:                         *taikuncore.NewNullableString(&opts.City),
+		VatNumber:                    *taikuncore.NewNullableString(&opts.VatNumber),
+		DiscountRate:                 *taikuncore.NewNullableFloat64(&opts.DiscountRate),
+		IsEligibleUpdateSubscription: &opts.IsEligibleUpdateSubscription,
+	}
+	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsCreate(context.TODO()).OrganizationCreateCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, addFields)
 
-	body := models.OrganizationCreateCommand{
-		Address:                      opts.Address,
-		BillingEmail:                 opts.BillingEmail,
-		City:                         opts.City,
-		Country:                      opts.Country,
-		DiscountRate:                 opts.DiscountRate,
-		Email:                        opts.Email,
-		FullName:                     opts.FullName,
-		IsEligibleUpdateSubscription: opts.IsEligibleUpdateSubscription,
-		Name:                         opts.Name,
-		Phone:                        opts.Phone,
-		VatNumber:                    opts.VatNumber,
-	}
-
-	params := organizations.NewOrganizationsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	response, err := apiClient.Client.Organizations.OrganizationsCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

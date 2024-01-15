@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/models"
-	"github.com/itera-io/taikungoclient/showbackclient/showback_credentials"
+	tk "github.com/itera-io/taikungoclient"
+	taikunshowback "github.com/itera-io/taikungoclient/showbackclient"
 	"github.com/spf13/cobra"
 )
 
@@ -85,26 +85,24 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikunshowback.CreateShowbackCredentialCommand{
+		Name:           *taikunshowback.NewNullableString(&opts.Name),
+		Url:            *taikunshowback.NewNullableString(&opts.URL),
+		Username:       *taikunshowback.NewNullableString(&opts.Username),
+		Password:       *taikunshowback.NewNullableString(&opts.Password),
+		OrganizationId: *taikunshowback.NewNullableInt32(&opts.OrganizationID),
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.ShowbackClient.ShowbackCredentialsAPI.ShowbackcredentialsCreate(context.TODO()).CreateShowbackCredentialCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.CreateShowbackCredentialCommand{
-		Name:           opts.Name,
-		OrganizationID: opts.OrganizationID,
-		Password:       opts.Password,
-		URL:            opts.URL,
-		Username:       opts.Username,
-	}
+	return out.PrintResult(data, addFields)
 
-	params := showback_credentials.NewShowbackCredentialsCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.ShowbackClient.ShowbackCredentials.ShowbackCredentialsCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

@@ -1,16 +1,15 @@
 package add
 
 import (
+	"context"
 	"fmt"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/checker"
-	"github.com/itera-io/taikungoclient/client/s3_credentials"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -99,46 +98,48 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func backupCredentialIsValid(opts *AddOptions) (bool, error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return false, err
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CheckS3Command{
+		S3AccessKeyId: *taikuncore.NewNullableString(&opts.S3AccessKey),
+		S3SecretKey:   *taikuncore.NewNullableString(&opts.S3SecretKey),
+		S3Endpoint:    *taikuncore.NewNullableString(&opts.S3Endpoint),
+		S3Region:      *taikuncore.NewNullableString(&opts.S3Region),
 	}
 
-	body := models.CheckS3Command{
-		S3AccessKeyID: opts.S3AccessKey,
-		S3SecretKey:   opts.S3SecretKey,
-		S3Endpoint:    opts.S3Endpoint,
-		S3Region:      opts.S3Region,
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.CheckerAPI.CheckerS3(context.TODO()).CheckS3Command(body).Execute()
+	if err != nil {
+		return false, tk.CreateError(response, err)
 	}
-	params := checker.NewCheckerS3Params().WithV(taikungoclient.Version).WithBody(&body)
-	_, err = apiClient.Client.Checker.CheckerS3(params, apiClient)
 
 	return err == nil, nil
+
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.BackupCredentialsCreateCommand{
+		S3Name:         *taikuncore.NewNullableString(&opts.S3Name),
+		S3AccessKeyId:  *taikuncore.NewNullableString(&opts.S3AccessKey),
+		S3SecretKey:    *taikuncore.NewNullableString(&opts.S3SecretKey),
+		S3Endpoint:     *taikuncore.NewNullableString(&opts.S3Endpoint),
+		S3Region:       *taikuncore.NewNullableString(&opts.S3Region),
+		OrganizationId: *taikuncore.NewNullableInt32(&opts.OrganizationID),
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsCreate(context.TODO()).BackupCredentialsCreateCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.BackupCredentialsCreateCommand{
-		S3AccessKeyID: opts.S3AccessKey,
-		S3Endpoint:    opts.S3Endpoint,
-		S3Name:        opts.S3Name,
-		S3Region:      opts.S3Region,
-		S3SecretKey:   opts.S3SecretKey,
-	}
-	if opts.OrganizationID != 0 {
-		body.OrganizationID = opts.OrganizationID
-	}
+	// Manipulate the gathered data
+	return out.PrintResult(data, addFields)
 
-	params := s3_credentials.NewS3CredentialsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	response, err := apiClient.Client.S3Credentials.S3CredentialsCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

@@ -1,13 +1,13 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -72,18 +72,16 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.StandaloneAPI.StandaloneDetails(context.TODO(), opts.ProjectID).Id(opts.StandaloneVMID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := stand_alone.NewStandAloneDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID).WithID(&opts.StandaloneVMID)
+	// Manipulate the gathered data
+	return out.PrintResults(data.Data, listFields)
 
-	response, err := apiClient.Client.StandAlone.StandAloneDetails(params, apiClient)
-	if err == nil {
-		return out.PrintResults(response.Payload.Data, listFields)
-	}
-
-	return
 }

@@ -1,14 +1,14 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/ssh_users"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -59,22 +59,21 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.SshUsersAPI.SshusersList(context.TODO(), opts.AccessProfileID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := ssh_users.NewSSHUsersListParams().WithV(taikungoclient.Version).WithAccessProfileID(opts.AccessProfileID)
-
-	response, err := apiClient.Client.SSHUsers.SSHUsersList(params, apiClient)
-	if err != nil {
-		return err
-	}
-
-	sshUsers := response.Payload
+	// Truncate the data
+	sshUsers := data
 	if opts.Limit != 0 && int32(len(sshUsers)) > opts.Limit {
 		sshUsers = sshUsers[:opts.Limit]
 	}
 
 	return out.PrintResults(sshUsers, listFields)
+
 }

@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -46,6 +46,12 @@ var addFields = fields.New(
 		field.NewHidden(
 			"CREATED-BY", "createdBy",
 		),
+		field.NewVisible(
+			"NVIDIA-GPU", "nvidiaGpuOperatorEnabled",
+		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
+		),
 	},
 )
 
@@ -56,7 +62,9 @@ type AddOptions struct {
 	OctaviaEnabled           bool
 	OrganizationID           int32
 	TaikunLBEnabled          bool
-	DisableUniqueClusterName bool
+	UniqueClusterNameEnabled bool
+	NvidiaGpuOperatorEnabled bool
+	WasmEnabled              bool
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -77,7 +85,9 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.ExposeNodePortOnBastion, "expose-node-port-on-bastion", false, "Expose Node Port on Bastion")
 	cmd.Flags().BoolVar(&opts.OctaviaEnabled, "enable-octavia", false, "Enable Octavia Load Balancer")
 	cmd.Flags().BoolVar(&opts.TaikunLBEnabled, "enable-taikun-lb", false, "Enable Taikun Load Balancer")
-	cmd.Flags().BoolVar(&opts.DisableUniqueClusterName, "disable-unique-cluster-name", false, "Disable unique cluster name, the cluster name will be cluster.local")
+	cmd.Flags().BoolVar(&opts.UniqueClusterNameEnabled, "unique-cluster-name", false, "Enable unique cluster name, the cluster name will not be cluster.local")
+	cmd.Flags().BoolVar(&opts.NvidiaGpuOperatorEnabled, "enable-gpu", false, "Enable support for Nvidia GPU operator")
+	cmd.Flags().BoolVar(&opts.WasmEnabled, "enable-wasm", false, "Enable support for WASM")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -86,27 +96,30 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CreateKubernetesProfileCommand{
+		Name:                     *taikuncore.NewNullableString(&opts.Name),
+		OctaviaEnabled:           &opts.OctaviaEnabled,
+		ExposeNodePortOnBastion:  &opts.ExposeNodePortOnBastion,
+		OrganizationId:           *taikuncore.NewNullableInt32(&opts.OrganizationID),
+		TaikunLBEnabled:          &opts.TaikunLBEnabled,
+		AllowSchedulingOnMaster:  &opts.AllowSchedulingOnMaster,
+		UniqueClusterName:        &opts.UniqueClusterNameEnabled,
+		NvidiaGpuOperatorEnabled: &opts.NvidiaGpuOperatorEnabled,
+		WasmEnabled:              &opts.WasmEnabled,
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesCreate(context.TODO()).CreateKubernetesProfileCommand(body).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	body := &models.CreateKubernetesProfileCommand{
-		AllowSchedulingOnMaster: opts.AllowSchedulingOnMaster,
-		ExposeNodePortOnBastion: opts.ExposeNodePortOnBastion,
-		Name:                    opts.Name,
-		OctaviaEnabled:          opts.OctaviaEnabled,
-		OrganizationID:          opts.OrganizationID,
-		TaikunLBEnabled:         opts.TaikunLBEnabled,
-		UniqueClusterName:       !opts.DisableUniqueClusterName,
-	}
+	// Manipulate the gathered data
+	return out.PrintResult(data, addFields)
 
-	params := kubernetes_profiles.NewKubernetesProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-	response, err := apiClient.Client.KubernetesProfiles.KubernetesProfilesCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

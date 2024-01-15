@@ -1,12 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/security_group"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -29,19 +28,16 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(securityGroupID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.SecurityGroupAPI.SecuritygroupDelete(context.TODO(), securityGroupID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.DeleteSecurityGroupCommand{ID: securityGroupID}
-	params := security_group.NewSecurityGroupDeleteParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.SecurityGroup.SecurityGroupDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Security group", securityGroupID)
-	}
-
+	out.PrintDeleteSuccess("Security group", securityGroupID)
 	return
+
 }

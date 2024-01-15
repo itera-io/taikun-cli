@@ -1,11 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_integrations"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -28,17 +28,16 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(alertingIntegrationID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.AlertingIntegrationsAPI.AlertingintegrationsDelete(context.TODO(), alertingIntegrationID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsDeleteParams().WithV(taikungoclient.Version).WithID(alertingIntegrationID)
-
-	_, _, err = apiClient.Client.AlertingIntegrations.AlertingIntegrationsDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Alerting integration", alertingIntegrationID)
-	}
-
+	out.PrintDeleteSuccess("Alerting integration", alertingIntegrationID)
 	return
+
 }

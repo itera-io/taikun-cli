@@ -1,12 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -29,19 +28,16 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(alertingProfileID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesDelete(context.TODO(), alertingProfileID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.DeleteAlertingProfilesCommand{ID: alertingProfileID}
-
-	params := alerting_profiles.NewAlertingProfilesDeleteParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	_, _, err = apiClient.Client.AlertingProfiles.AlertingProfilesDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Alerting profile", alertingProfileID)
-	}
-
+	out.PrintDeleteSuccess("Alerting profile", alertingProfileID)
 	return
+
 }

@@ -1,8 +1,11 @@
 package add
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -10,9 +13,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/security_group"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -96,27 +96,27 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	securityGroupProtocol := types.GetSecurityGroupProtocol(opts.Protocol)
+	body := taikuncore.CreateSecurityGroupCommand{
+		Name:                *taikuncore.NewNullableString(&opts.Name),
+		Protocol:            &securityGroupProtocol,
+		PortMinRange:        &opts.MinPort,
+		PortMaxRange:        &opts.MaxPort,
+		RemoteIpPrefix:      *taikuncore.NewNullableString(&opts.RemoteIpPrefix),
+		StandAloneProfileId: &opts.StandAloneProfileID,
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.SecurityGroupAPI.SecuritygroupCreate(context.TODO()).CreateSecurityGroupCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.CreateSecurityGroupCommand{
-		Name:                opts.Name,
-		PortMaxRange:        opts.MaxPort,
-		PortMinRange:        opts.MinPort,
-		Protocol:            types.GetSecurityGroupProtocol(opts.Protocol),
-		RemoteIPPrefix:      opts.RemoteIpPrefix,
-		StandAloneProfileID: opts.StandAloneProfileID,
-	}
+	// Manipulate the gathered data
+	return out.PrintResult(data, addFields)
 
-	params := security_group.NewSecurityGroupCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.Client.SecurityGroup.SecurityGroupCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

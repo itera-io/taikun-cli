@@ -1,14 +1,14 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/slack"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -62,33 +62,34 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.CreateSlackConfigurationCommand{
-		Channel:   opts.Channel,
-		Name:      opts.Name,
+	// Prepare the arguments for the query
+	body := taikuncore.CreateSlackConfigurationCommand{
+		Name:      *taikuncore.NewNullableString(&opts.Name),
+		Url:       *taikuncore.NewNullableString(&opts.URL),
+		Channel:   *taikuncore.NewNullableString(&opts.Channel),
 		SlackType: types.GetSlackType(opts.Type),
-		URL:       opts.URL,
 	}
-
 	if opts.OrganizationID != 0 {
-		body.OrganizationID = opts.OrganizationID
+		body.SetOrganizationId(opts.OrganizationID)
 	}
 
-	params := slack.NewSlackCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.SlackAPI.SlackCreate(context.TODO()).CreateSlackConfigurationCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
+	}
 
-	response, err := apiClient.Client.Slack.SlackCreate(params, apiClient)
+	// Manipulate the gathered data
 	if err == nil {
 		payload := map[string]interface{}{
-			"id": response.Payload.ID,
+			"id": data.GetId(),
 		}
 
 		return out.PrintResult(payload, addFields)
 	}
-
 	return
+
 }

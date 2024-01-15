@@ -1,12 +1,12 @@
 package unlock
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -28,21 +28,22 @@ func NewCmdUnlock() *cobra.Command {
 }
 
 func unlockRun(alertingProfileID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.AlertingProfilesLockManagerCommand{
+		Id:   &alertingProfileID,
+		Mode: *taikuncore.NewNullableString(&types.UnlockedMode),
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesLockManager(context.TODO()).AlertingProfilesLockManagerCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.AlertingProfilesLockManagerCommand{
-		ID:   alertingProfileID,
-		Mode: types.LockedMode,
-	}
-	params := alerting_profiles.NewAlertingProfilesLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesLockManager(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
 }

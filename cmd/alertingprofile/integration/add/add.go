@@ -1,17 +1,17 @@
 package add
 
 import (
+	"context"
 	"errors"
+	"github.com/itera-io/taikun-cli/utils/out"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_integrations"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -71,22 +71,23 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.CreateAlertingIntegrationCommand{
+	// Prepare the arguments for the query
+	body := taikuncore.CreateAlertingIntegrationCommand{
+		Url:                     *taikuncore.NewNullableString(&opts.URL),
+		Token:                   *taikuncore.NewNullableString(&opts.Token),
 		AlertingIntegrationType: types.GetAlertingIntegrationType(opts.Type),
-		Token:                   opts.Token,
-		URL:                     opts.URL,
-		AlertingProfileID:       opts.AlertingProfileID,
+		AlertingProfileId:       &opts.AlertingProfileID,
 	}
 
-	params := alerting_integrations.NewAlertingIntegrationsCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-	if response, err := apiClient.Client.AlertingIntegrations.AlertingIntegrationsCreate(params, apiClient); err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AlertingIntegrationsAPI.AlertingintegrationsCreate(context.TODO()).CreateAlertingIntegrationCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
-	return
+	return out.PrintResult(data, addFields)
+
 }

@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/access_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -69,40 +69,39 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) error {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return err
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	DNSServers := make([]*models.DNSServerCreateDto, len(opts.DNSServers))
+	// Prepare the arguments for the query
+	DNSServers := make([]taikuncore.DnsServerCreateDto, len(opts.DNSServers))
 	for i, rawDNSServer := range opts.DNSServers {
-		DNSServers[i] = &models.DNSServerCreateDto{
-			Address: rawDNSServer,
+		DNSServers[i] = taikuncore.DnsServerCreateDto{
+			Address: *taikuncore.NewNullableString(&rawDNSServer),
 		}
 	}
-
-	NTPServers := make([]*models.NtpServerCreateDto, len(opts.NTPServers))
-
+	NTPServers := make([]taikuncore.NtpServerCreateDto, len(opts.NTPServers))
 	for i, rawNTPServer := range opts.NTPServers {
-		NTPServers[i] = &models.NtpServerCreateDto{
-			Address: rawNTPServer,
+		NTPServers[i] = taikuncore.NtpServerCreateDto{
+			Address: *taikuncore.NewNullableString(&rawNTPServer),
 		}
 	}
-
-	body := &models.CreateAccessProfileCommand{
-		Name:           opts.Name,
-		HTTPProxy:      opts.HttpProxy,
-		OrganizationID: opts.OrganizationID,
-		DNSServers:     DNSServers,
+	body := taikuncore.CreateAccessProfileCommand{
+		Name:           *taikuncore.NewNullableString(&opts.Name),
+		OrganizationId: *taikuncore.NewNullableInt32(&opts.OrganizationID),
+		DnsServers:     DNSServers,
 		NtpServers:     NTPServers,
 	}
-
-	params := access_profiles.NewAccessProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-	response, err := apiClient.Client.AccessProfiles.AccessProfilesCreate(params, apiClient)
-	if err != nil {
-		return err
+	if opts.HttpProxy != "" {
+		body.SetHttpProxy(opts.HttpProxy)
 	}
 
-	return out.PrintResult(response.Payload, addFields)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesCreate(context.TODO()).CreateAccessProfileCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
+	}
+
+	// Manipulate the gathered data
+	return out.PrintResult(data, addFields)
+
 }

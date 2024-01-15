@@ -2,7 +2,6 @@ package root
 
 import (
 	"fmt"
-
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
@@ -18,6 +17,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration"
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile"
 	"github.com/itera-io/taikun-cli/cmd/user"
+	"github.com/itera-io/taikun-cli/cmd/usertoken"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/spf13/cobra"
@@ -52,7 +52,8 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration())
 	cmd.AddCommand(standaloneprofile.NewCmdStandaloneProfile())
 	cmd.AddCommand(user.NewCmdUser())
-	cmd.AddCommand(whoami.NewCmdWhoAmI())
+	cmd.AddCommand(usertoken.NewCmdUserToken())
+	cmd.AddCommand(whoami.NewCmdWhoami())
 
 	return cmd
 }

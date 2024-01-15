@@ -1,13 +1,16 @@
 package list
 
 import (
+	"context"
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/backup"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -39,6 +42,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	ProjectID int32
+	Limit     int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -58,6 +62,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "backups", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -65,18 +70,38 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.BackupPolicyAPI.BackupListAllBackups(context.TODO(), opts.ProjectID)
+
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	params := backup.NewBackupListAllBackupsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
+	var backups = make([]taikuncore.CBackupDto, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
 
-	response, err := apiClient.Client.Backup.BackupListAllBackups(params, apiClient)
-	if err == nil {
-		return out.PrintResults(response.Payload.Data, listFields)
+		backups = append(backups, data.GetData()...)
+
+		count := int32(len(backups))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
+
+		if count == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(count)
 	}
 
-	return
+	if opts.Limit != 0 && int32(len(backups)) > opts.Limit {
+		backups = backups[:opts.Limit]
+	}
+
+	return out.PrintResults(backups, listFields)
+
 }

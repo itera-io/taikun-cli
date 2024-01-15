@@ -1,14 +1,14 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/allowed_host"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -62,22 +62,21 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AllowedHostAPI.AllowedhostList(context.TODO(), opts.AccessProfileID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := allowed_host.NewAllowedHostListParams().WithV(taikungoclient.Version).WithAccessProfileID(opts.AccessProfileID)
-
-	response, err := apiClient.Client.AllowedHost.AllowedHostList(params, apiClient)
-	if err != nil {
-		return err
-	}
-
-	allowedHosts := response.Payload.Data
+	// Manipulate the gathered data
+	allowedHosts := data.Data
 	if opts.Limit != 0 && int32(len(allowedHosts)) > opts.Limit {
 		allowedHosts = allowedHosts[:opts.Limit]
 	}
 
 	return out.PrintResults(allowedHosts, listFields)
+
 }

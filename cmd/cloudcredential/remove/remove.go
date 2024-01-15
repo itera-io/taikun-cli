@@ -1,11 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/cloud_credentials"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -28,17 +28,16 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(cloudCredentialID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDelete(context.TODO(), cloudCredentialID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := cloud_credentials.NewCloudCredentialsDeleteParams().WithV(taikungoclient.Version).WithCloudID(cloudCredentialID)
-
-	_, _, err = apiClient.Client.CloudCredentials.CloudCredentialsDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Cloud credential", cloudCredentialID)
-	}
-
+	out.PrintDeleteSuccess("Cloud credential", cloudCredentialID)
 	return
+
 }

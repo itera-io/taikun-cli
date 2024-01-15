@@ -3,6 +3,7 @@ package project
 import (
 	"github.com/itera-io/taikun-cli/cmd/project/add"
 	"github.com/itera-io/taikun-cli/cmd/project/alert"
+	"github.com/itera-io/taikun-cli/cmd/project/autoscaler"
 	"github.com/itera-io/taikun-cli/cmd/project/backup"
 	"github.com/itera-io/taikun-cli/cmd/project/backupsource"
 	"github.com/itera-io/taikun-cli/cmd/project/disablemonitoring"
@@ -18,6 +19,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/quota"
 	"github.com/itera-io/taikun-cli/cmd/project/remove"
 	"github.com/itera-io/taikun-cli/cmd/project/restore"
+	"github.com/itera-io/taikun-cli/cmd/project/set"
 	"github.com/itera-io/taikun-cli/cmd/project/unlock"
 	"github.com/itera-io/taikun-cli/cmd/project/vm"
 	"github.com/spf13/cobra"
@@ -48,6 +50,8 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(vm.NewCmdVm())
 	cmd.AddCommand(restore.NewCmdRestore())
 	cmd.AddCommand(backupsource.NewCmdBackupSource())
+	cmd.AddCommand(autoscaler.NewCmdAutoscaler())
+	cmd.AddCommand(set.NewCmdSet())
 
 	return cmd
 }

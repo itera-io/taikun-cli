@@ -23,9 +23,11 @@ fi
 [[ -f "./go.mod" ]] || (echo "go.mod not found, run from root of repo" 1>&2 && exit 2)
 
 # client repo url
+#repo="https://github.com/itera-io/taikungoclient.git"
 repo="https://github.com/itera-io/taikungoclient.git"
 
 # client dependency path
+# path=github.com/itera-io/taikungoclient
 path=github.com/itera-io/taikungoclient
 
 # get latest commit hash
@@ -35,4 +37,4 @@ commit=$(git ls-remote $repo refs/heads/$branch | awk '{print $1}')
 go get $path@$commit
 
 # tidy module dependencies
-go mod tidy -compat=1.17
+go mod tidy -compat=1.20

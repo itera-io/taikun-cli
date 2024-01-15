@@ -1,14 +1,14 @@
 package info
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/servers"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -48,14 +48,18 @@ var infoFields = fields.New(
 			"CLOUD-CREDENTIAL-ID", "cloudId",
 		),
 		field.NewVisible(
-			"HAS-ALERTING-PROFILE", "hasAlertingProfile",
+			"ALERTING-PROFILE", "alertingProfileName",
+		),
+		field.NewVisible(
+			"ALERTING-PROFILE-ID", "alertingProfileId",
 		),
 		field.NewVisible(
 			"AUTO-UPGRADES", "isAutoUpgrade",
 		),
-		field.NewVisible(
-			"UPGRADABLE", "hasNextVersion",
-		),
+		// No longer in the API
+		//field.NewVisible(
+		//	"UPGRADABLE", "hasNextVersion",
+		//),
 		field.NewVisible(
 			"HAS-FLAVORS", "hasSelectedFlavors",
 		),
@@ -92,17 +96,18 @@ var infoFields = fields.New(
 		field.NewVisible(
 			"QUOTA-ID", "quotaId",
 		),
-		field.NewVisible(
-			"REVISIONS", "projectRevision",
-		),
-		field.NewVisible(
-			"SERVERS", "totalCount",
-		),
+		// Removed from the API
+		//field.NewVisible(
+		//	"REVISIONS", "projectRevision",
+		//),
+		//field.NewVisible(
+		//	"SERVERS", "totalCount",
+		//),
 		field.NewVisible(
 			"BASTIONS", "bastion",
 		),
 		field.NewVisible(
-			"KUBEMASTERS", "master",
+			"KUBEMASTERS", "masterReady",
 		),
 		field.NewVisible(
 			"KUBEWORKERS", "worker",
@@ -110,14 +115,17 @@ var infoFields = fields.New(
 		field.NewVisible(
 			"TOTAL-CPU", "usedCpu",
 		),
-		field.NewVisibleWithToStringFunc(
-			"TOTAL-DISK", "usedDiskSize", out.FormatBToGiB,
+		field.NewVisible(
+			"TOTAL-DISK", "usedDiskSize",
 		),
-		field.NewVisibleWithToStringFunc(
-			"TOTAL-RAM", "usedRam", out.FormatBToGiB,
+		field.NewVisible(
+			"TOTAL-RAM", "usedRam",
 		),
 		field.NewVisibleWithToStringFunc(
 			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
 		),
 	},
 )
@@ -148,18 +156,13 @@ func NewCmdInfo() *cobra.Command {
 }
 
 func infoRun(opts *InfoOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), opts.ProjectID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := servers.NewServersDetailsParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(opts.ProjectID)
+	myProject := data.GetProject()
+	return out.PrintResult(myProject, infoFields)
 
-	response, err := apiClient.Client.Servers.ServersDetails(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload.Project, infoFields)
-	}
-
-	return
 }

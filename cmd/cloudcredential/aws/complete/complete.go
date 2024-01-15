@@ -1,10 +1,11 @@
 package complete
 
 import (
+	"context"
+	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/aws"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -16,28 +17,25 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) c
 			return
 		}
 
-		apiClient, err := taikungoclient.NewClient()
+		myApiClient := tk.NewClient()
+
+		body := taikuncore.RegionListCommand{
+			AwsAccessKeyId:     *taikuncore.NewNullableString(accessKeyID),
+			AwsSecretAccessKey: *taikuncore.NewNullableString(secretAccessKey),
+		}
+
+		data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsRegionlist(context.TODO()).RegionListCommand(body).Execute()
 		if err != nil {
+			//err = tk.CreateError(response, err)
+			fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error())) // This function does not return an error... so just call it. #FIXME
 			return
 		}
 
-		body := models.RegionListCommand{
-			AwsAccessKeyID:     *accessKeyID,
-			AwsSecretAccessKey: *secretAccessKey,
-		}
-
-		params := aws.NewAwsRegionListParams().WithV(taikungoclient.Version)
-		params = params.WithBody(&body)
-
-		result, err := apiClient.Client.Aws.AwsRegionList(params, apiClient)
-		if err != nil {
-			return
-		}
-
-		for _, region := range result.Payload {
-			completions = append(completions, region.Region)
+		for _, region := range data {
+			completions = append(completions, region.GetRegion())
 		}
 
 		return
 	}
+
 }

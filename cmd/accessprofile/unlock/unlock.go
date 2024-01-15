@@ -1,12 +1,12 @@
 package unlock
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/access_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -28,21 +28,16 @@ func NewCmdUnlock() *cobra.Command {
 }
 
 func unlockRun(accessProfileID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.AccessProfilesLockManagementCommand{
+		Id:   &accessProfileID,
+		Mode: *taikuncore.NewNullableString(&types.UnlockedMode),
+	}
+	response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesLockManager(context.TODO()).AccessProfilesLockManagementCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.AccessProfilesLockManagementCommand{
-		ID:   accessProfileID,
-		Mode: types.UnlockedMode,
-	}
-	params := access_profiles.NewAccessProfilesLockManagerParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	_, err = apiClient.Client.AccessProfiles.AccessProfilesLockManager(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
 }

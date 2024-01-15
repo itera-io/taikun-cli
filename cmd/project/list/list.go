@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/projects"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -75,6 +75,9 @@ var listFields = fields.New(
 		field.NewHidden(
 			"LAST-MODIFIED-BY", "lastModifiedBy",
 		),
+		field.NewVisible(
+			"AUTOSCALER", "isAutoscalingEnabled",
+		),
 	},
 )
 
@@ -96,7 +99,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role). Default 0.")
 
 	cmdutils.AddSortByAndReverseFlags(&cmd, "projects", listFields)
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
@@ -106,39 +109,34 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := projects.NewProjectsListParams().WithV(taikungoclient.Version)
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.ProjectsAPI.ProjectsList(context.TODO())
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
-
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var projects = make([]*models.ProjectListDetailDto, 0)
+	var projects = make([]taikuncore.ProjectListDetailDto, 0)
 
 	for {
-		response, err := apiClient.Client.Projects.ProjectsList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
-		projects = append(projects, response.Payload.Data...)
+		projects = append(projects, data.GetData()...)
 
 		projectsCount := int32(len(projects))
 		if opts.Limit != 0 && projectsCount >= opts.Limit {
 			break
 		}
 
-		if projectsCount == response.Payload.TotalCount {
+		if projectsCount == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&projectsCount)
+		myRequest = myRequest.Offset(projectsCount)
 	}
 
 	if opts.Limit != 0 && int32(len(projects)) > opts.Limit {
@@ -146,4 +144,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(projects, listFields)
+
 }

@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/opa_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -93,30 +93,31 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CreateOpaProfileCommand{
+		Name:                  *taikuncore.NewNullableString(&opts.Name),
+		ForbidNodePort:        &opts.ForbidNodePort,
+		ForbidHttpIngress:     &opts.ForbidHTTPIngress,
+		RequireProbe:          &opts.RequireProbe,
+		UniqueIngresses:       &opts.UniqueIngresses,
+		UniqueServiceSelector: &opts.UniqueServiceSelector,
+		AllowedRepo:           opts.AllowedRepo,
+		ForbidSpecificTags:    opts.ForbidSpecificTags,
+		IngressWhitelist:      opts.IngressWhitelist,
+		OrganizationId:        *taikuncore.NewNullableInt32(&opts.OrganizationID),
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesCreate(context.TODO()).CreateOpaProfileCommand(body).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	body := &models.CreateOpaProfileCommand{
-		AllowedRepo:           opts.AllowedRepo,
-		ForbidHTTPIngress:     opts.ForbidHTTPIngress,
-		ForbidNodePort:        opts.ForbidNodePort,
-		ForbidSpecificTags:    opts.ForbidSpecificTags,
-		IngressWhitelist:      opts.IngressWhitelist,
-		Name:                  opts.Name,
-		OrganizationID:        opts.OrganizationID,
-		RequireProbe:          opts.RequireProbe,
-		UniqueIngresses:       opts.UniqueIngresses,
-		UniqueServiceSelector: opts.UniqueServiceSelector,
-	}
+	// Manipulate the gathered data
+	return out.PrintResult(data, addFields)
 
-	params := opa_profiles.NewOpaProfilesCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-	response, err := apiClient.Client.OpaProfiles.OpaProfilesCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

@@ -1,8 +1,11 @@
 package add
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -10,10 +13,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/flavors"
-	"github.com/itera-io/taikungoclient/client/servers"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -43,22 +42,30 @@ var addFields = fields.New(
 		field.NewHiddenWithToStringFunc(
 			"CLOUDTYPE", "cloudType", out.FormatCloudType,
 		),
+		field.NewHiddenWithToStringFunc(
+			"AVAILABILITY-ZONE", "availabilityZone", out.FormatAvailabilityZones,
+		),
 		field.NewHidden(
 			"PROJECT", "projectName",
 		),
 		field.NewHidden(
 			"PROJECT-ID", "projectId",
 		),
+		field.NewVisible(
+			"WASM", "wasmEnabled",
+		),
 	},
 )
 
 type AddOptions struct {
+	AvailabilityZone     string
 	DiskSize             int
 	Flavor               string
 	KubernetesNodeLabels []string
 	Name                 string
 	ProjectID            int32
 	Role                 string
+	WasmEnabled          bool
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -80,12 +87,17 @@ func NewCmdAdd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "a", "", "Availability zone (only for AWS, GCP and Azure projects)")
+	cmdutils.SetFlagCompletionFunc(&cmd, "availability-zone", availabilityZoneCompletionFunc)
+
 	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")
 	cmd.Flags().StringSliceVarP(&opts.KubernetesNodeLabels, "kubernetes-node-labels", "k", []string{}, "Kubernetes node labels (format: \"key=value,key2=value2,...\")")
 
 	cmd.Flags().StringVarP(&opts.Flavor, "flavor", "f", "", "Flavor (required)")
 	cmdutils.MarkFlagRequired(&cmd, "flavor")
-	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", flavorCompletionFunc)
+	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", cmdutils.FlavorCompletionFunc)
+
+	cmd.Flags().BoolVar(&opts.WasmEnabled, "enable-wasm", false, "Enable support for WASM")
 
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
@@ -101,39 +113,34 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
+	myApiClient := tk.NewClient()
+	diskSizeValue := types.GiBToB(opts.DiskSize)
+	serverRole := types.GetServerRole(opts.Role)
+	body := taikuncore.ServerForCreateDto{
+		AvailabilityZone: *taikuncore.NewNullableString(&opts.AvailabilityZone),
+		DiskSize:         &diskSizeValue,
+		Flavor:           *taikuncore.NewNullableString(&opts.Flavor),
+		Name:             *taikuncore.NewNullableString(&opts.Name),
+		ProjectId:        &opts.ProjectID,
+		Role:             &serverRole,
+		WasmEnabled:      &opts.WasmEnabled,
 	}
-
-	body := models.ServerForCreateDto{
-		DiskSize:  types.GiBToB(opts.DiskSize),
-		Flavor:    opts.Flavor,
-		Name:      opts.Name,
-		ProjectID: opts.ProjectID,
-		Role:      types.GetServerRole(opts.Role),
-	}
-
 	if len(opts.KubernetesNodeLabels) != 0 {
 		body.KubernetesNodeLabels, err = parseKubernetesNodeLabelsFlag(opts.KubernetesNodeLabels)
 		if err != nil {
 			return
 		}
 	}
-
-	params := servers.NewServersCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.Client.Servers.ServersCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	data, response, err := myApiClient.Client.ServersAPI.ServersCreate(context.TODO()).ServerForCreateDto(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, addFields)
 
-	return
 }
 
-func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNodeLabelsDto, error) {
-	labels := make([]*models.KubernetesNodeLabelsDto, len(labelsData))
+func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.KubernetesNodeLabelsDto, error) {
+	labels := make([]taikuncore.KubernetesNodeLabelsDto, len(labelsData))
 
 	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
@@ -145,16 +152,17 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]*models.KubernetesNod
 			return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
 		}
 
-		labels[labelIndex] = &models.KubernetesNodeLabelsDto{
-			Key:   tokens[0],
-			Value: tokens[1],
+		labels[labelIndex] = taikuncore.KubernetesNodeLabelsDto{
+			Key:   *taikuncore.NewNullableString(&tokens[0]),
+			Value: *taikuncore.NewNullableString(&tokens[1]),
 		}
 	}
 
 	return labels, nil
+
 }
 
-func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
+func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
 	if len(args) == 0 {
 		return []string{}
 	}
@@ -164,34 +172,58 @@ func flavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 		return []string{}
 	}
 
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsList(context.TODO()).Id(projectID).Execute()
+	if err != nil || len(data.GetData()) != 1 {
+		fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error()))
 		return []string{}
 	}
 
-	params := flavors.NewFlavorsGetSelectedFlavorsForProjectParams().WithV(taikungoclient.Version)
-	params = params.WithProjectID(&projectID)
+	projectOrgId := data.Data[0].GetOrganizationId()
+	ccType := data.Data[0].GetCloudType()
+	ccName := data.Data[0].GetCloudCredentialName()
+	if ccType == "OPENSTACK" {
+		return []string{}
+	}
 
 	completions := make([]string, 0)
 
-	for {
-		response, err := apiClient.Client.Flavors.FlavorsGetSelectedFlavorsForProject(params, apiClient)
-		if err != nil {
-			return []string{}
+	dataCC, responseCC, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO()).OrganizationId(projectOrgId).Execute()
+	if err != nil {
+		fmt.Println(fmt.Errorf(tk.CreateError(responseCC, err).Error()))
+		return []string{}
+	}
+	countCC := dataCC.GetTotalCountOpenstack() + dataCC.GetTotalCountAws() + dataCC.GetTotalCountAzure() + dataCC.GetTotalCountGoogle()
+
+	if err != nil || countCC == 0 {
+		return []string{}
+	}
+
+	if ccType == "AWS" {
+		amazonCCs := dataCC.GetAmazon()
+		for i := 0; i < int(dataCC.GetTotalCountAws()); i++ {
+			if ccName == amazonCCs[i].GetName() {
+				completions = append(completions, amazonCCs[i].AvailabilityZones...)
+			}
 		}
-
-		for _, flavor := range response.Payload.Data {
-			completions = append(completions, flavor.Name)
+	}
+	if ccType == "AZURE" {
+		azureCCs := dataCC.GetAzure()
+		for i := 0; i < int(dataCC.GetTotalCountAzure()); i++ {
+			if ccName == azureCCs[i].GetName() {
+				completions = append(completions, azureCCs[i].AvailabilityZones...)
+			}
 		}
-
-		count := int32(len(completions))
-
-		if count == response.Payload.TotalCount {
-			break
+	}
+	if ccType == "GOOGLE" {
+		googleCCs := dataCC.GetGoogle()
+		for i := 0; i < int(dataCC.GetTotalCountGoogle()); i++ {
+			if ccName == googleCCs[i].GetName() {
+				completions = append(completions, googleCCs[i].Zones...)
+			}
 		}
-
-		params = params.WithOffset(&count)
 	}
 
 	return completions
+
 }

@@ -1,12 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/opa_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -29,18 +28,17 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(policyProfileID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesDelete(context.TODO(), policyProfileID).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	body := &models.DeleteOpaProfileCommand{ID: policyProfileID}
-	params := opa_profiles.NewOpaProfilesDeleteParams().WithV(taikungoclient.Version).WithBody(body)
-
-	_, err = apiClient.Client.OpaProfiles.OpaProfilesDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Policy profile", policyProfileID)
-	}
-
+	out.PrintDeleteSuccess("Policy profile", policyProfileID)
 	return
+
 }

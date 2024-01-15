@@ -1,11 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/prometheus"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -28,18 +28,17 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(billingRuleID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesDelete(context.TODO(), billingRuleID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := prometheus.NewPrometheusDeleteParams().WithV(taikungoclient.Version)
-	params = params.WithID(billingRuleID)
-
-	_, err = apiClient.Client.Prometheus.PrometheusDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Billing rule", billingRuleID)
-	}
-
+	// Manipulate the gathered data
+	out.PrintDeleteSuccess("Billing rule", billingRuleID)
 	return
+
 }

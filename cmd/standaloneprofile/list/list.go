@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_profile"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -64,40 +64,34 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	params := stand_alone_profile.NewStandAloneProfileListParams().WithV(taikungoclient.Version)
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileList(context.TODO())
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
-
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	standAloneProfiles := make([]*models.StandAloneProfilesListDto, 0)
-
+	standAloneProfiles := make([]taikuncore.StandAloneProfilesListDto, 0)
 	for {
-		response, err := apiClient.Client.StandAloneProfile.StandAloneProfileList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		standAloneProfiles = append(standAloneProfiles, response.Payload.Data...)
+		standAloneProfiles = append(standAloneProfiles, data.GetData()...)
 
 		count := int32(len(standAloneProfiles))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(standAloneProfiles)) > opts.Limit {
@@ -105,4 +99,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(standAloneProfiles, listFields)
+
 }

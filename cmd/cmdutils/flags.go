@@ -1,15 +1,15 @@
 package cmdutils
 
 import (
+	"context"
 	"fmt"
+	tk "github.com/itera-io/taikungoclient"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/gmap"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/common"
 	"github.com/spf13/cobra"
 )
 
@@ -79,22 +79,20 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 }
 
 func getSortingElements(sortType string) (sortingElements []string, err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.CommonAPI.CommonSortingElements(context.TODO(), sortType).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
+	sortingElements = data
 
-	params := common.NewCommonGetSortingElementsParams().WithV(taikungoclient.Version)
-	params = params.WithType(sortType)
-
-	response, err := apiClient.Client.Common.CommonGetSortingElements(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	sortingElements = response.Payload
-
+	// Manipulate the gathered data
 	return
+
 }
 
 func AddOutputOnlyIDFlag(cmd *cobra.Command) {

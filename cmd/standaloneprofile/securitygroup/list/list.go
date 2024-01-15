@@ -1,13 +1,13 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/security_group"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -64,18 +64,16 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.SecurityGroupAPI.SecuritygroupList(context.TODO(), opts.StandAloneProfileID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := security_group.NewSecurityGroupListParams().WithV(taikungoclient.Version)
-	params = params.WithStandAloneProfileID(opts.StandAloneProfileID)
+	// Manipulate the gathered data
+	return out.PrintResults(data, listFields)
 
-	response, err := apiClient.Client.SecurityGroup.SecurityGroupList(params, apiClient)
-	if err == nil {
-		return out.PrintResults(response.Payload, listFields)
-	}
-
-	return
 }

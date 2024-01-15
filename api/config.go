@@ -15,7 +15,7 @@ const PayloadField = "Payload"
 
 // Sort direction to use when listing resources
 func GetSortDirection() *string {
-	var sortDirection string = "asc"
+	var sortDirection = "asc"
 	if config.ReverseSortDirection {
 		sortDirection = "desc"
 	}

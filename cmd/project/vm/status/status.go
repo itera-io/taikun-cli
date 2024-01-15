@@ -1,11 +1,11 @@
 package status
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_actions"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -33,18 +33,17 @@ func NewCmdStatus() *cobra.Command {
 }
 
 func statusRun(opts *StatusOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsStatus(context.TODO(), opts.StandaloneVMID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := stand_alone_actions.NewStandAloneActionsShowStandaloneVMStatusParams().WithV(taikungoclient.Version)
-	params = params.WithID(opts.StandaloneVMID)
-
-	response, err := apiClient.Client.StandAloneActions.StandAloneActionsShowStandaloneVMStatus(params, apiClient)
-	if err == nil {
-		out.Println(response.Payload)
-	}
-
+	// Manipulate the gathered data
+	out.Println(data)
 	return
+
 }

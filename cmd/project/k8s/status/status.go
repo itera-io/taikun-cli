@@ -1,10 +1,10 @@
 package status
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/servers"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -32,18 +32,12 @@ func NewCmdStatus() *cobra.Command {
 }
 
 func statusRun(opts *StatusOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.ServersAPI.ServersStatus(context.TODO(), opts.ServerID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	params := servers.NewServersShowServerStatusParams().WithV(taikungoclient.Version)
-	params = params.WithServerID(opts.ServerID)
-
-	response, err := apiClient.Client.Servers.ServersShowServerStatus(params, apiClient)
-	if err == nil {
-		out.Println(response.Payload)
-	}
-
+	out.Println(data)
 	return
+
 }

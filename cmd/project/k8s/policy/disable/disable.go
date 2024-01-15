@@ -1,11 +1,10 @@
 package disable
 
 import (
-	"github.com/itera-io/taikun-cli/utils/out"
+	"context"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/opa_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -33,22 +32,14 @@ func NewCmdDisable() *cobra.Command {
 }
 
 func disableRun(opts *DisableOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.DisableGatekeeperCommand{
+		ProjectId: &opts.ProjectID,
+	}
+	response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesDisableGatekeeper(context.TODO()).DisableGatekeeperCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.DisableGatekeeperCommand{
-		ProjectID: opts.ProjectID,
-	}
-
-	params := opa_profiles.NewOpaProfilesDisableGatekeeperParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.OpaProfiles.OpaProfilesDisableGatekeeper(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
 	return
+
 }

@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/prometheus"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -73,36 +73,35 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	params := prometheus.NewPrometheusListOfRulesParams().WithV(taikungoclient.Version)
+	// Prepare the arguments for the query
+	myRequest := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesList(context.TODO())
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var billingRules = make([]*models.PrometheusRuleListDto, 0)
-
+	var billingRules = make([]taikuncore.PrometheusRuleListDto, 0)
+	// Send the query and move offset until you get all the data
 	for {
-		response, err := apiClient.Client.Prometheus.PrometheusListOfRules(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		billingRules = append(billingRules, response.Payload.Data...)
+		billingRules = append(billingRules, data.GetData()...)
 
 		count := int32(len(billingRules))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCount {
+		if count == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(billingRules)) > opts.Limit {
@@ -110,4 +109,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(billingRules, listFields)
+
 }

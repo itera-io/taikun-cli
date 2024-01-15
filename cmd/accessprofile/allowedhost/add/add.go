@@ -1,17 +1,17 @@
 package add
 
 import (
+	"context"
 	"fmt"
+	"github.com/itera-io/taikun-cli/utils/out"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"net"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/allowed_host"
-	"github.com/itera-io/taikungoclient/models"
 	"github.com/spf13/cobra"
 )
 
@@ -79,24 +79,22 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CreateAllowedHostCommand{
+		AccessProfileId: &opts.AccessProfileID,
+		Description:     *taikuncore.NewNullableString(&opts.Description),
+		IpAddress:       *taikuncore.NewNullableString(&opts.IpAddress),
+		MaskBits:        &opts.MaskBits,
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AllowedHostAPI.AllowedhostCreate(context.TODO()).CreateAllowedHostCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, addFields)
 
-	body := models.CreateAllowedHostCommand{
-		AccessProfileID: opts.AccessProfileID,
-		IPAddress:       opts.IpAddress,
-		MaskBits:        opts.MaskBits,
-		Description:     opts.Description,
-	}
-
-	params := allowed_host.NewAllowedHostCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	response, err := apiClient.Client.AllowedHost.AllowedHostCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

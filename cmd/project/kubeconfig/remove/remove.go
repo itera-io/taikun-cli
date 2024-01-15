@@ -1,12 +1,12 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/kube_config"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -29,19 +29,15 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(kubeconfigID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	myApiClient := tk.NewClient()
+	body := taikuncore.DeleteKubeConfigCommand{
+		Id: &kubeconfigID,
+	}
+	response, err := myApiClient.Client.KubeConfigAPI.KubeconfigDelete(context.TODO()).DeleteKubeConfigCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
-
-	body := models.DeleteKubeConfigCommand{ID: kubeconfigID}
-	params := kube_config.NewKubeConfigDeleteParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.KubeConfig.KubeConfigDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Kubeconfig", kubeconfigID)
-	}
-
+	out.PrintDeleteSuccess("Kubeconfig", kubeconfigID)
 	return
+
 }

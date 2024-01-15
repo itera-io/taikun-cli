@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_profile"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -56,27 +56,25 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.StandAloneProfileCreateCommand{
-		Name:      opts.Name,
-		PublicKey: opts.PublicKey,
+	// Prepare the arguments for the query
+	body := taikuncore.StandAloneProfileCreateCommand{
+		Name:      *taikuncore.NewNullableString(&opts.Name),
+		PublicKey: *taikuncore.NewNullableString(&opts.PublicKey),
 	}
-
 	if opts.OrganizationID != 0 {
-		body.OrganizationID = opts.OrganizationID
+		body.SetOrganizationId(opts.OrganizationID)
 	}
 
-	params := stand_alone_profile.NewStandAloneProfileCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.Client.StandAloneProfile.StandAloneProfileCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileCreate(context.TODO()).StandAloneProfileCreateCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
-	return
+	// Manipulate the gathered data
+	return out.PrintResult(data, addFields)
+
 }

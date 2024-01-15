@@ -1,13 +1,15 @@
 package list
 
 import (
+	"context"
+	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/s3_credentials"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -67,41 +69,41 @@ func NewCmdList() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "backupcredentials", listFields)
 
 	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.S3CredentialsAPI.S3credentialsList(context.TODO())
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
-
-	params := s3_credentials.NewS3CredentialsListParams().WithV(taikungoclient.Version)
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
-	backupCredentials := []*models.BackupCredentialsListDto{}
+	var backupCredentials = make([]taikuncore.BackupCredentialsListDto, 0)
 
 	for {
-		response, err := apiClient.Client.S3Credentials.S3CredentialsList(params, apiClient)
+		data, response, err := myRequest.Execute()
 		if err != nil {
-			return err
+			return tk.CreateError(response, err)
 		}
 
-		backupCredentials = append(backupCredentials, response.Payload.Data...)
+		backupCredentials = append(backupCredentials, data.GetData()...)
 		backupCredentialsCount := int32(len(backupCredentials))
 
 		if opts.Limit != 0 && backupCredentialsCount >= opts.Limit {
 			break
 		}
 
-		if backupCredentialsCount == response.Payload.TotalCount {
+		if backupCredentialsCount == data.GetTotalCount() {
 			break
 		}
 
-		params = params.WithOffset(&backupCredentialsCount)
+		myRequest = myRequest.Offset(backupCredentialsCount)
 	}
 
 	if opts.Limit != 0 && int32(len(backupCredentials)) > opts.Limit {
@@ -109,4 +111,5 @@ func listRun(opts *ListOptions) (err error) {
 	}
 
 	return out.PrintResults(backupCredentials, listFields)
+
 }

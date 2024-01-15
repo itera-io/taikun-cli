@@ -1,18 +1,16 @@
 package add
 
 import (
-	"errors"
+	"context"
 	"fmt"
-	"strings"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 type AddOptions struct {
@@ -46,37 +44,35 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func getAlertingProfileWebhooks(alertingProfileID int32) ([]*models.AlertingWebhookDto, error) {
-	apiClient, err := taikungoclient.NewClient()
+func getAlertingProfileWebhooks(alertingProfileID int32) ([]taikuncore.AlertingWebhookDto, error) {
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesList(context.TODO()).Id(alertingProfileID).Execute()
 	if err != nil {
-		return nil, err
+		return nil, tk.CreateError(response, err)
 	}
 
-	params := alerting_profiles.NewAlertingProfilesListParams().WithV(taikungoclient.Version)
-	params = params.WithID(&alertingProfileID)
-
-	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesList(params, apiClient)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(response.Payload.Data) != 1 {
+	// Manipulate the gathered data
+	if len(data.Data) != 1 {
 		return nil, fmt.Errorf("Alerting profile with ID %d not found.", alertingProfileID)
 	}
 
-	return response.Payload.Data[0].Webhooks, nil
+	return data.Data[0].Webhooks, nil
+
 }
 
-func parseAddOptions(opts *AddOptions) (*models.AlertingWebhookDto, error) {
-	alertingWebhook := &models.AlertingWebhookDto{
-		URL: opts.URL,
+func parseAddOptions(opts *AddOptions) (*taikuncore.AlertingWebhookDto, error) {
+	alertingWebhook := &taikuncore.AlertingWebhookDto{
+		Url: *taikuncore.NewNullableString(&opts.URL),
 	}
 
-	headers := make([]*models.WebhookHeaderDto, len(opts.Headers))
+	headers := make([]taikuncore.WebhookHeaderDto, len(opts.Headers))
 
 	for headerIndex, header := range opts.Headers {
 		if len(header) == 0 {
-			return nil, errors.New("Invalid empty webhook header")
+			return nil, fmt.Errorf("Invalid empty webhook header")
 		}
 
 		tokens := strings.Split(header, "=")
@@ -84,22 +80,19 @@ func parseAddOptions(opts *AddOptions) (*models.AlertingWebhookDto, error) {
 			return nil, fmt.Errorf("Invalid webhook header format: %s", header)
 		}
 
-		headers[headerIndex] = &models.WebhookHeaderDto{
-			Key:   tokens[0],
-			Value: tokens[1],
+		headers[headerIndex] = taikuncore.WebhookHeaderDto{
+			Key:   *taikuncore.NewNullableString(&tokens[0]),
+			Value: *taikuncore.NewNullableString(&tokens[1]),
 		}
 	}
-
 	alertingWebhook.Headers = headers
 
 	return alertingWebhook, nil
+
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	myApiClient := tk.NewClient()
 
 	alertingWebhooks, err := getAlertingProfileWebhooks(opts.AlertingProfileID)
 	if err != nil {
@@ -111,15 +104,14 @@ func addRun(opts *AddOptions) (err error) {
 		return
 	}
 
-	alertingWebhooks = append(alertingWebhooks, newAlertingWebhook)
-	params := alerting_profiles.NewAlertingProfilesAssignWebhooksParams().WithV(taikungoclient.Version)
-	params = params.WithID(opts.AlertingProfileID)
-	params = params.WithBody(alertingWebhooks)
+	alertingWebhooks = append(alertingWebhooks, *newAlertingWebhook)
 
-	_, err = apiClient.Client.AlertingProfiles.AlertingProfilesAssignWebhooks(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAssignWebhooks(context.TODO(), opts.AlertingProfileID).AlertingWebhookDto(alertingWebhooks).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
+	out.PrintStandardSuccess()
 	return
+
 }

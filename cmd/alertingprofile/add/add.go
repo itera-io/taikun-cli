@@ -1,14 +1,14 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/alerting_profiles"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -76,33 +76,34 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.CreateAlertingProfileCommand{
-		Name:                 opts.Name,
-		OrganizationID:       opts.OrganizationID,
-		Reminder:             types.GetAlertingReminder(opts.Reminder),
-		SlackConfigurationID: opts.SlackConfigurationID,
+	// Prepare the arguments for the query
+	body := taikuncore.CreateAlertingProfileCommand{
+		Name:           *taikuncore.NewNullableString(&opts.Name),
+		OrganizationId: *taikuncore.NewNullableInt32(&opts.OrganizationID),
+		Reminder:       types.GetAlertingReminder(opts.Reminder),
 	}
-
+	if opts.SlackConfigurationID != 0 {
+		body.SetSlackConfigurationId(opts.SlackConfigurationID)
+	}
 	if len(opts.Emails) != 0 {
-		emails := make([]*models.AlertingEmailDto, len(opts.Emails))
+		emails := make([]taikuncore.AlertingEmailDto, len(opts.Emails))
 		for i, email := range opts.Emails {
-			emails[i] = &models.AlertingEmailDto{Email: email}
+			emails[i] = taikuncore.AlertingEmailDto{
+				Email: *taikuncore.NewNullableString(&email),
+			}
 		}
-
 		body.Emails = emails
 	}
 
-	params := alerting_profiles.NewAlertingProfilesCreateParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	response, err := apiClient.Client.AlertingProfiles.AlertingProfilesCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesCreate(context.TODO()).CreateAlertingProfileCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
-	return
+	return out.PrintResult(data, addFields)
+
 }

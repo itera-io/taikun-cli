@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/azure"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -24,9 +24,6 @@ var addFields = fields.New(
 		),
 		field.NewVisible(
 			"LOCATION", "azureLocation",
-		),
-		field.NewVisible(
-			"AVAILABILITY-ZONE", "azureAvailabilityZone",
 		),
 		field.NewHidden(
 			"CLIENT-ID", "azureClientId",
@@ -47,14 +44,14 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	Name                  string
-	AzureSubscriptionId   string
-	AzureClientId         string
-	AzureClientSecret     string
-	AzureTenantId         string
-	AzureLocation         string
-	AzureAvailabilityZone string
-	OrganizationID        int32
+	Name                string
+	AzureSubscriptionId string
+	AzureClientId       string
+	AzureClientSecret   string
+	AzureTenantId       string
+	AzureLocation       string
+	AzCount             int32
+	OrganizationID      int32
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -85,8 +82,8 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.AzureLocation, "location", "l", "", "Azure Location (required)")
 	cmdutils.MarkFlagRequired(&cmd, "location")
 
-	cmd.Flags().StringVarP(&opts.AzureAvailabilityZone, "availability-zone", "a", "", "Azure Availability Zone (required)")
-	cmdutils.MarkFlagRequired(&cmd, "availability-zone")
+	cmd.Flags().Int32VarP(&opts.AzCount, "az-count", "z", 0, "Azure Az Count (required)")
+	cmdutils.MarkFlagRequired(&cmd, "az-count")
 
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 
@@ -97,28 +94,27 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.CreateAzureCloudCommand{
+		Name:                *taikuncore.NewNullableString(&opts.Name),
+		AzureSubscriptionId: *taikuncore.NewNullableString(&opts.AzureSubscriptionId),
+		AzureClientId:       *taikuncore.NewNullableString(&opts.AzureClientId),
+		AzureClientSecret:   *taikuncore.NewNullableString(&opts.AzureClientSecret),
+		AzureTenantId:       *taikuncore.NewNullableString(&opts.AzureTenantId),
+		AzureLocation:       *taikuncore.NewNullableString(&opts.AzureLocation),
+		AzCount:             &opts.AzCount,
+		OrganizationId:      *taikuncore.NewNullableInt32(&opts.OrganizationID),
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.AzureCloudCredentialAPI.AzureCreate(context.TODO()).CreateAzureCloudCommand(body).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
+	return out.PrintResult(data, addFields)
 
-	body := &models.CreateAzureCloudCommand{
-		Name:                  opts.Name,
-		AzureSubscriptionID:   opts.AzureSubscriptionId,
-		AzureClientID:         opts.AzureClientId,
-		AzureClientSecret:     opts.AzureClientSecret,
-		AzureTenantID:         opts.AzureTenantId,
-		AzureLocation:         opts.AzureLocation,
-		AzureAvailabilityZone: opts.AzureAvailabilityZone,
-		OrganizationID:        opts.OrganizationID,
-	}
-
-	params := azure.NewAzureCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-	response, err := apiClient.Client.Azure.AzureCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

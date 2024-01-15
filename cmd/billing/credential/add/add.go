@@ -1,13 +1,13 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/ops_credentials"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -85,25 +85,24 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.OperationCredentialsCreateCommand{
+		Name:               *taikuncore.NewNullableString(&opts.Name),
+		PrometheusUsername: *taikuncore.NewNullableString(&opts.PrometheusUsername),
+		PrometheusPassword: *taikuncore.NewNullableString(&opts.PrometheusPassword),
+		PrometheusUrl:      *taikuncore.NewNullableString(&opts.PrometheusURL),
+		OrganizationId:     *taikuncore.NewNullableInt32(&opts.OrganizationID),
+	}
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.OperationCredentialsAPI.OpscredentialsCreate(context.TODO()).OperationCredentialsCreateCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := &models.OperationCredentialsCreateCommand{
-		Name:               opts.Name,
-		PrometheusUsername: opts.PrometheusUsername,
-		PrometheusPassword: opts.PrometheusPassword,
-		PrometheusURL:      opts.PrometheusURL,
-		OrganizationID:     opts.OrganizationID,
-	}
+	return out.PrintResult(data, addFields)
 
-	params := ops_credentials.NewOpsCredentialsCreateParams().WithV(taikungoclient.Version).WithBody(body)
-
-	response, err := apiClient.Client.OpsCredentials.OpsCredentialsCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
-	}
-
-	return
 }

@@ -1,30 +1,29 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikun-cli/utils/out/field"
-	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/backup"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
-var addFields = fields.New(
-	[]*field.Field{
-		field.NewVisible(
-			"ID", "projectId",
-		),
-		field.NewVisible(
-			"BACKUP-NAME", "backupName",
-		),
-		field.NewVisible(
-			"RESTORE-NAME", "restoreName",
-		),
-	},
-)
+// New generated api client does not return data
+//var addFields = fields.New(
+//	[]*field.Field{
+//		field.NewVisible(
+//			"ID", "projectId",
+//		),
+//		field.NewVisible(
+//			"BACKUP-NAME", "backupName",
+//		),
+//		field.NewVisible(
+//			"RESTORE-NAME", "restoreName",
+//		),
+//	},
+//)
 
 type AddOptions struct {
 	IncludeNamespaces []string
@@ -62,25 +61,19 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
-
-	body := models.RestoreBackupCommand{
-		ProjectID:         opts.ProjectID,
-		BackupName:        opts.BackupName,
-		RestoreName:       opts.RestoreName,
+	myApiClient := tk.NewClient()
+	body := taikuncore.RestoreBackupCommand{
+		ProjectId:         &opts.ProjectID,
+		BackupName:        *taikuncore.NewNullableString(&opts.BackupName),
+		RestoreName:       *taikuncore.NewNullableString(&opts.RestoreName),
 		IncludeNamespaces: opts.IncludeNamespaces,
 		ExcludeNamespaces: opts.ExcludeNamespaces,
 	}
-
-	params := backup.NewBackupRestoreBackupParams().WithV(taikungoclient.Version).WithBody(&body)
-
-	response, err := apiClient.Client.Backup.BackupRestoreBackup(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	response, err := myApiClient.Client.BackupPolicyAPI.BackupRestoreBackup(context.TODO()).RestoreBackupCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
+	out.PrintStandardSuccess()
 	return
 }

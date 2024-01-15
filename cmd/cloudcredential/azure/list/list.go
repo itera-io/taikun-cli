@@ -1,15 +1,15 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/cloud_credentials"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +31,7 @@ var listFields = fields.New(
 			"LOCATION", "location",
 		),
 		field.NewVisible(
-			"AVAILABILITY-ZONE", "availabilityZone",
+			"AVAILABILITY-ZONES", "availabilityZones",
 		),
 		field.NewHidden(
 			"TENANT-ID", "tenantId",
@@ -85,40 +85,37 @@ func listRun(opts *ListOptions) error {
 }
 
 func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return nil, err
-	}
-
-	params := cloud_credentials.NewCloudCredentialsDashboardListParams().WithV(taikungoclient.Version)
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO())
 	if opts.OrganizationID != 0 {
-		params = params.WithOrganizationID(&opts.OrganizationID)
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
 	if config.SortBy != "" {
-		params = params.WithSortBy(&config.SortBy).WithSortDirection(api.GetSortDirection())
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var azureCloudCredentials = make([]*models.AzureCredentialsListDto, 0)
+	var azureCloudCredentials = make([]taikuncore.AzureCredentialsListDto, 0)
 
 	for {
-		response, err := apiClient.Client.CloudCredentials.CloudCredentialsDashboardList(params, apiClient)
-		if err != nil {
-			return nil, err
+		data, response, newError := myRequest.Execute()
+		if newError != nil {
+			err = tk.CreateError(response, err)
+			return
 		}
 
-		azureCloudCredentials = append(azureCloudCredentials, response.Payload.Azure...)
+		azureCloudCredentials = append(azureCloudCredentials, data.Azure...)
 
 		count := int32(len(azureCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == response.Payload.TotalCountAzure {
+		if count == data.GetTotalCountAzure() {
 			break
 		}
 
-		params = params.WithOffset(&count)
+		myRequest = myRequest.Offset(count)
 	}
 
 	if opts.Limit != 0 && int32(len(azureCloudCredentials)) > opts.Limit {
@@ -127,8 +124,9 @@ func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, er
 
 	credentials = make([]interface{}, len(azureCloudCredentials))
 	for i, credential := range azureCloudCredentials {
-		credentials[i] = *credential
+		credentials[i] = credential
 	}
 
 	return credentials, nil
+
 }

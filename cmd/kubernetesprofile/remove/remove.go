@@ -1,11 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/kubernetes_profiles"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -28,17 +28,17 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(kubernetesProfileID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesDelete(context.TODO(), kubernetesProfileID).Execute()
 	if err != nil {
+		err = tk.CreateError(response, err)
 		return
 	}
 
-	params := kubernetes_profiles.NewKubernetesProfilesDeleteParams().WithV(taikungoclient.Version).WithID(kubernetesProfileID)
-
-	_, _, err = apiClient.Client.KubernetesProfiles.KubernetesProfilesDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Kubernetes profile", kubernetesProfileID)
-	}
-
+	out.PrintDeleteSuccess("Kubernetes profile", kubernetesProfileID)
 	return
+
 }

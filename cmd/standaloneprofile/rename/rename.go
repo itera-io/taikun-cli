@@ -1,13 +1,13 @@
 package rename
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_profile"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -39,23 +39,22 @@ func NewCmdRename() *cobra.Command {
 }
 
 func renameRun(opts *RenameOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.StandAloneProfileUpdateCommand{
+		Id:   &opts.ID,
+		Name: *taikuncore.NewNullableString(&opts.Name),
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileEdit(context.TODO()).StandAloneProfileUpdateCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.StandAloneProfileUpdateCommand{
-		ID:   opts.ID,
-		Name: opts.Name,
-	}
-
-	params := stand_alone_profile.NewStandAloneProfileEditParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.StandAloneProfile.StandAloneProfileEdit(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
 }

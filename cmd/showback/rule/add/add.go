@@ -1,14 +1,14 @@
 package add
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/models"
-	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
+	tk "github.com/itera-io/taikungoclient"
+	taikunshowback "github.com/itera-io/taikungoclient/showbackclient"
 	"github.com/spf13/cobra"
 )
 
@@ -120,39 +120,37 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) error {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return err
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.CreateShowbackRuleCommand{
-		GlobalAlertLimit: opts.GlobalAlertLimit,
+	// Prepare the arguments for the query
+	body := taikunshowback.CreateShowbackRuleCommand{
+		Name:             *taikunshowback.NewNullableString(&opts.Name),
+		MetricName:       *taikunshowback.NewNullableString(&opts.MetricName),
 		Kind:             types.GetShowbackKind(opts.Kind),
-		MetricName:       opts.MetricName,
-		Name:             opts.Name,
-		Price:            opts.Price,
 		Type:             types.GetEPrometheusType(opts.Type),
+		Price:            *taikunshowback.NewNullableFloat64(&opts.Price),
+		GlobalAlertLimit: *taikunshowback.NewNullableInt32(&opts.GlobalAlertLimit),
 	}
 
 	if opts.OrganizationID != 0 {
-		body.OrganizationID = opts.OrganizationID
+		body.SetOrganizationId(opts.OrganizationID)
 	}
 
 	if opts.ProjectAlertLimit != 0 {
-		body.ProjectAlertLimit = opts.ProjectAlertLimit
+		body.SetProjectAlertLimit(opts.ProjectAlertLimit)
 	}
 
 	if opts.ShowbackCredentialID != 0 {
-		body.ShowbackCredentialID = &opts.ShowbackCredentialID
+		body.SetShowbackCredentialId(opts.ShowbackCredentialID)
 	}
 
-	params := showback_rules.NewShowbackRulesCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.ShowbackClient.ShowbackRules.ShowbackRulesCreate(params, apiClient)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesCreate(context.TODO()).CreateShowbackRuleCommand(body).Execute()
 	if err != nil {
-		return err
+		return tk.CreateError(response, err)
 	}
 
-	return out.PrintResult(response.Payload, addFields)
+	return out.PrintResult(data, addFields)
+
 }

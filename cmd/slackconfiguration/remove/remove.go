@@ -1,12 +1,12 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/slack"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -29,20 +29,22 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(slackConfigID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.DeleteSlackConfigCommand{
+		Ids: []int32{slackConfigID},
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.SlackAPI.SlackDeleteMultiple(context.TODO()).DeleteSlackConfigCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.DeleteSlackConfigCommand{}
-	body.Ids = append(body.Ids, slackConfigID)
-	params := slack.NewSlackDeleteMultipleParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.Slack.SlackDeleteMultiple(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Slack configuration", slackConfigID)
-	}
-
+	// Manipulate the gathered data
+	out.PrintDeleteSuccess("Slack configuration", slackConfigID)
 	return
+
 }

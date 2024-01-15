@@ -1,13 +1,13 @@
 package resize
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/stand_alone_vm_disks"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -39,23 +39,22 @@ func NewCmdResize() *cobra.Command {
 }
 
 func resizeRun(opts *ResizeOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Prepare the arguments for the query
+	body := taikuncore.UpdateStandaloneVmDiskSizeCommand{
+		Id:   &opts.DiskID,
+		Size: &opts.Size,
+	}
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.Client.StandaloneVMDisksAPI.StandalonevmdisksUpdateSize(context.TODO()).UpdateStandaloneVmDiskSizeCommand(body).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	body := models.UpdateStandaloneVMDiskSizeCommand{
-		ID:   opts.DiskID,
-		Size: opts.Size,
-	}
-
-	params := stand_alone_vm_disks.NewStandAloneVMDisksUpdateDiskSizeParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	_, err = apiClient.Client.StandAloneVMDisks.StandAloneVMDisksUpdateDiskSize(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
-	}
-
+	out.PrintStandardSuccess()
 	return
+
 }

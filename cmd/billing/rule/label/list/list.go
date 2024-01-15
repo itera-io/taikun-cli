@@ -1,14 +1,14 @@
 package list
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/prometheus"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -55,28 +55,26 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesList(context.TODO()).Id(opts.BillingRuleID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := prometheus.NewPrometheusListOfRulesParams().WithV(taikungoclient.Version)
-	params = params.WithID(&opts.BillingRuleID)
-
-	response, err := apiClient.Client.Prometheus.PrometheusListOfRules(params, apiClient)
-	if err != nil {
-		return
-	}
-
-	if len(response.Payload.Data) != 1 {
+	// Manipulate the gathered data
+	if len(data.Data) != 1 {
 		return cmderr.ResourceNotFoundError("Billing rule", opts.BillingRuleID)
 	}
 
-	labels := response.Payload.Data[0].Labels
+	labels := data.Data[0].Labels
 
 	if opts.Limit != 0 && int32(len(labels)) > opts.Limit {
 		labels = labels[:opts.Limit]
 	}
 
 	return out.PrintResults(labels, listFields)
+
 }

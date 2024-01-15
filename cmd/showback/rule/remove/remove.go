@@ -1,11 +1,11 @@
 package remove
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/showbackclient/showback_rules"
+	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
@@ -28,18 +28,16 @@ func NewCmdDelete() *cobra.Command {
 }
 
 func deleteRun(showbackRuleID int32) (err error) {
-	apiClient, err := taikungoclient.NewClient()
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
+
+	// Execute a query into the API + graceful exit
+	response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesDelete(context.TODO(), showbackRuleID).Execute()
 	if err != nil {
-		return
+		return tk.CreateError(response, err)
 	}
 
-	params := showback_rules.NewShowbackRulesDeleteParams().WithV(taikungoclient.Version)
-	params = params.WithID(showbackRuleID)
-
-	_, _, err = apiClient.ShowbackClient.ShowbackRules.ShowbackRulesDelete(params, apiClient)
-	if err == nil {
-		out.PrintDeleteSuccess("Showback rule", showbackRuleID)
-	}
-
+	out.PrintDeleteSuccess("Showback rule", showbackRuleID)
 	return
+
 }

@@ -1,19 +1,17 @@
 package add
 
 import (
-	"errors"
+	"context"
 	"fmt"
-	"strings"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/prometheus"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 var addFields = fields.New(
@@ -94,18 +92,17 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	// Create and authenticated client to the Taikun API
+	myApiClient := tk.NewClient()
 
-	body := models.RuleCreateCommand{
-		MetricName:            opts.MetricName,
-		Name:                  opts.Name,
-		OperationCredentialID: opts.BillingCredentialID,
-		Price:                 opts.Price,
-		RuleDiscountRate:      opts.PriceRate,
+	// Prepare the arguments for the query
+	body := taikuncore.RuleCreateCommand{
+		Name:                  *taikuncore.NewNullableString(&opts.Name),
+		MetricName:            *taikuncore.NewNullableString(&opts.MetricName),
 		Type:                  types.GetPrometheusType(opts.Type),
+		Price:                 &opts.Price,
+		OperationCredentialId: &opts.BillingCredentialID,
+		RuleDiscountRate:      *taikuncore.NewNullableInt32(&opts.PriceRate),
 	}
 
 	body.Labels, err = parseLabelsFlag(opts.Labels)
@@ -113,23 +110,22 @@ func addRun(opts *AddOptions) (err error) {
 		return
 	}
 
-	params := prometheus.NewPrometheusCreateParams().WithV(taikungoclient.Version)
-	params = params.WithBody(&body)
-
-	response, err := apiClient.Client.Prometheus.PrometheusCreate(params, apiClient)
-	if err == nil {
-		return out.PrintResult(response.Payload, addFields)
+	// Execute a query into the API + graceful exit
+	data, response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesCreate(context.TODO()).RuleCreateCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
 
-	return
+	return out.PrintResult(data, addFields)
+
 }
 
-func parseLabelsFlag(labelsData []string) ([]*models.PrometheusLabelListDto, error) {
-	labels := make([]*models.PrometheusLabelListDto, len(labelsData))
+func parseLabelsFlag(labelsData []string) ([]taikuncore.PrometheusLabelListDto, error) {
+	labels := make([]taikuncore.PrometheusLabelListDto, len(labelsData))
 
 	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
-			return nil, errors.New("Invalid empty billing rule label")
+			return nil, fmt.Errorf("Invalid empty billing rule label")
 		}
 
 		tokens := strings.Split(labelData, "=")
@@ -137,11 +133,12 @@ func parseLabelsFlag(labelsData []string) ([]*models.PrometheusLabelListDto, err
 			return nil, fmt.Errorf("Invalid billing rule label format: %s", labelData)
 		}
 
-		labels[labelIndex] = &models.PrometheusLabelListDto{
-			Label: tokens[0],
-			Value: tokens[1],
+		labels[labelIndex] = taikuncore.PrometheusLabelListDto{
+			Label: *taikuncore.NewNullableString(&tokens[0]),
+			Value: *taikuncore.NewNullableString(&tokens[1]),
 		}
 	}
 
 	return labels, nil
+
 }

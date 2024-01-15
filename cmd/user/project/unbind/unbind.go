@@ -1,12 +1,12 @@
 package unbind
 
 import (
+	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikungoclient"
-	"github.com/itera-io/taikungoclient/client/user_projects"
-	"github.com/itera-io/taikungoclient/models"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -36,28 +36,28 @@ func NewCmdUnbind() *cobra.Command {
 	return &cmd
 }
 
+// unbindRun calls the API at /usersprojects/bindprojects and unbinds a user from a project.
+// Both identified by ID. If user and project are already unbound if fails.
 func unbindRun(opts *UnbindOptions) (err error) {
-	apiClient, err := taikungoclient.NewClient()
-	if err != nil {
-		return
-	}
+	myApiClient := tk.NewClient()
 
-	body := &models.BindProjectsCommand{
-		UserID: opts.UserID,
-		Projects: []*models.UpdateUserProjectDto{
+	// Create the body for the request
+	falseBool := false
+	body := taikuncore.BindProjectsCommand{
+		Projects: []taikuncore.UpdateUserProjectDto{
 			{
-				ProjectID: opts.ProjectID,
-				IsBound:   false,
+				Id:      &opts.ProjectID,
+				IsBound: &falseBool,
 			},
 		},
+		UserId: *taikuncore.NewNullableString(&opts.UserID),
 	}
 
-	params := user_projects.NewUserProjectsBindProjectsParams().WithV(taikungoclient.Version).WithBody(body)
-
-	_, err = apiClient.Client.UserProjects.UserProjectsBindProjects(params, apiClient)
-	if err == nil {
-		out.PrintStandardSuccess()
+	// Send the request and process response
+	response, err := myApiClient.Client.UserProjectsAPI.UserprojectsBindProjects(context.TODO()).BindProjectsCommand(body).Execute()
+	if err != nil {
+		return tk.CreateError(response, err)
 	}
-
+	out.PrintStandardSuccess()
 	return
 }
