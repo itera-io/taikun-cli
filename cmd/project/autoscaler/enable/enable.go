@@ -46,7 +46,7 @@ func NewCmdEnable() *cobra.Command {
 	cmdutils.SetFlagCompletionFunc(&cmd, "autoscaler-flavor", cmdutils.FlavorCompletionFunc)
 
 	cmd.Flags().Int32Var(&opts.MaxSize, "max-size", 1, "The autoscaler's maximum size")
-	cmd.Flags().Int32Var(&opts.MaxSize, "min-size", 1, "The autoscaler's minimum size")
+	cmd.Flags().Int32Var(&opts.MinSize, "min-size", 1, "The autoscaler's minimum size")
 	cmd.Flags().Float64Var(&opts.DiskSize, "disk-size", 30, "The autoscaler's disk size")
 
 	return &cmd
