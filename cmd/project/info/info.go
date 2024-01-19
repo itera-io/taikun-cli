@@ -127,6 +127,21 @@ var infoFields = fields.New(
 		field.NewVisible(
 			"WASM", "wasmEnabled",
 		),
+		field.NewVisible(
+			"AUTOSCALING", "isAutoscalingEnabled",
+		),
+		field.NewHidden(
+			"AUTOSCALING-GROUP", "autoscalingGroupName",
+		),
+		field.NewHidden(
+			"AUTOSCALING-MIN", "minSize",
+		),
+		field.NewHidden(
+			"AUTOSCALING-MAX", "maxSize",
+		),
+		field.NewHidden(
+			"AUTOSCALING-FLAVOR", "flavor",
+		),
 	},
 )
 

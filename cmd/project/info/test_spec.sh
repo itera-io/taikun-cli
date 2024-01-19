@@ -33,7 +33,7 @@ Context 'project/quota'
   Example 'Get detailed info about project with wasm enabled'
     When call taikun project info "$pid"
     The status should equal 0
-    The lines of output should equal 32
+    The lines of output should equal 33
     The output should include "$oid"
     The output should include "$ccid"
     The output should include "$projectname"
