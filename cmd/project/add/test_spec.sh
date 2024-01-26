@@ -16,7 +16,7 @@ Context 'project/add'
 
     Context 'with autoscaler default'
         autoscaler_default_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I | xargs )
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I | xargs )
         }
         BeforeAll 'autoscaler_default_project'
 
@@ -41,7 +41,7 @@ Context 'project/add'
 
     Context 'with autoscaler'
         autoscaler_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --autoscaler  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
         }
 
         cleanup() {
@@ -60,7 +60,8 @@ Context 'project/add'
 
     Context 'without autoscaler'
         not_autoscaler_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid"  --autoscaler-name "$(_rnd_name)" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I)
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid"  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I)
+            taikun project list -o "$oid" --limit 1 --format json
             taikun project list -o "$oid" --limit 1 --format json
             if ! taikun project delete "$pid" -q 2>/dev/null; then
                 taikun project delete --force "$pid" -q 2>/dev/null || true
