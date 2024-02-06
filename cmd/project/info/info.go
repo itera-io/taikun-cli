@@ -142,6 +142,9 @@ var infoFields = fields.New(
 		field.NewHidden(
 			"AUTOSCALING-FLAVOR", "flavor",
 		),
+		field.NewHidden(
+			"AUTOSCALING-SPOT", "isAutoscalingSpotEnabled",
+		),
 	},
 )
 
