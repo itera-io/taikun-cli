@@ -1,7 +1,7 @@
 Context 'usertoken/create'
 
     setup() {
-        tokenname="$(_rnd_name)"
+        tokenname=$(_rnd_name)
     }
 
     BeforeAll setup
