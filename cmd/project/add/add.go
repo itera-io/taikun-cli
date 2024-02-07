@@ -72,7 +72,6 @@ var addFields = fields.New(
 			"CREATED-BY", "createdBy",
 		),
 		field.NewHidden(
-
 			"CIDR", "cidr",
 		),
 		field.NewVisible(
