@@ -128,6 +128,18 @@ var infoFields = fields.New(
 			"WASM", "wasmEnabled",
 		),
 		field.NewVisible(
+			"SPOT", "spotEnabled",
+		),
+		field.NewHidden(
+			"SPOT-FULL", "allowFullSpotKubernetes",
+		),
+		field.NewHidden(
+			"SPOT-WORKERS", "allowSpotWorkers",
+		),
+		field.NewHidden(
+			"SPOT-VMS", "allowSpotVMs",
+		),
+		field.NewVisible(
 			"AUTOSCALING", "isAutoscalingEnabled",
 		),
 		field.NewHidden(
@@ -181,6 +193,10 @@ func infoRun(opts *InfoOptions) (err error) {
 	}
 
 	myProject := data.GetProject()
+
+	// Show if any of the spots is enabled for clarity
+	myProject.SetSpotEnabled(myProject.GetAllowSpotVMs() || myProject.GetAllowSpotWorkers() || myProject.GetAllowFullSpotKubernetes())
+
 	return out.PrintResult(myProject, infoFields)
 
 }

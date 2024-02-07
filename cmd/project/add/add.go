@@ -105,6 +105,10 @@ type AddOptions struct {
 	AutoscalerMaxSize   int32
 	AutoscalerDiskSize  float64
 	AutoscalerFlavor    string
+	SpotFull            bool
+	SpotWorker          bool
+	SpotVms             bool
+	SpotMaxPrice        float64
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -177,6 +181,11 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Float64Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB]")
 	cmd.Flags().StringVar(&opts.AutoscalerFlavor, "autoscaler-flavor", "", "The autoscaler flavor")
 
+	cmd.Flags().BoolVar(&opts.SpotFull, "spot-full", false, "Enable full spot flavorsKubernetes (worker + controlplane), bool")
+	cmd.Flags().BoolVar(&opts.SpotWorker, "spot-worker", false, "Enable spot flavors for Kubernetes workers, bool")
+	cmd.Flags().BoolVar(&opts.SpotVms, "spot-vms", false, "Enable spot flavors for standalone VMs, bool")
+	cmd.Flags().Float64Var(&opts.SpotMaxPrice, "spot-max-price", -1, "Set maximum price for spots")
+
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
 
@@ -191,18 +200,21 @@ func addRun(opts *AddOptions) (err error) {
 
 	isKubernetes := true
 	body := taikuncore.CreateProjectCommand{
-		AccessProfileId:     *taikuncore.NewNullableInt32(&opts.AccessProfileID),
-		AlertingProfileId:   *taikuncore.NewNullableInt32(&opts.AlertingProfileID),
-		CloudCredentialId:   &opts.CloudCredentialID,
-		DeleteOnExpiration:  &opts.DeleteOnExpiration,
-		Flavors:             opts.Flavors,
-		IsAutoUpgrade:       &opts.AutoUpgrade,
-		IsKubernetes:        &isKubernetes, // Looks to be always true in the UI. No API doc cover what this does.
-		KubernetesProfileId: *taikuncore.NewNullableInt32(&opts.KubernetesProfileID),
-		IsMonitoringEnabled: &opts.Monitoring,
-		Name:                *taikuncore.NewNullableString(&opts.Name),
-		OrganizationId:      *taikuncore.NewNullableInt32(&opts.OrganizationID),
-		AutoscalingEnabled:  &opts.IsAutoscaler,
+		AccessProfileId:         *taikuncore.NewNullableInt32(&opts.AccessProfileID),
+		AlertingProfileId:       *taikuncore.NewNullableInt32(&opts.AlertingProfileID),
+		CloudCredentialId:       &opts.CloudCredentialID,
+		DeleteOnExpiration:      &opts.DeleteOnExpiration,
+		Flavors:                 opts.Flavors,
+		IsAutoUpgrade:           &opts.AutoUpgrade,
+		IsKubernetes:            &isKubernetes, // Looks to be always true in the UI. No API doc cover what this does.
+		KubernetesProfileId:     *taikuncore.NewNullableInt32(&opts.KubernetesProfileID),
+		IsMonitoringEnabled:     &opts.Monitoring,
+		Name:                    *taikuncore.NewNullableString(&opts.Name),
+		OrganizationId:          *taikuncore.NewNullableInt32(&opts.OrganizationID),
+		AutoscalingEnabled:      &opts.IsAutoscaler,
+		AllowFullSpotKubernetes: &opts.SpotFull,
+		AllowSpotWorkers:        &opts.SpotWorker,
+		AllowSpotVMs:            &opts.SpotVms,
 	}
 
 	if opts.BackupCredentialID != 0 {
@@ -245,6 +257,10 @@ func addRun(opts *AddOptions) (err error) {
 		body.SetMinSize(opts.AutoscalerMinSize)
 		body.SetMaxSize(opts.AutoscalerMaxSize)
 		body.SetDiskSize(float64(types.GiBToB(int(opts.AutoscalerDiskSize))))
+	}
+
+	if opts.SpotMaxPrice > 0 {
+		body.SetMaxSpotPrice(opts.SpotMaxPrice)
 	}
 
 	myApiClient := tk.NewClient()
