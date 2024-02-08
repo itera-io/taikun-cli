@@ -16,7 +16,7 @@ Context 'project/add'
 
     Context 'with autoscaler default'
         autoscaler_default_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR"  -I | xargs )
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid"  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR"  -I | xargs )
         }
         BeforeAll 'autoscaler_default_project'
 
@@ -41,7 +41,7 @@ Context 'project/add'
 
     Context 'with autoscaler'
         autoscaler_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid"  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
         }
 
         cleanup() {
@@ -59,25 +59,16 @@ Context 'project/add'
     End
 
     Context 'without autoscaler'
-        not_autoscaler_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid"  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I)
-            taikun project list -o "$oid" --limit 1 --format json
-            taikun project list -o "$oid" --limit 1 --format json
-            if ! taikun project delete "$pid" -q 2>/dev/null; then
-                taikun project delete --force "$pid" -q 2>/dev/null || true
-            fi
-        }
-
         Example 'autoscaler project'
-            When call not_autoscaler_project
-            The status should equal 0
-            The output should include '"isAutoscalingEnabled": false'
+            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --autoscaler-name "auto"
+            The status should equal 1
+            The stderr should include 'Error: if any flags in the group [autoscaler-name autoscaler-flavor] are set they must all be set; missing [autoscaler-flavor]'
         End
     End
 
     Context 'Openstack cannot do spots'
         Example 'Create project'
-            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --spot-full -I
+            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --spot-full -I
             The status should not equal 0
             The stderr should include "Openstack cloud does not support to have spot option"
         End
