@@ -16,7 +16,7 @@ Context 'project/add'
 
     Context 'with autoscaler default'
         autoscaler_default_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I | xargs )
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR"  -I | xargs )
         }
         BeforeAll 'autoscaler_default_project'
 
@@ -72,6 +72,14 @@ Context 'project/add'
             When call not_autoscaler_project
             The status should equal 0
             The output should include '"isAutoscalingEnabled": false'
+        End
+    End
+
+    Context 'Openstack cannot do spots'
+        Example 'Create project'
+            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --spot-full -I
+            The status should not equal 0
+            The stderr should include "Openstack cloud does not support to have spot option"
         End
     End
 End
