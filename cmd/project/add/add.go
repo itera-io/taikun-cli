@@ -99,12 +99,12 @@ type AddOptions struct {
 	RouterIDStartRange  int32
 	TaikunLBFlavor      string
 	Cidr                string
-	IsAutoscaler        bool
 	AutoscalerName      string
 	AutoscalerMinSize   int32
 	AutoscalerMaxSize   int32
 	AutoscalerDiskSize  float64
 	AutoscalerFlavor    string
+	AutoscalerSpot      bool
 	SpotFull            bool
 	SpotWorker          bool
 	SpotVms             bool
@@ -139,15 +139,6 @@ func NewCmdAdd() *cobra.Command {
 				}
 			}
 
-			if opts.IsAutoscaler {
-				if opts.AutoscalerName == "" {
-					return cmderr.NoNameAutoscaler
-				}
-				if opts.AutoscalerFlavor == "" {
-					return cmderr.ErrCheckFailure("The autoscaler flavor")
-				}
-			}
-
 			return addRun(&opts)
 		},
 	}
@@ -174,12 +165,13 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "cidr", "", "Cidr IP")
 
-	cmd.Flags().BoolVar(&opts.IsAutoscaler, "autoscaler", false, "Enable autoscaler for the project")
-	cmd.Flags().StringVar(&opts.AutoscalerName, "autoscaler-name", "", "The autoscaler name")
-	cmd.Flags().Int32Var(&opts.AutoscalerMinSize, "autoscaler-min-size", 1, "The minimum size for the autoscaler")
-	cmd.Flags().Int32Var(&opts.AutoscalerMaxSize, "autoscaler-max-size", 1, "The maximum size for the autoscaler")
-	cmd.Flags().Float64Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB]")
+	cmd.Flags().StringVar(&opts.AutoscalerName, "autoscaler-name", "", "The autoscaler name (specify autoscaler name and flavor to enable autoscaler)")
+	cmd.Flags().Float64Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB] (default 30)")
 	cmd.Flags().StringVar(&opts.AutoscalerFlavor, "autoscaler-flavor", "", "The autoscaler flavor")
+	cmd.Flags().Int32Var(&opts.AutoscalerMinSize, "autoscaler-min-size", 1, "The minimum size for the autoscaler (default 1)")
+	cmd.Flags().Int32Var(&opts.AutoscalerMaxSize, "autoscaler-max-size", 1, "The maximum size for the autoscaler (default 1)")
+	cmd.Flags().BoolVar(&opts.AutoscalerSpot, "autoscaler-spot", false, "Enable spot flavors for the autoscaler (default false)")
+	cmd.MarkFlagsRequiredTogether("autoscaler-name", "autoscaler-flavor")
 
 	cmd.Flags().BoolVar(&opts.SpotFull, "spot-full", false, "Enable full spot flavorsKubernetes (worker + controlplane), bool")
 	cmd.Flags().BoolVar(&opts.SpotWorker, "spot-worker", false, "Enable spot flavors for Kubernetes workers, bool")
@@ -211,7 +203,6 @@ func addRun(opts *AddOptions) (err error) {
 		IsMonitoringEnabled:     &opts.Monitoring,
 		Name:                    *taikuncore.NewNullableString(&opts.Name),
 		OrganizationId:          *taikuncore.NewNullableInt32(&opts.OrganizationID),
-		AutoscalingEnabled:      &opts.IsAutoscaler,
 		AllowFullSpotKubernetes: &opts.SpotFull,
 		AllowSpotWorkers:        &opts.SpotWorker,
 		AllowSpotVMs:            &opts.SpotVms,
@@ -251,12 +242,16 @@ func addRun(opts *AddOptions) (err error) {
 		body.SetCidr(opts.Cidr)
 	}
 
-	if opts.IsAutoscaler {
+	// Autosclaer will enable if you specify name and flavor
+	if len(opts.AutoscalerFlavor) != 0 &&
+		len(opts.AutoscalerName) != 0 {
+		body.SetAutoscalingEnabled(true)
 		body.SetAutoscalingFlavor(opts.AutoscalerFlavor)
 		body.SetAutoscalingGroupName(opts.AutoscalerName)
 		body.SetMinSize(opts.AutoscalerMinSize)
 		body.SetMaxSize(opts.AutoscalerMaxSize)
 		body.SetDiskSize(float64(types.GiBToB(int(opts.AutoscalerDiskSize))))
+		body.SetAutoscalingSpotEnabled(opts.AutoscalerSpot)
 	}
 
 	if opts.SpotMaxPrice > 0 {
