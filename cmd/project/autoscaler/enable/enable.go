@@ -20,6 +20,7 @@ type EnableOptions struct {
 	DiskSize             float64
 	MaxSize              int32
 	MinSize              int32
+	Spot                 bool
 }
 
 func NewCmdEnable() *cobra.Command {
@@ -48,6 +49,7 @@ func NewCmdEnable() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.MaxSize, "max-size", 1, "The autoscaler's maximum size")
 	cmd.Flags().Int32Var(&opts.MinSize, "min-size", 1, "The autoscaler's minimum size")
 	cmd.Flags().Float64Var(&opts.DiskSize, "disk-size", 30, "The autoscaler's disk size")
+	cmd.Flags().BoolVarP(&opts.Spot, "spot-enable", "s", false, "Use to enable spot flavors for autoscaler (default false)")
 
 	return &cmd
 }
@@ -71,6 +73,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		MaxSize:              &opts.MaxSize,
 		DiskSize:             &diskSize,
 		Flavor:               *taikuncore.NewNullableString(&opts.Flavor),
+		SpotEnabled:          &opts.Spot,
 	}
 	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEnable(context.TODO()).EnableAutoscalingCommand(body).Execute()
 	if err != nil {

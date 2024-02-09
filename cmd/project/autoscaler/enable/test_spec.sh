@@ -18,6 +18,12 @@ Context 'project/autoscaler/enable'
 
     AfterAll 'cleanup'
 
+    Example 'enable spot autoscaling on openstack'
+        When call taikun project autoscaler enable "$pid" -n "$AUTOSCALER_NAME" -f "$AUTOSCALER_FLAVOR" --max-size 4 --min-size 1 --spot-enable
+        The status should equal 1
+        The stderr should include 'There is no spot option for OPENSTACK cloud'
+    End
+
     Example 'enable autoscaling succesfully'
         When call taikun project autoscaler enable "$pid" -n "$AUTOSCALER_NAME" -f "$AUTOSCALER_FLAVOR" --max-size 4 --min-size 1
         The status should equal 0
