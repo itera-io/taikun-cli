@@ -57,7 +57,7 @@ Context 'project/k8s/add'
     Example 'add two servers with the same name'
       When call taikun project k8s add "$pid" --name tk-cli-master -r kubemaster -f "$flavor"
       The status should equal 1
-      The stderr should include 'Duplicate name occured'
+      The stderr should include 'Duplicate name occurred'
     End
 
     Example 'Try to add wasm enabled bastion'
@@ -108,7 +108,7 @@ Context 'project/k8s/add'
     Example 'add one server with bad availability zone'
       When call taikun project k8s add "$pid" -n master2 --flavor "$flavor" -r kubemaster -a f
       The status should equal 1
-      The stderr should include 'There is no f for this cloud credential'
+      The stderr should include 'There is no zone f for this cloud credential'
     End
   End
 End
