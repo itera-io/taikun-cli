@@ -27,7 +27,7 @@ Context 'billing/rule/add'
     When call taikun billing rule add "$name" $flags
     The status should equal 1
     The stderr should include '400'
-    The stderr should include 'Duplicate rule occured'
+    The stderr should include 'Duplicate rule occurred'
   End
 
 End
