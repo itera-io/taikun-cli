@@ -52,6 +52,9 @@ var addFields = fields.New(
 		field.NewVisible(
 			"WASM", "wasmEnabled",
 		),
+		field.NewVisible(
+			"PROXMOX-STORAGE", "proxmoxStorage",
+		),
 	},
 )
 
@@ -65,6 +68,7 @@ type AddOptions struct {
 	UniqueClusterNameEnabled bool
 	NvidiaGpuOperatorEnabled bool
 	WasmEnabled              bool
+	ProxmoxStorage           string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -88,6 +92,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.UniqueClusterNameEnabled, "unique-cluster-name", false, "Enable unique cluster name, the cluster name will not be cluster.local")
 	cmd.Flags().BoolVar(&opts.NvidiaGpuOperatorEnabled, "enable-gpu", false, "Enable support for Nvidia GPU operator")
 	cmd.Flags().BoolVar(&opts.WasmEnabled, "enable-wasm", false, "Enable support for WASM")
+	cmd.Flags().StringVar(&opts.ProxmoxStorage, "proxmox-storage", "", "Proxmox storage")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -111,7 +116,14 @@ func addRun(opts *AddOptions) (err error) {
 		NvidiaGpuOperatorEnabled: &opts.NvidiaGpuOperatorEnabled,
 		WasmEnabled:              &opts.WasmEnabled,
 	}
+	if opts.ProxmoxStorage != "" {
+		proxmoxStorage, err := taikuncore.NewProxmoxStorageFromValue(opts.ProxmoxStorage)
+		if err != nil {
+			return err
+		}
+		body.SetProxmoxStorage(*proxmoxStorage)
 
+	}
 	// Execute a query into the API + graceful exit
 	data, response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesCreate(context.TODO()).CreateKubernetesProfileCommand(body).Execute()
 	if err != nil {
