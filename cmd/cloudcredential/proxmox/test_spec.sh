@@ -42,17 +42,17 @@ Context 'cloudcredential/proxmox'
     End
 
     Example 'check valid proxmox cloud credential'
-      When call taikun cloud-credential proxmox check "$ccname" -u "$PROXMOX_API_HOST" -i "$PROXMOX_CLIENT_ID" -s "$PROXMOX_CLIENT_SECRET"
+      When call taikun cloud-credential proxmox check -u "$PROXMOX_API_HOST" -i "$PROXMOX_CLIENT_ID" -s "$PROXMOX_CLIENT_SECRET"
       The lines of output should equal 1
       The status should equal 0
       The output should include "Proxmox cloud credential is valid."
     End
 
     Example 'check invalid proxmox cloud credential'
-      When call taikun cloud-credential proxmox check "$ccname" -u "$PROXMOX_API_HOST" -i "$PROXMOX_CLIENT_ID" -s "mockup"
+      When call taikun cloud-credential proxmox check -u "$PROXMOX_API_HOST" -i "mockup" -s "$PROXMOX_CLIENT_SECRET"
       The lines of stderr should equal 1
       The status should equal 1
-      The stderr should include "Error: Proxmox cloud credential is not valid."
+      The stderr should include "HTTP 400"
     End
 
 End

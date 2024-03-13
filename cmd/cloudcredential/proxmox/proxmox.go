@@ -1,8 +1,8 @@
 package proxmox
 
 import (
-	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/check"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/proxmox/add"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/proxmox/check"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/proxmox/list"
 	"github.com/spf13/cobra"
 )
