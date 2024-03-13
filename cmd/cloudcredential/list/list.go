@@ -5,6 +5,7 @@ import (
 	azlist "github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/list"
 	gcplist "github.com/itera-io/taikun-cli/cmd/cloudcredential/google/list"
 	oslist "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
+	proxmoxlist "github.com/itera-io/taikun-cli/cmd/cloudcredential/proxmox/list"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -100,18 +101,29 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
+	proxmoxOpts := proxmoxlist.ListOptions{
+		OrganizationID: opts.OrganizationID,
+	}
+
+	credentialsProxmox, err := proxmoxlist.ListCloudCredentialsProxmox(&proxmoxOpts)
+	if err != nil {
+		return
+	}
+
 	return out.PrintResultsOfDifferentTypes(
 		[]interface{}{
 			credentialsAmazon,
 			credentialsAzure,
 			credentialsGoogle,
 			credentialsOpenStack,
+			credentialsProxmox,
 		},
 		[]string{
 			"AWS",
 			"Azure",
 			"Google",
 			"OpenStack",
+			"Proxmox",
 		},
 		listFields,
 	)
