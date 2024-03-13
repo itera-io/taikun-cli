@@ -77,6 +77,7 @@ type AddOptions struct {
 	Username            string
 	VolumeSize          int64
 	VolumeType          string
+	hypervisor          string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -107,6 +108,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "name")
 
 	cmd.Flags().BoolVar(&opts.PublicIP, "public-ip", false, "Public IP")
+
+	cmd.Flags().StringVar(&opts.hypervisor, "hypervisor", "", "Hypervisor for Proxmox standalone VMs")
 
 	cmd.Flags().Int32VarP(&opts.Count, "count", "x", 1, "Number of VMs to create with this configuration (optional)")
 
@@ -172,6 +175,7 @@ func addRun(opts *AddOptions) error {
 		StandAloneProfileId: &opts.StandAloneProfileID,
 		StandAloneVmDisks:   make([]taikuncore.StandAloneVmDiskDto, 0),
 		VolumeSize:          &opts.VolumeSize,
+		Hypervisor:          *taikuncore.NewNullableString(&opts.hypervisor),
 	}
 
 	if opts.Username != "" {

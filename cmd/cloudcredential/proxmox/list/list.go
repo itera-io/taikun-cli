@@ -80,7 +80,6 @@ func listRun(opts *ListOptions) error {
 
 func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	//myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO())
 	myRequest := myApiClient.Client.ProxmoxCloudCredentialAPI.ProxmoxList(context.TODO())
 
 	if opts.OrganizationID != 0 {
@@ -91,7 +90,6 @@ func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, 
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	//var proxmoxCloudCredentials = make([]taikuncore.AmazonCredentialsListDto, 0)
 	var proxmoxCloudCredentials = make([]taikuncore.ProxmoxListDto, 0)
 
 	for {

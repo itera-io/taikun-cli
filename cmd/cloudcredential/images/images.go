@@ -94,17 +94,56 @@ func getImages(opts *ImagesOptions) (images interface{}, err error) {
 	}
 
 	switch cloudType {
-	case utils.AWS:
+	case taikuncore.CLOUDTYPE_AWS:
 		images, err = getAwsImages(opts)
-	case utils.AZURE:
+	case taikuncore.CLOUDTYPE_AZURE:
 		images, err = getAzureImages(opts)
-	case utils.OPENSTACK:
+	case taikuncore.CLOUDTYPE_OPENSTACK:
 		images, err = getOpenstackImages(opts)
-	case utils.GOOGLE:
+	case taikuncore.CLOUDTYPE_GOOGLE:
 		images, err = getGoogleImages(opts)
+	case taikuncore.CLOUDTYPE_PROXMOX:
+		images, err = getProxmoxImages(opts)
 	}
 
 	return
+}
+
+func getProxmoxImages(opts *ImagesOptions) (proxmoxImages interface{}, err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.ImagesAPI.ImagesProxmoxImages(context.TODO(), opts.CloudCredentialID)
+
+	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
+
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			err = tk.CreateError(response, err)
+			return nil, err
+		}
+
+		images = append(images, data.GetData()...)
+
+		count := int32(len(images))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
+
+		if count == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(count)
+	}
+
+	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+		images = images[:opts.Limit]
+	}
+
+	proxmoxImages = images
+
+	return proxmoxImages, nil
+
 }
 
 func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
