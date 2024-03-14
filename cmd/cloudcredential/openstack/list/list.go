@@ -101,7 +101,7 @@ func listRun(opts *ListOptions) error {
 
 func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO())
+	myRequest := myApiClient.Client.OpenstackCloudCredentialAPI.OpenstackList(context.TODO())
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
@@ -119,14 +119,14 @@ func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}
 			return
 		}
 
-		openstackCloudCredentials = append(openstackCloudCredentials, data.Openstack...)
+		openstackCloudCredentials = append(openstackCloudCredentials, data.GetData()...)
 
 		count := int32(len(openstackCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == data.GetTotalCountOpenstack() {
+		if count == data.GetTotalCount() {
 			break
 		}
 

@@ -93,7 +93,7 @@ func listRun(opts *ListOptions) (err error) {
 
 func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO())
+	myRequest := myApiClient.Client.GoogleAPI.GooglecloudList(context.TODO())
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
@@ -111,14 +111,14 @@ func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, e
 			return
 		}
 
-		googlecloudCloudCredentials = append(googlecloudCloudCredentials, data.Google...)
+		googlecloudCloudCredentials = append(googlecloudCloudCredentials, data.GetData()...)
 
 		count := int32(len(googlecloudCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == data.GetTotalCountGoogle() {
+		if count == data.GetTotalCount() {
 			break
 		}
 
