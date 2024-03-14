@@ -147,6 +147,28 @@ jobs:
           SLACK_WEBHOOK_FEEDBACK: ${{ secrets.SLACK_WEBHOOK_FEEDBACK }}
           CI_JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
+          PROXMOX_API_HOST: ${{ secrets.PROXMOX_API_HOST }}
+          PROXMOX_CLIENT_ID: ${{ secrets.PROXMOX_CLIENT_ID }}
+          PROXMOX_CLIENT_SECRET: ${{ secrets.PROXMOX_CLIENT_SECRET }}
+          PROXMOX_STORAGE: ${{ secrets.PROXMOX_STORAGE }}
+          PROXMOX_VM_TEMPLATE_NAME: ${{ secrets.PROXMOX_VM_TEMPLATE_NAME }}
+          PROXMOX_HYPERVISOR: ${{ secrets.PROXMOX_HYPERVISOR }}
+          PROXMOX_HYPERVISOR2: ${{ secrets.PROXMOX_HYPERVISOR2 }}
+
+          PROXMOX_PRIVATE_NETWORK: ${{ secrets.PROXMOX_PRIVATE_NETWORK }}
+          PROXMOX_PRIVATE_NETMASK: ${{ secrets.PROXMOX_PRIVATE_NETMASK }}
+          PROXMOX_PRIVATE_GATEWAY: ${{ secrets.PROXMOX_PRIVATE_GATEWAY }}
+          PROXMOX_PRIVATE_BEGIN_RANGE: ${{ secrets.PROXMOX_PRIVATE_BEGIN_RANGE }}
+          PROXMOX_PRIVATE_END_RANGE: ${{ secrets.PROXMOX_PRIVATE_END_RANGE }}
+          PROXMOX_PRIVATE_BRIDGE: ${{ secrets.PROXMOX_PRIVATE_BRIDGE }}
+
+          PROXMOX_PUBLIC_NETWORK: ${{ secrets.PROXMOX_PUBLIC_NETWORK }}
+          PROXMOX_PUBLIC_NETMASK: ${{ secrets.PROXMOX_PUBLIC_NETMASK }}
+          PROXMOX_PUBLIC_GATEWAY: ${{ secrets.PROXMOX_PUBLIC_GATEWAY }}
+          PROXMOX_PUBLIC_BEGIN_RANGE: ${{ secrets.PROXMOX_PUBLIC_BEGIN_RANGE }}
+          PROXMOX_PUBLIC_END_RANGE: ${{ secrets.PROXMOX_PUBLIC_END_RANGE }}
+          PROXMOX_PUBLIC_BRIDGE: ${{ secrets.PROXMOX_PUBLIC_BRIDGE }}
+
         run: |
           echo $CI_JOB_URL
           shellspec --shell bash --format tap --jobs $(nproc) | tee shellspec.log
