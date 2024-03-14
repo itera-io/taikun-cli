@@ -115,7 +115,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
 
-	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
+	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role [Kubemaster, Kubeworker, Bastion] (required)")
 	cmdutils.MarkFlagRequired(&cmd, "role")
 	cmdutils.SetFlagCompletionValues(&cmd, "role", types.ServerRoles.Keys()...)
 
