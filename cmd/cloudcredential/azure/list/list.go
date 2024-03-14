@@ -86,7 +86,7 @@ func listRun(opts *ListOptions) error {
 
 func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO())
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzureList(context.TODO())
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
@@ -104,14 +104,14 @@ func ListCloudCredentialsAzure(opts *ListOptions) (credentials []interface{}, er
 			return
 		}
 
-		azureCloudCredentials = append(azureCloudCredentials, data.Azure...)
+		azureCloudCredentials = append(azureCloudCredentials, data.GetData()...)
 
 		count := int32(len(azureCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
 
-		if count == data.GetTotalCountAzure() {
+		if count == data.GetTotalCount() {
 			break
 		}
 

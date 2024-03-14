@@ -99,7 +99,6 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "a", "", "Availability zone (only for AWS, GCP and Azure projects)")
-	cmdutils.SetFlagCompletionFunc(&cmd, "availability-zone", availabilityZoneCompletionFunc)
 
 	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")
 	cmd.Flags().StringSliceVarP(&opts.KubernetesNodeLabels, "kubernetes-node-labels", "k", []string{}, "Kubernetes node labels (format: \"key=value,key2=value2,...\")")
@@ -130,13 +129,17 @@ func addRun(opts *AddOptions) (err error) {
 	diskSizeValue := types.GiBToB(opts.DiskSize)
 	serverRole := types.GetServerRole(opts.Role)
 	body := taikuncore.ServerForCreateDto{
-		AvailabilityZone: *taikuncore.NewNullableString(&opts.AvailabilityZone),
-		DiskSize:         &diskSizeValue,
-		Flavor:           *taikuncore.NewNullableString(&opts.Flavor),
-		Name:             *taikuncore.NewNullableString(&opts.Name),
-		ProjectId:        &opts.ProjectID,
-		Role:             &serverRole,
-		WasmEnabled:      &opts.WasmEnabled,
+		DiskSize:    &diskSizeValue,
+		Flavor:      *taikuncore.NewNullableString(&opts.Flavor),
+		Name:        *taikuncore.NewNullableString(&opts.Name),
+		ProjectId:   &opts.ProjectID,
+		Role:        &serverRole,
+		WasmEnabled: &opts.WasmEnabled,
+	}
+
+	// Only send zone if user set it
+	if opts.AvailabilityZone != "" {
+		body.SetAvailabilityZone(opts.AvailabilityZone)
 	}
 
 	// Only set if optional Proxmox parameter is present
@@ -188,72 +191,6 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.Kubernetes
 	}
 
 	return labels, nil
-
-}
-
-func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	if len(args) == 0 {
-		return []string{}
-	}
-
-	projectID, err := types.Atoi32(args[0])
-	if err != nil {
-		return []string{}
-	}
-
-	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsList(context.TODO()).Id(projectID).Execute()
-	if err != nil || len(data.GetData()) != 1 {
-		fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error()))
-		return []string{}
-	}
-
-	projectOrgId := data.Data[0].GetOrganizationId()
-	ccType := data.Data[0].GetCloudType()
-	ccName := data.Data[0].GetCloudCredentialName()
-	if ccType == "OPENSTACK" {
-		return []string{}
-	}
-
-	completions := make([]string, 0)
-
-	dataCC, responseCC, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO()).OrganizationId(projectOrgId).Execute()
-	if err != nil {
-		fmt.Println(fmt.Errorf(tk.CreateError(responseCC, err).Error()))
-		return []string{}
-	}
-	countCC := dataCC.GetTotalCountOpenstack() + dataCC.GetTotalCountAws() + dataCC.GetTotalCountAzure() + dataCC.GetTotalCountGoogle()
-
-	if err != nil || countCC == 0 {
-		return []string{}
-	}
-
-	if ccType == "AWS" {
-		amazonCCs := dataCC.GetAmazon()
-		for i := 0; i < int(dataCC.GetTotalCountAws()); i++ {
-			if ccName == amazonCCs[i].GetName() {
-				completions = append(completions, amazonCCs[i].AvailabilityZones...)
-			}
-		}
-	}
-	if ccType == "AZURE" {
-		azureCCs := dataCC.GetAzure()
-		for i := 0; i < int(dataCC.GetTotalCountAzure()); i++ {
-			if ccName == azureCCs[i].GetName() {
-				completions = append(completions, azureCCs[i].AvailabilityZones...)
-			}
-		}
-	}
-	if ccType == "GOOGLE" {
-		googleCCs := dataCC.GetGoogle()
-		for i := 0; i < int(dataCC.GetTotalCountGoogle()); i++ {
-			if ccName == googleCCs[i].GetName() {
-				completions = append(completions, googleCCs[i].Zones...)
-			}
-		}
-	}
-
-	return completions
 
 }
 
