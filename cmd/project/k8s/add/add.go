@@ -54,6 +54,15 @@ var addFields = fields.New(
 		field.NewVisible(
 			"WASM", "wasmEnabled",
 		),
+		field.NewVisible(
+			"HYPERVISOR", "hypervisor",
+		),
+		field.NewVisible(
+			"PROXMOX-ROLE", "proxmoxRole",
+		),
+		field.NewVisible(
+			"PROXMOX-DISK", "proxmoxExtraDiskSize",
+		),
 	},
 )
 
@@ -66,6 +75,8 @@ type AddOptions struct {
 	ProjectID            int32
 	Role                 string
 	WasmEnabled          bool
+	ProxmoxDisk          int32
+	Hypervisor           string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -98,6 +109,8 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", cmdutils.FlavorCompletionFunc)
 
 	cmd.Flags().BoolVar(&opts.WasmEnabled, "enable-wasm", false, "Enable support for WASM")
+	cmd.Flags().StringVar(&opts.Hypervisor, "hypervisor", "", "Proxmox hypervisor")
+	cmd.Flags().Int32Var(&opts.ProxmoxDisk, "proxmox-disk", 0, "Proxmox extra disk size (this will automatically enable proxmox NFS type)")
 
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
@@ -125,6 +138,22 @@ func addRun(opts *AddOptions) (err error) {
 		Role:             &serverRole,
 		WasmEnabled:      &opts.WasmEnabled,
 	}
+
+	// Only set if optional Proxmox parameter is present
+	if opts.ProxmoxDisk != 0 {
+		proxmoxRole, err1 := getProxmoxRole(opts.ProjectID)
+		if err1 != nil {
+			return err1
+		}
+		body.SetProxmoxRole(*proxmoxRole)
+		body.SetProxmoxExtraDiskSize(opts.ProxmoxDisk)
+	}
+
+	// Only set if optional Proxmox parameter is present
+	if opts.Hypervisor != "" {
+		body.SetHypervisor(opts.Hypervisor)
+	}
+
 	if len(opts.KubernetesNodeLabels) != 0 {
 		body.KubernetesNodeLabels, err = parseKubernetesNodeLabelsFlag(opts.KubernetesNodeLabels)
 		if err != nil {
@@ -226,4 +255,28 @@ func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplet
 
 	return completions
 
+}
+
+// Proxmox Role type for a k8s server depends on Proxmox type specified in the Kubernetes profile.
+// The names in profile don't match the names we send to the server, for it, we have this function.
+func getProxmoxRole(projectId int32) (returnRole *taikuncore.ProxmoxRole, returnErr error) {
+	myclient := tk.NewClient()
+	data, response, err := myclient.Client.ServersAPI.ServersDetails(context.TODO(), projectId).Execute()
+	if err != nil {
+		returnErr = tk.CreateError(response, err)
+		return
+	}
+	kubernetesProfile := data.GetProject()
+	var proxmoxRoleString string
+	switch kubernetesProfile.GetProxmoxStorage() {
+	case "NFS":
+		proxmoxRoleString = "NFS"
+	case "OpenEBS":
+		proxmoxRoleString = "STORAGE"
+	default:
+		proxmoxRoleString = ""
+	}
+
+	returnRole, returnErr = taikuncore.NewProxmoxRoleFromValue(proxmoxRoleString)
+	return
 }

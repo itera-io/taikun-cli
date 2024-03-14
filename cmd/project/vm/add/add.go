@@ -175,7 +175,10 @@ func addRun(opts *AddOptions) error {
 		StandAloneProfileId: &opts.StandAloneProfileID,
 		StandAloneVmDisks:   make([]taikuncore.StandAloneVmDiskDto, 0),
 		VolumeSize:          &opts.VolumeSize,
-		Hypervisor:          *taikuncore.NewNullableString(&opts.hypervisor),
+	}
+
+	if opts.hypervisor != "" {
+		body.SetHypervisor(opts.hypervisor)
 	}
 
 	if opts.Username != "" {

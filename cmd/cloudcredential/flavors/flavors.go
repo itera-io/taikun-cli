@@ -132,7 +132,6 @@ func getAwsFlavors(opts *FlavorsOptions) (err error) {
 	}
 
 	return out.PrintResults(flavors, flavorsFields)
-	return nil
 }
 
 func getProxmoxFlavors(opts *FlavorsOptions) (err error) {
@@ -243,7 +242,6 @@ func getAzureFlavors(opts *FlavorsOptions) (err error) {
 	}
 
 	return out.PrintResults(flavors, flavorsFields)
-	return nil
 }
 
 func getGoogleFlavors(opts *FlavorsOptions) (err error) {
@@ -280,5 +278,4 @@ func getGoogleFlavors(opts *FlavorsOptions) (err error) {
 	}
 
 	return out.PrintResults(flavors, flavorsFields)
-	return nil
 }

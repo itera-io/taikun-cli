@@ -79,6 +79,15 @@ var listFields = fields.New(
 		field.NewVisible(
 			"WASM", "wasmEnabled",
 		),
+		field.NewHidden(
+			"HYPERVISOR", "hypervisor",
+		),
+		field.NewHidden(
+			"PROXMOX-ROLE", "proxmoxRole",
+		),
+		field.NewHidden(
+			"PROXMOX-DISK", "proxmoxExtraDiskSize",
+		),
 	},
 )
 
@@ -163,6 +172,10 @@ func getFlavorField(servers []taikuncore.ServerListDto) (string, error) {
 
 	if servers[0].GetGoogleMachineType() != "" {
 		return "googleMachineType", nil
+	}
+
+	if servers[0].GetProxmoxFlavor() != "" {
+		return "proxmoxFlavor", nil
 	}
 
 	return "", cmderr.ErrServerHasNoFlavors

@@ -7,17 +7,13 @@ import (
 	taikuncore "github.com/itera-io/taikungoclient/client"
 )
 
-const (
-	AWS = iota
-	AZURE
-	OPENSTACK
-	GOOGLE
-	PROXMOX
-)
-
 func GetCloudType(cloudCredentialID int32) (cloudType taikuncore.CloudType, err error) {
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsOrgList(context.TODO()).Id(cloudCredentialID).IsAdmin(false).Execute()
+	data, response, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsOrgList(context.TODO()).IsAdmin(false).Id(cloudCredentialID).Execute()
+
+	if len(data) == 0 {
+		return taikuncore.CLOUDTYPE_NONE, cmderr.ResourceNotFoundError("Cloud credential", cloudCredentialID)
+	}
 
 	if err != nil {
 		err = tk.CreateError(response, err)
