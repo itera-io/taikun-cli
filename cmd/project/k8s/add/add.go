@@ -54,13 +54,13 @@ var addFields = fields.New(
 		field.NewVisible(
 			"WASM", "wasmEnabled",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"HYPERVISOR", "hypervisor",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"PROXMOX-ROLE", "proxmoxRole",
 		),
-		field.NewVisible(
+		field.NewHidden(
 			"PROXMOX-DISK", "proxmoxExtraDiskSize",
 		),
 	},

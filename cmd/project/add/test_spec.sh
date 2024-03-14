@@ -70,7 +70,7 @@ Context 'project/add'
         Example 'Create project'
             When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --spot-full -I
             The status should not equal 0
-            The stderr should include "Openstack cloud does not support to have spot option"
+            The stderr should include "OPENSTACK cloud provider does not support spot option"
         End
     End
 End
