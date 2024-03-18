@@ -1,4 +1,4 @@
-Context 'cloudcredential/proxmox/story'
+Context 'cloudcredential/proxmox/list'
     # ---
     # --- The story test simulates the whole process from nothing to Proxmox project with VM and k8s server (no commit) ---
     # ---

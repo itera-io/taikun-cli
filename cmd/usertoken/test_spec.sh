@@ -1,4 +1,4 @@
-Context 'usertoken/create'
+Context 'usertoken'
 
     setup() {
         tokenname=$(_rnd_name)
