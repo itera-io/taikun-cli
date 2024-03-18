@@ -1,4 +1,4 @@
-Context 'lock/unlock'
+Context 'cloudcredential/lock'
   setup() {
     orgname="$(_rnd_name)"
     ccname="$(_rnd_name)"

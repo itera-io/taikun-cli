@@ -1,4 +1,4 @@
-Context 'project/aws-with-spot'
+Context 'project/spot'
   setup() {
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs)
     ccid=$(taikun cloud-credential aws add "$(_rnd_name)" -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY" -r "$AWS_DEFAULT_REGION" -z 1 -o "$oid" -I | xargs)

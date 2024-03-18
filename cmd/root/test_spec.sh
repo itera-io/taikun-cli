@@ -1,4 +1,4 @@
-Context 'root/version'
+Context 'root'
   Example 'Get CLI version'
     When call taikun --version
     The status should equal 0
