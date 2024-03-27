@@ -6,6 +6,7 @@ import (
 	gcplist "github.com/itera-io/taikun-cli/cmd/cloudcredential/google/list"
 	oslist "github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack/list"
 	proxmoxlist "github.com/itera-io/taikun-cli/cmd/cloudcredential/proxmox/list"
+	vspherelist "github.com/itera-io/taikun-cli/cmd/cloudcredential/vsphere/list"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -110,6 +111,14 @@ func listRun(opts *ListOptions) (err error) {
 		return
 	}
 
+	vsphereOpts := vspherelist.ListOptions{
+		OrganizationID: opts.OrganizationID,
+	}
+	credentialsVSphere, err := vspherelist.ListCloudCredentialsvSphere(&vsphereOpts)
+	if err != nil {
+		return
+	}
+
 	return out.PrintResultsOfDifferentTypes(
 		[]interface{}{
 			credentialsAmazon,
@@ -117,6 +126,7 @@ func listRun(opts *ListOptions) (err error) {
 			credentialsGoogle,
 			credentialsOpenStack,
 			credentialsProxmox,
+			credentialsVSphere,
 		},
 		[]string{
 			"AWS",
@@ -124,6 +134,7 @@ func listRun(opts *ListOptions) (err error) {
 			"Google",
 			"OpenStack",
 			"Proxmox",
+			"vSphere",
 		},
 		listFields,
 	)

@@ -28,31 +28,16 @@ var listFields = fields.New(
 			"ORG-ID", "organizationId",
 		),
 		field.NewVisible(
-			"BILLING-ACCOUNT", "billingAccountName",
+			"STORAGE", "storage",
 		),
 		field.NewVisible(
-			"FOLDER-ID", "folderId",
-		),
-		field.NewVisible(
-			"PROJECT-ID", "projectId",
-		),
-		field.NewVisible(
-			"PARTNER", "partnerName",
-		),
-		field.NewVisible(
-			"REGION", "region",
-		),
-		field.NewVisible(
-			"ZONES", "zones",
-		),
-		field.NewHiddenWithToStringFunc(
-			"CREATED-AT", "createdAt", out.FormatDateTimeString,
+			"DEFAULT", "isDefault",
 		),
 		field.NewVisibleWithToStringFunc(
 			"LOCK", "isLocked", out.FormatLockStatus,
 		),
 		field.NewHidden(
-			"DEFAULT", "isDefault",
+			"CREATED-BY", "createdBy",
 		),
 	},
 )
@@ -65,37 +50,38 @@ type ListOptions struct {
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
-	cmd := cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "List Google Cloud Platform credentials",
-		Args:  cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
+		Short: "List vSphere cloud credentials",
+		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun(&opts)
 		},
+		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
-	cmdutils.AddSortByAndReverseFlags(&cmd, "cloud-credentials", listFields)
-	cmdutils.AddColumnsFlag(&cmd, listFields)
-
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
 
-	return &cmd
+	cmdutils.AddLimitFlag(cmd, &opts.Limit)
+	cmdutils.AddSortByAndReverseFlags(cmd, "cloud-credentials", listFields)
+	cmdutils.AddColumnsFlag(cmd, listFields)
+
+	return cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
-	googleCloudCredentials, err := ListCloudCredentialsGoogle(opts)
+func listRun(opts *ListOptions) error {
+	vSphereCloudCredentials, err := ListCloudCredentialsvSphere(opts)
 	if err != nil {
 		return err
 	}
 
-	return out.PrintResults(googleCloudCredentials, listFields)
+	return out.PrintResults(vSphereCloudCredentials, listFields)
 }
 
-func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, err error) {
+func ListCloudCredentialsvSphere(opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.GoogleAPI.GooglecloudList(context.TODO())
+	myRequest := myApiClient.Client.VsphereCloudCredentialAPI.VsphereList(context.TODO())
+
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
@@ -104,7 +90,7 @@ func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, e
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var googlecloudCloudCredentials = make([]taikuncore.GoogleCredentialsListDto, 0)
+	var vSphereCloudCredentials = make([]taikuncore.VsphereListDto, 0)
 
 	for {
 		data, response, newError := myRequest.Execute()
@@ -113,9 +99,9 @@ func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, e
 			return
 		}
 
-		googlecloudCloudCredentials = append(googlecloudCloudCredentials, data.GetData()...)
+		vSphereCloudCredentials = append(vSphereCloudCredentials, data.GetData()...)
 
-		count := int32(len(googlecloudCloudCredentials))
+		count := int32(len(vSphereCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
@@ -127,12 +113,12 @@ func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, e
 		myRequest = myRequest.Offset(count)
 	}
 
-	if opts.Limit != 0 && int32(len(googlecloudCloudCredentials)) > opts.Limit {
-		googlecloudCloudCredentials = googlecloudCloudCredentials[:opts.Limit]
+	if opts.Limit != 0 && int32(len(vSphereCloudCredentials)) > opts.Limit {
+		vSphereCloudCredentials = vSphereCloudCredentials[:opts.Limit]
 	}
 
-	credentials = make([]interface{}, len(googlecloudCloudCredentials))
-	for i, credential := range googlecloudCloudCredentials {
+	credentials = make([]interface{}, len(vSphereCloudCredentials))
+	for i, credential := range vSphereCloudCredentials {
 		credentials[i] = credential
 	}
 
