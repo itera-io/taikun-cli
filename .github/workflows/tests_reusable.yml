@@ -174,7 +174,7 @@ jobs:
           GCP_BILLING_ACCOUNT: ${{ secrets.GCP_BILLING_ACCOUNT }}
           GCP_REGION: ${{ secrets.GCP_REGION }}
           GCP_ZONE: ${{ secrets.GCP_ZONE }}
-          GCP_AZ_COUNT: 1
+          GCP_AZ_COUNT: ${{ secrets.GCP_AZ_COUNT }}
 
           export VSPHERE_USERNAME: ${{ secrets.VSPHERE_USERNAME }}
           export VSPHERE_PASSWORD: ${{ secrets.VSPHERE_PASSWORD }}
