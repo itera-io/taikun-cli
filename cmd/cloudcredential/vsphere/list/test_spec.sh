@@ -63,11 +63,11 @@ Context 'cloudcredential/vsphere/list'
     End
 
     Example 'list vsphere vm'
-      When call taikun project vm list "$projectid"
+      When call taikun project vm list "$projectid" --all-columns
       The output should include "$vmname"
       The output should include "$vmid"
-      The output should inculde "$flavor"
-      The output should inculde "$image"
+      The output should include "$flavor"
+      The output should include  "$image"
       The status should equal 0
     End
 
