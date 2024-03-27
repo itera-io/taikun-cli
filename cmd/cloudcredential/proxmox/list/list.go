@@ -70,12 +70,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) error {
-	amazonCloudCredentials, err := ListCloudCredentialsProxmox(opts)
+	proxmoxCloudCredentials, err := ListCloudCredentialsProxmox(opts)
 	if err != nil {
 		return err
 	}
 
-	return out.PrintResults(amazonCloudCredentials, listFields)
+	return out.PrintResults(proxmoxCloudCredentials, listFields)
 }
 
 func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, err error) {

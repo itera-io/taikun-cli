@@ -31,8 +31,8 @@ Context 'cloudcredential/proxmox/list'
     BeforeAll 'setup'
 
     cleanup() {
-      taikun project vm delete "$vmid" -q 2>/dev/null || true
-      taikun project k8s delete "$serverid" -q 2>/dev/null || true
+      taikun project vm delete "$projectid" --vm-ids "$vmid" -q 2>/dev/null || true
+      taikun project k8s delete "$projectid" --server-ids "$serverid" -q 2>/dev/null || true
       taikun project delete "$projectid" -q 2>/dev/null || true
       taikun kubernetes-profile delete "$k8sprofileid" -q 2>/dev/null || true
       taikun standalone-profile delete "$standaloneprofileid" -q 2>/dev/null || true

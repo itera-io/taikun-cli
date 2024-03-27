@@ -117,27 +117,27 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.PrivateEndRange, "private-end-range", "", "Proxmox end of the range of the private network (required)")
 	cmdutils.MarkFlagRequired(&cmd, "private-end-range")
 
-	cmd.Flags().StringVar(&opts.PrivateBridge, "private-bridge", "", "Proxmox client ID (required)")
+	cmd.Flags().StringVar(&opts.PrivateBridge, "private-bridge", "", "Proxmox private bridge (required)")
 	cmdutils.MarkFlagRequired(&cmd, "private-bridge")
 
 	// Public network
 	cmd.Flags().StringVar(&opts.PublicNetwork, "public-network", "", "Proxmox private network (required)")
-	cmdutils.MarkFlagRequired(&cmd, "private-network")
+	cmdutils.MarkFlagRequired(&cmd, "public-network")
 
 	cmd.Flags().Int32Var(&opts.PublicNetmask, "public-netmask", 0, "Proxmox private netmask (required)")
-	cmdutils.MarkFlagRequired(&cmd, "private-netmask")
+	cmdutils.MarkFlagRequired(&cmd, "public-netmask")
 
 	cmd.Flags().StringVar(&opts.PublicGateway, "public-gateway", "", "Proxmox private gateway (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-gateway")
 
 	cmd.Flags().StringVar(&opts.PublicBeginRange, "public-begin-range", "", "Proxmox begin of the range of the private network (required)")
-	cmdutils.MarkFlagRequired(&cmd, "private-begin-range")
+	cmdutils.MarkFlagRequired(&cmd, "public-begin-range")
 
 	cmd.Flags().StringVar(&opts.PublicEndRange, "public-end-range", "", "Proxmox end of the range of the private network (required)")
-	cmdutils.MarkFlagRequired(&cmd, "private-end-range")
+	cmdutils.MarkFlagRequired(&cmd, "public-end-range")
 
-	cmd.Flags().StringVar(&opts.PublicBridge, "public-bridge", "", "Proxmox client ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "private-bridge")
+	cmd.Flags().StringVar(&opts.PublicBridge, "public-bridge", "", "Proxmox public bridge (required)")
+	cmdutils.MarkFlagRequired(&cmd, "public-bridge")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
