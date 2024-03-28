@@ -169,6 +169,38 @@ jobs:
           PROXMOX_PUBLIC_END_RANGE: ${{ secrets.PROXMOX_PUBLIC_END_RANGE }}
           PROXMOX_PUBLIC_BRIDGE: ${{ secrets.PROXMOX_PUBLIC_BRIDGE }}
 
+          GCP_CONFIG_FILE: ${{ secrets.GCP_CONFIG_FILE }}
+          GCP_FOLDER_ID: ${{ secrets.GCP_FOLDER_ID }}
+          GCP_BILLING_ACCOUNT: ${{ secrets.GCP_BILLING_ACCOUNT }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          GCP_ZONE: ${{ secrets.GCP_ZONE }}
+          GCP_AZ_COUNT: ${{ secrets.GCP_AZ_COUNT }}
+
+          VSPHERE_USERNAME: ${{ secrets.VSPHERE_USERNAME }}
+          VSPHERE_PASSWORD: ${{ secrets.VSPHERE_PASSWORD }}
+          VSPHERE_API_URL: ${{ secrets.VSPHERE_API_URL }}
+          VSPHERE_DATACENTER: ${{ secrets.VSPHERE_DATACENTER }}
+          VSPHERE_RESOURCE_POOL: ${{ secrets.VSPHERE_RESOURCE_POOL }}
+          VSPHERE_DATA_STORE: ${{ secrets.VSPHERE_DATA_STORE }}
+          VSPHERE_DRS_ENABLED: ${{ secrets.VSPHERE_DRS_ENABLED }}
+          VSPHERE_HYPERVISORS: ${{ secrets.VSPHERE_HYPERVISORS }}
+          VSPHERE_VM_TEMPLATE: ${{ secrets.VSPHERE_VM_TEMPLATE }}
+          VSPHERE_CONTINENT: ${{ secrets.VSPHERE_CONTINENT }}
+
+          VSPHERE_PUBLIC_NETWORK_NAME: ${{ secrets.VSPHERE_PUBLIC_NETWORK_NAME }}
+          VSPHERE_PUBLIC_NETWORK_ADDRESS: ${{ secrets.VSPHERE_PUBLIC_NETWORK_ADDRESS }}
+          VSPHERE_PUBLIC_NETMASK: ${{ secrets.VSPHERE_PUBLIC_NETMASK }}
+          VSPHERE_PUBLIC_GATEWAY: ${{ secrets.VSPHERE_PUBLIC_GATEWAY }}
+          VSPHERE_PUBLIC_BEGIN_RANGE: ${{ secrets.VSPHERE_PUBLIC_BEGIN_RANGE }}
+          VSPHERE_PUBLIC_END_RANGE: ${{ secrets.VSPHERE_PUBLIC_END_RANGE }}
+
+          VSPHERE_PRIVATE_NETWORK_NAME: ${{ secrets.VSPHERE_PRIVATE_NETWORK_NAME }}
+          VSPHERE_PRIVATE_NETWORK_ADDRESS: ${{ secrets.VSPHERE_PRIVATE_NETWORK_ADDRESS }}
+          VSPHERE_PRIVATE_NETMASK: ${{ secrets.VSPHERE_PRIVATE_NETMASK }}
+          VSPHERE_PRIVATE_GATEWAY: ${{ secrets.VSPHERE_PRIVATE_GATEWAY }}
+          VSPHERE_PRIVATE_BEGIN_RANGE: ${{ secrets.VSPHERE_PRIVATE_BEGIN_RANGE }}
+          VSPHERE_PRIVATE_END_RANGE: ${{ secrets.VSPHERE_PRIVATE_END_RANGE }}
+
         run: |
           echo $CI_JOB_URL
           shellspec --shell bash --format tap --jobs $(nproc) | tee shellspec.log

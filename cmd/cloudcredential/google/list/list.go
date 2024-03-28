@@ -79,6 +79,8 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByAndReverseFlags(&cmd, "cloud-credentials", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+
 	return &cmd
 }
 

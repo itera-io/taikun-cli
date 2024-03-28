@@ -92,6 +92,8 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 		return getGoogleFlavors(opts)
 	case taikuncore.CLOUDTYPE_OPENSTACK:
 		return getOpenstackFlavors(opts)
+	case taikuncore.CLOUDTYPE_VSPHERE:
+		return getVsphereFlavors(opts)
 	default:
 		return fmt.Errorf("Could not determine cloud type")
 	}
@@ -253,6 +255,42 @@ func getGoogleFlavors(opts *FlavorsOptions) (err error) {
 	}
 
 	var flavors = make([]taikuncore.GoogleFlavorDto, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		flavors = append(flavors, data.GetData()...)
+
+		flavorsCount := int32(len(flavors))
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
+
+		if flavorsCount == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(flavorsCount)
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
+	}
+
+	return out.PrintResults(flavors, flavorsFields)
+}
+
+func getVsphereFlavors(opts *FlavorsOptions) (err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsVsphereFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest = myRequest.StartRam(types.GiBToB(int(opts.MinRAM))).EndRam(types.GiBToB(int(opts.MaxRAM)))
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+
+	var flavors = make([]taikuncore.VsphereFlavorData, 0)
 	for {
 		data, response, err := myRequest.Execute()
 		if err != nil {

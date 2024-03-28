@@ -32,7 +32,7 @@ Context 'cloudcredential/proxmox'
     End
 
     Example 'list all cloud credentials'
-      When call list_cc
+      When call list_cc_all
       The lines of output should equal 1
       The status should equal 0
       The output should include "$orgname"

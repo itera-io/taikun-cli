@@ -52,7 +52,7 @@ func NewCmdList() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "list",
-		Short: "List Proxmox cloud credentials",
+		Short: "List vSphere cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return listRun(&opts)
 		},
@@ -70,17 +70,17 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) error {
-	proxmoxCloudCredentials, err := ListCloudCredentialsProxmox(opts)
+	vSphereCloudCredentials, err := ListCloudCredentialsvSphere(opts)
 	if err != nil {
 		return err
 	}
 
-	return out.PrintResults(proxmoxCloudCredentials, listFields)
+	return out.PrintResults(vSphereCloudCredentials, listFields)
 }
 
-func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, err error) {
+func ListCloudCredentialsvSphere(opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ProxmoxCloudCredentialAPI.ProxmoxList(context.TODO())
+	myRequest := myApiClient.Client.VsphereCloudCredentialAPI.VsphereList(context.TODO())
 
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
@@ -90,7 +90,7 @@ func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, 
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var proxmoxCloudCredentials = make([]taikuncore.ProxmoxListDto, 0)
+	var vSphereCloudCredentials = make([]taikuncore.VsphereListDto, 0)
 
 	for {
 		data, response, newError := myRequest.Execute()
@@ -99,9 +99,9 @@ func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, 
 			return
 		}
 
-		proxmoxCloudCredentials = append(proxmoxCloudCredentials, data.Data...)
+		vSphereCloudCredentials = append(vSphereCloudCredentials, data.GetData()...)
 
-		count := int32(len(proxmoxCloudCredentials))
+		count := int32(len(vSphereCloudCredentials))
 		if opts.Limit != 0 && count >= opts.Limit {
 			break
 		}
@@ -113,12 +113,12 @@ func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, 
 		myRequest = myRequest.Offset(count)
 	}
 
-	if opts.Limit != 0 && int32(len(proxmoxCloudCredentials)) > opts.Limit {
-		proxmoxCloudCredentials = proxmoxCloudCredentials[:opts.Limit]
+	if opts.Limit != 0 && int32(len(vSphereCloudCredentials)) > opts.Limit {
+		vSphereCloudCredentials = vSphereCloudCredentials[:opts.Limit]
 	}
 
-	credentials = make([]interface{}, len(proxmoxCloudCredentials))
-	for i, credential := range proxmoxCloudCredentials {
+	credentials = make([]interface{}, len(vSphereCloudCredentials))
+	for i, credential := range vSphereCloudCredentials {
 		credentials[i] = credential
 	}
 

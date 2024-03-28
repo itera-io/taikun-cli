@@ -36,6 +36,7 @@ type ImagesOptions struct {
 	AzureOffer        string
 	AzureSKU          string
 	GoogleImageType   string
+	GoogleLatest      bool
 	Limit             int32
 }
 
@@ -72,6 +73,8 @@ func NewCmdImages() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.GoogleImageType, "google-image-type", "g", "", "Google image type (ignored if cloud type isn't Google)")
 	cmdutils.SetFlagCompletionValues(&cmd, "google-image-type", types.GoogleImageTypes.Keys()...)
 
+	cmd.Flags().BoolVarP(&opts.GoogleLatest, "google-latest", "l", false, "Google flag for latest images (ignored if cloud type isn't Google)")
+
 	cmdutils.AddColumnsFlag(&cmd, imagesFields)
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 
@@ -104,9 +107,46 @@ func getImages(opts *ImagesOptions) (images interface{}, err error) {
 		images, err = getGoogleImages(opts)
 	case taikuncore.CLOUDTYPE_PROXMOX:
 		images, err = getProxmoxImages(opts)
+	case taikuncore.CLOUDTYPE_VSPHERE:
+		images, err = getVsphereImages(opts)
 	}
 
 	return
+}
+
+func getVsphereImages(opts *ImagesOptions) (vsphereImages interface{}, err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.ImagesAPI.ImagesVsphereImages(context.TODO(), opts.CloudCredentialID)
+
+	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
+
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			err = tk.CreateError(response, err)
+			return nil, err
+		}
+
+		images = append(images, data.GetData()...)
+
+		count := int32(len(images))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
+
+		if count == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(count)
+	}
+
+	if opts.Limit != 0 && int32(len(images)) > opts.Limit {
+		images = images[:opts.Limit]
+	}
+	vsphereImages = images
+
+	return vsphereImages, nil
 }
 
 func getProxmoxImages(opts *ImagesOptions) (proxmoxImages interface{}, err error) {
@@ -143,7 +183,6 @@ func getProxmoxImages(opts *ImagesOptions) (proxmoxImages interface{}, err error
 	proxmoxImages = images
 
 	return proxmoxImages, nil
-
 }
 
 func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
@@ -243,7 +282,7 @@ func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) 
 	}
 
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ImagesAPI.ImagesGoogleImages(context.TODO(), opts.CloudCredentialID, opts.GoogleImageType)
+	myRequest := myApiClient.Client.ImagesAPI.ImagesGoogleImages(context.TODO(), opts.CloudCredentialID, opts.GoogleImageType).Latest(opts.GoogleLatest)
 
 	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 

@@ -178,5 +178,9 @@ func getFlavorField(servers []taikuncore.ServerListDto) (string, error) {
 		return "proxmoxFlavor", nil
 	}
 
+	if servers[0].GetVsphereFlavor() != "" {
+		return "vsphereFlavor", nil
+	}
+
 	return "", cmderr.ErrServerHasNoFlavors
 }
