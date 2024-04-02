@@ -21,13 +21,16 @@ Context 'kubernetesprofile'
   Context 'add/delete'
     add_config() {
       profile_name="$(_rnd_name)"
+      profile_name2="$(_rnd_name)"
       scid=$(taikun kubernetes-profile add "$profile_name" -o "$oid" --enable-octavia --enable-gpu --enable-wasm -I)
+      scid2=$(taikun kubernetes-profile add "$profile_name2" -o "$oid" --enable-octavia --enable-gpu --enable-wasm --proxmox-storage "OpenEBS" -I)
     }
 
     Before 'add_config'
 
     delete_config() {
       taikun kubernetes-profile delete "$scid" -q
+      taikun kubernetes-profile delete "$scid2" -q
     }
 
     After 'delete_config'
@@ -35,22 +38,25 @@ Context 'kubernetesprofile'
     Example 'add then delete kubernetes profile'
       When call taikun kubernetes-profile list -o "$oid" --no-decorate
       The status should equal 0
-      The lines of output should equal 2 # counting the default
+      The lines of output should equal 3 # counting the default
       The output should include "$scid"
+      The output should include "$scid2"
       The output should include "$profile_name"
+      The output should include "$profile_name2"
+      The output should include "OpenEBS"
     End
 
     Example 'Check if GPU got enabled'
       When call taikun kubernetes-profile list -o "$oid" --columns=nvidia-gpu --no-decorate
       The status should equal 0
-      The lines of output should equal 2 # counting the default
+      The lines of output should equal 3 # counting the default
       The output should include "Yes"
     End
 
     Example 'Check if Wasm got enabled'
       When call taikun kubernetes-profile list -o "$oid" --columns=wasm --no-decorate
       The status should equal 0
-      The lines of output should equal 2 # counting the default
+      The lines of output should equal 3 # counting the default
       The output should include "Yes"
     End
   End

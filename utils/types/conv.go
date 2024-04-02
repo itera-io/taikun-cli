@@ -18,3 +18,7 @@ func GiBToMiB(gibiBytes float64) float64 {
 func GiBToB(gibiBytes int) int64 {
 	return (int64(gibiBytes) * 1024 * 1024 * 1024)
 }
+
+func GiBToBFloat64(gibiBytes float64) float64 {
+	return (float64(gibiBytes) * 1024 * 1024 * 1024)
+}

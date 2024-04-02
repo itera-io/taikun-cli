@@ -69,7 +69,7 @@ Context 'project/k8s/list'
 
   Context
     add_servers() {
-      bsid=$(taikun project k8s add "$pid" -n bastion -r bastion -f "$flavor" -a a -I)
+      bsid=$(taikun project k8s add "$pid" -n bastion -r bastion -f "$flavor" -a b -I)
       msid=$(taikun project k8s add "$pid" -n master -r kubemaster -f "$flavor" -a b -I)
       wsid=$(taikun project k8s add "$pid" -n worker -r kubeworker -f "$flavor" -a c -I)
     }
@@ -84,7 +84,7 @@ Context 'project/k8s/list'
       When call taikun project k8s list "$pid" --no-decorate
       The status should equal 0
       The lines of output should equal 3
-      The output should include $AWS_DEFAULT_REGION'a'
+      The output should not include $AWS_DEFAULT_REGION'a'
       The output should include $AWS_DEFAULT_REGION'b'
       The output should include $AWS_DEFAULT_REGION'c'
     End

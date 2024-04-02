@@ -54,6 +54,15 @@ var addFields = fields.New(
 		field.NewVisible(
 			"WASM", "wasmEnabled",
 		),
+		field.NewHidden(
+			"HYPERVISOR", "hypervisor",
+		),
+		field.NewHidden(
+			"PROXMOX-ROLE", "proxmoxRole",
+		),
+		field.NewHidden(
+			"PROXMOX-DISK", "proxmoxExtraDiskSize",
+		),
 	},
 )
 
@@ -66,6 +75,8 @@ type AddOptions struct {
 	ProjectID            int32
 	Role                 string
 	WasmEnabled          bool
+	ProxmoxDisk          int32
+	Hypervisor           string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -88,7 +99,6 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "a", "", "Availability zone (only for AWS, GCP and Azure projects)")
-	cmdutils.SetFlagCompletionFunc(&cmd, "availability-zone", availabilityZoneCompletionFunc)
 
 	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")
 	cmd.Flags().StringSliceVarP(&opts.KubernetesNodeLabels, "kubernetes-node-labels", "k", []string{}, "Kubernetes node labels (format: \"key=value,key2=value2,...\")")
@@ -98,11 +108,13 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.SetFlagCompletionFunc(&cmd, "flavor", cmdutils.FlavorCompletionFunc)
 
 	cmd.Flags().BoolVar(&opts.WasmEnabled, "enable-wasm", false, "Enable support for WASM")
+	cmd.Flags().StringVar(&opts.Hypervisor, "hypervisor", "", "Proxmox hypervisor")
+	cmd.Flags().Int32Var(&opts.ProxmoxDisk, "proxmox-disk", 0, "Proxmox extra disk size (this will automatically enable proxmox NFS type)")
 
 	cmd.Flags().StringVarP(&opts.Name, "name", "n", "", "Name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "name")
 
-	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required)")
+	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role [Kubemaster, Kubeworker, Bastion] (required)")
 	cmdutils.MarkFlagRequired(&cmd, "role")
 	cmdutils.SetFlagCompletionValues(&cmd, "role", types.ServerRoles.Keys()...)
 
@@ -117,14 +129,34 @@ func addRun(opts *AddOptions) (err error) {
 	diskSizeValue := types.GiBToB(opts.DiskSize)
 	serverRole := types.GetServerRole(opts.Role)
 	body := taikuncore.ServerForCreateDto{
-		AvailabilityZone: *taikuncore.NewNullableString(&opts.AvailabilityZone),
-		DiskSize:         &diskSizeValue,
-		Flavor:           *taikuncore.NewNullableString(&opts.Flavor),
-		Name:             *taikuncore.NewNullableString(&opts.Name),
-		ProjectId:        &opts.ProjectID,
-		Role:             &serverRole,
-		WasmEnabled:      &opts.WasmEnabled,
+		DiskSize:    &diskSizeValue,
+		Flavor:      *taikuncore.NewNullableString(&opts.Flavor),
+		Name:        *taikuncore.NewNullableString(&opts.Name),
+		ProjectId:   &opts.ProjectID,
+		Role:        &serverRole,
+		WasmEnabled: &opts.WasmEnabled,
 	}
+
+	// Only send zone if user set it
+	if opts.AvailabilityZone != "" {
+		body.SetAvailabilityZone(opts.AvailabilityZone)
+	}
+
+	// Only set if optional Proxmox parameter is present
+	if opts.ProxmoxDisk != 0 {
+		proxmoxRole, err1 := getProxmoxRole(opts.ProjectID)
+		if err1 != nil {
+			return err1
+		}
+		body.SetProxmoxRole(*proxmoxRole)
+		body.SetProxmoxExtraDiskSize(opts.ProxmoxDisk)
+	}
+
+	// Only set if optional Proxmox parameter is present
+	if opts.Hypervisor != "" {
+		body.SetHypervisor(opts.Hypervisor)
+	}
+
 	if len(opts.KubernetesNodeLabels) != 0 {
 		body.KubernetesNodeLabels, err = parseKubernetesNodeLabelsFlag(opts.KubernetesNodeLabels)
 		if err != nil {
@@ -162,68 +194,26 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.Kubernetes
 
 }
 
-func availabilityZoneCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
-	if len(args) == 0 {
-		return []string{}
-	}
-
-	projectID, err := types.Atoi32(args[0])
+// Proxmox Role type for a k8s server depends on Proxmox type specified in the Kubernetes profile.
+// The names in profile don't match the names we send to the server, for it, we have this function.
+func getProxmoxRole(projectId int32) (returnRole *taikuncore.ProxmoxRole, returnErr error) {
+	myclient := tk.NewClient()
+	data, response, err := myclient.Client.ServersAPI.ServersDetails(context.TODO(), projectId).Execute()
 	if err != nil {
-		return []string{}
+		returnErr = tk.CreateError(response, err)
+		return
+	}
+	kubernetesProfile := data.GetProject()
+	var proxmoxRoleString string
+	switch kubernetesProfile.GetProxmoxStorage() {
+	case "NFS":
+		proxmoxRoleString = "NFS"
+	case "OpenEBS":
+		proxmoxRoleString = "STORAGE"
+	default:
+		proxmoxRoleString = ""
 	}
 
-	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsList(context.TODO()).Id(projectID).Execute()
-	if err != nil || len(data.GetData()) != 1 {
-		fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error()))
-		return []string{}
-	}
-
-	projectOrgId := data.Data[0].GetOrganizationId()
-	ccType := data.Data[0].GetCloudType()
-	ccName := data.Data[0].GetCloudCredentialName()
-	if ccType == "OPENSTACK" {
-		return []string{}
-	}
-
-	completions := make([]string, 0)
-
-	dataCC, responseCC, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsDashboardList(context.TODO()).OrganizationId(projectOrgId).Execute()
-	if err != nil {
-		fmt.Println(fmt.Errorf(tk.CreateError(responseCC, err).Error()))
-		return []string{}
-	}
-	countCC := dataCC.GetTotalCountOpenstack() + dataCC.GetTotalCountAws() + dataCC.GetTotalCountAzure() + dataCC.GetTotalCountGoogle()
-
-	if err != nil || countCC == 0 {
-		return []string{}
-	}
-
-	if ccType == "AWS" {
-		amazonCCs := dataCC.GetAmazon()
-		for i := 0; i < int(dataCC.GetTotalCountAws()); i++ {
-			if ccName == amazonCCs[i].GetName() {
-				completions = append(completions, amazonCCs[i].AvailabilityZones...)
-			}
-		}
-	}
-	if ccType == "AZURE" {
-		azureCCs := dataCC.GetAzure()
-		for i := 0; i < int(dataCC.GetTotalCountAzure()); i++ {
-			if ccName == azureCCs[i].GetName() {
-				completions = append(completions, azureCCs[i].AvailabilityZones...)
-			}
-		}
-	}
-	if ccType == "GOOGLE" {
-		googleCCs := dataCC.GetGoogle()
-		for i := 0; i < int(dataCC.GetTotalCountGoogle()); i++ {
-			if ccName == googleCCs[i].GetName() {
-				completions = append(completions, googleCCs[i].Zones...)
-			}
-		}
-	}
-
-	return completions
-
+	returnRole, returnErr = taikuncore.NewProxmoxRoleFromValue(proxmoxRoleString)
+	return
 }

@@ -2,6 +2,7 @@ package flavors
 
 import (
 	"context"
+	"fmt"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/utils"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -35,6 +36,7 @@ var flavorsFields = fields.New(
 
 type FlavorsOptions struct {
 	CloudCredentialID int32
+	CloudType         taikuncore.CloudType
 	MaxCPU            int32
 	MaxRAM            float64
 	MinCPU            int32
@@ -55,9 +57,13 @@ func NewCmdFlavors() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.CloudCredentialID = cloudCredentialID
-			if err = adjustRamUnits(&opts); err != nil {
+
+			cloudType, err := utils.GetCloudType(opts.CloudCredentialID)
+			if err != nil {
 				return err
 			}
+			opts.CloudType = cloudType
+
 			return flavorRun(&opts)
 		},
 	}
@@ -74,41 +80,35 @@ func NewCmdFlavors() *cobra.Command {
 	return &cmd
 }
 
-func adjustRamUnits(opts *FlavorsOptions) (err error) {
-	cloudType, err := utils.GetCloudType(opts.CloudCredentialID)
-	if err != nil {
-		return
-	}
-
-	switch cloudType {
-	case utils.GOOGLE:
-		// Temporarily ignore RAM range for Google until units are set to GiB
-		opts.MinRAM = -1
-		opts.MaxRAM = -1
+func flavorRun(opts *FlavorsOptions) (err error) {
+	switch opts.CloudType {
+	case taikuncore.CLOUDTYPE_AWS:
+		return getAwsFlavors(opts)
+	case taikuncore.CLOUDTYPE_AZURE:
+		return getAzureFlavors(opts)
+	case taikuncore.CLOUDTYPE_PROXMOX:
+		return getProxmoxFlavors(opts)
+	case taikuncore.CLOUDTYPE_GOOGLE:
+		return getGoogleFlavors(opts)
+	case taikuncore.CLOUDTYPE_OPENSTACK:
+		return getOpenstackFlavors(opts)
+	case taikuncore.CLOUDTYPE_VSPHERE:
+		return getVsphereFlavors(opts)
 	default:
-		opts.MinRAM = types.GiBToMiB(opts.MinRAM)
-		opts.MaxRAM = types.GiBToMiB(opts.MaxRAM)
+		return fmt.Errorf("Could not determine cloud type")
 	}
-
-	return
 }
 
-func flavorRun(opts *FlavorsOptions) (err error) {
+func getAwsFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.CloudCredentialAPI.CloudcredentialsAllFlavors(context.TODO(), opts.CloudCredentialID)
-	myRequest = myRequest.StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAwsInstanceTypes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest = myRequest.StartRam(types.GiBToMiB(opts.MinRAM)).EndRam(types.GiBToMiB(opts.MaxRAM))
+
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
-	minRAM := opts.MinRAM
-	maxRAM := opts.MaxRAM
 
-	// Temporarily ignore RAM range for Google until units are set to GiB
-	if minRAM != -1 && maxRAM != -1 {
-		myRequest = myRequest.StartRam(minRAM).EndRam(maxRAM)
-	}
-
-	var flavors = make([]taikuncore.FlavorsListDto, 0)
+	var flavors = make([]taikuncore.AwsFlavorListDto, 0)
 	for {
 		data, response, err := myRequest.Execute()
 		if err != nil {
@@ -134,5 +134,186 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	}
 
 	return out.PrintResults(flavors, flavorsFields)
+}
 
+func getProxmoxFlavors(opts *FlavorsOptions) (err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsProxmoxFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest = myRequest.StartRam(types.GiBToB(int(opts.MinRAM))).EndRam(types.GiBToB(int(opts.MaxRAM)))
+
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+
+	var flavors = make([]taikuncore.ProxmoxFlavorData, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		flavors = append(flavors, data.GetData()...)
+
+		flavorsCount := int32(len(flavors))
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
+
+		if flavorsCount == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(flavorsCount)
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
+	}
+
+	return out.PrintResults(flavors, flavorsFields)
+}
+
+func getOpenstackFlavors(opts *FlavorsOptions) (err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsOpenstackFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest = myRequest.StartRam(types.GiBToMiB(opts.MinRAM)).EndRam(types.GiBToMiB(opts.MaxRAM))
+
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+
+	var flavors = make([]taikuncore.OpenstackFlavorListDto, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		flavors = append(flavors, data.GetData()...)
+
+		flavorsCount := int32(len(flavors))
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
+
+		if flavorsCount == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(flavorsCount)
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
+	}
+
+	return out.PrintResults(flavors, flavorsFields)
+}
+
+func getAzureFlavors(opts *FlavorsOptions) (err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAzureVmSizes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest = myRequest.StartRam(types.GiBToMiB(opts.MinRAM)).EndRam(types.GiBToMiB(opts.MaxRAM))
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+
+	var flavors = make([]taikuncore.AzureFlavorsWithPriceDto, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		flavors = append(flavors, data.GetData()...)
+
+		flavorsCount := int32(len(flavors))
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
+
+		if flavorsCount == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(flavorsCount)
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
+	}
+
+	return out.PrintResults(flavors, flavorsFields)
+}
+
+func getGoogleFlavors(opts *FlavorsOptions) (err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsGoogleMachineTypes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest = myRequest.StartRam(types.GiBToBFloat64(opts.MinRAM)).EndRam(types.GiBToBFloat64(opts.MaxRAM))
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+
+	var flavors = make([]taikuncore.GoogleFlavorDto, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		flavors = append(flavors, data.GetData()...)
+
+		flavorsCount := int32(len(flavors))
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
+
+		if flavorsCount == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(flavorsCount)
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
+	}
+
+	return out.PrintResults(flavors, flavorsFields)
+}
+
+func getVsphereFlavors(opts *FlavorsOptions) (err error) {
+	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsVsphereFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest = myRequest.StartRam(types.GiBToB(int(opts.MinRAM))).EndRam(types.GiBToB(int(opts.MaxRAM)))
+	if config.SortBy != "" {
+		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	}
+
+	var flavors = make([]taikuncore.VsphereFlavorData, 0)
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		flavors = append(flavors, data.GetData()...)
+
+		flavorsCount := int32(len(flavors))
+		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+			break
+		}
+
+		if flavorsCount == data.GetTotalCount() {
+			break
+		}
+
+		myRequest = myRequest.Offset(flavorsCount)
+	}
+
+	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
+		flavors = flavors[:opts.Limit]
+	}
+
+	return out.PrintResults(flavors, flavorsFields)
 }

@@ -1,4 +1,4 @@
-Context 'backupcredential /credential'
+Context 'backupcredential'
   setup(){
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
