@@ -22,6 +22,7 @@ fi
 
 failures=0
 
+# Shellspec Context must be named EXACLY as the path leading to the folder containing the spec .sh file.
 for context in $fctx; do
   if [[ ! -d "./cmd/$context" ]]; then
     echo "Error: invalid context $context, please fix context name"

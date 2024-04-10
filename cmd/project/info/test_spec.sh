@@ -1,4 +1,4 @@
-Context 'project/quota'
+Context 'project/info'
   setup() {
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
@@ -33,7 +33,7 @@ Context 'project/quota'
   Example 'Get detailed info about project with wasm enabled'
     When call taikun project info "$pid"
     The status should equal 0
-    The lines of output should equal 32
+    The lines of output should equal 34
     The output should include "$oid"
     The output should include "$ccid"
     The output should include "$projectname"

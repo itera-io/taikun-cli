@@ -70,6 +70,9 @@ var listFields = fields.New(
 		field.NewHidden(
 			"LAST-MODIFIED-BY", "lastModifiedBy",
 		),
+		field.NewHidden(
+			"HYPERVISOR", "hypervisor",
+		),
 	},
 )
 

@@ -51,6 +51,9 @@ var listFields = fields.New(
 		field.NewVisible(
 			"WASM", "wasmEnabled",
 		),
+		field.NewVisible(
+			"PROXMOX-STORAGE", "proxmoxStorage",
+		),
 	},
 )
 

@@ -1,7 +1,7 @@
-Context 'usertoken/create'
+Context 'usertoken'
 
     setup() {
-        tokenname="$(_rnd_name)"
+        tokenname=$(_rnd_name)
     }
 
     BeforeAll setup
@@ -19,14 +19,14 @@ Context 'usertoken/create'
 
     AfterAll delete
 
-    Example 'create a basic user token'
+    Example 'basic usertoken'
         When call taikun usertoken add "$tokenname" --bind-all
         The status should equal 0
         The output should include 'ACCESS-KEY'
         The output should include 'SECRET-KEY'
     End
 
-    Example 'create a user token with name already existing'
+    Example 'name already exists'
         When call taikun usertoken add "$tokenname" --bind-all
         The status should equal 1
         The stderr should include 'already exists'
@@ -39,13 +39,13 @@ Context 'usertoken/create'
         The output should include "$tokenname"
     End
 
-    Example 'delete one user token'
+    Example 'delete usertoken'
         When call taikun usertoken delete "$tokenname"
         The status should equal 0
         The output should include 'deleted successfully'
     End
 
-    Example 'delete non existing user token'
+    Example 'delete nonexisting usertoken'
         When call taikun usertoken delete "$tokenname"
         The status should equal 1
         The stderr should include "No user token found with name '$tokenname'"

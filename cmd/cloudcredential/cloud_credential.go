@@ -4,12 +4,15 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/flavors"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/google"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/images"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/list"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/lock"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/openstack"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/proxmox"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/remove"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/unlock"
+	"github.com/itera-io/taikun-cli/cmd/cloudcredential/vsphere"
 	"github.com/spf13/cobra"
 )
 
@@ -23,11 +26,13 @@ func NewCmdCloudCredential() *cobra.Command {
 	cmd.AddCommand(aws.NewCmdAWS())
 	cmd.AddCommand(azure.NewCmdAzure())
 	cmd.AddCommand(flavors.NewCmdFlavors())
-	//cmd.AddCommand(google.NewCmdGoogle())
+	cmd.AddCommand(google.NewCmdGoogle())
 	cmd.AddCommand(images.NewCmdImages())
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(lock.NewCmdLock())
 	cmd.AddCommand(openstack.NewCmdOpenstack())
+	cmd.AddCommand(proxmox.NewCmdProxmox())
+	cmd.AddCommand(vsphere.NewCmdVsphere())
 	cmd.AddCommand(remove.NewCmdDelete())
 	cmd.AddCommand(unlock.NewCmdUnlock())
 

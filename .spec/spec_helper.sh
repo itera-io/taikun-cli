@@ -1,12 +1,12 @@
-# shellcheck shell=sh
+# shellcheck shell=bash
 
 _rnd_name() {
-  echo tk-cli-test-$(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')
+  echo "tk-cli-test-$(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')"
 }
 
 # Radom number is created from numbers 1-9, because trailing zero can cause problems in prints
 _rnd_number() {
-  shuf --echo --repeat --head-count=6 {1..9} | tr -d '\n'
+  shuf --echo --repeat --head-count=6 $(seq 1 9) | tr -d '\n'
 }
 
 # Autoscaler flavor
