@@ -68,7 +68,7 @@ var addFields = fields.New(
 
 type AddOptions struct {
 	AvailabilityZone     string
-	DiskSize             int
+	DiskSize             int32
 	Flavor               string
 	KubernetesNodeLabels []string
 	Name                 string
@@ -100,7 +100,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "a", "", "Availability zone (only for AWS, GCP and Azure projects)")
 
-	cmd.Flags().IntVarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")
+	cmd.Flags().Int32VarP(&opts.DiskSize, "disk-size", "d", 30, "Disk size in GB")
 	cmd.Flags().StringSliceVarP(&opts.KubernetesNodeLabels, "kubernetes-node-labels", "k", []string{}, "Kubernetes node labels (format: \"key=value,key2=value2,...\")")
 
 	cmd.Flags().StringVarP(&opts.Flavor, "flavor", "f", "", "Flavor (required)")

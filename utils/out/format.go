@@ -191,16 +191,14 @@ func FormatID(v interface{}) string {
 	return field.NotAvailable
 }
 
-// Format RAM by dividing by 1024 until RAM is less than 1024
+// Format RAM from Bytes to GibiBytes
 func FormatRAM(v interface{}) string {
-	if ram, ok := v.(float64); ok {
-		for ram >= 1024 {
-			ram = ram / 1024
+	if size, ok := v.(float64); ok && size != 0 {
+		GibiBytes := v.(float64) / float64(1073741824)
+		if GibiBytes > 1 && GibiBytes < 3000 {
+			return fmt.Sprintf("%v GiB", GibiBytes)
 		}
-
-		return fmt.Sprintf("%d GiB", int(ram))
 	}
-
 	return field.NotAvailable
 }
 
