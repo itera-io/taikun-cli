@@ -102,7 +102,7 @@ type AddOptions struct {
 	AutoscalerName      string
 	AutoscalerMinSize   int32
 	AutoscalerMaxSize   int32
-	AutoscalerDiskSize  float64
+	AutoscalerDiskSize  int32
 	AutoscalerFlavor    string
 	AutoscalerSpot      bool
 	SpotFull            bool
@@ -166,7 +166,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "cidr", "", "Cidr IP")
 
 	cmd.Flags().StringVar(&opts.AutoscalerName, "autoscaler-name", "", "The autoscaler name (specify autoscaler name and flavor to enable autoscaler)")
-	cmd.Flags().Float64Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB] (default 30)")
+	cmd.Flags().Int32Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB] (default 30)")
 	cmd.Flags().StringVar(&opts.AutoscalerFlavor, "autoscaler-flavor", "", "The autoscaler flavor")
 	cmd.Flags().Int32Var(&opts.AutoscalerMinSize, "autoscaler-min-size", 1, "The minimum size for the autoscaler (default 1)")
 	cmd.Flags().Int32Var(&opts.AutoscalerMaxSize, "autoscaler-max-size", 1, "The maximum size for the autoscaler (default 1)")
@@ -250,7 +250,7 @@ func addRun(opts *AddOptions) (err error) {
 		body.SetAutoscalingGroupName(opts.AutoscalerName)
 		body.SetMinSize(opts.AutoscalerMinSize)
 		body.SetMaxSize(opts.AutoscalerMaxSize)
-		body.SetDiskSize(float64(types.GiBToB(int(opts.AutoscalerDiskSize))))
+		body.SetDiskSize(types.GiBToB(opts.AutoscalerDiskSize))
 		body.SetAutoscalingSpotEnabled(opts.AutoscalerSpot)
 	}
 
