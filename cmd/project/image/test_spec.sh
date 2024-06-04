@@ -24,7 +24,7 @@ Context 'project/image'
 
   Context
     bind() {
-      img=$(taikun cloud-credential images "$cc" --limit 1 --columns id --no-decorate)
+      img=$(taikun cloud-credential images "$cc" --limit 1 --columns id --no-decorate | xargs)
       taikun project image bind "$id" --image-ids "$img" -q
     }
     BeforeEach 'bind'
