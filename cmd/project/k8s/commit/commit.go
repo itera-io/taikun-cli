@@ -5,6 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +34,8 @@ func NewCmdCommit() *cobra.Command {
 
 func commitRun(opts *CommitOptions) (err error) {
 	myApiClient := tk.NewClient()
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsCommit(context.TODO(), opts.ProjectID).Execute()
+	commitCommand := taikuncore.ProjectDeploymentCommitCommand{ProjectId: &opts.ProjectID}
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommit(context.TODO()).ProjectDeploymentCommitCommand(commitCommand).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

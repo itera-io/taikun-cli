@@ -39,11 +39,11 @@ func NewCmdEnable() *cobra.Command {
 
 func enableRun(opts *EnableOptions) (err error) {
 	myApiClient := tk.NewClient()
-	body := taikuncore.EnableGatekeeperCommand{
-		ProjectId:    &opts.ProjectID,
-		OpaProfileId: &opts.PolicyProfileID,
+	body := taikuncore.DeploymentOpaEnableCommand{
+		ProjectId:       &opts.ProjectID,
+		OpaCredentialId: &opts.PolicyProfileID,
 	}
-	response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesEnableGatekeeper(context.TODO()).EnableGatekeeperCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableOpa(context.TODO()).DeploymentOpaEnableCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

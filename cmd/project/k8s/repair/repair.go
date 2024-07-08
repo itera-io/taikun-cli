@@ -5,6 +5,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +34,9 @@ func NewCmdRepair() *cobra.Command {
 
 func repairRun(opts *RepairOptions) (err error) {
 	myApiClient := tk.NewClient()
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsRepair(context.TODO(), opts.ProjectID).Execute()
+	var body taikuncore.ProjectDeploymentRepairCommand
+	body.SetProjectId(opts.ProjectID)
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepair(context.TODO()).ProjectDeploymentRepairCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

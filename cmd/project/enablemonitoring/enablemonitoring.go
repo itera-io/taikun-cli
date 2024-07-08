@@ -3,7 +3,6 @@ package enablemonitoring
 import (
 	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
-	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
@@ -35,26 +34,17 @@ func NewCmdEnableMonitoring() *cobra.Command {
 }
 
 func enableMonitoringRun(opts *EnableMonitoringOptions) (err error) {
-	isMonitoringEnabled, err := cmdutils.IsMonitoringEnabled(opts.ProjectID)
-	if err != nil {
-		return
-	}
-	if isMonitoringEnabled {
-		err = cmderr.ErrProjectMonitoringAlreadyEnabled
-		return
-	}
-
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
-	body := taikuncore.MonitoringOperationsCommand{
+	body := taikuncore.DeploymentEnableMonitoringCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsMonitoring(context.TODO()).MonitoringOperationsCommand(body).Execute()
+	_, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableMonitoring(context.TODO()).DeploymentEnableMonitoringCommand(body).Execute()
 	if err != nil {
-		return tk.CreateError(response, err)
+		return cmderr.ErrProjectMonitoringAlreadyEnabled
 	}
 
 	// Manipulate the gathered data
