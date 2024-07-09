@@ -43,7 +43,7 @@ func disableMonitoringRun(opts *DisableMonitoringOptions) (err error) {
 	// Execute a query into the API + graceful exit
 	_, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableMonitoring(context.TODO()).DeploymentDisableMonitoringCommand(body).Execute()
 	if err != nil {
-		return cmderr.ErrProjectBackupAlreadyDisabled
+		return cmderr.ErrProjectMonitoringAlreadyDisabled
 	}
 
 	// Manipulate the gathered data
