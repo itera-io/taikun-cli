@@ -1,5 +1,21 @@
 package cmdutils
 
+import (
+	"context"
+	tk "github.com/itera-io/taikungoclient"
+)
+
+func IsAutoscalingEnabled(projectID int32) (autoscalingEnabled bool, err error) {
+	myApiClient := tk.NewClient()
+	data, response, err := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), projectID).Execute()
+	if err != nil {
+		err = tk.CreateError(response, err)
+		return
+	}
+	autoscalingEnabled = data.Project.GetIsAutoscalingEnabled()
+	return
+}
+
 //import (
 //	"context"
 //	tk "github.com/itera-io/taikungoclient"

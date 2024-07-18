@@ -38,12 +38,12 @@ func repairRun(opts *RepairOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	body := taikuncore.RepairStandAloneVmCommand{
+	body := taikuncore.ProjectDeploymentRepairVmCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneAPI.StandaloneRepair(context.TODO()).RepairStandAloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepairVm(context.TODO()).ProjectDeploymentRepairVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
