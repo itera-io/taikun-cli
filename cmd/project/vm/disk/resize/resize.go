@@ -13,7 +13,7 @@ import (
 
 type ResizeOptions struct {
 	DiskID int32
-	Size   int64
+	Size   int32
 }
 
 func NewCmdResize() *cobra.Command {
@@ -32,7 +32,7 @@ func NewCmdResize() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int64VarP(&opts.Size, "size", "s", 0, "New size in GiB (required)")
+	cmd.Flags().Int32VarP(&opts.Size, "size", "s", 0, "New size in GiB (required)")
 	cmdutils.MarkFlagRequired(&cmd, "size")
 
 	return &cmd

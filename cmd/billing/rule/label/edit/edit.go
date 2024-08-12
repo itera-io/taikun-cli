@@ -16,7 +16,7 @@ type AddOptions struct {
 	Labels        []string
 }
 
-func NewCmdAdd() *cobra.Command {
+func NewCmdEdit() *cobra.Command {
 	var opts AddOptions
 
 	cmd := cobra.Command{
