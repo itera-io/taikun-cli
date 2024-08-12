@@ -33,10 +33,10 @@ func NewCmdDisable() *cobra.Command {
 
 func disableRun(opts *DisableOptions) (err error) {
 	myApiClient := tk.NewClient()
-	body := taikuncore.DisableGatekeeperCommand{
+	body := taikuncore.DeploymentDisableOpaCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesDisableGatekeeper(context.TODO()).DisableGatekeeperCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableOpa(context.TODO()).DeploymentDisableOpaCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

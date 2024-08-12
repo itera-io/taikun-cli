@@ -35,10 +35,10 @@ func NewCmdDisable() *cobra.Command {
 
 func disableRun(opts *DisableOptions) (err error) {
 	myApiClient := tk.NewClient()
-	body := taikuncore.DisableBackupCommand{
+	body := taikuncore.DeploymentDisableBackupCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	_, err = myApiClient.Client.BackupPolicyAPI.BackupDisableBackup(context.TODO()).DisableBackupCommand(body).Execute()
+	_, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableBackup(context.TODO()).DeploymentDisableBackupCommand(body).Execute()
 	if err != nil {
 		//return tk.CreateError(response, err)
 		return cmderr.ErrProjectBackupAlreadyDisabled

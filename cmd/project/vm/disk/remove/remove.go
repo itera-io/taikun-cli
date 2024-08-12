@@ -43,13 +43,13 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	body := taikuncore.DeleteStandAloneVmDiskCommand{
+	body := taikuncore.DeleteVmDiskCommand{
 		StandaloneVmId: &opts.StandaloneVMID,
 		VmDiskIds:      opts.DiskIDs,
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneVMDisksAPI.StandalonevmdisksDelete(context.TODO()).DeleteStandAloneVmDiskCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVmDisks(context.TODO()).DeleteVmDiskCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
