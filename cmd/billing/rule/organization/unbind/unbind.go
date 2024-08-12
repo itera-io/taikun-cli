@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
-	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -42,19 +41,12 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	isBound := false
-	body := taikuncore.BindPrometheusOrganizationsCommand{
-		PrometheusRuleId: &opts.BillingRuleID,
-		Organizations: []taikuncore.BindOrganizationsToRuleDto{
-			{
-				OrganizationId: &opts.OrganizationID,
-				IsBound:        &isBound,
-			},
-		},
-	}
+	billingRuleId := int32(opts.BillingRuleID)
+	body := []int32{opts.OrganizationID}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesBindOrganizations(context.TODO()).BindPrometheusOrganizationsCommand(body).Execute()
+	//response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesBindOrganizations(context.TODO()).BindPrometheusOrganizationsCommand(body).Execute()
+	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesDeleteOrganizations(context.TODO(), billingRuleId).RequestBody(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
