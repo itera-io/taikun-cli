@@ -19,15 +19,15 @@ Context 'billing/rule/label/edit'
   }
   AfterAll 'cleanup'
 
-  add_label() {
+  edit_label() {
     taikun billing rule label edit "$id" -l lang=rust -q
   }
-  Before 'add_label'
+  Before 'edit_label'
 
-  Example 'add a label'
+  Example 'edit a label'
     When call taikun billing rule label list "$id" --no-decorate
     The status should equal 0
-    The lines of output should equal 2
+    The lines of output should equal 1
     The output should not include vim
     The output should include rust
     The output should not include ed
