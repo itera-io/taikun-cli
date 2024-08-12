@@ -46,20 +46,16 @@ func bindRun(opts *BindOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	isBound := true
-	body := taikuncore.BindPrometheusOrganizationsCommand{
-		PrometheusRuleId: &opts.BillingRuleID,
-		Organizations: []taikuncore.BindOrganizationsToRuleDto{
-			{
-				OrganizationId:   &opts.OrganizationID,
-				RuleDiscountRate: *taikuncore.NewNullableFloat64(&opts.DiscountRate),
-				IsBound:          &isBound,
-			},
+	billingRuleId := int32(opts.BillingRuleID)
+	body := []taikuncore.AddOrganizationsToRuleDto{
+		{
+			OrganizationId:   &opts.OrganizationID,
+			RuleDiscountRate: *taikuncore.NewNullableFloat64(&opts.DiscountRate),
 		},
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesBindOrganizations(context.TODO()).BindPrometheusOrganizationsCommand(body).Execute()
+	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesAddOrganizations(context.TODO(), billingRuleId).AddOrganizationsToRuleDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

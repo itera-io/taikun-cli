@@ -1,4 +1,4 @@
-Context 'billing/rule/label/add'
+Context 'billing/rule/label/edit'
 
   setup() {
     name="$(_rnd_name)"
@@ -20,7 +20,7 @@ Context 'billing/rule/label/add'
   AfterAll 'cleanup'
 
   add_label() {
-    taikun billing rule label add "$id" -l lang -v rust -q
+    taikun billing rule label edit "$id" -l lang=rust -q
   }
   Before 'add_label'
 
@@ -28,9 +28,9 @@ Context 'billing/rule/label/add'
     When call taikun billing rule label list "$id" --no-decorate
     The status should equal 0
     The lines of output should equal 2
-    The output should include vim
+    The output should not include vim
     The output should include rust
-    The output should include ed
+    The output should not include ed
     The output should include lang
   End
 
