@@ -26,8 +26,7 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) c
 
 		data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsRegionlist(context.TODO()).RegionListCommand(body).Execute()
 		if err != nil {
-			//err = tk.CreateError(response, err)
-			fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error())) // This function does not return an error... so just call it. #FIXME
+			fmt.Println(tk.CreateError(response, err))
 			return
 		}
 
