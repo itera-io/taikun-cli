@@ -39,6 +39,7 @@ var listFields = fields.New(
 		field.NewVisibleWithToStringFunc(
 			"CLOUD", "cloudType", out.FormatCloudType,
 		),
+		field.NewVisible("VIRTUAL", "isVirtualCluster"),
 		field.NewVisible(
 			"K8S", "isKubernetes",
 		),
