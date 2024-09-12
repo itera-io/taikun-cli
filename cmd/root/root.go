@@ -18,6 +18,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile"
 	"github.com/itera-io/taikun-cli/cmd/user"
 	"github.com/itera-io/taikun-cli/cmd/usertoken"
+	"github.com/itera-io/taikun-cli/cmd/virtualcluster"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/spf13/cobra"
@@ -54,6 +55,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(user.NewCmdUser())
 	cmd.AddCommand(usertoken.NewCmdUserToken())
 	cmd.AddCommand(whoami.NewCmdWhoami())
+	cmd.AddCommand(virtualcluster.NewCmdVirtualcluster())
 
 	return cmd
 }
