@@ -29,15 +29,6 @@ var listFields = fields.New(
 		field.NewVisibleWithToStringFunc(
 			"RAM", "ram", out.FormatBToGiB,
 		),
-		field.NewVisible(
-			"AWS", "isAws",
-		),
-		field.NewVisible(
-			"AZURE", "isAzure",
-		),
-		field.NewVisible(
-			"OPENSTACK", "isOpenstack",
-		),
 		field.NewHidden(
 			"PROJECT", "projectName",
 		),
