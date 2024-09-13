@@ -20,7 +20,7 @@ Context 'project/flavor'
       When call taikun project flavor list "$pid"
       The status should equal 0
       The lines of output should equal 2
-      The output should include "OPENSTACK"
+      The output should include "RAM"
     End
 
     Example 'bind flavor'
