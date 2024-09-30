@@ -39,7 +39,7 @@ func purgeRun(projectIdString string) (err error) {
 
 	var serversToDelete []int32
 	for _, server := range data.GetData() {
-		serversToDelete = append(serversToDelete, *server.Id)
+		serversToDelete = append(serversToDelete, server.Id)
 	}
 
 	alwaysTellThe := true // https://www.youtube.com/watch?v=GvlN1Lr3yt8

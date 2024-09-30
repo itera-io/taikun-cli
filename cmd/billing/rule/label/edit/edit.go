@@ -49,10 +49,10 @@ func addRun(opts *AddOptions) (err error) {
 
 	// Prepare the arguments for the query
 	body := taikuncore.RuleForUpdateDto{
-		Name:                  data.GetData()[0].Name,
-		MetricName:            data.GetData()[0].MetricName,
-		Type:                  data.GetData()[0].Type,
-		Price:                 *taikuncore.NewNullableFloat64(data.GetData()[0].Price),
+		Name:                  *taikuncore.NewNullableString(&data.GetData()[0].Name),
+		MetricName:            *taikuncore.NewNullableString(&data.GetData()[0].MetricName),
+		Type:                  &data.GetData()[0].Type,
+		Price:                 *taikuncore.NewNullableFloat64(&data.GetData()[0].Price),
 		OperationCredentialId: data.GetData()[0].OperationCredential.OperationCredentialId,
 	}
 
