@@ -41,10 +41,6 @@ func MutuallyExclusiveFlagsError(flagA string, flagB string) error {
 	return fmt.Errorf("The flags %s and %s are mutually exclusive", flagA, flagB)
 }
 
-var ErrServerHasNoFlavors = errors.New(
-	"Server has no listed flavor",
-)
-
 func UnknownFlagValueError(flag string, received string, expected []string) error {
 	return fmt.Errorf("unknown %s: %s, expected one of %v.", flag, received, expected)
 }

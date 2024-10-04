@@ -42,7 +42,7 @@ func GetAllEndpoints() ([]taikuncore.AvailableEndpointData, error) {
 	for i := 0; i < len(data.GetData()); i++ {
 		res := data.GetData()[i]
 		endpoint := taikuncore.AvailableEndpointData{
-			Id:          res.Id,
+			Id:          &res.Id,
 			Path:        res.Path,
 			Method:      res.Method,
 			Description: res.Description,
@@ -76,7 +76,7 @@ func GetAllBindingEndpoints(tokenId string, unboundEndpoints bool) ([]taikuncore
 	for i := 0; i < len(data.GetData()); i++ {
 		res := data.GetData()[i]
 		endpoint := taikuncore.AvailableEndpointData{
-			Id:          res.Id,
+			Id:          &res.Id,
 			Path:        res.Path,
 			Method:      res.Method,
 			Description: res.Description,
