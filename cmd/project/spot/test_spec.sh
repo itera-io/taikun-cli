@@ -38,8 +38,8 @@ Context 'project/spot'
       The output should include 'Operation was successful'
     End
 
-    Example 'Enable vms spot'
-      When call taikun project spot vms --enable  "$pid"
+    Example 'Enable project spot'
+      When call taikun project spot project --enable  "$pid"
       The status should equal 0
       The lines of output should equal 1
       The output should include 'Operation was successful'
@@ -57,7 +57,7 @@ Context 'project/spot'
       The output should include 'Yes'
     End
 
-    Example 'List if vms spots are set correctly'
+    Example 'List if project spots are set correctly'
       When call taikun project info --columns  SPOT-VMS "$pid"
       The status should equal 0
       The output should include 'Yes'

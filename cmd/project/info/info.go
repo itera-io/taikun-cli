@@ -15,10 +15,10 @@ import (
 var infoFields = fields.New(
 	[]*field.Field{
 		field.NewHidden(
-			"ID", "projectId",
+			"ID", "id",
 		),
 		field.NewVisible(
-			"NAME", "projectName",
+			"NAME", "name",
 		),
 		field.NewVisible(
 			"ORG", "organizationName",
@@ -27,10 +27,10 @@ var infoFields = fields.New(
 			"ORG-ID", "organizationId",
 		),
 		field.NewVisibleWithToStringFunc(
-			"HEALTH", "projectHealth", out.FormatProjectHealth,
+			"HEALTH", "health", out.FormatProjectHealth,
 		),
 		field.NewVisible(
-			"STATUS", "projectStatus",
+			"STATUS", "status",
 		),
 		field.NewVisible(
 			"ACCESS-PROFILE", "accessProfileName",
@@ -82,7 +82,7 @@ var infoFields = fields.New(
 			"HAS-KUBECONFIG", "hasKubeConfigFile",
 		),
 		field.NewVisible(
-			"K8S-VERSION", "kubernetesCurrentVersion",
+			"K8S-VERSION", "kubernetesVersion",
 		),
 		field.NewHidden(
 			"KUBESPRAY-VERSION", "kubeCurrentVersion",

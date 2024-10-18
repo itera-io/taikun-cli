@@ -93,6 +93,8 @@ func FormatCloudType(v interface{}) string {
 			return "vSphere"
 		case "proxmox":
 			return "Proxmox"
+		case "zadara":
+			return "Zadara"
 		}
 	}
 

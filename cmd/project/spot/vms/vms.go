@@ -20,7 +20,7 @@ func NewCmdVms() *cobra.Command {
 	var opts VmsOptions
 
 	cmd := cobra.Command{
-		Use:   "vms <project-id>",
+		Use:   "project <project-id>",
 		Short: "Disable or enable the project's spot for standalone VMs",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
