@@ -25,7 +25,7 @@ Context 'project/vm'
   }
   AfterAll 'cleanup'
 
-  Example 'add and then remove 3 vms'
+  Example 'add and then remove 3 project'
     When call taikun project vm list "$id" --no-decorate
     The status should equal 0
     The lines of output should equal 3

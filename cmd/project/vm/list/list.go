@@ -97,7 +97,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddSortByAndReverseFlags(&cmd, "standalone-vms", listFields)
+	cmdutils.AddSortByAndReverseFlags(&cmd, "standalone-project", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
