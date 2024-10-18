@@ -16,6 +16,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/showback"
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration"
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile"
+	"github.com/itera-io/taikun-cli/cmd/tofu"
 	"github.com/itera-io/taikun-cli/cmd/user"
 	"github.com/itera-io/taikun-cli/cmd/usertoken"
 	"github.com/itera-io/taikun-cli/cmd/virtualcluster"
@@ -56,6 +57,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(usertoken.NewCmdUserToken())
 	cmd.AddCommand(whoami.NewCmdWhoami())
 	cmd.AddCommand(virtualcluster.NewCmdVirtualcluster())
+	cmd.AddCommand(tofu.NewCmdTofu())
 
 	return cmd
 }
