@@ -123,7 +123,7 @@ func NewCmdAdd() *cobra.Command {
 		myApiClient := tk.NewClient()
 		data, response, err := myApiClient.Client.CommonAPI.CommonCountries(context.TODO()).Execute()
 		if err != nil {
-			fmt.Println(fmt.Errorf(tk.CreateError(response, err).Error())) // This function does not return an error... so just call it. #FIXME
+			fmt.Println(tk.CreateError(response, err))
 			return
 		}
 		for _, countryListDto := range data {

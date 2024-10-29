@@ -38,12 +38,12 @@ func commitRun(opts *CommitOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	body := taikuncore.CommitStandAloneVmCommand{
+	body := taikuncore.DeploymentCommitVmCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneAPI.StandaloneCommit(context.TODO()).CommitStandAloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommitVm(context.TODO()).DeploymentCommitVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

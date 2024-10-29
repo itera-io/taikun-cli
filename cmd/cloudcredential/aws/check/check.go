@@ -66,7 +66,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	if err != nil {
 		myError := tk.CreateError(response, err)
 		myStringError := fmt.Sprint(myError)
-		if strings.Contains(myStringError, "Failed to validate") {
+		if strings.Contains(myStringError, "Failed") {
 			err = cmderr.ErrCheckFailure("AWS cloud credential") // Taikun responded that credentials are not valid.
 		} else {
 			err = tk.CreateError(response, err) // Something else happened

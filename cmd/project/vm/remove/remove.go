@@ -55,7 +55,7 @@ func NewCmdDelete() *cobra.Command {
 
 func deleteRun(opts *DeleteOptions) error {
 	myApiClient := tk.NewClient()
-	body := taikuncore.DeleteStandAloneVmCommand{
+	body := taikuncore.ProjectDeploymentDeleteVmsCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
@@ -78,7 +78,7 @@ func deleteRun(opts *DeleteOptions) error {
 		body.VmIds = opts.VMIDs
 	}
 
-	response, err := myApiClient.Client.StandaloneAPI.StandaloneDelete(context.TODO()).DeleteStandAloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVms(context.TODO()).ProjectDeploymentDeleteVmsCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

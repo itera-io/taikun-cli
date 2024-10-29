@@ -6,7 +6,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
-	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 
@@ -42,19 +41,11 @@ func bindRun(opts *BindOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Create the body for the request
-	trueBool := true
-	body := taikuncore.BindProjectsCommand{
-		Projects: []taikuncore.UpdateUserProjectDto{
-			{
-				Id:      &opts.ProjectID,
-				IsBound: &trueBool,
-			},
-		},
-		UserId: *taikuncore.NewNullableString(&opts.UserID),
-	}
+	body := []int32{opts.ProjectID}
 
 	// Send the request and process response
-	response, err := myApiClient.Client.UserProjectsAPI.UserprojectsBindProjects(context.TODO()).BindProjectsCommand(body).Execute()
+	//response, err := myApiClient.Client.UserProjectsAPI.UserprojectsBindProjects(context.TODO()).BindProjectsCommand(body).Execute()
+	response, err := myApiClient.Client.UsersAPI.UsersAddUserProjects(context.TODO(), opts.UserID).RequestBody(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
