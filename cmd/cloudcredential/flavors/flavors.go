@@ -38,9 +38,9 @@ type FlavorsOptions struct {
 	CloudCredentialID int32
 	CloudType         taikuncore.CloudType
 	MaxCPU            int32
-	MaxRAM            float64
+	MaxRAM            int32
 	MinCPU            int32
-	MinRAM            float64
+	MinRAM            int32
 	Limit             int32
 }
 
@@ -68,10 +68,10 @@ func NewCmdFlavors() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32Var(&opts.MaxCPU, "max-cpu", 36, "Maximal CPU count")
-	cmd.Flags().Float64Var(&opts.MaxRAM, "max-ram", 500, "Maximal RAM size in GiB")
 	cmd.Flags().Int32Var(&opts.MinCPU, "min-cpu", 2, "Minimal CPU count")
-	cmd.Flags().Float64Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
+	cmd.Flags().Int32Var(&opts.MaxCPU, "max-cpu", 36, "Maximal CPU count")
+	cmd.Flags().Int32Var(&opts.MinRAM, "min-ram", 2, "Minimal RAM size in GiB")
+	cmd.Flags().Int32Var(&opts.MaxRAM, "max-ram", 500, "Maximal RAM size in GiB")
 
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "flavors", flavorsFields)
@@ -102,7 +102,7 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 func getAwsFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAwsInstanceTypes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
-	myRequest = myRequest.StartRam(types.GiBToMiB(opts.MinRAM)).EndRam(types.GiBToMiB(opts.MaxRAM))
+	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
@@ -139,7 +139,7 @@ func getAwsFlavors(opts *FlavorsOptions) (err error) {
 func getProxmoxFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.FlavorsAPI.FlavorsProxmoxFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
-	myRequest = myRequest.StartRam(types.GiBToB(int(opts.MinRAM))).EndRam(types.GiBToB(int(opts.MaxRAM)))
+	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
@@ -176,7 +176,7 @@ func getProxmoxFlavors(opts *FlavorsOptions) (err error) {
 func getOpenstackFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.FlavorsAPI.FlavorsOpenstackFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
-	myRequest = myRequest.StartRam(types.GiBToMiB(opts.MinRAM)).EndRam(types.GiBToMiB(opts.MaxRAM))
+	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
@@ -213,7 +213,7 @@ func getOpenstackFlavors(opts *FlavorsOptions) (err error) {
 func getAzureFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAzureVmSizes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
-	myRequest = myRequest.StartRam(types.GiBToMiB(opts.MinRAM)).EndRam(types.GiBToMiB(opts.MaxRAM))
+	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
@@ -249,7 +249,7 @@ func getAzureFlavors(opts *FlavorsOptions) (err error) {
 func getGoogleFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.FlavorsAPI.FlavorsGoogleMachineTypes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
-	myRequest = myRequest.StartRam(types.GiBToBFloat64(opts.MinRAM)).EndRam(types.GiBToBFloat64(opts.MaxRAM))
+	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
@@ -285,7 +285,7 @@ func getGoogleFlavors(opts *FlavorsOptions) (err error) {
 func getVsphereFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.FlavorsAPI.FlavorsVsphereFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
-	myRequest = myRequest.StartRam(types.GiBToB(int(opts.MinRAM))).EndRam(types.GiBToB(int(opts.MaxRAM)))
+	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}

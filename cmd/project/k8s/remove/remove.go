@@ -54,7 +54,7 @@ func NewCmdDelete() *cobra.Command {
 
 func deleteRun(opts *DeleteOptions) (err error) {
 	myApiClient := tk.NewClient()
-	body := taikuncore.DeleteServerCommand{
+	body := taikuncore.ProjectDeploymentDeleteServersCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
@@ -76,7 +76,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	} else {
 		body.SetServerIds(opts.ServerIDs)
 	}
-	response, err := myApiClient.Client.ServersAPI.ServersDelete(context.TODO()).DeleteServerCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

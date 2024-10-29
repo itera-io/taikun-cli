@@ -44,11 +44,11 @@ func NewCmdEnable() *cobra.Command {
 
 func enableRun(opts *EnableOptions) (err error) {
 	myApiClient := tk.NewClient()
-	body := taikuncore.EnableBackupCommand{
+	body := taikuncore.DeploymentEnableBackupCommand{
 		ProjectId:      &opts.ProjectID,
 		S3CredentialId: &opts.BackupCredentialID,
 	}
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupEnableBackup(context.TODO()).EnableBackupCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableBackup(context.TODO()).DeploymentEnableBackupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

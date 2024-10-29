@@ -2,7 +2,6 @@ package add
 
 import (
 	"context"
-	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -11,7 +10,6 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 var addFields = fields.New(
@@ -105,7 +103,7 @@ func addRun(opts *AddOptions) (err error) {
 		RuleDiscountRate:      *taikuncore.NewNullableInt32(&opts.PriceRate),
 	}
 
-	body.Labels, err = parseLabelsFlag(opts.Labels)
+	body.Labels, err = out.ParseLabelsFlag(opts.Labels)
 	if err != nil {
 		return
 	}
@@ -117,28 +115,5 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	return out.PrintResult(data, addFields)
-
-}
-
-func parseLabelsFlag(labelsData []string) ([]taikuncore.PrometheusLabelListDto, error) {
-	labels := make([]taikuncore.PrometheusLabelListDto, len(labelsData))
-
-	for labelIndex, labelData := range labelsData {
-		if len(labelData) == 0 {
-			return nil, fmt.Errorf("Invalid empty billing rule label")
-		}
-
-		tokens := strings.Split(labelData, "=")
-		if len(tokens) != 2 {
-			return nil, fmt.Errorf("Invalid billing rule label format: %s", labelData)
-		}
-
-		labels[labelIndex] = taikuncore.PrometheusLabelListDto{
-			Label: *taikuncore.NewNullableString(&tokens[0]),
-			Value: *taikuncore.NewNullableString(&tokens[1]),
-		}
-	}
-
-	return labels, nil
 
 }

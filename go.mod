@@ -4,9 +4,9 @@ go 1.21
 
 require (
 	github.com/go-openapi/strfmt v0.23.0
-	github.com/itera-io/taikungoclient v0.0.0-20240410133813-d5b905532412
-	github.com/jedib0t/go-pretty/v6 v6.5.6
-	github.com/spf13/cobra v1.8.0
+	github.com/itera-io/taikungoclient v0.0.0-20241029000246-fdf6bf8e98a6
+	github.com/jedib0t/go-pretty/v6 v6.5.9
+	github.com/spf13/cobra v1.8.1
 )
 
 require (

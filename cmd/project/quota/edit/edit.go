@@ -13,11 +13,11 @@ import (
 type EditOptions struct {
 	projectId      int32
 	serverCpu      int64
-	serverRam      int
-	serverDiskSize int
+	serverRam      int32
+	serverDiskSize int32
 	vmCpu          int64
-	vmRam          int
-	vmVolumeSize   int64
+	vmRam          int32
+	vmVolumeSize   float64
 }
 
 func NewCmdEdit() *cobra.Command {
@@ -38,11 +38,11 @@ func NewCmdEdit() *cobra.Command {
 	}
 
 	cmd.Flags().Int64VarP(&opts.serverCpu, "server-cpu", "c", 1000000, "Maximum CPU for servers (unlimited by default)")
-	cmd.Flags().IntVarP(&opts.serverDiskSize, "disk-size", "d", 102400, "Maximum Disk Size for servers in GBs (unlimited by default)")
-	cmd.Flags().IntVarP(&opts.serverRam, "server-ram", "r", 102400, "Maximum RAM for servers in GBs (unlimited by default)")
+	cmd.Flags().Int32VarP(&opts.serverDiskSize, "disk-size", "d", 102400, "Maximum Disk Size for servers in GBs (unlimited by default)")
+	cmd.Flags().Int32VarP(&opts.serverRam, "server-ram", "r", 102400, "Maximum RAM for servers in GBs (unlimited by default)")
 	cmd.Flags().Int64VarP(&opts.vmCpu, "vm-cpu", "p", 1000000, "Maximum CPU for virtual machines (unlimited by default)")
-	cmd.Flags().Int64VarP(&opts.vmVolumeSize, "vm-volume-size", "v", 102400, "Maximum Volume Size for virtual machines in GBs (unlimited by default)")
-	cmd.Flags().IntVarP(&opts.vmRam, "vm-ram", "a", 102400, "Maximum RAM for virtual machines in GBs (unlimited by default)")
+	cmd.Flags().Float64VarP(&opts.vmVolumeSize, "vm-volume-size", "v", 102400, "Maximum Volume Size for virtual machines in GBs (unlimited by default)")
+	cmd.Flags().Int32VarP(&opts.vmRam, "vm-ram", "a", 102400, "Maximum RAM for virtual machines in GBs (unlimited by default)")
 
 	return cmd
 }
