@@ -2,6 +2,7 @@
 Manage resources in [Taikun](https://taikun.cloud) from the command line.
 
 ## Getting started
+You can take a look in the quickstart folder for some inspiration on some Taikun CLI scripting inspiration. 
 
 ### Downloading the binary
 To download the CLI, head to the [latest release page](https://github.com/itera-io/taikun-cli/releases/latest).
