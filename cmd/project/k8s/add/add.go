@@ -210,7 +210,10 @@ func getProxmoxRole(projectId int32) (returnRole *taikuncore.ProxmoxRole, return
 		proxmoxRoleString = "NFS"
 	case "OpenEBS":
 		proxmoxRoleString = "STORAGE"
+	case "Longhorn":
+		proxmoxRoleString = "STORAGE"
 	default:
+		// Unknown proxmox storage
 		proxmoxRoleString = ""
 	}
 

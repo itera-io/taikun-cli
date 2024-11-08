@@ -95,6 +95,14 @@ func FormatCloudType(v interface{}) string {
 			return "Proxmox"
 		case "zadara":
 			return "Zadara"
+		case "zededa":
+			return "Zededa"
+		case "openshift":
+			return "Openshift"
+		case "tanzu":
+			return "Tanzu"
+		default:
+			return strings.ToLower(cloudType)
 		}
 	}
 
