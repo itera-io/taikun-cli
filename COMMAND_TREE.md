@@ -164,7 +164,7 @@
         * expiration (Manage expiration for a project)
       * spot (Manage if projects can use spot flavors)
         * full (Disable or enable the project's full spot Kubernetes support)
-        * vms (Disable or enable the project's spot for standalone VMs)
+        * project (Disable or enable the project's spot for standalone VMs)
         * worker (Disable or enable the project's spot Kubernetes worker support)
       * unlock (Unlock a project)
       * vm (Manage a project's standalone VMs)
