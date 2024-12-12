@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
+	"github.com/itera-io/taikun-cli/cmd/application"
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
 	"github.com/itera-io/taikun-cli/cmd/billing"
+	"github.com/itera-io/taikun-cli/cmd/catalog"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -13,6 +15,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile"
 	"github.com/itera-io/taikun-cli/cmd/project"
+	"github.com/itera-io/taikun-cli/cmd/repository"
 	"github.com/itera-io/taikun-cli/cmd/showback"
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration"
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile"
@@ -56,6 +59,9 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(usertoken.NewCmdUserToken())
 	cmd.AddCommand(whoami.NewCmdWhoami())
 	cmd.AddCommand(virtualcluster.NewCmdVirtualcluster())
+	cmd.AddCommand(application.NewCmdApplication())
+	cmd.AddCommand(repository.NewCmdRepository())
+	cmd.AddCommand(catalog.NewCmdCatalog())
 
 	return cmd
 }
