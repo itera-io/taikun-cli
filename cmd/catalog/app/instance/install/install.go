@@ -89,13 +89,3 @@ func installAppRun(opts InstallOptions) (err error) {
 
 	return nil
 }
-
-func encryptToBase64(input string) string {
-	// Convert the input string to a byte slice
-	data := []byte(input)
-
-	// Encode the byte slice to Base64
-	encoded := base64.StdEncoding.EncodeToString(data)
-
-	return encoded
-}
