@@ -1,4 +1,4 @@
-Context 'catalogs/'
+Context 'catalogs/catalogs'
   setup() {
     orgname="$(_rnd_name)"
     oid=$(taikun organization add "$orgname" -f "$orgname" -I)

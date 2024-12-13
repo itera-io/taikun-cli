@@ -1,4 +1,4 @@
-Context 'repository/'
+Context 'repository/one'
   Example 'list the recommended repositories'
     When call taikun repository list-recommend
     The status should equal 0
@@ -20,7 +20,7 @@ Context 'repository/'
 #  End
 End
 
-Context 'repostory/'
+Context 'repostory/two'
   setup(){
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$cname" --full-name "$(_rnd_name)" -I | xargs)
