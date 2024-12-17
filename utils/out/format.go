@@ -295,3 +295,27 @@ func getTagValue(tagMap map[string]interface{}, key string) (valueString string,
 
 	return
 }
+
+// FormatRepoName extracts the "name" field from the "repository" map.
+func FormatRepoName(repository interface{}) string {
+	// Assert the repository to a map[string]interface{} to handle dynamic keys.
+	if repoMap, ok := repository.(map[string]interface{}); ok {
+		if name, exists := repoMap["name"]; exists {
+			if nameStr, ok := name.(string); ok {
+				return nameStr
+			}
+		}
+	}
+	return ""
+}
+
+func FormatDisabled(isBound interface{}) string {
+	if disabledBool, ok := isBound.(bool); ok {
+		if disabledBool {
+			return "Enabled"
+		} else {
+			return "Disabled"
+		}
+	}
+	return ""
+}
