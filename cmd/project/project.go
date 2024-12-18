@@ -16,6 +16,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/kubeconfig"
 	"github.com/itera-io/taikun-cli/cmd/project/list"
 	"github.com/itera-io/taikun-cli/cmd/project/lock"
+	"github.com/itera-io/taikun-cli/cmd/project/purge"
 	"github.com/itera-io/taikun-cli/cmd/project/quota"
 	"github.com/itera-io/taikun-cli/cmd/project/remove"
 	"github.com/itera-io/taikun-cli/cmd/project/restore"
@@ -54,6 +55,7 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(autoscaler.NewCmdAutoscaler())
 	cmd.AddCommand(set.NewCmdSet())
 	cmd.AddCommand(spot.NewCmdSpot())
+	cmd.AddCommand(purge.NewCmdPurge())
 
 	return cmd
 }

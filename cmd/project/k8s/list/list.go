@@ -3,7 +3,6 @@ package list
 import (
 	"context"
 	"github.com/itera-io/taikun-cli/api"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -121,10 +120,7 @@ func NewCmdList() *cobra.Command {
 func listRun(opts *ListOptions) (err error) {
 	projectServers, err := ListServers(opts)
 	if err == nil {
-		flavorJsonPropertyName, err := getFlavorField(projectServers)
-		if err != nil {
-			return err
-		}
+		flavorJsonPropertyName := "flavor"
 
 		if err := listFields.SetFieldJsonPropertyName("FLAVOR", flavorJsonPropertyName); err != nil {
 			return err
@@ -151,36 +147,4 @@ func ListServers(opts *ListOptions) (projectServers []taikuncore.ServerListDto, 
 	projectServers = data.GetData()
 	return
 
-}
-
-func getFlavorField(servers []taikuncore.ServerListDto) (string, error) {
-	if len(servers) == 0 {
-		return "flavor", nil
-	}
-
-	if servers[0].GetAwsInstanceType() != "" {
-		return "awsInstanceType", nil
-	}
-
-	if servers[0].GetAzureVmSize() != "" {
-		return "azureVmSize", nil
-	}
-
-	if servers[0].GetOpenstackFlavor() != "" {
-		return "openstackFlavor", nil
-	}
-
-	if servers[0].GetGoogleMachineType() != "" {
-		return "googleMachineType", nil
-	}
-
-	if servers[0].GetProxmoxFlavor() != "" {
-		return "proxmoxFlavor", nil
-	}
-
-	if servers[0].GetVsphereFlavor() != "" {
-		return "vsphereFlavor", nil
-	}
-
-	return "", cmderr.ErrServerHasNoFlavors
 }
