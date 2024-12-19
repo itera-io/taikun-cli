@@ -38,15 +38,6 @@ var listFields = fields.New(
 		field.NewHidden(
 			"WINDOWS", "isWindows",
 		),
-		field.NewHidden(
-			"AWS", "isAws",
-		),
-		field.NewHidden(
-			"AZURE", "isAzure",
-		),
-		field.NewHidden(
-			"OPENSTACK", "isOpenstack",
-		),
 	},
 )
 

@@ -32,6 +32,8 @@ func GetCloudType(cloudCredentialID int32) (cloudType taikuncore.CloudType, err 
 		return taikuncore.CLOUDTYPE_PROXMOX, nil
 	case taikuncore.CLOUDTYPE_VSPHERE:
 		return taikuncore.CLOUDTYPE_VSPHERE, nil
+	case taikuncore.CLOUDTYPE_OPENSHIFT:
+		return taikuncore.CLOUDTYPE_OPENSHIFT, nil
 	default:
 		return taikuncore.CLOUDTYPE_NONE, cmderr.ResourceNotFoundError("Cloud credential", cloudCredentialID)
 	}

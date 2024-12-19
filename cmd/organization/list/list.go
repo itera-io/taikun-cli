@@ -105,6 +105,16 @@ func NewCmdList() *cobra.Command {
 // listRun sends multiple queries to the API and returns a list of organizations.
 // Organizations are returned in the UserForListDto structs generated in models.
 func listRun(opts *ListOptions) (err error) {
+	organizations, err := ListOrganizations(opts)
+	if err != nil {
+		return err
+	}
+
+	return out.PrintResults(organizations, ListFields)
+}
+
+// List organizations, also used in list catalogs
+func ListOrganizations(opts *ListOptions) (organizations []taikuncore.OrganizationDetailsDto, err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.OrganizationsAPI.OrganizationsList(context.TODO())
 	// Set Sorting if set in command line options
@@ -112,14 +122,12 @@ func listRun(opts *ListOptions) (err error) {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
 
-	var organizations = make([]taikuncore.OrganizationDetailsDto, 0)
-
 	// Execute the request, it returns only 50 lines in one page
 	// then execute it again with an Offset until you have read all of it.
 	for {
 		data, response, err := myRequest.Execute()
 		if err != nil {
-			return tk.CreateError(response, err)
+			return nil, tk.CreateError(response, err)
 		}
 		organizations = append(organizations, data.Data...)
 
@@ -140,5 +148,5 @@ func listRun(opts *ListOptions) (err error) {
 		organizations = organizations[:opts.Limit]
 	}
 
-	return out.PrintResults(organizations, ListFields)
+	return organizations, nil
 }
