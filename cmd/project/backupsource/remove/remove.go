@@ -47,7 +47,7 @@ func deleteRun(opts DeleteOption) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackupLocation(context.TODO()).DeleteBackupStorageLocationCommand(body).Execute()
+	_, response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackupLocation(context.TODO()).DeleteBackupStorageLocationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

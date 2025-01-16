@@ -110,12 +110,12 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.CheckerAPI.CheckerS3(context.TODO()).CheckS3Command(body).Execute()
+	_, response, err := myApiClient.Client.CheckerAPI.CheckerS3(context.TODO()).CheckS3Command(body).Execute()
 	if err != nil {
 		return false, tk.CreateError(response, err)
 	}
 
-	return err == nil, nil
+	return true, nil
 
 }
 

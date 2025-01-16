@@ -45,7 +45,7 @@ func createcatalogRun(catalogname string, opts CreateOptions) (err error) {
 		body.SetOrganizationId(opts.OrganizationID)
 	}
 
-	response, err := myApiClient.Client.CatalogAPI.CatalogCreate(context.TODO()).CreateCatalogCommand(body).Execute()
+	_, response, err := myApiClient.Client.CatalogAPI.CatalogCreate(context.TODO()).CreateCatalogCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

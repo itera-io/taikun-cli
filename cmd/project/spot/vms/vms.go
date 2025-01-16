@@ -54,7 +54,7 @@ func vmsRun(opts *VmsOptions) (err error) {
 		return fmt.Errorf("Unknown mode. Either disable or enable.")
 	}
 
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotVms(context.TODO()).SpotVmOperationCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotVms(context.TODO()).SpotVmOperationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

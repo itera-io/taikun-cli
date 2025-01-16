@@ -43,7 +43,7 @@ func commitRun(opts *CommitOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommitVm(context.TODO()).DeploymentCommitVmCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommitVm(context.TODO()).DeploymentCommitVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

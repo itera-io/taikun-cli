@@ -33,7 +33,7 @@ func unlockRun(accessProfileID int32) (err error) {
 		Id:   &accessProfileID,
 		Mode: *taikuncore.NewNullableString(&types.UnlockedMode),
 	}
-	response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesLockManager(context.TODO()).AccessProfilesLockManagementCommand(body).Execute()
+	_, response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesLockManager(context.TODO()).AccessProfilesLockManagementCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -81,11 +81,11 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.CheckerAPI.CheckerSsh(context.TODO()).SshKeyCommand(body).Execute()
+	_, response, err := myApiClient.Client.CheckerAPI.CheckerSsh(context.TODO()).SshKeyCommand(body).Execute()
 	if err != nil {
 		return false, tk.CreateError(response, err)
 	}
-	return err == nil, nil
+	return true, nil
 
 }
 

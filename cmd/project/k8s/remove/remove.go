@@ -76,7 +76,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	} else {
 		body.SetServerIds(opts.ServerIDs)
 	}
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

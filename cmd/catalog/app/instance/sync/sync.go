@@ -38,7 +38,7 @@ func syncAppRun(opts SyncOptions) (err error) {
 
 	body := taikuncore.SyncProjectAppCommand{ProjectAppId: &opts.ProjectAppId}
 
-	response, err := myApiClient.Client.ProjectAppsAPI.ProjectappSync(context.TODO()).SyncProjectAppCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectAppsAPI.ProjectappSync(context.TODO()).SyncProjectAppCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

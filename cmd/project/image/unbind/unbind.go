@@ -43,7 +43,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ImagesAPI.ImagesUnbindImagesFromProject(context.TODO()).DeleteImageFromProjectCommand(body).Execute()
+	_, response, err := myApiClient.Client.ImagesAPI.ImagesUnbindImagesFromProject(context.TODO()).DeleteImageFromProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

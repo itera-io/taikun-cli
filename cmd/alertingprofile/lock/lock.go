@@ -38,7 +38,7 @@ func lockRun(alertingProfileID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesLockManager(context.TODO()).AlertingProfilesLockManagerCommand(body).Execute()
+	_, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesLockManager(context.TODO()).AlertingProfilesLockManagerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

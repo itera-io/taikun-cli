@@ -59,7 +59,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupImportBackupStorage(context.TODO()).ImportBackupStorageLocationCommand(body).Execute()
+	_, response, err := myApiClient.Client.BackupPolicyAPI.BackupImportBackupStorage(context.TODO()).ImportBackupStorageLocationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

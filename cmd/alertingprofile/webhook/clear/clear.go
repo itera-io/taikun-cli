@@ -31,7 +31,7 @@ func clearRun(alertingProfileID int32) (err error) {
 	myApiClient := tk.NewClient()
 	emptyWebhokList := make([]taikuncore.AlertingWebhookDto, 0)
 
-	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAssignWebhooks(context.TODO(), alertingProfileID).AlertingWebhookDto(emptyWebhokList).Execute()
+	_, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAssignWebhooks(context.TODO(), alertingProfileID).AlertingWebhookDto(emptyWebhokList).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

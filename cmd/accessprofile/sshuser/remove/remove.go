@@ -38,7 +38,7 @@ func deleteRun(sshUserID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.SshUsersAPI.SshusersDelete(context.TODO()).DeleteSshUserCommand(body).Execute()
+	_, response, err := myApiClient.Client.SshUsersAPI.SshusersDelete(context.TODO()).DeleteSshUserCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

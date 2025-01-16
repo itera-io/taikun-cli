@@ -35,7 +35,7 @@ func makedefaultRun(catalogid int32) (err error) {
 		Id: &catalogid,
 	}
 
-	response, err := myApiClient.Client.CatalogAPI.CatalogMakeDefault(context.TODO()).CatalogMakeDefaultCommand(body).Execute()
+	_, response, err := myApiClient.Client.CatalogAPI.CatalogMakeDefault(context.TODO()).CatalogMakeDefaultCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

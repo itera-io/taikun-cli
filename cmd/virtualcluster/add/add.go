@@ -64,7 +64,7 @@ func addRun(opts *AddOptions) (err error) {
 		AlertingProfileId: *taikuncore.NewNullableInt32(&opts.alertingProfileId),
 	}
 
-	response, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterCreate(context.TODO()).CreateVirtualClusterCommand(body).Execute()
+	_, response, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterCreate(context.TODO()).CreateVirtualClusterCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

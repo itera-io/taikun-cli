@@ -55,7 +55,7 @@ func checkRun(opts *CheckOptions) (err error) {
 
 	// Execute a query into the API + graceful exit
 	myRequest := myApiClient.Client.VsphereCloudCredentialAPI.VsphereValidate(context.TODO()).ValidateVsphereCommand(body)
-	response, err := myRequest.Execute()
+	_, response, err := myRequest.Execute()
 
 	if err == nil {
 		out.PrintCheckSuccess("vSphere cloud credential")

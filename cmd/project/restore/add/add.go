@@ -69,7 +69,7 @@ func addRun(opts *AddOptions) (err error) {
 		IncludeNamespaces: opts.IncludeNamespaces,
 		ExcludeNamespaces: opts.ExcludeNamespaces,
 	}
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupRestoreBackup(context.TODO()).RestoreBackupCommand(body).Execute()
+	_, response, err := myApiClient.Client.BackupPolicyAPI.BackupRestoreBackup(context.TODO()).RestoreBackupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

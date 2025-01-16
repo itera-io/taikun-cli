@@ -48,7 +48,7 @@ func disableRun(opts *DisableOptions) (err error) {
 	body := taikuncore.DisableAutoscalingCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingDisable(context.TODO()).DisableAutoscalingCommand(body).Execute()
+	_, response, err := myApiClient.Client.AutoscalingAPI.AutoscalingDisable(context.TODO()).DisableAutoscalingCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
