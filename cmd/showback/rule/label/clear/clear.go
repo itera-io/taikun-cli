@@ -56,7 +56,7 @@ func clearRun(opts *ClearOptions) error {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesUpdate(context.TODO()).UpdateShowbackRuleCommand(body).Execute()
+	_, response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesUpdate(context.TODO()).UpdateShowbackRuleCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

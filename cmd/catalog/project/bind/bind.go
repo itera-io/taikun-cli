@@ -34,7 +34,7 @@ func NewCmdBind() *cobra.Command {
 func bindRun(catalogid int32, projectid int32) (err error) {
 	myApiClient := tk.NewClient()
 
-	_, response, err := myApiClient.Client.CatalogAPI.CatalogAddProject(context.TODO(), catalogid).RequestBody([]int32{projectid}).Execute()
+	response, err := myApiClient.Client.CatalogAPI.CatalogAddProject(context.TODO(), catalogid).RequestBody([]int32{projectid}).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

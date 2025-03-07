@@ -43,7 +43,7 @@ func deleteRun(opts DeleteOption) (err error) {
 		ProjectId: &opts.ProjectID,
 		Name:      *taikuncore.NewNullableString(&opts.Name),
 	}
-	_, response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackup(context.TODO()).DeleteBackupCommand(body).Execute()
+	response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackup(context.TODO()).DeleteBackupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

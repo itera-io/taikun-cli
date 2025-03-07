@@ -38,7 +38,7 @@ func lockRun(cloudCredentialID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsLockManager(context.TODO()).CloudLockManagerCommand(body).Execute()
+	response, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsLockManager(context.TODO()).CloudLockManagerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

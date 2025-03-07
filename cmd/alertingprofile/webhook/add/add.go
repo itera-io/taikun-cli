@@ -106,7 +106,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	alertingWebhooks = append(alertingWebhooks, *newAlertingWebhook)
 
-	_, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAssignWebhooks(context.TODO(), opts.AlertingProfileID).AlertingWebhookDto(alertingWebhooks).Execute()
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAssignWebhooks(context.TODO(), opts.AlertingProfileID).AlertingWebhookDto(alertingWebhooks).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

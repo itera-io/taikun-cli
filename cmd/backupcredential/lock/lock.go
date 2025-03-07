@@ -38,7 +38,7 @@ func lockRun(backupCredentialID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsLockManagement(context.TODO()).BackupLockManagerCommand(body).Execute()
+	response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsLockManagement(context.TODO()).BackupLockManagerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

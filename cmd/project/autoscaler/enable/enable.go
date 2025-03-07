@@ -75,7 +75,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		Flavor:               *taikuncore.NewNullableString(&opts.Flavor),
 		SpotEnabled:          &opts.Spot,
 	}
-	_, response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEnable(context.TODO()).EnableAutoscalingCommand(body).Execute()
+	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEnable(context.TODO()).EnableAutoscalingCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

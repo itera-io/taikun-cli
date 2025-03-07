@@ -57,7 +57,7 @@ func editRun(opts *EditOptions) (err error) {
 		MinSize:   &opts.MinSize,
 		MaxSize:   &opts.MaxSize,
 	}
-	_, response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEdit(context.TODO()).EditAutoscalingCommand(body).Execute()
+	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEdit(context.TODO()).EditAutoscalingCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
