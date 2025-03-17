@@ -22,7 +22,7 @@ Context 'project/autoscaler'
       When call taikun project autoscaler enable "$pid" -n "$AUTOSCALER_NAME" -f "$flavor" --max-size 4 --min-size 1 --spot-enable
       The status should equal 1
       The lines of stderr should equal 1
-      The stderr should include 'full spot kubernetes or allow spot workers should be enabled'
+      The stderr should include 'full spot or worker spot should be enabled'
     End
 
     Example 'Disable project spot'

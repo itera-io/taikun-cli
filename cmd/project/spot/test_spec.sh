@@ -24,22 +24,14 @@ Context 'project/spot'
       The stderr should include 'Taikun Error:'
     End
 
+    Example 'List if full spots are set correctly'
+      When call taikun project info --columns SPOT-FULL "$pid"
+      The status should equal 0
+      The output should include 'Yes'
+    End
+
     Example 'Disable full spot'
       When call taikun project spot full --disable "$pid"
-      The status should equal 0
-      The lines of output should equal 1
-      The output should include 'Operation was successful'
-    End
-
-    Example 'Enable worker spot'
-      When call taikun project spot worker --enable "$pid"
-      The status should equal 0
-      The lines of output should equal 1
-      The output should include 'Operation was successful'
-    End
-
-    Example 'Enable project spot'
-      When call taikun project spot project --enable  "$pid"
       The status should equal 0
       The lines of output should equal 1
       The output should include 'Operation was successful'
@@ -51,20 +43,53 @@ Context 'project/spot'
       The output should include 'No'
     End
 
+    Example 'Enable worker spot'
+      When call taikun project spot worker --enable "$pid"
+      The status should equal 0
+      The lines of output should equal 1
+      The output should include 'Operation was successful'
+    End
+
+    Example 'Enable full spot while worker spot is enabled'
+      When call taikun project spot full --enable  "$pid"
+      The status should equal 1
+      The stderr should include 'Spot workers option enabled for this project.'
+    End
+
     Example 'List if worker spots are set correctly'
       When call taikun project info --columns SPOT-WORKERS "$pid"
       The status should equal 0
       The output should include 'Yes'
     End
 
-    Example 'List if project spots are set correctly'
-      When call taikun project info --columns  SPOT-VMS "$pid"
+    Example 'Disable worker spot'
+      When call taikun project spot worker --disable "$pid"
       The status should equal 0
-      The output should include 'Yes'
+      The lines of output should equal 1
+      The output should include 'Operation was successful'
     End
 
-    Example 'List if spots are set correctly'
-      When call taikun project info --columns SPOT "$pid"
+    Example 'List if worker spots are set correctly'
+      When call taikun project info --columns SPOT-WORKERS "$pid"
+      The status should equal 0
+      The output should include 'No'
+    End
+
+    Example 'List if VMS spots are set correctly'
+      When call taikun project info --columns  SPOT-VMS "$pid"
+      The status should equal 0
+      The output should include 'No'
+    End
+
+    Example 'Enable VMS spot while worker spot is enabled'
+      When call taikun project spot vms --enable  "$pid"
+      The status should equal 0
+      The lines of output should equal 1
+      The output should include 'Operation was successful'
+    End
+
+    Example 'List if VMS spots are set correctly'
+      When call taikun project info --columns  SPOT-VMS "$pid"
       The status should equal 0
       The output should include 'Yes'
     End
