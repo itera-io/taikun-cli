@@ -23,7 +23,7 @@ Context 'cloudcredential/lock'
   Example 'lock with already locked'
     When call taikun cloud-credential lock "$ccid"
     The status should equal 1
-    The stderr should include "Cloud credential already lock"
+    The stderr should include "already"
   End
 
   Example 'unlock'

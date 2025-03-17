@@ -36,7 +36,7 @@ func unbindRun(bindings []int32) (err error) {
 	body := taikuncore.UnbindFlavorFromProjectCommand{
 		Ids: bindings,
 	}
-	response, err := myApiClient.Client.FlavorsAPI.FlavorsUnbindFromProject(context.TODO()).UnbindFlavorFromProjectCommand(body).Execute()
+	_, response, err := myApiClient.Client.FlavorsAPI.FlavorsUnbindFromProject(context.TODO()).UnbindFlavorFromProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

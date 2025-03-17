@@ -43,7 +43,7 @@ func stopRun(opts *StopOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsStop(context.TODO()).StopStandaloneVmCommand(body).Execute()
+	_, response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsStop(context.TODO()).StopStandaloneVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -20,7 +20,7 @@ func NewCmdVms() *cobra.Command {
 	var opts VmsOptions
 
 	cmd := cobra.Command{
-		Use:   "project <project-id>",
+		Use:   "vms <project-id>",
 		Short: "Disable or enable the project's spot for standalone VMs",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -54,7 +54,7 @@ func vmsRun(opts *VmsOptions) (err error) {
 		return fmt.Errorf("Unknown mode. Either disable or enable.")
 	}
 
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotVms(context.TODO()).SpotVmOperationCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotVms(context.TODO()).SpotVmOperationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

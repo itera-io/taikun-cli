@@ -83,7 +83,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.UserTokenAPI.UsertokenBindUnbind(context.TODO()).BindUnbindEndpointToTokenCommand(body).Execute()
+	_, response, err := myApiClient.Client.UserTokenAPI.UsertokenBindUnbind(context.TODO()).BindUnbindEndpointToTokenCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

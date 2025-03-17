@@ -85,7 +85,7 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	if err != nil {
 		return false, tk.CreateError(response, err)
 	}
-	return err == nil, nil
+	return true, nil
 
 }
 
