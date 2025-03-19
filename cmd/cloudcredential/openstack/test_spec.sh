@@ -3,7 +3,7 @@ Context 'cloudcredential/openstack'
       orgname="$(_rnd_name)"
       ccname="$(_rnd_name)"
       oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-      ccid=$(taikun cloud-credential openstack add "$ccname" -o "$oid" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
+      ccid=$(taikun cloud-credential openstack add "$ccname" -o "$oid" -p "$OS_PASSWORD" -d "$OS_USER_DOMAIN_NAME" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
     }
     BeforeAll 'setup'
 
