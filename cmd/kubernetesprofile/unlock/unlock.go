@@ -38,7 +38,7 @@ func unlockRun(kubernetesProfileID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesLockManager(context.TODO()).KubernetesProfilesLockManagerCommand(body).Execute()
+	_, response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesLockManager(context.TODO()).KubernetesProfilesLockManagerCommand(body).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

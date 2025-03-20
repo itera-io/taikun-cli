@@ -4,7 +4,7 @@ default: install
 
 .PHONY: build
 build:
-	go mod tidy -compat=1.21
+	go mod tidy -compat=1.23
 	go build -o ${BINARY} .
 
 .PHONY: dockerbuild

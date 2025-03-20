@@ -53,7 +53,8 @@ Context 'project/k8s/list'
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs)
     ccid=$(taikun cloud-credential aws add "$(_rnd_name)" -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY" -r "$AWS_DEFAULT_REGION" -z 3 -o "$oid" -I | xargs)
     # flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --limit 1 -C name) # Selects m4.4xlarge (16 CPU, 64 RAM) which is total overkill for testmachine
-    flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
+    #flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
+    flavor="c5d.large"
     pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --flavors "$flavor" -I | xargs)
   }
   BeforeAll 'setup'

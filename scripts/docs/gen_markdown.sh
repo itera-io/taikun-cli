@@ -23,7 +23,7 @@ func main() {
 EOF
 
 # update dependencies
-go mod tidy -compat=1.21
+go mod tidy -compat=1.23
 
 # build
 go build -o taikun

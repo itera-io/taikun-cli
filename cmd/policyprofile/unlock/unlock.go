@@ -38,7 +38,7 @@ func unlockRun(policyProfileID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesLockManager(context.TODO()).OpaProfileLockManagerCommand(body).Execute()
+	_, response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesLockManager(context.TODO()).OpaProfileLockManagerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

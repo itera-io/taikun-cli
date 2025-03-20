@@ -55,7 +55,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesAddOrganizations(context.TODO(), billingRuleId).AddOrganizationsToRuleDto(body).Execute()
+	_, response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesAddOrganizations(context.TODO(), billingRuleId).AddOrganizationsToRuleDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

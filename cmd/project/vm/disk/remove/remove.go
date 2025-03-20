@@ -49,7 +49,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVmDisks(context.TODO()).DeleteVmDiskCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVmDisks(context.TODO()).DeleteVmDiskCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

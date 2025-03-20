@@ -60,7 +60,7 @@ func deleteRun(opts DeleteOptions) (err error) {
 		AppRepoId: &foundId,
 	}
 
-	response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryDelete(context.TODO()).DeleteRepositoryCommand(command).Execute()
+	_, response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryDelete(context.TODO()).DeleteRepositoryCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

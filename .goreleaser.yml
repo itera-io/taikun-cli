@@ -2,7 +2,7 @@
 project_name: taikun
 before:
   hooks:
-    - go mod tidy -compat=1.21
+    - go mod tidy -compat=1.23
 builds:
   - env:
       - CGO_ENABLED=0

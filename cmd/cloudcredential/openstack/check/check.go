@@ -13,10 +13,12 @@ import (
 )
 
 type CheckOptions struct {
-	Username string
-	Password string
-	URL      string
-	Domain   string
+	Username      string
+	Password      string
+	AppCredId     string
+	AppCredSecret string
+	URL           string
+	Domain        string
 }
 
 func NewCmdCheck() *cobra.Command {
@@ -32,13 +34,15 @@ func NewCmdCheck() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.Username, "username", "u", "", "OpenStack Username (required)")
-	cmdutils.MarkFlagRequired(cmd, "username")
-
 	cmd.Flags().StringVarP(&opts.Password, "password", "p", "", "OpenStack Password (required)")
-	cmdutils.MarkFlagRequired(cmd, "password")
+	cmd.MarkFlagsRequiredTogether("username", "password")
+
+	cmd.Flags().StringVarP(&opts.AppCredId, "appcredid", "i", "", "OpenStack Application Credential ID")
+	cmd.Flags().StringVarP(&opts.AppCredSecret, "appcredsecret", "s", "", "OpenStack Application Credential Secret")
+	cmd.MarkFlagsRequiredTogether("appcredid", "appcredsecret")
 
 	cmd.Flags().StringVarP(&opts.Domain, "domain", "d", "", "OpenStack Domain (required)")
-	cmdutils.MarkFlagRequired(cmd, "domain")
+	cmd.MarkFlagsRequiredTogether("domain", "username")
 
 	cmd.Flags().StringVar(&opts.URL, "url", "", "OpenStack URL (required)")
 	cmdutils.MarkFlagRequired(cmd, "url")
@@ -52,10 +56,20 @@ func checkRun(opts *CheckOptions) (err error) {
 
 	// Prepare the arguments for the query
 	body := taikuncore.CheckOpenstackCommand{
-		OpenStackUser:     *taikuncore.NewNullableString(&opts.Username),
-		OpenStackPassword: *taikuncore.NewNullableString(&opts.Password),
-		OpenStackUrl:      *taikuncore.NewNullableString(&opts.URL),
-		OpenStackDomain:   *taikuncore.NewNullableString(&opts.Domain),
+		OpenStackUrl: *taikuncore.NewNullableString(&opts.URL),
+	}
+
+	if opts.Username != "" && opts.Password != "" && opts.Domain != "" {
+		body.SetOpenStackDomain(opts.Domain)
+		body.SetOpenStackUser(opts.Username)
+		body.SetOpenStackPassword(opts.Password)
+		body.SetApplicationCredEnabled(false)
+	}
+
+	if opts.AppCredId != "" && opts.AppCredSecret != "" {
+		body.SetOpenStackUser(opts.AppCredId)
+		body.SetOpenStackPassword(opts.AppCredSecret)
+		body.SetApplicationCredEnabled(true)
 	}
 
 	// Execute a query into the API + graceful exit

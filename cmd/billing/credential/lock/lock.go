@@ -38,7 +38,7 @@ func lockRun(billingCredentialID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.OperationCredentialsAPI.OpscredentialsLockManager(context.TODO()).OperationCredentialLockManagerCommand(body).Execute()
+	_, response, err := myApiClient.Client.OperationCredentialsAPI.OpscredentialsLockManager(context.TODO()).OperationCredentialLockManagerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

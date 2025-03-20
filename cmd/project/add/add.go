@@ -175,7 +175,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().BoolVar(&opts.SpotFull, "spot-full", false, "Enable full spot flavorsKubernetes (worker + controlplane), bool")
 	cmd.Flags().BoolVar(&opts.SpotWorker, "spot-worker", false, "Enable spot flavors for Kubernetes workers, bool")
-	cmd.Flags().BoolVar(&opts.SpotVms, "spot-project", false, "Enable spot flavors for standalone VMs, bool")
+	cmd.Flags().BoolVar(&opts.SpotVms, "spot-vms", false, "Enable spot flavors for standalone VMs, bool")
 	cmd.Flags().Float64Var(&opts.SpotMaxPrice, "spot-max-price", -1, "Set maximum price for spots")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)

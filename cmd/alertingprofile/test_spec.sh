@@ -33,7 +33,7 @@ Context 'alertingprofile'
       Example 'duplicate name causes error'
         When call taikun alerting-profile add "$name" --reminder daily -o "$oid"
         The status should equal 1
-        The stderr should include 'Please specify another name'
+        The stderr should include 'already exists'
       End
 
       Example 'invalid reminder causes error'

@@ -50,7 +50,7 @@ func purgeRun(projectIdString string) (err error) {
 		DeleteAutoscalingServers: &alwaysTellThe,
 	}
 
-	response, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
+	_, response, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
