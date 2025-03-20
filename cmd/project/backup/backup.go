@@ -4,7 +4,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/backup/disable"
 	"github.com/itera-io/taikun-cli/cmd/project/backup/enable"
 	"github.com/itera-io/taikun-cli/cmd/project/backup/list"
-	"github.com/itera-io/taikun-cli/cmd/project/remove"
+	"github.com/itera-io/taikun-cli/cmd/project/backup/remove"
 	"github.com/spf13/cobra"
 )
 

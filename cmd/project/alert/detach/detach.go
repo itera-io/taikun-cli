@@ -37,7 +37,7 @@ func detachRun(opts *DetachOptions) (err error) {
 	body := taikuncore.AttachDetachAlertingProfileCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesDetach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
+	_, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesDetach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -9,7 +9,7 @@ on:
         type: string
 
 env:
-  GO_VERSION: '1.21'
+  GO_VERSION: '1.23'
 
 jobs:
   # CLI must build without failure
@@ -133,6 +133,8 @@ jobs:
           OS_REGION_NAME: ${{ secrets.OS_REGION_NAME }}
           OS_USER_DOMAIN_NAME: ${{ secrets.OS_USER_DOMAIN_NAME }}
           OS_USERNAME: ${{ secrets.OS_USERNAME }}
+          OS_APPLICATION_CREDENTIAL_ID: ${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}
+          OS_APPLICATION_CREDENTIAL_SECRET: ${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}
 
           PROMETHEUS_PASSWORD: ${{ secrets.PROMETHEUS_PASSWORD }}
           PROMETHEUS_URL: ${{ secrets.PROMETHEUS_URL }}

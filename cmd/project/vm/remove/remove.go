@@ -78,7 +78,7 @@ func deleteRun(opts *DeleteOptions) error {
 		body.VmIds = opts.VMIDs
 	}
 
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVms(context.TODO()).ProjectDeploymentDeleteVmsCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVms(context.TODO()).ProjectDeploymentDeleteVmsCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

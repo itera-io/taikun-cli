@@ -54,7 +54,7 @@ func workerRun(opts *WorkerOptions) (err error) {
 		return fmt.Errorf("Unknown mode. Either disable or enable.")
 	}
 
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotWorkers(context.TODO()).SpotWorkerOperationCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotWorkers(context.TODO()).SpotWorkerOperationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

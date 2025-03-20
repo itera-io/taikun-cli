@@ -69,7 +69,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		ProjectId: &opts.ProjectID,
 	}
 
-	request, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterDelete(context.TODO()).DeleteVirtualClusterCommand(body).Execute()
+	_, request, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterDelete(context.TODO()).DeleteVirtualClusterCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(request, err)
 	}

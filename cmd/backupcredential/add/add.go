@@ -115,7 +115,7 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 		return false, tk.CreateError(response, err)
 	}
 
-	return err == nil, nil
+	return true, nil
 
 }
 

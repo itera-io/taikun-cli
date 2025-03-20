@@ -38,7 +38,7 @@ func disableRun(opts *DisableOptions) (err error) {
 	body := taikuncore.DeploymentDisableBackupCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	_, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableBackup(context.TODO()).DeploymentDisableBackupCommand(body).Execute()
+	_, _, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableBackup(context.TODO()).DeploymentDisableBackupCommand(body).Execute()
 	if err != nil {
 		//return tk.CreateError(response, err)
 		return cmderr.ErrProjectBackupAlreadyDisabled

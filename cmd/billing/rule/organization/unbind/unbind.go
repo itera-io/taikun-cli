@@ -45,8 +45,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	body := []int32{opts.OrganizationID}
 
 	// Execute a query into the API + graceful exit
-	//response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesBindOrganizations(context.TODO()).BindPrometheusOrganizationsCommand(body).Execute()
-	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesDeleteOrganizations(context.TODO(), billingRuleId).RequestBody(body).Execute()
+	_, response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesDeleteOrganizations(context.TODO(), billingRuleId).RequestBody(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

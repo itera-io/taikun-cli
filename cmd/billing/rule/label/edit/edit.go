@@ -62,7 +62,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err = myApiClient.Client.PrometheusRulesAPI.PrometheusrulesUpdate(context.TODO(), opts.BillingRuleID).RuleForUpdateDto(body).Execute()
+	_, response, err = myApiClient.Client.PrometheusRulesAPI.PrometheusrulesUpdate(context.TODO(), opts.BillingRuleID).RuleForUpdateDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
