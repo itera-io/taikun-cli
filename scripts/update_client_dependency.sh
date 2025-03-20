@@ -37,4 +37,4 @@ commit=$(git ls-remote $repo refs/heads/$branch | awk '{print $1}')
 go get $path@$commit
 
 # tidy module dependencies
-go mod tidy -compat=1.21
+go mod tidy -compat=1.23
