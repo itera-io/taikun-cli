@@ -43,7 +43,7 @@ func bindRun(opts *BindOptions) (err error) {
 		ProjectId: &opts.ProjectID,
 		Flavors:   opts.Flavors,
 	}
-	_, response, err := myApiClient.Client.FlavorsAPI.FlavorsBindToProject(context.TODO()).BindFlavorToProjectCommand(body).Execute()
+	response, err := myApiClient.Client.FlavorsAPI.FlavorsBindToProject(context.TODO()).BindFlavorToProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
