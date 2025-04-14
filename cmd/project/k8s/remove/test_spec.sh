@@ -37,7 +37,7 @@ Context 'project/k8s/remove'
     Example 'delete the same server twice'
       When call taikun project k8s delete "$pid" --server-ids "$msid"
       The status should equal 1
-      The stderr should include '404'
+      The stderr should include 'was not found'
     End
   End
 

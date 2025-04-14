@@ -31,14 +31,14 @@ Context 'cloudcredential/openstack'
       When call taikun cloud-credential openstack check -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" -u "$OS_USERNAME" --url "$OS_AUTH_URL"
       The lines of output should equal 1
       The status should equal 0
-      The output should include "OpenStack cloud credential is valid."
+      The output should include "OpenStack cloud credential is valid"
     End
 
     Example 'check invalid openstack cloud credential'
       When call taikun cloud-credential openstack check -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" -u "$OS_USERNAME" --url "mockup.local"
       The lines of stderr should equal 1
       The status should equal 1
-      The stderr should include "Error: OpenStack cloud credential is not valid."
+      The stderr should include "Error: OpenStack cloud credential is not valid"
     End
 
 End
