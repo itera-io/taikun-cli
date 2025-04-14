@@ -104,6 +104,7 @@ jobs:
           TAIKUN_API_HOST: ${{ (inputs.endpoint == 'staging') && secrets.TAIKUN_STAGING_API_HOST || secrets.TAIKUN_API_HOST }}
           TAIKUN_ACCESS_KEY: ${{ (inputs.endpoint == 'staging') && secrets.TAIKUN_STAGING_ACCESS_KEY || secrets.TAIKUN_ACCESS_KEY }}
           TAIKUN_SECRET_KEY: ${{ (inputs.endpoint == 'staging') && secrets.TAIKUN_STAGING_SECRET_KEY || secrets.TAIKUN_SECRET_KEY }}
+          TAIKUN_AUTH_MODE: "token"
 
           # Set in secrets in GitHub
           ARM_AZ_COUNT: 1
