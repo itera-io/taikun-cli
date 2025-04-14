@@ -137,12 +137,12 @@ func parseTagsOption(tagsOption []string) ([]taikuncore.StandAloneMetaDataDto, e
 
 	for tagIndex, tag := range tagsOption {
 		if len(tag) == 0 {
-			return nil, errors.New("Invalid empty VM tag")
+			return nil, errors.New("invalid empty VM tag")
 		}
 
 		tokens := strings.Split(tag, "=")
 		if len(tokens) != 2 {
-			return nil, fmt.Errorf("Invalid VM tag format: %s", tag)
+			return nil, fmt.Errorf("invalid VM tag format: %s", tag)
 		}
 
 		tags[tagIndex] = taikuncore.StandAloneMetaDataDto{

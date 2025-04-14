@@ -51,7 +51,7 @@ func fullRun(opts *FullOptions) (err error) {
 	} else if opts.DisableFullSpot {
 		body.SetMode("disable")
 	} else {
-		return fmt.Errorf("Unknown mode. Either disable or enable.")
+		return fmt.Errorf("unknown mode. Either disable or enable")
 	}
 
 	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleFullSpot(context.TODO()).FullSpotOperationCommand(body).Execute()

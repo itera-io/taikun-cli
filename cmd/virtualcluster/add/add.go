@@ -53,7 +53,7 @@ func addRun(opts *AddOptions) (err error) {
 		if data.GetTotalCount() == 1 {
 			opts.alertingProfileId = data.GetData()[0].GetAlertingProfileId()
 		} else {
-			return fmt.Errorf("Cannot get parent project alerting profile id.")
+			return fmt.Errorf("cannot get parent project alerting profile id")
 		}
 
 	}

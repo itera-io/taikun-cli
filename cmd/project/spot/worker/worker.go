@@ -51,7 +51,7 @@ func workerRun(opts *WorkerOptions) (err error) {
 	} else if opts.DisableWorkerSpot {
 		body.SetMode("disable")
 	} else {
-		return fmt.Errorf("Unknown mode. Either disable or enable.")
+		return fmt.Errorf("unknown mode. Either disable or enable")
 	}
 
 	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotWorkers(context.TODO()).SpotWorkerOperationCommand(body).Execute()

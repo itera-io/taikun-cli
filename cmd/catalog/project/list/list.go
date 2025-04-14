@@ -64,7 +64,7 @@ func listRun(catid *int32) (err error) {
 	}
 
 	if len(data.GetData()) != 1 {
-		return fmt.Errorf("Catalog not found")
+		return fmt.Errorf("catalog not found")
 	}
 	if len(data.Data[0].BoundProjects) < 1 {
 		return out.PrintResults([]interface{}{}, listFields)

@@ -6,7 +6,7 @@ toolchain go1.23.5
 
 require (
 	github.com/go-openapi/strfmt v0.23.0
-	github.com/itera-io/taikungoclient v0.0.0-20250312000352-fb5925b327e8
+	github.com/itera-io/taikungoclient v0.0.0-20250413003034-03d53a4c36a4
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/spf13/cobra v1.9.1
 )

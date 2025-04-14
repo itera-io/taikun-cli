@@ -41,7 +41,7 @@ func disableMonitoringRun(opts *DisableMonitoringOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, _, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableMonitoring(context.TODO()).DeploymentDisableMonitoringCommand(body).Execute()
+	_, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableMonitoring(context.TODO()).DeploymentDisableMonitoringCommand(body).Execute()
 	if err != nil {
 		return cmderr.ErrProjectMonitoringAlreadyDisabled
 	}

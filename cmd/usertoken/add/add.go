@@ -73,7 +73,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	// Were some endpoints (or BindAll) set?
 	if len(opts.Endpoints) != 0 && opts.BindAll {
-		err = errors.New("Please specify bindAll OR enpoints option")
+		err = errors.New("please specify bindAll OR enpoints option")
 		return
 	}
 

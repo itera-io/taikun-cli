@@ -55,7 +55,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	}
 
 	if len(opts.Endpoints) != 0 && opts.UnBindAll {
-		return fmt.Errorf("Please specify unbind-all OR enpoints option")
+		return fmt.Errorf("please specify unbind-all OR enpoints option")
 	}
 
 	// Setting user-specified endpoints

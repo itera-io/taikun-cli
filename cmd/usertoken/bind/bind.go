@@ -55,7 +55,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	if len(opts.Endpoints) != 0 && opts.BindAll {
-		return fmt.Errorf("Please specify bindAll OR enpoints option")
+		return fmt.Errorf("please specify bindAll OR enpoints option")
 	}
 
 	// Setting user-specified endpoints

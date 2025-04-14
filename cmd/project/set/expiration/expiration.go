@@ -55,7 +55,7 @@ func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
 	body.SetProjectId(opts.ProjectID)
 
 	if (opts.RemoveExpiration && opts.ExpirationDate != "") || (!opts.RemoveExpiration && opts.ExpirationDate == "") {
-		return fmt.Errorf("specify one --remove-expiration (-r) or --expiration-date (-e). Flags mutually exclusive.")
+		return fmt.Errorf("specify one --remove-expiration (-r) or --expiration-date (-e). Flags mutually exclusive")
 	}
 
 	if opts.RemoveExpiration { // Remove expiration

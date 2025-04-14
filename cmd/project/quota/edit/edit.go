@@ -70,7 +70,7 @@ func editRun(opts *EditOptions) (err error) {
 	if opts.vmRam > 0 {
 		body.SetVmRam(types.GiBToB(opts.vmRam))
 	}
-	_, response, err := myApiClient.Client.ProjectQuotasAPI.ProjectquotasUpdate(context.TODO()).UpdateQuotaCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectQuotasAPI.ProjectquotasUpdate(context.TODO()).UpdateQuotaCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
