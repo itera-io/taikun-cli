@@ -3,7 +3,7 @@ Context 'organization'
       orgname="$(_rnd_name)"
       orgnamefull="$(_rnd_name)"
       oid=$(taikun organization add "$orgname" --full-name "$orgnamefull" -I)
-      fakeoid="$(_rnd_number)"
+      fakeoid="$(_rnd_between 50000 100000)"
     }
     BeforeAll add_org
 
