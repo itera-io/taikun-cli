@@ -6,7 +6,7 @@ Context 'project/k8s/add'
     flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
     profilename="$(_rnd_name)"
     kid=$(taikun kubernetes-profile add "$profilename" -o "$oid" --enable-wasm --enable-octavia -I)
-    pid=$(taikun project add "$(_rnd_name)" -o "$oid" --cloud-credential-id "$ccid" --flavors "$flavor" --kubernetes-profile-id "$kid" -I | xargs)
+    pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$flavor" --kubernetes-profile-id "$kid" -I | xargs)
   }
   BeforeAll 'setup'
 
@@ -79,7 +79,7 @@ Context 'project/k8s/add'
     ccid=$(taikun cloud-credential aws add "$(_rnd_name)" -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY" -r "$AWS_DEFAULT_REGION" -z 1 -o "$oid" -I | xargs)
     #flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --limit 1 -C name) # Selects m4.4xlarge (16 CPU, 64 RAM) which is total overkill for testmachine
     flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
-    pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --flavors "$flavor" -I | xargs)
+    pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$flavor" -I | xargs)
   }
   BeforeAll 'setup'
 

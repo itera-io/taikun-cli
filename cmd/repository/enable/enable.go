@@ -60,7 +60,7 @@ func enableRun(opts EnableOptions) (err error) {
 		command.OrganizationId.Set(&opts.OrganizationID)
 	}
 
-	_, response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryBind(context.TODO()).BindAppRepositoryCommand(command).Execute()
+	response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryBind(context.TODO()).BindAppRepositoryCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

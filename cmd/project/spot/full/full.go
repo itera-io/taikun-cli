@@ -54,7 +54,7 @@ func fullRun(opts *FullOptions) (err error) {
 		return fmt.Errorf("unknown mode. Either disable or enable")
 	}
 
-	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleFullSpot(context.TODO()).FullSpotOperationCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleFullSpot(context.TODO()).FullSpotOperationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

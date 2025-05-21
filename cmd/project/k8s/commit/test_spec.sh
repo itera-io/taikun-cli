@@ -3,7 +3,7 @@ Context 'project/k8s/commit'
         oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs )
         ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I | xargs)
         flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --limit 1 -C name | xargs)
-        pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --flavors "$flavor" -I | xargs)
+        pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$flavor" -I | xargs)
 
     }
 

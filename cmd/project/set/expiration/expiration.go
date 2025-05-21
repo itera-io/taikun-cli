@@ -67,7 +67,7 @@ func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsExtendLifetime(context.TODO()).ProjectExtendLifeTimeCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsExtendLifetime(context.TODO()).ProjectExtendLifeTimeCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

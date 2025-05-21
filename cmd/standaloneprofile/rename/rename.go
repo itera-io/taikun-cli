@@ -49,7 +49,7 @@ func renameRun(opts *RenameOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileEdit(context.TODO()).StandAloneProfileUpdateCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileEdit(context.TODO()).StandAloneProfileUpdateCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

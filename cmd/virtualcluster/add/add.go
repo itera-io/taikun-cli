@@ -60,7 +60,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	body := taikuncore.CreateVirtualClusterCommand{
 		ProjectId:         &opts.parentProjectId,
-		Name:              *taikuncore.NewNullableString(&opts.virtualClusterName),
+		Name:              &opts.virtualClusterName,
 		AlertingProfileId: *taikuncore.NewNullableInt32(&opts.alertingProfileId),
 	}
 

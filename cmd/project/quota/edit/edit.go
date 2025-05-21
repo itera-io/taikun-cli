@@ -24,7 +24,7 @@ const (
 	minVMCpu = 1
 	maxVMCpu = 1000000
 
-	minVMVolume = 1
+	minVMVolume = 1.0
 	maxVMVolume = 102400.0
 
 	minVMRam = 1
