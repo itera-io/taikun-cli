@@ -2,7 +2,7 @@ Context 'project/add'
 
     setup() {
         oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I)
-        ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
+        ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -s "$OS_APPLICATION_CREDENTIAL_SECRET" -i "$OS_APPLICATION_CREDENTIAL_ID" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
     }
 
     BeforeAll 'setup'

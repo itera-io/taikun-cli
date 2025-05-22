@@ -21,7 +21,7 @@ Context 'showback/rule/list'
   Example 'negative limit causes error'
     When call taikun showback rule list --limit -42 -o "$oid"
     The status should equal 1
-    The stderr should equal 'Error: The --limit flag must be positive.'
+    The stderr should equal 'Error: the --limit flag must be positive'
   End
 
   Example 'list two showback rules'
