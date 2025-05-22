@@ -46,6 +46,6 @@ Context 'project/autoscaler/edit'
     Example 'edit when not enabled'
         When call taikun project autoscaler edit "$pid" --max-size 9 --min-size 3
         The status should equal 1
-        The stderr should include 'Project autoscaling is disabled'
+        The stderr should include 'project autoscaling is disabled'
     End
 End

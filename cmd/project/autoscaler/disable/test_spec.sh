@@ -27,6 +27,6 @@ Context 'project/autoscaler/disable'
     Example 'disable two times'
         When call taikun project autoscaler disable "$pid"
         The status should equal 1
-        The stderr should include 'Project autoscaling already disabled'
+        The stderr should include 'project autoscaling already disabled'
     End
 End

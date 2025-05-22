@@ -39,7 +39,7 @@ Context 'billing/rule/organization/unbind'
   Example 'unbind a nonexistent organization'
     When call taikun billing rule organization unbind "$id" -o 0 -q
     The status should equal 1
-    The stderr should include 'ailed to delete organization(s) for prometheus rule'
+    The stderr should include 'Can not find organization'
     The stderr should include '400'
   End
 End
