@@ -60,6 +60,6 @@ Context 'project/backup'
   Example 'disable backup for project with backup already disabled'
     When call taikun project backup disable $pid
     The status should equal 1
-    The stderr should include 'Project backup already disabled'
+    The stderr should include 'project backup already disabled'
   End
 End

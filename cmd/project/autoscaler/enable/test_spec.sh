@@ -42,6 +42,6 @@ Context 'project/autoscaler/enable'
     Example 'enable two times'
         When call taikun project autoscaler enable "$pid" -n "$(_rnd_name)" -f "$AUTOSCALER_FLAVOR"
         The status should equal 1
-        The stderr should include 'Project autoscaling already enabled'
+        The stderr should include 'project autoscaling already enabled'
     End
 End
