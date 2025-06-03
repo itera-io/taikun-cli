@@ -2,7 +2,7 @@ Context 'project/autoscaler/enable'
     setup() {
         oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I)
         ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
-        pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  -o "$oid" --flavors "$AUTOSCALER_FLAVOR" -I)
+        pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$AUTOSCALER_FLAVOR" -I)
         AUTOSCALER_NAME="auto"
     }
 
@@ -42,6 +42,6 @@ Context 'project/autoscaler/enable'
     Example 'enable two times'
         When call taikun project autoscaler enable "$pid" -n "$(_rnd_name)" -f "$AUTOSCALER_FLAVOR"
         The status should equal 1
-        The stderr should include 'Project autoscaling already enabled'
+        The stderr should include 'project autoscaling already enabled'
     End
 End

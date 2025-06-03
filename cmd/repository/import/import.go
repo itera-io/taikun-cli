@@ -66,7 +66,7 @@ func enableRun(name string, opts importOpts) (err error) {
 		command.SetPassword(opts.Password)
 	}
 
-	_, response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryImport(context.TODO()).ImportRepoCommand(command).Execute()
+	response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryImport(context.TODO()).ImportRepoCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

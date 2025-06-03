@@ -33,7 +33,7 @@ func deleteRun(kubeconfigID int32) (err error) {
 	body := taikuncore.DeleteKubeConfigCommand{
 		Id: &kubeconfigID,
 	}
-	_, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigDelete(context.TODO()).DeleteKubeConfigCommand(body).Execute()
+	response, err := myApiClient.Client.KubeConfigAPI.KubeconfigDelete(context.TODO()).DeleteKubeConfigCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -119,7 +119,7 @@ func StringToEndpointFormat(endpoint string, usertokenId string) (*taikuncore.Av
 		}
 	}
 
-	return nil, fmt.Errorf("Endpoint '%s' was malformed and could not be parsed or this endpoint is already bound/unbound.", endpoint)
+	return nil, fmt.Errorf("endpoint '%s' was malformed and could not be parsed or this endpoint is already bound/unbound", endpoint)
 }
 
 func EndpointFormatToString(res taikuncore.EndpointElements) string {

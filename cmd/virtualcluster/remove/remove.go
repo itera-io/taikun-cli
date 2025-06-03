@@ -57,7 +57,7 @@ func deleteMultiple(optsList []*DeleteOptions) error {
 
 	if errorOccured {
 		_, _ = fmt.Fprintln(os.Stderr)
-		return errors.New("Failed to delete one or more virtual projects")
+		return errors.New("failed to delete one or more virtual projects")
 	}
 
 	return nil
@@ -69,7 +69,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 		ProjectId: &opts.ProjectID,
 	}
 
-	_, request, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterDelete(context.TODO()).DeleteVirtualClusterCommand(body).Execute()
+	request, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterDelete(context.TODO()).DeleteVirtualClusterCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(request, err)
 	}

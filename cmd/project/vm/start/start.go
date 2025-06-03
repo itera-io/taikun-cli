@@ -43,7 +43,7 @@ func startRun(opts *StartOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsStart(context.TODO()).StartStandaloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsStart(context.TODO()).StartStandaloneVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

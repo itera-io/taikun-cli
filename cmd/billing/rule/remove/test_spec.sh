@@ -30,7 +30,7 @@ Context 'billing/rule/remove'
     When call taikun billing rule delete 0
     The status should equal 1
     The stderr should include 404
-    The stderr should include 'Error: Failed to delete one or more resources'
+    The stderr should include 'Error: failed to delete one or more resources'
   End
 
   Example 'delete existing billing rule'
@@ -47,6 +47,6 @@ Context 'billing/rule/remove'
     The output should include 'was deleted successfully'
     The output should include "$id"
     The stderr should include 404
-    The stderr should include 'Error: Failed to delete one or more resources'
+    The stderr should include 'Error: failed to delete one or more resources'
   End
 End

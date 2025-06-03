@@ -62,7 +62,7 @@ func deleteMultiple(optsList []*DeleteOptions) error {
 
 	if errorOccured {
 		fmt.Fprintln(os.Stderr)
-		return errors.New("Failed to delete one or more projects")
+		return errors.New("failed to delete one or more projects")
 	}
 
 	return nil

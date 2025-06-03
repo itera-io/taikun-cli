@@ -38,7 +38,7 @@ func deleteRun(standaloneProfileID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileDelete(context.TODO()).DeleteStandAloneProfileCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileDelete(context.TODO()).DeleteStandAloneProfileCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

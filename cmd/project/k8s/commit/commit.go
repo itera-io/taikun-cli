@@ -35,7 +35,7 @@ func NewCmdCommit() *cobra.Command {
 func commitRun(opts *CommitOptions) (err error) {
 	myApiClient := tk.NewClient()
 	commitCommand := taikuncore.ProjectDeploymentCommitCommand{ProjectId: &opts.ProjectID}
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommit(context.TODO()).ProjectDeploymentCommitCommand(commitCommand).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommit(context.TODO()).ProjectDeploymentCommitCommand(commitCommand).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

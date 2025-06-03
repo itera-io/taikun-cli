@@ -2,7 +2,6 @@ package out
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/config"
@@ -129,12 +128,14 @@ func FormatETC(v interface{}) string {
 // Format Bytes as GiB
 func FormatBToGiB(v interface{}) string {
 	if bytes, ok := v.(float64); ok {
-		var jsMaxSafeInteger float64 = 9007199254740991
+		const jsMaxSafeInteger float64 = 9007199254740991
+		const bytesInGiB = 1073741824 // 1024^3
+
 		if bytes == jsMaxSafeInteger {
 			return field.NotAvailable
 		}
 
-		return fmt.Sprintf("%d GiB", int(bytes/math.Pow(1024, 3)))
+		return fmt.Sprintf("%d GiB", int(bytes/bytesInGiB))
 	}
 
 	return field.NotAvailable

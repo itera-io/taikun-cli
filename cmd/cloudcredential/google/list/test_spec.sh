@@ -18,7 +18,7 @@ Context 'cloudcredential/google/list'
       k8sprofileid=$(taikun kubernetes-profile add "$k8sprofilename" --enable-taikun-lb -o "$oid" -I)
 
       projectname="$(_rnd_name)"
-      projectid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" --kubernetes-profile-id "$k8sprofileid" --flavors "$flavor" -o "$oid" -I)
+      projectid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" --kubernetes-profile-id "$k8sprofileid" --flavors "$flavor" -I)
 
       taikun project image bind "$projectid" --image-ids "$image_name" -q
       standaloneprofile="$(_rnd_name)"

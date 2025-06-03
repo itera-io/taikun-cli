@@ -55,7 +55,7 @@ func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
 	body.SetProjectId(opts.ProjectID)
 
 	if (opts.RemoveExpiration && opts.ExpirationDate != "") || (!opts.RemoveExpiration && opts.ExpirationDate == "") {
-		return fmt.Errorf("specify one --remove-expiration (-r) or --expiration-date (-e). Flags mutually exclusive.")
+		return fmt.Errorf("specify one --remove-expiration (-r) or --expiration-date (-e). Flags mutually exclusive")
 	}
 
 	if opts.RemoveExpiration { // Remove expiration
@@ -67,7 +67,7 @@ func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.ProjectsAPI.ProjectsExtendLifetime(context.TODO()).ProjectExtendLifeTimeCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsExtendLifetime(context.TODO()).ProjectExtendLifeTimeCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

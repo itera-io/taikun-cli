@@ -56,7 +56,7 @@ func getAlertingProfileWebhooks(alertingProfileID int32) ([]taikuncore.AlertingW
 
 	// Manipulate the gathered data
 	if len(data.Data) != 1 {
-		return nil, fmt.Errorf("Alerting profile with ID %d not found.", alertingProfileID)
+		return nil, fmt.Errorf("alerting profile with ID %d not found", alertingProfileID)
 	}
 
 	return data.Data[0].Webhooks, nil
@@ -72,12 +72,12 @@ func parseAddOptions(opts *AddOptions) (*taikuncore.AlertingWebhookDto, error) {
 
 	for headerIndex, header := range opts.Headers {
 		if len(header) == 0 {
-			return nil, fmt.Errorf("Invalid empty webhook header")
+			return nil, fmt.Errorf("invalid empty webhook header")
 		}
 
 		tokens := strings.Split(header, "=")
 		if len(tokens) != 2 {
-			return nil, fmt.Errorf("Invalid webhook header format: %s", header)
+			return nil, fmt.Errorf("invalid webhook header format: %s", header)
 		}
 
 		headers[headerIndex] = taikuncore.WebhookHeaderDto{

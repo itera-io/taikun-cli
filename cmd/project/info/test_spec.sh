@@ -5,7 +5,7 @@ Context 'project/info'
     projectname="$(_rnd_name)"
     profilename="$(_rnd_name)"
     kid=$(taikun kubernetes-profile add "$profilename" -o "$oid" --enable-wasm --enable-octavia -I)
-    pid=$(taikun project add "$projectname" -o "$oid" --cloud-credential-id "$ccid" --kubernetes-profile-id "$kid" -I)
+    pid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" --kubernetes-profile-id "$kid" -I)
   }
   Before 'setup'
 

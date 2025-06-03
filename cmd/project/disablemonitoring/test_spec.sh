@@ -2,7 +2,7 @@ Context 'project/disablemonitoring'
   setup() {
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs)
     cc=$(taikun cloud-credential aws add "$(_rnd_name)" -o "$oid" --access-key-id "$AWS_ACCESS_KEY_ID" --secret-access-key "$AWS_SECRET_ACCESS_KEY" --region "$AWS_DEFAULT_REGION" --az-count "$AWS_AZ_COUNT" -I | xargs)
-    id=$(taikun project add "$(_rnd_name)" -o "$oid" --cloud-credential-id "$cc" -I | xargs)
+    id=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$cc" -I | xargs)
   }
   BeforeAll 'setup'
 

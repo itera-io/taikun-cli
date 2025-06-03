@@ -4,9 +4,10 @@ _rnd_name() {
   echo "tk-cli-test-$(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')"
 }
 
-# Radom number is created from numbers 1-9, because trailing zero can cause problems in prints
-_rnd_number() {
-  shuf --echo --repeat --head-count=6 $(seq 1 9) | tr -d '\n'
+_rnd_between() {
+  local min=$1
+  local max=$2
+  echo $((RANDOM % (max - min + 1) + min))
 }
 
 # Autoscaler flavor

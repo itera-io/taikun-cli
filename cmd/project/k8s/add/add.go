@@ -176,12 +176,12 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.Kubernetes
 
 	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
-			return nil, errors.New("Invalid empty kubernetes node label")
+			return nil, errors.New("invalid empty kubernetes node label")
 		}
 
 		tokens := strings.Split(labelData, "=")
 		if len(tokens) != 2 {
-			return nil, fmt.Errorf("Invalid kubernetes node label format: %s", labelData)
+			return nil, fmt.Errorf("invalid kubernetes node label format: %s", labelData)
 		}
 
 		labels[labelIndex] = taikuncore.KubernetesNodeLabelsDto{

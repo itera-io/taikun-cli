@@ -35,7 +35,7 @@ func NewCmdUninstall() *cobra.Command {
 func uninstallAppRun(opts UninstallOptions) (err error) {
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.ProjectAppsAPI.ProjectappDelete(context.TODO(), opts.ProjectAppId).Execute()
+	_, response, err := myApiClient.Client.ProjectAppsAPI.ProjectappDelete(context.TODO(), opts.ProjectAppId).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

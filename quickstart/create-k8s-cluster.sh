@@ -13,7 +13,7 @@ PROJECT_NAME="tk-cli-quickstart"
 # -----------------------------
 project_real_name="$PROJECT_NAME-$(shuf --echo --repeat --head-count=8 {a..z} | tr -d '\n')"
 flavor=$(taikun cloud-credential flavors "$CLOUD_CREDENTAIL_ID" --no-decorate --min-cpu 2 --max-cpu 4 --min-ram 4 --max-ram 8 -C name --limit 1 | xargs)
-projectid=$(taikun project add "$project_real_name" --cloud-credential-id "$CLOUD_CREDENTAIL_ID" --flavors "$flavor" -o "$ORGANIZATION_ID" -I)
+projectid=$(taikun project add "$project_real_name" --cloud-credential-id "$CLOUD_CREDENTAIL_ID" --flavors "$flavor" -I)
 
 servername1="tk-cli-w"
 serverid1=$(taikun project k8s add "$projectid" --flavor "$flavor" --name "$servername1" --role Kubeworker -I )

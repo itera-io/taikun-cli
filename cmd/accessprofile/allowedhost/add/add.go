@@ -57,7 +57,7 @@ func NewCmdAdd() *cobra.Command {
 			}
 
 			if opts.MaskBits < 0 && opts.MaskBits > 32 {
-				return fmt.Errorf("Mask bits must be in the range of [0, 32]")
+				return fmt.Errorf("mask bits must be in the range of [0, 32]")
 			}
 
 			return addRun(&opts)

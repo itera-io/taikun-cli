@@ -47,7 +47,7 @@ func editRun(opts *EditOptions) (err error) {
 		return err
 	}
 	if !autoscalingEnabled {
-		err = fmt.Errorf("Project autoscaling is disabled and thus cannot be edited")
+		err = fmt.Errorf("project autoscaling is disabled and thus cannot be edited")
 		return err
 	}
 

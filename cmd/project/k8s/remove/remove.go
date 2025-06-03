@@ -34,11 +34,11 @@ func NewCmdDelete() *cobra.Command {
 			}
 			if opts.DeleteAll {
 				if len(opts.ServerIDs) != 0 {
-					return errors.New("Cannot set both --server-ids and --all-servers flags")
+					return errors.New("cannot set both --server-ids and --all-servers flags")
 				}
 			} else {
 				if len(opts.ServerIDs) == 0 {
-					return errors.New("Must set one of --server-ids and --all-servers flags")
+					return errors.New("must set one of --server-ids and --all-servers flags")
 				}
 			}
 			return deleteRun(&opts)
@@ -76,7 +76,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	} else {
 		body.SetServerIds(opts.ServerIDs)
 	}
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

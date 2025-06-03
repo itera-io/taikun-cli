@@ -55,7 +55,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	if len(opts.Endpoints) != 0 && opts.BindAll {
-		return fmt.Errorf("Please specify bindAll OR enpoints option")
+		return fmt.Errorf("please specify bindAll OR enpoints option")
 	}
 
 	// Setting user-specified endpoints
@@ -83,7 +83,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.UserTokenAPI.UsertokenBindUnbind(context.TODO()).BindUnbindEndpointToTokenCommand(body).Execute()
+	response, err := myApiClient.Client.UserTokenAPI.UsertokenBindUnbind(context.TODO()).BindUnbindEndpointToTokenCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

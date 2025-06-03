@@ -50,7 +50,7 @@ func rebootRun(opts *RebootOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsReboot(context.TODO()).RebootStandAloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsReboot(context.TODO()).RebootStandAloneVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
