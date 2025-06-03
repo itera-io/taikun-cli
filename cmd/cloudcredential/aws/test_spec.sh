@@ -38,7 +38,7 @@ Context 'cloudcredential/aws'
       When call taikun cloud-credential aws check -a "$AWS_ACCESS_KEY_ID" -s "mockup" -r "$AWS_DEFAULT_REGION"
       The lines of stderr should equal 1
       The status should equal 1
-      The stderr should include "Error: AWS cloud credential is not valid."
+      The stderr should include "Error: AWS cloud credential is not valid"
     End
 
 End

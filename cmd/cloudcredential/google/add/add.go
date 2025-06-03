@@ -63,14 +63,14 @@ func NewCmdAdd() *cobra.Command {
 					return cmderr.MutuallyExclusiveFlagsError("--import-project", "--billing-account-id")
 				}
 			} else if !opts.ImportProject {
-				return errors.New("Must set --billing-acount-id if not importing a project")
+				return errors.New("must set --billing-acount-id if not importing a project")
 			}
 			if opts.FolderID != "" {
 				if opts.ImportProject {
 					return cmderr.MutuallyExclusiveFlagsError("--import-project", "--folder-id")
 				}
 			} else if !opts.ImportProject {
-				return errors.New("Must set --folder-id if not importing a project")
+				return errors.New("must set --folder-id if not importing a project")
 			}
 			return addRun(&opts)
 		},

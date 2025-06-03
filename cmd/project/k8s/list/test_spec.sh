@@ -4,7 +4,7 @@ Context 'project/k8s/list'
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs)
     ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I | xargs)
     flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
-    pid=$(taikun project add "$(_rnd_name)" -o "$oid" --cloud-credential-id "$ccid" --flavors "$flavor" -I | xargs)
+    pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$flavor" -I | xargs)
   }
   BeforeAll 'setup'
 
@@ -55,7 +55,7 @@ Context 'project/k8s/list'
     # flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --limit 1 -C name) # Selects m4.4xlarge (16 CPU, 64 RAM) which is total overkill for testmachine
     #flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
     flavor="c5d.large"
-    pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -o "$oid" --flavors "$flavor" -I | xargs)
+    pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$flavor" -I | xargs)
   }
   BeforeAll 'setup'
 

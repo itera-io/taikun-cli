@@ -64,7 +64,7 @@ Context 'catalogs/catalogs'
     The lines of stderr should equal 1
     The status should equal 1
     The stderr should include "400"
-    The stderr should include "You can not delete default catalog"
+    The stderr should include "can not delete default catalog"
   End
 
   Example 'not make it default again'

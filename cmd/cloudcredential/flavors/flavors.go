@@ -95,7 +95,7 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 	case taikuncore.CLOUDTYPE_VSPHERE:
 		return getVsphereFlavors(opts)
 	default:
-		return fmt.Errorf("Could not determine cloud type")
+		return fmt.Errorf("could not determine cloud type")
 	}
 }
 

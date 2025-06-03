@@ -53,14 +53,14 @@ func deleteRun(opts DeleteOptions) (err error) {
 		}
 	}
 	if foundId == -1 {
-		return fmt.Errorf("Repo with name %s and org %s not found", opts.RepoName, opts.RepoOrg)
+		return fmt.Errorf("repo with name %s and org %s not found", opts.RepoName, opts.RepoOrg)
 	}
 
 	command := taikuncore.DeleteRepositoryCommand{
 		AppRepoId: &foundId,
 	}
 
-	_, response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryDelete(context.TODO()).DeleteRepositoryCommand(command).Execute()
+	response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryDelete(context.TODO()).DeleteRepositoryCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

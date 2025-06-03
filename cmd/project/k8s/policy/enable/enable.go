@@ -43,7 +43,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		ProjectId:       &opts.ProjectID,
 		OpaCredentialId: &opts.PolicyProfileID,
 	}
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableOpa(context.TODO()).DeploymentOpaEnableCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableOpa(context.TODO()).DeploymentOpaEnableCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

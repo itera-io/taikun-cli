@@ -38,7 +38,7 @@ func deleteRun(slackConfigID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.SlackAPI.SlackDeleteMultiple(context.TODO()).DeleteSlackConfigCommand(body).Execute()
+	response, err := myApiClient.Client.SlackAPI.SlackDeleteMultiple(context.TODO()).DeleteSlackConfigCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

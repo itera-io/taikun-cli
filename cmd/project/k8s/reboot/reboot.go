@@ -45,7 +45,7 @@ func rebootRun(opts *RebootOptions) (err error) {
 		body.SetType("soft")
 	}
 
-	_, response, err := myApiClient.Client.ServersAPI.ServersReboot(context.TODO()).RebootServerCommand(body).Execute()
+	response, err := myApiClient.Client.ServersAPI.ServersReboot(context.TODO()).RebootServerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

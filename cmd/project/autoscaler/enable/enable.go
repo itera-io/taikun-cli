@@ -60,7 +60,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		return err
 	}
 	if autoscalingEnabled {
-		err = fmt.Errorf("Project autoscaling already enabled")
+		err = fmt.Errorf("project autoscaling already enabled")
 		return err
 	}
 

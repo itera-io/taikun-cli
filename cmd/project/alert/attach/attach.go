@@ -43,7 +43,7 @@ func attachRun(opts *AttachOptions) (err error) {
 		ProjectId:         &opts.ProjectID,
 		AlertingProfileId: *taikuncore.NewNullableInt32(&opts.AlertingProfileID),
 	}
-	_, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAttach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAttach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

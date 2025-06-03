@@ -36,7 +36,7 @@ func disableRun(opts *DisableOptions) (err error) {
 	body := taikuncore.DeploymentDisableOpaCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableOpa(context.TODO()).DeploymentDisableOpaCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableOpa(context.TODO()).DeploymentDisableOpaCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

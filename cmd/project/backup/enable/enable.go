@@ -48,7 +48,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		ProjectId:      &opts.ProjectID,
 		S3CredentialId: &opts.BackupCredentialID,
 	}
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableBackup(context.TODO()).DeploymentEnableBackupCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableBackup(context.TODO()).DeploymentEnableBackupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

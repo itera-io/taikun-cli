@@ -46,7 +46,7 @@ Context 'cloudcredential/azure'
     When call taikun cloud-credential azure check --client-id="$AZURE_CLIENT_ID" --client-secret="mockup.local" --tenant-id="$AZURE_TENANT"
     The lines of stderr should equal 1
     The status should equal 1
-    The stderr should include "Azure cloud credential is not valid."
+    The stderr should include "Azure cloud credential is not valid"
   End
 
   # Publishers
