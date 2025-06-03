@@ -49,7 +49,7 @@ func resizeRun(opts *ResizeOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, response, err := myApiClient.Client.StandaloneVMDisksAPI.StandalonevmdisksUpdateSize(context.TODO()).UpdateStandaloneVmDiskSizeCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneVMDisksAPI.StandalonevmdisksUpdateSize(context.TODO()).UpdateStandaloneVmDiskSizeCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -11,12 +11,12 @@ func ParseLabelsFlag(labelsData []string) ([]taikuncore.PrometheusLabelListDto, 
 
 	for labelIndex, labelData := range labelsData {
 		if len(labelData) == 0 {
-			return nil, fmt.Errorf("Invalid empty billing rule label")
+			return nil, fmt.Errorf("invalid empty billing rule label")
 		}
 
 		tokens := strings.Split(labelData, "=")
 		if len(tokens) != 2 {
-			return nil, fmt.Errorf("Invalid billing rule label format: %s", labelData)
+			return nil, fmt.Errorf("invalid billing rule label format: %s", labelData)
 		}
 
 		labels[labelIndex] = taikuncore.PrometheusLabelListDto{

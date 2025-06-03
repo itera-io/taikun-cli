@@ -4,7 +4,7 @@ Context 'project/backup'
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs)
     bid=$(taikun backup-credential add "$(_rnd_name)" -o "$oid" -a "$S3_ACCESS_KEY_ID" -e "$S3_ENDPOINT" -r "$S3_REGION" -s "$S3_SECRET_ACCESS_KEY" -I | xargs)
     ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I | xargs)
-    pid=$(taikun project add "$(_rnd_name)" -o "$oid" --cloud-credential-id "$ccid" -I | xargs)
+    pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -I | xargs)
   }
 
   BeforeAll 'setup'
@@ -60,6 +60,6 @@ Context 'project/backup'
   Example 'disable backup for project with backup already disabled'
     When call taikun project backup disable $pid
     The status should equal 1
-    The stderr should include 'Project backup already disabled'
+    The stderr should include 'project backup already disabled'
   End
 End

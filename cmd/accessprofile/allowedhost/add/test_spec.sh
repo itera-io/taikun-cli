@@ -23,7 +23,7 @@ Context 'accessprofile/allowedhost/add'
 
   Example 'duplicate ip address'
     When call taikun access-profile host add "$profile_id" -i "$ip" -m 16
-    The stderr should include '400'
+    The stderr should include '409'
     The stderr should include 'already exists'
     The status should equal 1
   End

@@ -3,13 +3,13 @@ Context 'project/quota'
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
     projectname="$(_rnd_name)"
-    pid=$(taikun project add "$projectname" -o "$oid" --cloud-credential-id "$ccid" -I)
-    num1="$(_rnd_number)"
-    num2="$(_rnd_number)"
-    num3="$(_rnd_number)"
-    num4="$(_rnd_number)"
-    num5="$(_rnd_number)"
-    num6="$(_rnd_number)"
+    pid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" -I)
+    diskSize="$(_rnd_between 30 102400)"
+    serverCpu="$(_rnd_between 2 1000000)"
+    serverRam="$(_rnd_between 2 102400)"
+    vmCpu="$(_rnd_between 1 1000000)"
+    vmRam="$(_rnd_between 1 102400)"
+    vmVolume="$(_rnd_between 1 102400)"
   }
   BeforeAll 'setup'
 
@@ -32,11 +32,11 @@ Context 'project/quota'
     The lines of output should equal 1
     The output should include "$projectname"
     The output should include "$pid"
-    The output should not include "$num5"
+    The output should not include "$vmRam"
   End
 
   Example 'change quota for my project'
-    When call taikun project quota edit "$pid" --disk-size "$num1" --server-cpu "$num2" --server-ram "$num3" --vm-cpu "$num4" --vm-ram "$num5" --vm-volume-size "$num6"
+    When call taikun project quota edit "$pid" --disk-size "$diskSize" --server-cpu "$serverCpu" --server-ram "$serverRam" --vm-cpu "$vmCpu" --vm-ram "$vmRam" --vm-volume-size "$vmVolume"
     The status should equal 0
     The lines of output should equal 1
     The output should include "Operation was successful."
@@ -46,11 +46,11 @@ Context 'project/quota'
     When call list_project
     The status should equal 0
     The lines of output should equal 1
-    The output should include "$num1"
-    The output should include "$num2"
-    The output should include "$num3"
-    The output should include "$num4"
-    The output should include "$num5"
-    The output should include "$num6"
+    The output should include "$diskSize"
+    The output should include "$serverCpu"
+    The output should include "$serverRam"
+    The output should include "$vmCpu"
+    The output should include "$vmRam"
+    The output should include "$vmVolume"
   End
 End

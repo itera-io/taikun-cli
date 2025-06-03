@@ -40,7 +40,7 @@ func disableRun(opts *DisableOptions) (err error) {
 		return err
 	}
 	if !autoscalingEnabled {
-		err = fmt.Errorf("Project autoscaling already disabled")
+		err = fmt.Errorf("project autoscaling already disabled")
 		return err
 	}
 

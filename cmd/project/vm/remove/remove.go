@@ -35,11 +35,11 @@ func NewCmdDelete() *cobra.Command {
 			}
 			if opts.DeleteAll {
 				if len(opts.VMIDs) != 0 {
-					return errors.New("Cannot set both --vm-ids and --all-project flags")
+					return errors.New("annot set both --vm-ids and --all-project flags")
 				}
 			} else {
 				if len(opts.VMIDs) == 0 {
-					return errors.New("Must set one of --vm-ids and --all-project flags")
+					return errors.New("must set one of --vm-ids and --all-project flags")
 				}
 			}
 			return deleteRun(&opts)
@@ -78,7 +78,7 @@ func deleteRun(opts *DeleteOptions) error {
 		body.VmIds = opts.VMIDs
 	}
 
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVms(context.TODO()).ProjectDeploymentDeleteVmsCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVms(context.TODO()).ProjectDeploymentDeleteVmsCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

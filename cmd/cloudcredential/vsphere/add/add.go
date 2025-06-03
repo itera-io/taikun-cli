@@ -80,7 +80,7 @@ func NewCmdAdd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
 			if ((opts.DrsEnabled) && (len(opts.Hypervisors) != 0)) || (!opts.DrsEnabled) && (len(opts.Hypervisors) == 0) {
-				return fmt.Errorf("Specify only one of [--drs-enabled,--hypervisors]")
+				return fmt.Errorf("specify only one of [--drs-enabled,--hypervisors]")
 			}
 			return addRun(&opts)
 		},
@@ -176,7 +176,7 @@ func addRun(opts *AddOptions) (err error) {
 		return
 	}
 	if len(dataDC) != 1 {
-		return fmt.Errorf("Datacenter ID query had multiple responses.")
+		return fmt.Errorf("datacenter ID query had multiple responses")
 	}
 	datacenterID := dataDC[0].GetDatacenter()
 

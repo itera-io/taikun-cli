@@ -38,7 +38,7 @@ Context 'cloudcredential/openstack-appcred'
       When call taikun cloud-credential openstack check -i "$OS_APPLICATION_CREDENTIAL_ID" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --url "mockup.local"
       The lines of stderr should equal 1
       The status should equal 1
-      The stderr should include "OpenStack cloud credential is not valid."
+      The stderr should include "OpenStack cloud credential is not valid"
     End
 
 End

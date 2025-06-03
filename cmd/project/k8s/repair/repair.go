@@ -36,7 +36,7 @@ func repairRun(opts *RepairOptions) (err error) {
 	myApiClient := tk.NewClient()
 	var body taikuncore.ProjectDeploymentRepairCommand
 	body.SetProjectId(opts.ProjectID)
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepair(context.TODO()).ProjectDeploymentRepairCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepair(context.TODO()).ProjectDeploymentRepairCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

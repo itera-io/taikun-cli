@@ -45,7 +45,7 @@ Context 'cloudcredential/proxmox'
       When call taikun cloud-credential proxmox check -u "$PROXMOX_API_HOST" -i "$PROXMOX_CLIENT_ID" -s "$PROXMOX_CLIENT_SECRET"
       The lines of output should equal 1
       The status should equal 0
-      The output should include "Proxmox cloud credential is valid."
+      The output should include "Proxmox cloud credential is valid"
     End
 
     Example 'check invalid proxmox cloud credential'

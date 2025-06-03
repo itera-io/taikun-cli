@@ -93,7 +93,6 @@ type AddOptions struct {
 	KubernetesVersion   string
 	Monitoring          bool
 	Name                string
-	OrganizationID      int32
 	PolicyProfileID     int32
 	RouterIDEndRange    int32
 	RouterIDStartRange  int32
@@ -158,7 +157,6 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringSliceVarP(&opts.Flavors, "flavors", "f", []string{}, "Bind flavors to the project")
 	cmd.Flags().Int32VarP(&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0, "Kubernetes profile ID")
 	cmd.Flags().BoolVarP(&opts.Monitoring, "monitoring", "m", false, "Enable monitoring")
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().Int32VarP(&opts.PolicyProfileID, "policy-profile-id", "p", 0, "Policy profile ID")
 	cmd.Flags().Int32Var(&opts.RouterIDStartRange, "router-id-start-range", -1, "Router ID start range (required with OpenStack and Taikun load balancer")
 	cmd.Flags().Int32Var(&opts.RouterIDEndRange, "router-id-end-range", -1, "Router ID end range (required with OpenStack and Taikun load balancer")
@@ -185,7 +183,9 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
-	err = setDefaultAddOptions(opts)
+	myApiClient := tk.NewClient()
+
+	err = setDefaultAddOptions(opts, myApiClient)
 	if err != nil {
 		return err
 	}
@@ -202,7 +202,6 @@ func addRun(opts *AddOptions) (err error) {
 		KubernetesProfileId:     *taikuncore.NewNullableInt32(&opts.KubernetesProfileID),
 		IsMonitoringEnabled:     &opts.Monitoring,
 		Name:                    *taikuncore.NewNullableString(&opts.Name),
-		OrganizationId:          *taikuncore.NewNullableInt32(&opts.OrganizationID),
 		AllowFullSpotKubernetes: &opts.SpotFull,
 		AllowSpotWorkers:        &opts.SpotWorker,
 		AllowSpotVMs:            &opts.SpotVms,
@@ -258,7 +257,6 @@ func addRun(opts *AddOptions) (err error) {
 		body.SetMaxSpotPrice(opts.SpotMaxPrice)
 	}
 
-	myApiClient := tk.NewClient()
 	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsCreate(context.TODO()).CreateProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
@@ -267,30 +265,29 @@ func addRun(opts *AddOptions) (err error) {
 
 }
 
-func setDefaultAddOptions(opts *AddOptions) (err error) {
-	if opts.OrganizationID == 0 {
-		opts.OrganizationID, err = organization.GetDefaultOrganizationID()
-		if err != nil {
-			return
-		}
+func setDefaultAddOptions(opts *AddOptions, client *tk.Client) (err error) {
+	// Get organization ID from cloud credential ID
+	organizationID, err := organization.GetOrganizationIDFromCloudCredential(opts.CloudCredentialID, client)
+	if err != nil {
+		return err
 	}
 
 	if opts.AccessProfileID == 0 {
-		opts.AccessProfileID, err = getDefaultAccessProfileID(opts.OrganizationID)
+		opts.AccessProfileID, err = getDefaultAccessProfileID(organizationID)
 		if err != nil {
 			return
 		}
 	}
 
 	if opts.AlertingProfileID == 0 {
-		opts.AlertingProfileID, err = getDefaultAlertingProfileID(opts.OrganizationID)
+		opts.AlertingProfileID, err = getDefaultAlertingProfileID(organizationID)
 		if err != nil {
 			return
 		}
 	}
 
 	if opts.KubernetesProfileID == 0 {
-		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(opts.OrganizationID)
+		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(organizationID)
 		if err != nil {
 			return err
 		}

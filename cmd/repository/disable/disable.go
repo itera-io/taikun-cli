@@ -87,7 +87,7 @@ func disableRun(opts DisableOptions) (err error) {
 		command.OrganizationId.Set(&opts.OrganizationID)
 	}
 
-	_, response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryUnbind(context.TODO()).UnbindAppRepositoryCommand(command).Execute()
+	response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryUnbind(context.TODO()).UnbindAppRepositoryCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

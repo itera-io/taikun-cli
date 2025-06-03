@@ -33,7 +33,7 @@ func NewCmdUpgrade() *cobra.Command {
 
 func upgradeRun(opts *UpgradeOptions) (err error) {
 	myApiClient := tk.NewClient()
-	_, response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentUpgrade(context.TODO(), opts.ProjectID).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentUpgrade(context.TODO(), opts.ProjectID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

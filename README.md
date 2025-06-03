@@ -17,6 +17,13 @@ TAIKUN_EMAIL
 TAIKUN_PASSWORD
 ```
 
+To authenticate with user tokens, set the following environment variables:
+```
+TAIKUN_ACCESS_KEY
+TAIKUN_SECRET_KEY
+TAIKUN_AUTH_MODE: "token"
+```
+
 To authenticate with Keycloak, set the following environment variables:
 ```
 TAIKUN_KEYCLOAK_EMAIL
