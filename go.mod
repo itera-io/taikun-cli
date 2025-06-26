@@ -6,7 +6,7 @@ toolchain go1.23.5
 
 require (
 	github.com/go-openapi/strfmt v0.23.0
-	github.com/itera-io/taikungoclient v0.0.0-20250531000429-36a392a09a7e
+	github.com/itera-io/taikungoclient v0.0.0-20250626000511-e02093180e7b
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/spf13/cobra v1.9.1
 )
@@ -21,7 +21,7 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
-	go.mongodb.org/mongo-driver v1.17.3 // indirect
+	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
 )
