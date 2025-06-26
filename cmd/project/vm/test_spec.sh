@@ -8,8 +8,6 @@ Context 'project/vm'
     img=$(taikun cc images "$cc" --no-decorate | grep -E -i '(ubuntu)|(focal)' | head -1 | cut -d ' ' -f 1 | xargs)
     image=$(taikun cc images "$cc" --no-decorate | grep -E -i 'Debian' | head -1 | cut -d ' ' -f 1 | xargs)
     image_name=$(taikun cc images "$cc" -C name --no-decorate | grep -E -i 'Debian' | head -1 | xargs)
-    #image=$(taikun cc images "$cc" --no-decorate -C id --limit 1 --show-large-values | xargs)
-    #image_name=$(taikun cc images "$cc" --no-decorate -C name --limit 1 --show-large-values | xargs)
     profile=$(taikun standalone-profile add "$(_rnd_name)" -o "$oid" --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I | xargs)
     taikun project image bind "$id" --image-ids "$img" -q
     vm_onetag=$(taikun project vm add "$id" --name onetag --flavor "$flavor" --image-id "$img" --volume-size 8 --standalone-profile-id "$profile" --tags foo=bar -I | xargs)
