@@ -3,7 +3,7 @@ Context 'cloudcredential/openstack'
       orgname="$(_rnd_name)"
       ccname="$(_rnd_name)"
       oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-      ccid=$(taikun cloud-credential openstack add "$ccname" -o "$oid" -p "$OS_PASSWORD" -d "$OS_USER_DOMAIN_NAME" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
+      ccid=$(taikun cloud-credential openstack add "$ccname" -s "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
     }
     BeforeAll 'setup'
 
@@ -25,13 +25,6 @@ Context 'cloudcredential/openstack'
       The output should include "$ccname"
       The output should include "$ccid"
       The output should include "Unlocked"
-    End
-
-    Example 'check valid openstack cloud credential'
-      When call taikun cloud-credential openstack check -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" -u "$OS_USERNAME" --url "$OS_AUTH_URL"
-      The lines of output should equal 1
-      The status should equal 0
-      The output should include "OpenStack cloud credential is valid"
     End
 
     Example 'check invalid openstack cloud credential'

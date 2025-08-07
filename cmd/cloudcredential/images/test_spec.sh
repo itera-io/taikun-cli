@@ -3,7 +3,7 @@ Context 'cloudcredential/images'
     orgname="$(_rnd_name)"
     ccname="$(_rnd_name)"
     oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-    ccid_openstack=$(taikun cloud-credential openstack add "$ccname" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
+    ccid_openstack=$(taikun cloud-credential openstack add "$ccname" -s "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
     ccid_aws=$(taikun cloud-credential aws add "$(_rnd_name)" -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY" -r "$AWS_DEFAULT_REGION" -z 1 -o "$oid" -I | xargs)
     ccid_azure=$(taikun cloud-credential azure add "$(_rnd_name)" --az-count "$AZ_COUNT" --client-id "$AZURE_CLIENT_ID" --client-secret "$AZURE_SECRET" --location "$AZURE_LOCATION" --subscription-id "$AZURE_SUBSCRIPTION" --tenant-id "$AZURE_TENANT" -o "$oid" -I | xargs)
   }

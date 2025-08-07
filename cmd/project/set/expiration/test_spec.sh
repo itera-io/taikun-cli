@@ -1,7 +1,7 @@
 Context 'project/set/expiration'
     setup() {
       oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs )
-      ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I | xargs)
+      ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
       projectname="$(_rnd_name)"
       pid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" -I | xargs)
     }
