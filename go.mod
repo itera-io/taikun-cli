@@ -6,12 +6,12 @@ toolchain go1.23.5
 
 require (
 	github.com/go-openapi/strfmt v0.23.0
-	github.com/itera-io/taikungoclient v0.0.0-20250806000521-c63532078a31
+	github.com/itera-io/taikungoclient v0.0.0-20250807083832-15fc4e5d684a
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/spf13/cobra v1.9.1
 )
 
-//replace github.com/itera-io/taikungoclient => /home/smidra/taikun/taikungoclient/taikungoclient-official
+//replace github.com/itera-io/taikungoclient v0.0.0-20250807075803-a970ec8d585f => /home/smidra/taikun/taikungoclient/taikungoclient-official
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
