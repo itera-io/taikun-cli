@@ -204,8 +204,6 @@ jobs:
           VSPHERE_PRIVATE_BEGIN_RANGE: ${{ secrets.VSPHERE_PRIVATE_BEGIN_RANGE }}
           VSPHERE_PRIVATE_END_RANGE: ${{ secrets.VSPHERE_PRIVATE_END_RANGE }}
 
-          FIRST_FAIL_TRACE: ${{ secrets.FIRST_FAIL_TRACE }}
-
         run: |
           echo $CI_JOB_URL
           shellspec --shell bash --format tap --jobs $(nproc) | tee shellspec.log
