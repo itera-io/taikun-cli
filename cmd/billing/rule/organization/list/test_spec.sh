@@ -18,8 +18,7 @@ Context 'billing/rule/organization/list'
     url="$PROMETHEUS_URL"
     user="$PROMETHEUS_USERNAME"
 
-#    org_name1="$(_rnd_name)"
-    org_name1="radek-organization"
+    org_name1="$(_rnd_name)"
     oid1=$(taikun organization add "$org_name1" --full-name "$org_name1" -I | xargs)
     org_name2="$(_rnd_name)"
     oid2=$(taikun organization add "$org_name2" --full-name "$org_name2" -I | xargs)
