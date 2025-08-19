@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -103,7 +104,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.VolumeType, "volume-type", "", "OpenStack Volume Type")
 	cmd.Flags().BoolVar(&opts.ImportNetwork, "import-network", false, "Import Network (false by default)")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", -1, "Organization ID")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -131,6 +132,10 @@ func addRun(opts *AddOptions) (err error) {
 		OpenStackImportNetwork:    &importNetwork,
 		OpenStackInternalSubnetId: *taikuncore.NewNullableString(&opts.InternalSubnetId),
 		OrganizationId:            *taikuncore.NewNullableInt32(&opts.OrganizationID),
+	}
+
+	if opts.OrganizationID == -1 {
+		body.OrganizationId = *taikuncore.NewNullableInt32(nil)
 	}
 
 	if opts.Username != "" && opts.Password != "" {

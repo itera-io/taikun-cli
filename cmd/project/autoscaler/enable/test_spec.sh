@@ -5,9 +5,7 @@ Context 'project/autoscaler/enable'
         pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$AUTOSCALER_FLAVOR" -I)
         AUTOSCALER_NAME="auto"
     }
-
     BeforeAll 'setup'
-
     cleanup() {
         if ! taikun project delete "$pid" -q 2>/dev/null; then
                 taikun project delete --force "$pid" -q 2>/dev/null || true
@@ -15,7 +13,6 @@ Context 'project/autoscaler/enable'
         taikun cloud-credential delete "$ccid" -q 2>/dev/null || true
         taikun organization delete "$oid" -q 2>/dev/null || true
     }
-
     AfterAll 'cleanup'
 
     Example 'enable spot autoscaling on openstack'

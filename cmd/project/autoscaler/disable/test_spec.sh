@@ -5,9 +5,7 @@ Context 'project/autoscaler/disable'
         pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I)
         taikun project autoscaler disable "$pid" -q
     }
-
     BeforeAll 'setup'
-
     cleanup() {
         if ! taikun project delete "$pid" -q 2>/dev/null; then
                 taikun project delete --force "$pid" -q 2>/dev/null || true
@@ -15,7 +13,6 @@ Context 'project/autoscaler/disable'
         taikun cloud-credential delete "$ccid" -q 2>/dev/null || true
         taikun organization delete "$oid" -q 2>/dev/null || true
     }
-
     AfterAll 'cleanup'
 
     Example 'disable autoscaling succesfully'

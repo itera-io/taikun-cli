@@ -3,12 +3,10 @@ Context 'accessprofile/add'
     name="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
   }
-
   cleanup() {
     taikun access-profile delete "$id" -q 2>/dev/null || true
     taikun organization delete "$oid" -q 2>/dev/null || true
   }
-
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
