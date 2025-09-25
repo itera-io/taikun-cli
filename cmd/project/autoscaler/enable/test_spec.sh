@@ -3,7 +3,6 @@ Context 'project/autoscaler/enable'
         oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I)
         ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
         pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --flavors "$AUTOSCALER_FLAVOR" -I)
-        AUTOSCALER_NAME="auto"
     }
     BeforeAll 'setup'
     cleanup() {
@@ -16,13 +15,13 @@ Context 'project/autoscaler/enable'
     AfterAll 'cleanup'
 
     Example 'enable spot autoscaling on openstack'
-        When call taikun project autoscaler enable "$pid" -n "$AUTOSCALER_NAME" -f "$AUTOSCALER_FLAVOR" --max-size 4 --min-size 1 --spot-enable
+        When call taikun project autoscaler enable "$pid" -f "$AUTOSCALER_FLAVOR" --max-size 4 --min-size 1 --spot-enable
         The status should equal 1
         The stderr should include 'There is no spot'
     End
 
     Example 'enable autoscaling succesfully'
-        When call taikun project autoscaler enable "$pid" -n "$AUTOSCALER_NAME" -f "$AUTOSCALER_FLAVOR" --max-size 4 --min-size 1
+        When call taikun project autoscaler enable "$pid" -f "$AUTOSCALER_FLAVOR" --max-size 4 --min-size 1
         The status should equal 0
         The output should include 'Operation was successful'
     End
@@ -30,14 +29,14 @@ Context 'project/autoscaler/enable'
     Example 'enable autoscaling succesfully'
         When call taikun project info "$pid" --all-columns
         The output should include "$AUTOSCALER_FLAVOR"
-        The output should include "$AUTOSCALER_NAME"
+        The output should include "taikunca"
         The output should include " 1 "
         The output should include " 4 "
         The status should equal 0
     End
 
     Example 'enable two times'
-        When call taikun project autoscaler enable "$pid" -n "$(_rnd_name)" -f "$AUTOSCALER_FLAVOR"
+        When call taikun project autoscaler enable "$pid" -f "$AUTOSCALER_FLAVOR"
         The status should equal 1
         The stderr should include 'project autoscaling already enabled'
     End
