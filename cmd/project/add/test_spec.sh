@@ -16,7 +16,7 @@ Context 'project/add'
 
     Context 'with autoscaler default'
         autoscaler_default_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR"  -I | xargs )
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  --autoscaler-flavor "$AUTOSCALER_FLAVOR"  -I | xargs )
         }
         BeforeAll 'autoscaler_default_project'
 
@@ -41,7 +41,7 @@ Context 'project/add'
 
     Context 'with autoscaler'
         autoscaler_project() {
-            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
+            pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --autoscaler-disk-size 32 --autoscaler-min-size 2 --autoscaler-max-size 10 -I)
         }
 
         cleanup() {
@@ -58,17 +58,17 @@ Context 'project/add'
         End
     End
 
-    Context 'without autoscaler'
-        Example 'autoscaler project'
-            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --autoscaler-name "auto"
-            The status should equal 1
-            The stderr should include 'Error: if any flags in the group [autoscaler-name autoscaler-flavor] are set they must all be set; missing [autoscaler-flavor]'
-        End
-    End
+#    Context 'without autoscaler'
+#        Example 'autoscaler project'
+#            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --autoscaler-name "auto"
+#            The status should equal 1
+#            The stderr should include 'Error: if any flags in the group [autoscaler-name autoscaler-flavor] are set they must all be set; missing [autoscaler-flavor]'
+#        End
+#    End
 
     Context 'Openstack cannot do spots'
         Example 'Create project'
-            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --autoscaler-name "auto" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --spot-full -I
+            When call taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" --autoscaler-flavor "$AUTOSCALER_FLAVOR" --spot-full -I
             The status should not equal 0
             The stderr should include "OPENSTACK cloud provider does not support spot option"
         End
