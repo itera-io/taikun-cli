@@ -15,12 +15,13 @@ import (
 )
 
 type EnableOptions struct {
-	ProjectID int32
-	Flavor    string
-	DiskSize  int32
-	MaxSize   int32
-	MinSize   int32
-	Spot      bool
+	ProjectID                      int32
+	DeprecatedAutoscalingGroupName string
+	Flavor                         string
+	DiskSize                       int32
+	MaxSize                        int32
+	MinSize                        int32
+	Spot                           bool
 }
 
 func NewCmdEnable() *cobra.Command {
@@ -39,7 +40,8 @@ func NewCmdEnable() *cobra.Command {
 		},
 	}
 
-	//cmd.Flags().StringVarP(&opts.AutoscalingGroupName, "autoscaler-name", "n", "", "The autoscaler's name (required)")
+	cmd.Flags().StringVarP(&opts.DeprecatedAutoscalingGroupName, "autoscaler-name", "n", "", "The autoscaler's name DEPRECATED")
+	_ = cmd.Flags().MarkDeprecated("autoscaler-name", "just specify autoscaler-flavor. Name will always be taikunCA.")
 	//cmdutils.MarkFlagRequired(&cmd, "autoscaler-name")
 
 	cmd.Flags().StringVarP(&opts.Flavor, "autoscaler-flavor", "f", "", "The autoscaler's flavor (required)")
