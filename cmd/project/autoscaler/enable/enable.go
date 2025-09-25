@@ -3,6 +3,7 @@ package enable
 import (
 	"context"
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -14,13 +15,12 @@ import (
 )
 
 type EnableOptions struct {
-	ProjectID            int32
-	AutoscalingGroupName string
-	Flavor               string
-	DiskSize             int32
-	MaxSize              int32
-	MinSize              int32
-	Spot                 bool
+	ProjectID int32
+	Flavor    string
+	DiskSize  int32
+	MaxSize   int32
+	MinSize   int32
+	Spot      bool
 }
 
 func NewCmdEnable() *cobra.Command {
@@ -39,8 +39,8 @@ func NewCmdEnable() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVarP(&opts.AutoscalingGroupName, "autoscaler-name", "n", "", "The autoscaler's name (required)")
-	cmdutils.MarkFlagRequired(&cmd, "autoscaler-name")
+	//cmd.Flags().StringVarP(&opts.AutoscalingGroupName, "autoscaler-name", "n", "", "The autoscaler's name (required)")
+	//cmdutils.MarkFlagRequired(&cmd, "autoscaler-name")
 
 	cmd.Flags().StringVarP(&opts.Flavor, "autoscaler-flavor", "f", "", "The autoscaler's flavor (required)")
 	cmdutils.MarkFlagRequired(&cmd, "autoscaler-flavor")
@@ -67,13 +67,13 @@ func enableRun(opts *EnableOptions) (err error) {
 	myApiClient := tk.NewClient()
 	diskSize := types.GiBToB(opts.DiskSize)
 	body := taikuncore.EnableAutoscalingCommand{
-		Id:                   &opts.ProjectID,
-		AutoscalingGroupName: *taikuncore.NewNullableString(&opts.AutoscalingGroupName),
-		MinSize:              &opts.MinSize,
-		MaxSize:              &opts.MaxSize,
-		DiskSize:             &diskSize,
-		Flavor:               *taikuncore.NewNullableString(&opts.Flavor),
-		SpotEnabled:          &opts.Spot,
+		Id: &opts.ProjectID,
+		//AutoscalingGroupName: *taikuncore.NewNullableString(&opts.AutoscalingGroupName),
+		MinSize:     &opts.MinSize,
+		MaxSize:     &opts.MaxSize,
+		DiskSize:    &diskSize,
+		Flavor:      *taikuncore.NewNullableString(&opts.Flavor),
+		SpotEnabled: &opts.Spot,
 	}
 	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEnable(context.TODO()).EnableAutoscalingCommand(body).Execute()
 	if err != nil {
