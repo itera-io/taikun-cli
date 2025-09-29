@@ -2,6 +2,7 @@ package enable
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -18,7 +19,7 @@ func NewCmdEnable() *cobra.Command {
 	var opts EnableOptions
 
 	cmd := cobra.Command{
-		Use:   "enable <NAME> <ORG>",
+		Use:   "enable <REPOSITORY-NAME> <ORGANIZATION-NAME>",
 		Short: "Enable a repository. Specify repository name and repository organization name.",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {

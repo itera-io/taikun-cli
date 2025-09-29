@@ -2,6 +2,7 @@ package unbind
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -12,7 +13,7 @@ import (
 func NewCmdUnbind() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "unbind <CATALOG_ID> <PROJECT_ID>",
-		Short: "Bind project to catalog id.",
+		Short: "Unbind project to catalog id.",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			catalogid, err := types.Atoi32(args[0])

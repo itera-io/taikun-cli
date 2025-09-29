@@ -2,6 +2,7 @@ package publishers
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -46,7 +47,7 @@ func publishersRun(opts *PublishersOptions) (err error) {
 
 func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzurePublishers(context.TODO(), opts.CloudCredentialID)
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzurePublishers(context.TODO(), opts.CloudCredentialID).Limit(1000)
 	publishers = make([]string, 0)
 	for {
 		data, response, err := myRequest.Execute()

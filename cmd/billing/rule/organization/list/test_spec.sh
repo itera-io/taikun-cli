@@ -1,6 +1,18 @@
 Context 'billing/rule/organization/list'
 
+  # --- move cleanup above setup (unchanged body) ---
+  cleanup() {
+    taikun billing rule delete "$id" -q 2>/dev/null || true
+    taikun billing credential delete "$cid" -q 2>/dev/null || true
+    taikun organization delete "$oid1" -q 2>/dev/null || true
+    taikun organization delete "$oid2" -q 2>/dev/null || true
+  }
+
   setup() {
+    set -euo pipefail
+
+    trap 'rc=$?; SETUP_FAILED=1; cleanup || true; return "$rc"' ERR
+
     name="$(_rnd_name)"
     pass="$PROMETHEUS_PASSWORD"
     url="$PROMETHEUS_URL"
@@ -13,18 +25,15 @@ Context 'billing/rule/organization/list'
 
     cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid1" -I)
     id=$(taikun billing rule add "$name" -b "$cid" -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
+
+    trap - ERR
   }
 
   BeforeAll 'setup'
+  AfterAll  'cleanup'
 
-  cleanup() {
-    taikun billing rule delete "$id" -q 2>/dev/null || true
-    taikun billing credential delete "$cid" -q 2>/dev/null || true
-    taikun organization delete "$oid1" -q 2>/dev/null || true
-    taikun organization delete "$oid2" -q 2>/dev/null || true
-  }
-
-  AfterAll 'cleanup'
+  # --- one-line guard to skip this context if setup failed ---
+  Skip if 'setup failed' [ -n "${SETUP_FAILED:-}" ]
 
   Example 'no bindings'
     When call taikun billing rule organization list "$id" --no-decorate

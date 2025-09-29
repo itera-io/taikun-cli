@@ -3,6 +3,7 @@ package deleterepo
 import (
 	"context"
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -18,8 +19,8 @@ type DeleteOptions struct {
 func NewCmdDelete() *cobra.Command {
 	var opts DeleteOptions
 	cmd := cobra.Command{
-		Use:   "delete <NAME> <ORG>",
-		Short: "Delete a repository. Specify repository name and repository organization name.",
+		Use:   "delete <REPOSITORY-NAME> <ORGANIZATION-NAME>",
+		Short: "Delete a private repository. Specify repository name and repository organization name.",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			//repo, err :=args[0]
