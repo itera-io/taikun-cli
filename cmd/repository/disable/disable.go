@@ -2,6 +2,8 @@ package disable
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -18,7 +20,7 @@ func NewCmdDisable() *cobra.Command {
 	var opts DisableOptions
 
 	cmd := cobra.Command{
-		Use:   "disable <NAME> <ORG>",
+		Use:   "disable <REPOSITORY-NAME> <ORGANIZATION-NAME>",
 		Short: "Disable a repository. Specify repository name and repository organization name.",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -41,7 +43,11 @@ func disableRun(opts DisableOptions) (err error) {
 	foundId = ""
 
 	// Try recommended
-	data, response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryRecommendedList(context.TODO()).Execute()
+	recommendCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryRecommendedList(context.TODO())
+	if opts.OrganizationID != -1 {
+		recommendCommand = recommendCommand.OrganizationId(opts.OrganizationID)
+	}
+	data, response, err := recommendCommand.Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
@@ -53,7 +59,11 @@ func disableRun(opts DisableOptions) (err error) {
 	}
 	// Try public
 	if foundId == "" {
-		data2, response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(false).Search(opts.RepoName).Execute()
+		publicCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(false).Search(opts.RepoName)
+		if opts.OrganizationID != -1 {
+			publicCommand = publicCommand.OrganizationId(opts.OrganizationID)
+		}
+		data2, response, err := publicCommand.Execute()
 		if err != nil {
 			return tk.CreateError(response, err)
 		}
@@ -67,7 +77,11 @@ func disableRun(opts DisableOptions) (err error) {
 
 	// Try private
 	if foundId == "" {
-		data3, response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(true).Search(opts.RepoName).Execute()
+		privateCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(true).Search(opts.RepoName)
+		if opts.OrganizationID != -1 {
+			privateCommand = privateCommand.OrganizationId(opts.OrganizationID)
+		}
+		data3, response, err := privateCommand.Execute()
 		if err != nil {
 			return tk.CreateError(response, err)
 		}
@@ -77,6 +91,10 @@ func disableRun(opts DisableOptions) (err error) {
 				break
 			}
 		}
+	}
+
+	if foundId == "" {
+		return fmt.Errorf("repo with name %s and org %s not enabled so you cannot disable", opts.RepoName, opts.RepoOrg)
 	}
 
 	command := taikuncore.UnbindAppRepositoryCommand{

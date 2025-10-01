@@ -44,13 +44,13 @@ Context 'policyprofile'
       taikun policy-profile lock "$ppid" -q
     }
 
-    Before 'add_config'
+    BeforeAll 'add_config'
 
     delete_config() {
       taikun policy-profile delete "$ppid" -q
     }
 
-    After 'delete_config'
+    AfterAll 'delete_config'
 
     Example 'lock with already locked'
       When call taikun policy-profile lock "$ppid"

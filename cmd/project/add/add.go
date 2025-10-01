@@ -3,6 +3,8 @@ package add
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -15,7 +17,6 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 var addFields = fields.New(
@@ -81,33 +82,33 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	AccessProfileID     int32
-	AlertingProfileID   int32
-	AutoUpgrade         bool
-	BackupCredentialID  int32
-	CloudCredentialID   int32
-	DeleteOnExpiration  bool
-	ExpirationDate      string
-	Flavors             []string
-	KubernetesProfileID int32
-	KubernetesVersion   string
-	Monitoring          bool
-	Name                string
-	PolicyProfileID     int32
-	RouterIDEndRange    int32
-	RouterIDStartRange  int32
-	TaikunLBFlavor      string
-	Cidr                string
-	AutoscalerName      string
-	AutoscalerMinSize   int32
-	AutoscalerMaxSize   int32
-	AutoscalerDiskSize  int32
-	AutoscalerFlavor    string
-	AutoscalerSpot      bool
-	SpotFull            bool
-	SpotWorker          bool
-	SpotVms             bool
-	SpotMaxPrice        float64
+	AccessProfileID          int32
+	AlertingProfileID        int32
+	AutoUpgrade              bool
+	BackupCredentialID       int32
+	CloudCredentialID        int32
+	DeleteOnExpiration       bool
+	ExpirationDate           string
+	Flavors                  []string
+	KubernetesProfileID      int32
+	KubernetesVersion        string
+	Monitoring               bool
+	Name                     string
+	PolicyProfileID          int32
+	RouterIDEndRange         int32
+	RouterIDStartRange       int32
+	TaikunLBFlavor           string
+	Cidr                     string
+	DeprecatedAutoscalerName string
+	AutoscalerMinSize        int32
+	AutoscalerMaxSize        int32
+	AutoscalerDiskSize       int32
+	AutoscalerFlavor         string
+	AutoscalerSpot           bool
+	SpotFull                 bool
+	SpotWorker               bool
+	SpotVms                  bool
+	SpotMaxPrice             float64
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -163,13 +164,14 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "cidr", "", "Cidr IP")
 
-	cmd.Flags().StringVar(&opts.AutoscalerName, "autoscaler-name", "", "The autoscaler name (specify autoscaler name and flavor to enable autoscaler)")
+	cmd.Flags().StringVar(&opts.DeprecatedAutoscalerName, "autoscaler-name", "", "The autoscaler name (specify autoscaler name and flavor to enable autoscaler) DEPRECATED")
+	//cmd.Flags().BoolP("autoscaler-name", "", false, "Help message for root version")
+	_ = cmd.Flags().MarkDeprecated("autoscaler-name", "just specify autoscaler-flavor. Name will always be taikunCA.")
 	cmd.Flags().Int32Var(&opts.AutoscalerDiskSize, "autoscaler-disk-size", 30, "The disk size for the autoscaler in GiB [30 to 8192 GiB] (default 30)")
-	cmd.Flags().StringVar(&opts.AutoscalerFlavor, "autoscaler-flavor", "", "The autoscaler flavor")
+	cmd.Flags().StringVar(&opts.AutoscalerFlavor, "autoscaler-flavor", "", "The autoscaler flavor (specify flavor to enable autoscaler)")
 	cmd.Flags().Int32Var(&opts.AutoscalerMinSize, "autoscaler-min-size", 1, "The minimum size for the autoscaler (default 1)")
 	cmd.Flags().Int32Var(&opts.AutoscalerMaxSize, "autoscaler-max-size", 1, "The maximum size for the autoscaler (default 1)")
 	cmd.Flags().BoolVar(&opts.AutoscalerSpot, "autoscaler-spot", false, "Enable spot flavors for the autoscaler (default false)")
-	cmd.MarkFlagsRequiredTogether("autoscaler-name", "autoscaler-flavor")
 
 	cmd.Flags().BoolVar(&opts.SpotFull, "spot-full", false, "Enable full spot flavorsKubernetes (worker + controlplane), bool")
 	cmd.Flags().BoolVar(&opts.SpotWorker, "spot-worker", false, "Enable spot flavors for Kubernetes workers, bool")
@@ -242,11 +244,10 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Autosclaer will enable if you specify name and flavor
-	if len(opts.AutoscalerFlavor) != 0 &&
-		len(opts.AutoscalerName) != 0 {
+	if len(opts.AutoscalerFlavor) != 0 {
 		body.SetAutoscalingEnabled(true)
 		body.SetAutoscalingFlavor(opts.AutoscalerFlavor)
-		body.SetAutoscalingGroupName(opts.AutoscalerName)
+		//body.SetAutoscalingGroupName(opts.AutoscalerName)
 		body.SetMinSize(opts.AutoscalerMinSize)
 		body.SetMaxSize(opts.AutoscalerMaxSize)
 		body.SetDiskSize(types.GiBToB(opts.AutoscalerDiskSize))

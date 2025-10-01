@@ -1,5 +1,4 @@
 Context 'billing/rule/organization/bind'
-
   setup() {
     name="$(_rnd_name)"
     pass="$PROMETHEUS_PASSWORD"
@@ -10,15 +9,12 @@ Context 'billing/rule/organization/bind'
     cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid" -I | xargs)
     id=$(taikun billing rule add "$name" -b "$cid" -l foo=foo -m abc --price 1 --price-rate 1 --type count -I | xargs)
   }
-
   BeforeAll 'setup'
-
   cleanup() {
     taikun billing rule delete "$id" -q 2> /dev/null || true
     taikun billing credential delete "$cid" -q 2>/dev/null || true
     taikun organization delete "$oid" -q 2>/dev/null || true
   }
-
   AfterAll 'cleanup'
 
   Context

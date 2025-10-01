@@ -15,6 +15,10 @@ func GiBToB(gibiBytes int32) float64 {
 	return float64(1073741824) * float64(gibiBytes)
 }
 
+func GiBToBInt64(gibiBytes int32) int64 {
+	return int64(1073741824) * int64(gibiBytes)
+}
+
 func BToGiB(bytes float64) int32 {
 	return int32(bytes / 1073741824)
 }

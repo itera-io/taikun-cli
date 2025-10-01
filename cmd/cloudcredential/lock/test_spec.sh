@@ -3,7 +3,7 @@ Context 'cloudcredential/lock'
     orgname="$(_rnd_name)"
     ccname="$(_rnd_name)"
     oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-    ccid=$(taikun cloud-credential openstack add "$ccname" -o "$oid" -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -u "$OS_USERNAME" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
+    ccid=$(taikun cloud-credential openstack add "$ccname" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
     taikun cloud-credential lock "$ccid" -q
   }
   BeforeAll 'setup'
