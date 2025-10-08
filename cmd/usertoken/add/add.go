@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/usertoken/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -13,7 +15,6 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 var addFields = fields.New(
@@ -48,7 +49,7 @@ func NewCmdAdd() *cobra.Command {
 		Args: cobra.ExactArgs(1),
 	}
 
-	cmd.Flags().StringVar(&opts.ExpirationDate, "expiration-date", "", fmt.Sprintf("Expiration date in the format: %s", types.ExpectedDateFormat))
+	cmd.Flags().StringVar(&opts.ExpirationDate, "expiration-date", "", fmt.Sprintf("Expiration date in the format: %s, %s, or %s", types.ExpectedDateFormat, "dd.mm.yyyy hh:mm", types.ExpectedDateTimeFormat))
 	cmd.Flags().BoolVar(&opts.ReadOnly, "is-read-only", false, "Enable to create a user token with read-only permissions")
 	cmd.Flags().BoolVar(&opts.BindAll, "bind-all", false, "Enable to bind all available endpoints")
 
