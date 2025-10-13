@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -38,11 +39,12 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	Name           string
-	HttpProxy      string
-	OrganizationID int32
-	DNSServers     []string
-	NTPServers     []string
+	Name              string
+	HttpProxy         string
+	OrganizationID    int32
+	DNSServers        []string
+	NTPServers        []string
+	TrustedRegistries []string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -62,6 +64,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
 	cmd.Flags().StringSliceVarP(&opts.DNSServers, "dns-servers", "d", []string{}, "DNS Servers")
 	cmd.Flags().StringSliceVarP(&opts.NTPServers, "ntp-servers", "n", []string{}, "NTP Servers")
+	cmd.Flags().StringSliceVarP(&opts.TrustedRegistries, "trusted-registries", "t", []string{}, "Trusted Registries")
 	cmdutils.AddOutputOnlyIDFlag(cmd)
 	cmdutils.AddColumnsFlag(cmd, addFields)
 
@@ -85,11 +88,18 @@ func addRun(opts *AddOptions) error {
 			Address: *taikuncore.NewNullableString(&rawNTPServer),
 		}
 	}
+	TrustedRegistries := make([]taikuncore.TrustedRegisteredCreateDto, len(opts.TrustedRegistries))
+	for i, rawTrustedRegistries := range opts.TrustedRegistries {
+		TrustedRegistries[i] = taikuncore.TrustedRegisteredCreateDto{
+			Registry: *taikuncore.NewNullableString(&rawTrustedRegistries),
+		}
+	}
 	body := taikuncore.CreateAccessProfileCommand{
-		Name:           *taikuncore.NewNullableString(&opts.Name),
-		OrganizationId: *taikuncore.NewNullableInt32(&opts.OrganizationID),
-		DnsServers:     DNSServers,
-		NtpServers:     NTPServers,
+		Name:              *taikuncore.NewNullableString(&opts.Name),
+		OrganizationId:    *taikuncore.NewNullableInt32(&opts.OrganizationID),
+		DnsServers:        DNSServers,
+		NtpServers:        NTPServers,
+		TrustedRegistries: TrustedRegistries,
 	}
 	if opts.HttpProxy != "" {
 		body.SetHttpProxy(opts.HttpProxy)
