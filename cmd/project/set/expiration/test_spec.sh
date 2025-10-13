@@ -94,19 +94,19 @@ Context 'project/set/expiration'
     Example 'test invalid datetime format - missing colon'
       When call taikun project set expiration "$pid" --expiration-date "01.01.3000 1430" -d
       The status should equal 1
-      The output should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
+      The stderr should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
     End
 
     Example 'test invalid datetime format - wrong time format'
       When call taikun project set expiration "$pid" --expiration-date "01.01.3000 25:70" -d
       The status should equal 1
-      The output should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
+      The stderr should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
     End
 
     Example 'test invalid datetime format - seconds without minutes'
       When call taikun project set expiration "$pid" --expiration-date "01.01.3000 14:30:70" -d
       The status should equal 1
-      The output should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
+      The stderr should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
     End
 
 End
