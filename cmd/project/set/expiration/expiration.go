@@ -25,7 +25,7 @@ func NewCmdExpiration() *cobra.Command {
 
 	cmd := cobra.Command{
 		Use:   "expiration <project-id>",
-		Short: "Manage expiration for a project",
+		Short: "Manage expiration for a project. Projects can expire every full hour. Minutes and seconds are ignored. If no minutes are specified - midnight is used.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ProjectID, err = types.Atoi32(args[0])
@@ -43,7 +43,7 @@ func NewCmdExpiration() *cobra.Command {
 
 	cmd.Flags().BoolVarP(&opts.RemoveExpiration, "remove-expiration", "r", false, "Clear expiration date - project never expires.")
 	cmd.Flags().BoolVarP(&opts.DeleteOnExpiration, "delete-on-expiration", "d", false, "Delete project on expiration")
-	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s, %s, or %s", types.ExpectedDateFormat, "dd.mm.yyyy hh:mm", types.ExpectedDateTimeFormat))
+	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s, %s, or %s", types.ExpectedDateFormat, "dd.mm.yyyy hh:mm", types.ExpectedDateTimeFormat, " Minutes and seconds are ignored. Projects can expire only at 00 (full hour)."))
 
 	return &cmd
 }
