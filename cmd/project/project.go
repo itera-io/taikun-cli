@@ -8,7 +8,6 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/backupsource"
 	"github.com/itera-io/taikun-cli/cmd/project/disablemonitoring"
 	"github.com/itera-io/taikun-cli/cmd/project/enablemonitoring"
-	"github.com/itera-io/taikun-cli/cmd/project/etc"
 	"github.com/itera-io/taikun-cli/cmd/project/flavor"
 	"github.com/itera-io/taikun-cli/cmd/project/image"
 	"github.com/itera-io/taikun-cli/cmd/project/info"
@@ -36,7 +35,6 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(add.NewCmdAdd())
 	cmd.AddCommand(alert.NewCmdAlert())
 	cmd.AddCommand(backup.NewCmdBackup())
-	cmd.AddCommand(etc.NewCmdEtc())
 	cmd.AddCommand(flavor.NewCmdFlavor())
 	cmd.AddCommand(image.NewCmdImage())
 	cmd.AddCommand(info.NewCmdInfo())
