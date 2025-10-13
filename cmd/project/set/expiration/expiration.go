@@ -43,7 +43,7 @@ func NewCmdExpiration() *cobra.Command {
 
 	cmd.Flags().BoolVarP(&opts.RemoveExpiration, "remove-expiration", "r", false, "Clear expiration date - project never expires.")
 	cmd.Flags().BoolVarP(&opts.DeleteOnExpiration, "delete-on-expiration", "d", false, "Delete project on expiration")
-	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s, %s, or %s", types.ExpectedDateFormat, "dd.mm.yyyy hh:mm", types.ExpectedDateTimeFormat, " Minutes and seconds are ignored. Projects can expire only at 00 (full hour)."))
+	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s, %s, or %s.  Minutes and seconds are ignored. Projects can expire only at 00 (full hour).", types.ExpectedDateFormat, "dd.mm.yyyy hh:mm", types.ExpectedDateTimeFormat))
 
 	return &cmd
 }
