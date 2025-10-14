@@ -26,7 +26,7 @@ var ErrIDArgumentNotANumber = errors.New(
 )
 
 var ErrUnknownDateFormat = errors.New(
-	"please enter a valid date in the format dd/mm/yyyy",
+	"please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss",
 )
 
 var ErrRouterIDInvalidRange = errors.New(

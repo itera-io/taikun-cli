@@ -29,7 +29,7 @@ Context 'accessprofile/add'
 
     Example 'duplicate names'
       When call taikun access-profile add "$name" -o "$oid"
-      The stderr should include '409'
+      The stderr should include '400'
       The stderr should include 'already exists'
       The status should equal 1
     End

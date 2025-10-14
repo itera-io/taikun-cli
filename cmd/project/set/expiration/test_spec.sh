@@ -59,4 +59,54 @@ Context 'project/set/expiration'
       The output should include "No"
     End
 
+    Example 'set expiration with time (hours and minutes)'
+      When call taikun project set expiration "$pid" --expiration-date "01.01.3000 14:30" -d
+      The status should equal 0
+      The lines of output should equal 1
+      The output should include "Operation was successful"
+    End
+
+    Example 'list set expiration with time'
+      When call list_project
+      The status should equal 0
+      The lines of output should equal 1
+      The output should include "$pid"
+      The output should include "Yes"
+      The output should include "3000-01-01 14:30:00"
+    End
+
+    Example 'set expiration with seconds'
+      When call taikun project set expiration "$pid" --expiration-date "01.01.3000 15:45:30" -d
+      The status should equal 0
+      The lines of output should equal 1
+      The output should include "Operation was successful"
+    End
+
+    Example 'list set expiration with seconds'
+      When call list_project
+      The status should equal 0
+      The lines of output should equal 1
+      The output should include "$pid"
+      The output should include "Yes"
+      The output should include "3000-01-01 15:45:30"
+    End
+
+    Example 'test invalid datetime format - missing colon'
+      When call taikun project set expiration "$pid" --expiration-date "01.01.3000 1430" -d
+      The status should equal 1
+      The stderr should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
+    End
+
+    Example 'test invalid datetime format - wrong time format'
+      When call taikun project set expiration "$pid" --expiration-date "01.01.3000 25:70" -d
+      The status should equal 1
+      The stderr should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
+    End
+
+    Example 'test invalid datetime format - seconds without minutes'
+      When call taikun project set expiration "$pid" --expiration-date "01.01.3000 14:30:70" -d
+      The status should equal 1
+      The stderr should include "please enter a valid date in the format dd.mm.yyyy, dd.mm.yyyy hh:mm, or dd.mm.yyyy hh:mm:ss"
+    End
+
 End

@@ -154,7 +154,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVarP(&opts.AutoUpgrade, "auto-upgrade", "u", false, "Enable auto upgrade")
 	cmd.Flags().Int32VarP(&opts.BackupCredentialID, "backup-credential-id", "b", 0, "Backup credential ID")
 	cmd.Flags().BoolVarP(&opts.DeleteOnExpiration, "delete-on-expiration", "d", false, "Delete the project on its expiration date")
-	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s", types.ExpectedDateFormat))
+	cmd.Flags().StringVarP(&opts.ExpirationDate, "expiration-date", "e", "", fmt.Sprintf("Expiration date in the format: %s, %s, or %s", types.ExpectedDateFormat, "dd.mm.yyyy hh:mm", types.ExpectedDateTimeFormat))
 	cmd.Flags().StringSliceVarP(&opts.Flavors, "flavors", "f", []string{}, "Bind flavors to the project")
 	cmd.Flags().Int32VarP(&opts.KubernetesProfileID, "kubernetes-profile-id", "k", 0, "Kubernetes profile ID")
 	cmd.Flags().BoolVarP(&opts.Monitoring, "monitoring", "m", false, "Enable monitoring")
