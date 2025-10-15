@@ -1,4 +1,4 @@
-Context 'application/app'
+Context 'application'
   Example 'list one application'
     When call taikun application list --limit 1
     The status should equal 0

@@ -3,6 +3,7 @@ package edit
 import (
 	"context"
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -36,7 +37,7 @@ func NewCmdEdit() *cobra.Command {
 	}
 
 	cmd.Flags().Int32Var(&opts.MaxSize, "max-size", 1, "The autoscaler's maximum size")
-	cmd.Flags().Int32Var(&opts.MinSize, "min-size", 1, "The autoscaler's minimum size")
+	cmd.Flags().Int32Var(&opts.MinSize, "min-size", 0, "The autoscaler's minimum size")
 
 	return &cmd
 }

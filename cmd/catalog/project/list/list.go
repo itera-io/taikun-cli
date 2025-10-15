@@ -3,6 +3,7 @@ package list
 import (
 	"context"
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -27,6 +28,10 @@ var listFields = fields.New(
 	},
 )
 
+type ListOptions struct {
+	OrganizationID int32
+}
+
 // Hack, to also display the catalog id for user convenience. maintenanceModeEnabled is totally ignored
 var localCatID *int32
 
@@ -35,6 +40,8 @@ func SetLocalCatalogId(ignore interface{}) string {
 }
 
 func NewCmdList() *cobra.Command {
+	var opts ListOptions
+
 	cmd := cobra.Command{
 		Use:   "list <CATALOG_ID>",
 		Short: "List projects bound to this catalog",
@@ -45,20 +52,25 @@ func NewCmdList() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			localCatID = &catid
-			return listRun(&catid)
+			return listRun(&catid, opts.OrganizationID)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
 
+	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", -1, "Organization ID")
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
 
-func listRun(catid *int32) (err error) {
+func listRun(catid *int32, orgid int32) (err error) {
 	myApiClient := tk.NewClient()
 
-	data, response, err := myApiClient.Client.CatalogAPI.CatalogList(context.TODO()).Id(*catid).Execute()
+	listCommand := myApiClient.Client.CatalogAPI.CatalogList(context.TODO()).Id(*catid)
+	if orgid != -1 {
+		listCommand = listCommand.OrganizationId(orgid)
+	}
+	data, response, err := listCommand.Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

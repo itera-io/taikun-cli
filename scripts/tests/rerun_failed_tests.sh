@@ -28,7 +28,8 @@ for context in $fctx; do
     echo "Error: invalid context $context, please fix context name"
     exit 1
   fi
-  if ! shellspec --shell bash --format tap --jobs "$(nproc)" ./cmd/$context; then
+#  if ! shellspec --shell bash --format tap --jobs "$(nproc)" ./cmd/$context; then
+  if ! shellspec --shell bash --format tap --jobs "1" ./cmd/$context; then
     failures=$((failures+1))
   fi
 done

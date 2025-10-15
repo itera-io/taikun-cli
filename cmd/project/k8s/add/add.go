@@ -126,7 +126,7 @@ func NewCmdAdd() *cobra.Command {
 
 func addRun(opts *AddOptions) (err error) {
 	myApiClient := tk.NewClient()
-	diskSizeValue := types.GiBToB(opts.DiskSize)
+	diskSizeValue := types.GiBToBInt64(opts.DiskSize)
 	serverRole := types.GetServerRole(opts.Role)
 	body := taikuncore.ServerForCreateDto{
 		DiskSize:    &diskSizeValue,

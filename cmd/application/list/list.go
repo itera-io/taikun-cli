@@ -2,6 +2,7 @@ package list
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -16,7 +17,7 @@ import (
 var listFields = fields.New(
 	[]*field.Field{
 		field.NewHidden("ID", "packageId"),
-		field.NewVisible("NAME", "normalizedName"),
+		field.NewVisible("ORGANIZATION", "normalizedName"),
 		field.NewVisibleWithToStringFunc("REPOSITORY", "repository", out.FormatRepoName),
 		field.NewVisible("VERSION", "appVersion"),
 		field.NewVisible("DESCRIPTION", "description"),
@@ -55,7 +56,7 @@ func NewCmdList() *cobra.Command {
 func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
 
-	myRequest := myApiClient.Client.PackageAPI.PackageList(context.TODO())
+	myRequest := myApiClient.Client.PackageAPI.PackageList(context.TODO()).Limit(1000)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}

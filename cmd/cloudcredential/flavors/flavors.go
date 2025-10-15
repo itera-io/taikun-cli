@@ -3,6 +3,7 @@ package flavors
 import (
 	"context"
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/utils"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -102,7 +103,7 @@ func flavorRun(opts *FlavorsOptions) (err error) {
 func getAwsFlavors(opts *FlavorsOptions) (err error) {
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAwsInstanceTypes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
-	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
+	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000).Limit(1000)
 
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
