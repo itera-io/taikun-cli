@@ -3,7 +3,7 @@
 Describe 'accessprofile/trustedregistry'
   setup() {
     apname="$(_rnd_name)"
-    registryname="test.example.com"
+    registryname="ghcr.io"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     apid=$(taikun access-profile add "$apname" -o "$oid" -I | xargs )
   }
