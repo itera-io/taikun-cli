@@ -7,6 +7,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/lock"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/remove"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/sshuser"
+	"github.com/itera-io/taikun-cli/cmd/accessprofile/trustedregistry"
 	"github.com/itera-io/taikun-cli/cmd/accessprofile/unlock"
 	"github.com/spf13/cobra"
 )
@@ -25,6 +26,7 @@ func NewCmdAccessProfile() *cobra.Command {
 	cmd.AddCommand(sshuser.NewCmdSshUser())
 	cmd.AddCommand(allowedhost.NewCmdAllowedHost())
 	cmd.AddCommand(unlock.NewCmdUnlock())
+	cmd.AddCommand(trustedregistry.NewCmdTrustedRegistry())
 
 	return cmd
 }
