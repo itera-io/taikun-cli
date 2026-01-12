@@ -3,13 +3,14 @@ package check
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 type CheckOptions struct {
@@ -74,7 +75,7 @@ func checkRun(opts *CheckOptions) (err error) {
 
 	// Execute a query into the API + graceful exit
 	myRequest := myApiClient.Client.CheckerAPI.CheckerOpenstack(context.TODO()).CheckOpenstackCommand(body)
-	response, err := myRequest.Execute()
+	_, response, err := myRequest.Execute()
 
 	if err == nil {
 		out.PrintCheckSuccess("OpenStack cloud credential")
