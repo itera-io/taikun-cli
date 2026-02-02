@@ -47,6 +47,16 @@ Context 'user'
         The stderr should include "${username}@mailinator.com"
       End
 
+      Example 'toggle notification mode'
+        When call taikun user notifications enable
+        The status should equal 0
+        The output should include 'Operation was successful.'
+
+        When call taikun user notifications disable
+        The status should equal 0
+        The output should include 'Operation was successful.'
+      End
+
       Context
         bind() {
           taikun user project bind "$uid" --project-id "$pid" -q

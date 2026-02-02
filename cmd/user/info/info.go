@@ -2,10 +2,12 @@ package info
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
@@ -38,6 +40,7 @@ func NewCmdInfo() *cobra.Command {
 
 // myInfoRun calls the API and gets the info about the current user
 func myInfoRun() (err error) {
+	showNotificationField(infoFields)
 	myApiClient := tk.NewClient()
 	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
 	if err != nil {
@@ -61,4 +64,13 @@ func listRun(userID string) (err error) {
 	}
 
 	return out.PrintResult(data.Data[0], infoFields)
+}
+
+func showNotificationField(infoFields fields.Fields) {
+	for _, infoField := range infoFields.AllFields() {
+		if infoField.NameMatches("EMAIL-NOTIFICATIONS") {
+			infoField.Show()
+			return
+		}
+	}
 }
