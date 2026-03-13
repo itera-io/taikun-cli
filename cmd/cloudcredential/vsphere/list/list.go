@@ -60,7 +60,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
 
 	cmdutils.AddLimitFlag(cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(cmd, "cloud-credentials", listFields)
@@ -70,6 +70,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) error {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	vSphereCloudCredentials, err := ListCloudCredentialsvSphere(opts)
 	if err != nil {
 		return err

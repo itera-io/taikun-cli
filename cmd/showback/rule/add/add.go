@@ -100,7 +100,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.MetricName, "metric-name", "m", "", "Metric name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "metric-name")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmd.Flags().Float64VarP(&opts.Price, "price", "p", 0, "Price")
 	cmdutils.MarkFlagRequired(&cmd, "price")
@@ -120,6 +120,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) error {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 

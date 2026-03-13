@@ -75,7 +75,7 @@ func NewCmdAdd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 	cmd.Flags().BoolVar(&opts.ForbidHTTPIngress, "forbid-http-ingress", false, "Requires Ingress resources to be HTTPS only")
 	cmd.Flags().BoolVar(&opts.ForbidNodePort, "forbid-node-port", false, "Disallows all Services with type NodePort")
 	cmd.Flags().BoolVar(&opts.RequireProbe, "require-probe", false, "Requires Pods to have readiness and liveness probes")
@@ -93,6 +93,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 

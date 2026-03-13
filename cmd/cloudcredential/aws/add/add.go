@@ -76,7 +76,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32VarP(&opts.AWSAzCount, "az-count", "z", 0, "AWS Az Count (required)")
 	cmdutils.MarkFlagRequired(&cmd, "az-count")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -85,6 +85,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 

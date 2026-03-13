@@ -30,13 +30,18 @@ func NewCmdUnbind() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "organization-id")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	return &cmd
 }
 
 func unbindRun(opts *UnbindOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 

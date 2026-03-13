@@ -54,7 +54,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
@@ -64,6 +64,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileList(context.TODO())
 	if opts.OrganizationID != 0 {
@@ -82,8 +88,8 @@ func listRun(opts *ListOptions) (err error) {
 
 		standAloneProfiles = append(standAloneProfiles, data.GetData()...)
 
-		count := int32(len(standAloneProfiles))
-		if opts.Limit != 0 && count >= opts.Limit {
+		count := int64(len(standAloneProfiles))
+		if opts.Limit != 0 && count >= int64(opts.Limit) {
 			break
 		}
 
@@ -91,7 +97,7 @@ func listRun(opts *ListOptions) (err error) {
 			break
 		}
 
-		myRequest = myRequest.Offset(count)
+		myRequest = myRequest.Offset(int32(count))
 	}
 
 	if opts.Limit != 0 && int32(len(standAloneProfiles)) > opts.Limit {

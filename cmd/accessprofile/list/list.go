@@ -63,7 +63,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
 
 	cmdutils.AddLimitFlag(cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(cmd, "access-profiles", listFields)
@@ -73,6 +73,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -95,8 +101,8 @@ func listRun(opts *ListOptions) (err error) {
 
 		accessProfiles = append(accessProfiles, data.GetData()...)
 
-		count := int32(len(accessProfiles))
-		if opts.Limit != 0 && count >= opts.Limit {
+		count := int64(len(accessProfiles))
+		if opts.Limit != 0 && count >= int64(opts.Limit) {
 			break
 		}
 
@@ -104,7 +110,7 @@ func listRun(opts *ListOptions) (err error) {
 			break
 		}
 
-		myRequest = myRequest.Offset(count)
+		myRequest = myRequest.Offset(int32(count))
 	}
 
 	if opts.Limit != 0 && int32(len(accessProfiles)) > opts.Limit {

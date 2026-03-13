@@ -51,7 +51,7 @@ Context 'repostory/two'
   End
 
   Example 'disable the new repo'
-    When call taikun repository disable tk-cli-susetest "$cname" -o "$oid"
+    When call taikun repository disable tk-cli-susetest -o "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
@@ -65,7 +65,7 @@ Context 'repostory/two'
   End
 
   Example 'enable the new repo'
-    When call taikun repository enable tk-cli-susetest "$cname" -o "$oid"
+    When call taikun repository enable tk-cli-susetest -o "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
@@ -79,13 +79,13 @@ Context 'repostory/two'
   End
 
   Example 'disable the repo for deletion'
-    When call taikun repository disable tk-cli-susetest "$cname" -o "$oid"
+    When call taikun repository disable tk-cli-susetest -o "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
 
   Example 'delete the repository'
-    When call taikun repository delete tk-cli-susetest "$cname" -o "$oid"
+    When call taikun repository delete tk-cli-susetest -o "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End

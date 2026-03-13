@@ -13,7 +13,8 @@ func GetDefaultOrganizationID() (id int32, err error) {
 		return -1, tk.CreateError(response, err)
 	}
 	if err == nil {
-		id = data.Data.GetOrganizationId()
+		account := data.Data.GetAccount()
+		id = account.GetAccountId()
 	}
 
 	return

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -12,30 +13,32 @@ import (
 
 type DeleteOptions struct {
 	RepoName       string
-	RepoOrg        string
 	OrganizationID int32
 }
 
 func NewCmdDelete() *cobra.Command {
 	var opts DeleteOptions
 	cmd := cobra.Command{
-		Use:   "delete <REPOSITORY-NAME> <ORGANIZATION-NAME>",
-		Short: "Delete a private repository. Specify repository name and repository organization name.",
-		Args:  cobra.ExactArgs(2),
+		Use:   "delete <REPOSITORY-NAME>",
+		Short: "Delete a private repository. Specify repository name.",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			//repo, err :=args[0]
 			opts.RepoName = args[0]
-			opts.RepoOrg = args[1]
 			return deleteRun(opts)
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", -1, "Organization ID")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	return &cmd
 }
 
 func deleteRun(opts DeleteOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+
 	myApiClient := tk.NewClient()
 
 	// Get ID
@@ -43,18 +46,22 @@ func deleteRun(opts DeleteOptions) (err error) {
 	foundId = -1
 
 	// Try private
-	data3, response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(true).Search(opts.RepoName).OrganizationId(opts.OrganizationID).Execute()
+	privateCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(true).Search(opts.RepoName)
+	if orgID != 0 {
+		privateCommand = privateCommand.OrganizationId(orgID)
+	}
+	data3, response, err := privateCommand.Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
 	for _, repo := range data3.Data {
-		if repo.Name == opts.RepoName && repo.OrganizationName == opts.RepoOrg {
+		if repo.Name == opts.RepoName {
 			foundId = repo.AppRepoId
 			break
 		}
 	}
 	if foundId == -1 {
-		return fmt.Errorf("repo with name %s and org %s not found", opts.RepoName, opts.RepoOrg)
+		return fmt.Errorf("repo with name %s not found", opts.RepoName)
 	}
 
 	command := taikuncore.DeleteRepositoryCommand{

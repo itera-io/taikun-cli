@@ -152,3 +152,8 @@ func CheckFlagValue(flagName string, flagValue string, valid gmap.GenericMap) er
 
 	return nil
 }
+
+func AddOrgIDFlag(cmd *cobra.Command, target *int32) {
+	cmd.Flags().Int32VarP(target, "organization-id", "o", 0,
+		"Organization ID (overrides TAIKUN_ORGANIZATION_ID env var)")
+}

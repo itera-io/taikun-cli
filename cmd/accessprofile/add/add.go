@@ -61,7 +61,7 @@ func NewCmdAdd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(&opts.HttpProxy, "http-proxy", "p", "", "Http Proxy URL")
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
 	cmd.Flags().StringSliceVarP(&opts.DNSServers, "dns-servers", "d", []string{}, "DNS Servers")
 	cmd.Flags().StringSliceVarP(&opts.NTPServers, "ntp-servers", "n", []string{}, "NTP Servers")
 	cmd.Flags().StringSliceVarP(&opts.TrustedRegistries, "trusted-registries", "t", []string{}, "Trusted Registries")
@@ -72,6 +72,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) error {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 

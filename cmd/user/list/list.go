@@ -91,7 +91,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
 
 	cmdutils.AddSortByAndReverseFlags(cmd, "users", ListFields)
 	cmdutils.AddColumnsFlag(cmd, ListFields)
@@ -102,6 +102,12 @@ func NewCmdList() *cobra.Command {
 
 // listRun calls the API, gets the Users and prints them in a table.
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	users, err := ListUsers(opts)
 	if err != nil {
 		return err

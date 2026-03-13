@@ -32,13 +32,13 @@ func FlavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 			completions = append(completions, flavor.GetName())
 		}
 
-		count := int32(len(completions))
+		count := int64(len(completions))
 
 		if count == data.GetTotalCount() {
 			break
 		}
 
-		myRequest = myRequest.Offset(count)
+		myRequest = myRequest.Offset(int32(count))
 	}
 
 	return completions

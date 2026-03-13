@@ -8,7 +8,6 @@ import (
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -85,7 +84,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().BoolVarP(&opts.ImportProject, "import-project", "i", false, "Import project")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmd.Flags().StringVarP(&opts.Region, "region", "r", "", "Region (required)")
 	cmdutils.MarkFlagRequired(&cmd, "region")
@@ -100,19 +99,18 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	configFile, err := os.Open(opts.ConfigFilePath)
 	if err != nil {
 		return err
 	}
 
 	myApiClient := tk.NewClient()
-
-	if opts.OrganizationID == 0 {
-		opts.OrganizationID, err = organization.GetDefaultOrganizationID()
-		if err != nil {
-			return
-		}
-	}
 
 	myRequest := myApiClient.Client.GoogleAPI.GooglecloudCreate(context.TODO())
 	myRequest = myRequest.Config(configFile)

@@ -99,10 +99,10 @@ func ListAppInstances(opts *ListOptions) (appInstanceList []taikuncore.InstanceA
 		}
 
 		appInstanceList = append(appInstanceList, data.GetData()...)
-		appInstancesCount := int32(len(appInstanceList))
+		appInstancesCount := int64(len(appInstanceList))
 
 		// We have (over)reached the limit, cut it at the limit and break
-		if opts.Limit != 0 && appInstancesCount >= opts.Limit {
+		if opts.Limit != 0 && appInstancesCount >= int64(opts.Limit) {
 			if int32(len(appInstanceList)) > opts.Limit {
 				appInstanceList = appInstanceList[:opts.Limit]
 			}
@@ -114,7 +114,7 @@ func ListAppInstances(opts *ListOptions) (appInstanceList []taikuncore.InstanceA
 		}
 
 		// The new request will be shifted to the next page of users.
-		myRequest = myRequest.Offset(appInstancesCount)
+		myRequest = myRequest.Offset(int32(appInstancesCount))
 	}
 
 	return appInstanceList, nil

@@ -84,9 +84,9 @@ func listRun(opts *ListOptions) (err error) {
 		}
 
 		flavors = append(flavors, data.GetData()...)
-		flavorsCount := int32(len(flavors))
+		flavorsCount := int64(len(flavors))
 
-		if opts.Limit != 0 && flavorsCount >= opts.Limit {
+		if opts.Limit != 0 && flavorsCount >= int64(opts.Limit) {
 			break
 		}
 
@@ -94,7 +94,7 @@ func listRun(opts *ListOptions) (err error) {
 			break
 		}
 
-		myRequest = myRequest.Offset(flavorsCount)
+		myRequest = myRequest.Offset(int32(flavorsCount))
 	}
 
 	if opts.Limit != 0 && int32(len(flavors)) > opts.Limit {
