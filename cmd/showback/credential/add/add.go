@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -100,7 +101,7 @@ func addRun(opts *AddOptions) (err error) {
 		Url:            *taikunshowback.NewNullableString(&opts.URL),
 		Username:       *taikunshowback.NewNullableString(&opts.Username),
 		Password:       *taikunshowback.NewNullableString(&opts.Password),
-		OrganizationId: &opts.OrganizationID,
+		OrganizationId: *taikunshowback.NewNullableInt32(&opts.OrganizationID),
 	}
 
 	// Execute a query into the API + graceful exit

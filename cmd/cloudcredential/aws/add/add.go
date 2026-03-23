@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -99,7 +100,7 @@ func addRun(opts *AddOptions) (err error) {
 		Name:               *taikuncore.NewNullableString(&opts.Name),
 		AwsSecretAccessKey: *taikuncore.NewNullableString(&opts.AWSSecretAccessKey),
 		AwsAccessKeyId:     *taikuncore.NewNullableString(&opts.AWSAccessKeyID),
-		AzCount:            &opts.AWSAzCount,
+		AzCount:            *taikuncore.NewNullableInt32(&opts.AWSAzCount),
 		AwsRegion:          *taikuncore.NewNullableString(&opts.AWSRegion),
 		OrganizationId:     *taikuncore.NewNullableInt32(&opts.OrganizationID),
 	}
