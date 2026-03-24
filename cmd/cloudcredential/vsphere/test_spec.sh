@@ -15,11 +15,11 @@
 #    AfterAll 'cleanup'
 #
 #    list_cc(){
-#      taikun cloud-credential vsphere list -o "$oid" --no-decorate
+#      taikun cloud-credential vsphere list -O "$oid" --no-decorate
 #    }
 #
 #    list_cc_all(){
-#      taikun cloud-credential list -o "$oid" --no-decorate
+#      taikun cloud-credential list -O "$oid" --no-decorate
 #    }
 #
 #    Example 'list vsphere cloud credential'

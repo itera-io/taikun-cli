@@ -3,7 +3,7 @@ Context 'cloudcredential/proxmox'
       orgname="$(_rnd_name)"
       ccname="$(_rnd_name)"
       oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-      ccid=$(taikun cloud-credential proxmox add "$ccname" --api-host "$PROXMOX_API_HOST" --client-id "$PROXMOX_CLIENT_ID" --client-secret "$PROXMOX_CLIENT_SECRET" --storage "$PROXMOX_STORAGE" --vm-template "$PROXMOX_VM_TEMPLATE_NAME" --hypervisors "$PROXMOX_HYPERVISOR,$PROXMOX_HYPERVISOR2" --continent "$PROXMOX_CONTINENT" --private-network "$PROXMOX_PRIVATE_NETWORK" --private-netmask "$PROXMOX_PRIVATE_NETMASK" --private-gateway "$PROXMOX_PRIVATE_GATEWAY" --private-begin-range "$PROXMOX_PRIVATE_BEGIN_RANGE" --private-end-range "$PROXMOX_PRIVATE_END_RANGE" --private-bridge "$PROXMOX_PRIVATE_BRIDGE" --public-network "$PROXMOX_PUBLIC_NETWORK" --public-netmask "$PROXMOX_PUBLIC_NETMASK" --public-gateway "$PROXMOX_PUBLIC_GATEWAY" --public-begin-range "$PROXMOX_PUBLIC_BEGIN_RANGE" --public-end-range "$PROXMOX_PUBLIC_END_RANGE" --public-bridge "$PROXMOX_PUBLIC_BRIDGE" -o "$oid" -I)
+      ccid=$(taikun cloud-credential proxmox add "$ccname" --api-host "$PROXMOX_API_HOST" --client-id "$PROXMOX_CLIENT_ID" --client-secret "$PROXMOX_CLIENT_SECRET" --storage "$PROXMOX_STORAGE" --vm-template "$PROXMOX_VM_TEMPLATE_NAME" --hypervisors "$PROXMOX_HYPERVISOR,$PROXMOX_HYPERVISOR2" --continent "$PROXMOX_CONTINENT" --private-network "$PROXMOX_PRIVATE_NETWORK" --private-netmask "$PROXMOX_PRIVATE_NETMASK" --private-gateway "$PROXMOX_PRIVATE_GATEWAY" --private-begin-range "$PROXMOX_PRIVATE_BEGIN_RANGE" --private-end-range "$PROXMOX_PRIVATE_END_RANGE" --private-bridge "$PROXMOX_PRIVATE_BRIDGE" --public-network "$PROXMOX_PUBLIC_NETWORK" --public-netmask "$PROXMOX_PUBLIC_NETMASK" --public-gateway "$PROXMOX_PUBLIC_GATEWAY" --public-begin-range "$PROXMOX_PUBLIC_BEGIN_RANGE" --public-end-range "$PROXMOX_PUBLIC_END_RANGE" --public-bridge "$PROXMOX_PUBLIC_BRIDGE" -O "$oid" -I)
     }
     BeforeAll 'setup'
 
@@ -14,11 +14,11 @@ Context 'cloudcredential/proxmox'
     AfterAll 'cleanup'
 
     list_cc(){
-      taikun cloud-credential proxmox list -o "$oid" --no-decorate
+      taikun cloud-credential proxmox list -O "$oid" --no-decorate
     }
 
     list_cc_all(){
-      taikun cloud-credential list -o "$oid" --no-decorate
+      taikun cloud-credential list -O "$oid" --no-decorate
     }
 
     Example 'list proxmox cloud credential'

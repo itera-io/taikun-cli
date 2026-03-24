@@ -1,7 +1,7 @@
 Context 'project/set/expiration'
     setup() {
       oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs )
-      ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
+      ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
       projectname="$(_rnd_name)"
       pid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" -I | xargs)
     }
@@ -17,7 +17,7 @@ Context 'project/set/expiration'
     AfterAll 'cleanup'
 
     list_project(){
-      taikun project list -o "$oid" -C id,name,org,expires,delete-on-expiration --no-decorate
+      taikun project list -O "$oid" -C id,name,org,expires,delete-on-expiration --no-decorate
     }
 
     Example 'list no expiration'

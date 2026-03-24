@@ -40,7 +40,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
+	//cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd

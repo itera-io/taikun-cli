@@ -5,7 +5,7 @@ Context 'standaloneprofile'
 
     name="$(_rnd_name)"
     pubkey="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy"
-    id=$(taikun standalone-profile add "$name" --public-key "$pubkey" -o "$oid" -I)
+    id=$(taikun standalone-profile add "$name" --public-key "$pubkey" -O "$oid" -I)
   }
   BeforeAll 'setup'
 
@@ -16,7 +16,7 @@ Context 'standaloneprofile'
   AfterAll 'cleanup'
 
   Example 'add, list and delete'
-    When call taikun standalone-profile list -o "$oid" --no-decorate --show-large-values
+    When call taikun standalone-profile list -O "$oid" --no-decorate --show-large-values
     The status should equal 0
     The lines of output should equal 1
     The output should include "$name"
@@ -24,19 +24,19 @@ Context 'standaloneprofile'
   End
 
   Example 'duplicate name should cause error'
-    When call taikun standalone-profile add "$name" --public-key "$pubkey" -o "$oid"
+    When call taikun standalone-profile add "$name" --public-key "$pubkey" -O "$oid"
     The status should equal 1
     The stderr should include 'Please specify another name'
   End
 
   Example 'calling add without name should cause error'
-    When call taikun standalone-profile add --public-key "$pubkey" -o "$oid"
+    When call taikun standalone-profile add --public-key "$pubkey" -O "$oid"
     The status should equal 1
     The stderr should equal 'Error: accepts 1 arg(s), received 0'
   End
 
   Example 'calling add without public key should cause error'
-    When call taikun standalone-profile add "$name" -o "$oid"
+    When call taikun standalone-profile add "$name" -O "$oid"
     The status should equal 1
     The stderr should equal 'Error: required flag(s) "public-key" not set'
   End
@@ -53,7 +53,7 @@ Context 'standaloneprofile'
     AfterEach 'unlock'
 
     Example 'lock then unlock'
-      When call taikun standalone-profile list -o "$oid" --columns lock --no-decorate
+      When call taikun standalone-profile list -O "$oid" --columns lock --no-decorate
       The status should equal 0
     The lines of output should equal 1
       The output should include 'Locked'
@@ -73,7 +73,7 @@ Context 'standaloneprofile'
     AfterEach 'restore_old_name'
 
     Example 'rename then restore old name'
-      When call taikun standalone-profile list -o "$oid" --columns name --no-decorate
+      When call taikun standalone-profile list -O "$oid" --columns name --no-decorate
       The status should equal 0
       The lines of output should equal 1
       The output should include "$new_name"

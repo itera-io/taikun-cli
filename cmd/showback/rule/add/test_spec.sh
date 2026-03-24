@@ -19,7 +19,7 @@ Context 'showback/rule/add'
 
   Context
     add_rule() {
-      id=$(taikun showback rule add "$name" -t sum -k general -m node --global-alert-limit 10 --price 1 -o "$oid" -I | xargs)
+      id=$(taikun showback rule add "$name" -t sum -k general -m node --global-alert-limit 10 --price 1 -O "$oid" -I | xargs)
     }
     BeforeAll 'add_rule'
 
@@ -30,7 +30,7 @@ Context 'showback/rule/add'
 
     Example 'basic showback rule'
       list() {
-        taikun showback rule list -o "$oid" --no-decorate
+        taikun showback rule list -O "$oid" --no-decorate
       }
 
       When call list
@@ -40,7 +40,7 @@ Context 'showback/rule/add'
     End
 
     Example 'duplicate names'
-      When call taikun showback rule add "$name" -t sum -k general -m node --global-alert-limit 10 --price 1 -o "$oid"
+      When call taikun showback rule add "$name" -t sum -k general -m node --global-alert-limit 10 --price 1 -O "$oid"
       The stderr should include '400'
       The stderr should include 'already exists'
       The status should equal 1

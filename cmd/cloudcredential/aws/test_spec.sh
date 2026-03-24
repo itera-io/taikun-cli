@@ -3,7 +3,7 @@ Context 'cloudcredential/aws'
       orgname="$(_rnd_name)"
       ccname="$(_rnd_name)"
       oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-      ccid=$(taikun cloud-credential aws add "$ccname" -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY" -r "$AWS_DEFAULT_REGION" -z 1 -o "$oid" -I)
+      ccid=$(taikun cloud-credential aws add "$ccname" -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY" -r "$AWS_DEFAULT_REGION" -z 1 -O "$oid" -I)
     }
     BeforeAll 'setup'
 
@@ -14,7 +14,7 @@ Context 'cloudcredential/aws'
     AfterAll 'cleanup'
 
     list_cc(){
-      taikun cloud-credential list -o "$oid" --no-decorate
+      taikun cloud-credential list -O "$oid" --no-decorate
     }
 
     Example 'list aws cloud credential'

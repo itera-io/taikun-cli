@@ -12,8 +12,8 @@ Context 'accessprofile/add'
 
   Example 'basic access profile'
     run() {
-      taikun access-profile add "$name" -o "$oid" -q
-      taikun access-profile list
+      taikun access-profile add "$name" -O "$oid" -q
+      taikun access-profile list -O "$oid"
     }
 
     When call run
@@ -23,12 +23,12 @@ Context 'accessprofile/add'
 
   Context
     add_access_profile() {
-      taikun access-profile add "$name" -o "$oid" -q
+      taikun access-profile add "$name" -O "$oid" -q
     }
     Before 'add_access_profile'
 
     Example 'duplicate names'
-      When call taikun access-profile add "$name" -o "$oid"
+      When call taikun access-profile add "$name" -O "$oid"
       The stderr should include '400'
       The stderr should include 'already exists'
       The status should equal 1

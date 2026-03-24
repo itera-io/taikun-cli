@@ -8,7 +8,7 @@ Context 'accessprofile/lock'
   add_profile() {
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     name="$(_rnd_name)"
-    id=$(taikun access-profile add "$name" -o "$oid" -I)
+    id=$(taikun access-profile add "$name" -O "$oid" -I)
   }
 
   BeforeEach 'setup'

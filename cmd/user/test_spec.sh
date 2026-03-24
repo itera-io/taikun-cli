@@ -2,7 +2,7 @@ Context 'user'
 
     setup() {
       oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I)
-      ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
+      ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
       pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -I)
     }
     BeforeAll 'setup'
@@ -17,7 +17,7 @@ Context 'user'
     Context
       add_user() {
         username="$(_rnd_name)"
-        uid=$(taikun user add "$username" --role user --email "${username}@mailinator.com" -o "$oid" -I)
+        uid=$(taikun user add "$username" --role user --email "${username}@mailinator.com" -O "$oid" -I)
       }
       BeforeAll 'add_user'
 
@@ -27,21 +27,21 @@ Context 'user'
       AfterAll 'del_user'
 
       Example 'add and then remove'
-        When call taikun user list -o "$oid" --no-decorate
+        When call taikun user list -O "$oid" --no-decorate
         The status should equal 0
         The lines of output should equal 1
         The output should include "$username"
       End
 
       Example 'duplicate name causes error'
-        When call taikun user add "$username" --role manager --email "${username}2@mailinator.com" -o "$oid"
+        When call taikun user add "$username" --role manager --email "${username}2@mailinator.com" -O "$oid"
         The status should equal 1
         The stderr should include 'already exists'
         The stderr should include "$username"
       End
 
       Example 'duplicate email causes error'
-        When call taikun user add "${username}2" --role manager --email "${username}@mailinator.com" -o "$oid"
+        When call taikun user add "${username}2" --role manager --email "${username}@mailinator.com" -O "$oid"
         The status should equal 1
         The stderr should include 'already exists'
         The stderr should include "${username}@mailinator.com"

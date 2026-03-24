@@ -54,7 +54,7 @@ func readOrgIDFromEnv() (int32, bool, error) {
 
 func ErrMissingOrg() error {
 	return fmt.Errorf(
-		"organization ID is required; either pass --organization-id or set the %s environment variable",
+		"organization ID is required; either pass -O or set the %s environment variable",
 		EnvOrgID,
 	)
 }

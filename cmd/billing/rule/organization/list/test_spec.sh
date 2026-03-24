@@ -23,7 +23,7 @@ Context 'billing/rule/organization/list'
     org_name2="$(_rnd_name)"
     oid2=$(taikun organization add "$org_name2" --full-name "$org_name2" -I | xargs)
 
-    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid1" -I)
+    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -O "$oid1" -I)
     id=$(taikun billing rule add "$name" -b "$cid" -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
 
     trap - ERR
@@ -44,8 +44,8 @@ Context 'billing/rule/organization/list'
   Context
 
     bind_org() {
-      taikun billing rule organization bind "$id" -o "$oid1" -d 42 -q
-      taikun billing rule organization bind "$id" -o "$oid2" -d 42 -q
+      taikun billing rule organization bind "$id" -O "$oid1" -d 42 -q
+      taikun billing rule organization bind "$id" -O "$oid2" -d 42 -q
     }
 
     BeforeEach 'bind_org'

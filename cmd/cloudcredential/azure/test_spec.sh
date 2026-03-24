@@ -3,7 +3,7 @@ Context 'cloudcredential/azure'
     orgname="$(_rnd_name)"
     ccname="$(_rnd_name)"
     oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-    ccid=$(taikun cloud-credential azure add "$ccname" -o "$oid" --az-count="$AZ_COUNT" --client-id="$AZURE_CLIENT_ID" --client-secret="$AZURE_SECRET" --location="$AZURE_LOCATION" --subscription-id="$AZURE_SUBSCRIPTION" --tenant-id="$AZURE_TENANT" -I)
+    ccid=$(taikun cloud-credential azure add "$ccname" -O "$oid" --az-count="$AZ_COUNT" --client-id="$AZURE_CLIENT_ID" --client-secret="$AZURE_SECRET" --location="$AZURE_LOCATION" --subscription-id="$AZURE_SUBSCRIPTION" --tenant-id="$AZURE_TENANT" -I)
   }
   BeforeAll 'setup'
 
@@ -14,7 +14,7 @@ Context 'cloudcredential/azure'
   AfterAll 'cleanup'
 
   list_cc(){
-    taikun cloud-credential list -o "$oid" --no-decorate
+    taikun cloud-credential list -O "$oid" --no-decorate
   }
 
   Example 'list azure cloud credential'
@@ -28,7 +28,7 @@ Context 'cloudcredential/azure'
   End
 
   Example 'same name azure cloud credential'
-    When call taikun cloud-credential azure add "$ccname" -o "$oid" --az-count="$AZ_COUNT" --client-id="$AZURE_CLIENT_ID" --client-secret="$AZURE_SECRET" --location="$AZURE_LOCATION" --subscription-id="$AZURE_SUBSCRIPTION" --tenant-id="$AZURE_TENANT"
+    When call taikun cloud-credential azure add "$ccname" -O "$oid" --az-count="$AZ_COUNT" --client-id="$AZURE_CLIENT_ID" --client-secret="$AZURE_SECRET" --location="$AZURE_LOCATION" --subscription-id="$AZURE_SUBSCRIPTION" --tenant-id="$AZURE_TENANT"
     The lines of output should equal 0
     The lines of stderr should equal 1
     The status should equal 1

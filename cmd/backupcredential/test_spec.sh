@@ -2,7 +2,7 @@ Context 'backupcredential'
   setup(){
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
-    cid=$(taikun backup-credential add "$cname" --s3-access-key "$S3_ACCESS_KEY_ID" --s3-endpoint "$S3_ENDPOINT" --s3-region "$S3_REGION" --s3-secret-key "$S3_SECRET_ACCESS_KEY" -o "$oid" -I | xargs)
+    cid=$(taikun backup-credential add "$cname" --s3-access-key "$S3_ACCESS_KEY_ID" --s3-endpoint "$S3_ENDPOINT" --s3-region "$S3_REGION" --s3-secret-key "$S3_SECRET_ACCESS_KEY" -O "$oid" -I | xargs)
     taikun backup-credential lock "$cid" -q
   }
   BeforeAll 'setup'
@@ -14,7 +14,7 @@ Context 'backupcredential'
   AfterAll 'cleanup'
 
   list_cred(){
-    taikun backup-credential list | grep "$cname"
+    taikun backup-credential list -O "$oid" | grep "$cname"
   }
 
   Example 'lock already locked'

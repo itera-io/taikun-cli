@@ -2,7 +2,7 @@ Context 'alertingprofile/integration'
   setup() {
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
     name="$(_rnd_name)"
-    apid=$(taikun alerting-profile add "$name" --reminder daily -o "$oid" -I | xargs)
+    apid=$(taikun alerting-profile add "$name" --reminder daily -O "$oid" -I | xargs)
     integration_id=$(taikun alerting-profile integration add "$apid" --token "mock" --url "https://zaphod.beeblebrox.local" --type opsgenie -I | xargs)
   }
   BeforeAll 'setup'

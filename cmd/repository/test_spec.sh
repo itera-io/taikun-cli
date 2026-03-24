@@ -1,10 +1,11 @@
 Context 'repository/one'
-  Example 'list the recommended repositories'
-    When call taikun repository list-recommend
-    The status should equal 0
-    The output should include "REPOSITORY-NAME"
-    The output should include "taikun-managed-apps"
-  End
+# List command requires repository ID
+#  Example 'list the recommended repositories'
+#    When call taikun repository list-recommend
+#    The status should equal 0
+#    The output should include "REPOSITORY-NAME"
+#    The output should include "taikun-managed-apps"
+#  End
 
   Example 'list the public repositories'
     When call taikun repository list-public --limit 1 --no-decorate --sort-by REPOSITORY-NAME
@@ -33,17 +34,17 @@ Context 'repostory/two'
   AfterAll 'cleanup'
 
   askforrepo(){
-    taikun repository list-private --no-decorate -o "$oid" | grep "tk-cli-susetest"
+    taikun repository list-private --no-decorate -O "$oid" | grep "tk-cli-susetest"
   }
 
   Example 'import private repo'
-    When call taikun repository import tk-cli-susetest --url https://kubernetes-charts.suse.com -o "$oid"
+    When call taikun repository import tk-cli-susetest --url https://kubernetes-charts.suse.com -O "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
 
   Example 'list the new repository'
-    When call taikun repository list-private --no-decorate -o "$oid"
+    When call taikun repository list-private --no-decorate -O "$oid"
     The status should equal 0
     The output should include "$cname"
     The output should include "Enabled"
@@ -51,7 +52,7 @@ Context 'repostory/two'
   End
 
   Example 'disable the new repo'
-    When call taikun repository disable tk-cli-susetest -o "$oid"
+    When call taikun repository disable tk-cli-susetest -O "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
@@ -65,7 +66,7 @@ Context 'repostory/two'
   End
 
   Example 'enable the new repo'
-    When call taikun repository enable tk-cli-susetest -o "$oid"
+    When call taikun repository enable tk-cli-susetest -O "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
@@ -79,19 +80,19 @@ Context 'repostory/two'
   End
 
   Example 'disable the repo for deletion'
-    When call taikun repository disable tk-cli-susetest -o "$oid"
+    When call taikun repository disable tk-cli-susetest -O "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
 
   Example 'delete the repository'
-    When call taikun repository delete tk-cli-susetest -o "$oid"
+    When call taikun repository delete tk-cli-susetest -O "$oid"
     The status should equal 0
     The output should include "Operation was successful."
   End
 
   Example 'list without repo'
-    When call taikun repository list-private --no-decorate -o "$oid"
+    When call taikun repository list-private --no-decorate -O "$oid"
     The status should equal 0
     The output should not include "$cname"
   End

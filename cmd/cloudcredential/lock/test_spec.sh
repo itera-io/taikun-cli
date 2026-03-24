@@ -3,7 +3,7 @@ Context 'cloudcredential/lock'
     orgname="$(_rnd_name)"
     ccname="$(_rnd_name)"
     oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-    ccid=$(taikun cloud-credential openstack add "$ccname" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
+    ccid=$(taikun cloud-credential openstack add "$ccname" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
     taikun cloud-credential lock "$ccid" -q
   }
   BeforeAll 'setup'
@@ -15,7 +15,7 @@ Context 'cloudcredential/lock'
   AfterAll 'cleanup'
 
   Example 'list if lock is successful'
-    When call taikun cloud-credential list -o "$oid"
+    When call taikun cloud-credential list -O "$oid"
     The status should equal 0
     The output should include "Locked"
   End
@@ -33,7 +33,7 @@ Context 'cloudcredential/lock'
   End
 
   Example 'list if unlock is successful'
-    When call taikun cloud-credential list -o "$oid"
+    When call taikun cloud-credential list -O "$oid"
     The status should equal 0
     The output should include "Unlocked"
   End

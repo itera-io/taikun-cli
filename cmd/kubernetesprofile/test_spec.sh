@@ -13,7 +13,7 @@ Context 'kubernetesprofile'
   AfterAll 'cleanup'
 
   Example 'No kubernetes profiles'
-    When call taikun kubernetes-profile list -o "$oid" --no-decorate
+    When call taikun kubernetes-profile list -O "$oid" --no-decorate
     The status should equal 0
     The lines of output should equal 1 # counting the default
   End
@@ -22,8 +22,8 @@ Context 'kubernetesprofile'
     add_config() {
       profile_name="$(_rnd_name)"
       profile_name2="$(_rnd_name)"
-      scid=$(taikun kubernetes-profile add "$profile_name" -o "$oid" --enable-octavia --enable-gpu --enable-wasm -I)
-      scid2=$(taikun kubernetes-profile add "$profile_name2" -o "$oid" --enable-octavia --enable-gpu --enable-wasm --proxmox-storage "OpenEBS" -I)
+      scid=$(taikun kubernetes-profile add "$profile_name" -O "$oid" --enable-octavia --enable-gpu --enable-wasm -I)
+      scid2=$(taikun kubernetes-profile add "$profile_name2" -O "$oid" --enable-octavia --enable-gpu --enable-wasm --proxmox-storage "OpenEBS" -I)
     }
 
     Before 'add_config'
@@ -36,7 +36,7 @@ Context 'kubernetesprofile'
     After 'delete_config'
 
     Example 'add then delete kubernetes profile'
-      When call taikun kubernetes-profile list -o "$oid" --no-decorate
+      When call taikun kubernetes-profile list -O "$oid" --no-decorate
       The status should equal 0
       The lines of output should equal 3 # counting the default
       The output should include "$scid"
@@ -47,14 +47,14 @@ Context 'kubernetesprofile'
     End
 
     Example 'Check if GPU got enabled'
-      When call taikun kubernetes-profile list -o "$oid" --columns=nvidia-gpu --no-decorate
+      When call taikun kubernetes-profile list -O "$oid" --columns=nvidia-gpu --no-decorate
       The status should equal 0
       The lines of output should equal 3 # counting the default
       The output should include "Yes"
     End
 
     Example 'Check if Wasm got enabled'
-      When call taikun kubernetes-profile list -o "$oid" --columns=wasm --no-decorate
+      When call taikun kubernetes-profile list -O "$oid" --columns=wasm --no-decorate
       The status should equal 0
       The lines of output should equal 3 # counting the default
       The output should include "Yes"
@@ -64,7 +64,7 @@ Context 'kubernetesprofile'
 
     Context 'lock/unlock'
       add_config() {
-        ppid=$(taikun kubernetes-profile add "$(_rnd_name)" -o "$oid" --enable-octavia -I)
+        ppid=$(taikun kubernetes-profile add "$(_rnd_name)" -O "$oid" --enable-octavia -I)
         taikun kubernetes-profile lock "$ppid" -q
       }
 
