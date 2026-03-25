@@ -119,5 +119,4 @@ func addRun(opts *AddOptions) error {
 
 	// Manipulate the gathered data
 	return out.PrintResult(data, addFields)
-
 }
