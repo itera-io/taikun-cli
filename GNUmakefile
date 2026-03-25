@@ -1,12 +1,12 @@
 BINARY=taikun
-GOLANGCI_LINTERS_VERSION := v2.11.3
+GOLANGCI_LINTERS_VERSION := v2.11.4
 
 default: install
 
-deps: shellspec-install goreleaser-install ## Installing development prerequisites locally
+deps: shellspec-install goreleaser-install go-linters-install ## Installing development prerequisites locally
 
 shellspec-install: ## Installs shellspec locally (to run shell-based unit tests)
-	curl -fsSL https://git.io/shellspec | sh
+	- curl -fsSL https://git.io/shellspec | sh
 
 goreleaser-install: ## Installs goreleaser binary with go install
 	go install github.com/goreleaser/goreleaser/v2@latest
@@ -15,8 +15,7 @@ go-linters-install: ## Installs Golang's linters locally for verification
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin ${GOLANGCI_LINTERS_VERSION}
 
 .PHONY: build
-build: ## Builds taikun-cli binary
-	go mod tidy -compat=1.24
+build: go-vendor ## Builds taikun-cli binary
 	go build -o ${BINARY} .
 
 .PHONY: dockerbuild
@@ -47,6 +46,15 @@ release: install ## Releases Go binary
 ci_local: install lint test release ## Mimics CI/CD behavior locally and runs test and release phases
 	echo "======================================"
 	echo "Local mock of the CI pipeline complete"
+
+go-tidy: ## Runs go mod tidy
+	go mod tidy
+
+go-vendor: go-tidy ## Runs go mod tidy && go mod vendor
+	go mod vendor
+
+clean-vendor: ## Removes vendor folder
+	rm -rf vendor
 
 .PHONY: help
 help: # Credits to https://gist.github.com/prwhite/8168133 for this handy oneliner
