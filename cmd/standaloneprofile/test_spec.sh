@@ -26,7 +26,7 @@ Context 'standaloneprofile'
   Example 'duplicate name should cause error'
     When call taikun standalone-profile add "$name" --public-key "$pubkey" -O "$oid"
     The status should equal 1
-    The stderr should include 'Please specify another name'
+    The stderr should include 'already exists'
   End
 
   Example 'calling add without name should cause error'

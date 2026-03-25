@@ -2,6 +2,7 @@ package enable
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -39,12 +40,15 @@ func enableRun(opts EnableOptions) (err error) {
 		return err
 	}
 
+	orgIDStr := fmt.Sprintf("%s", orgID)
+
 	myApiClient := tk.NewClient()
 
 	command := taikuncore.BindAppRepositoryCommand{
 		FilteringElements: []taikuncore.FilteringElementDto{
 			{
-				Name: *taikuncore.NewNullableString(&opts.RepoName),
+				Name:             *taikuncore.NewNullableString(&opts.RepoName),
+				OrganizationName: *taikuncore.NewNullableString(&orgIDStr),
 			},
 		},
 	}

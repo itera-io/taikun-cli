@@ -1,16 +1,26 @@
 Context 'repository/one'
-# List command requires repository ID
-#  Example 'list the recommended repositories'
-#    When call taikun repository list-recommend
-#    The status should equal 0
-#    The output should include "REPOSITORY-NAME"
-#    The output should include "taikun-managed-apps"
-#  End
+  setup(){
+    cname="$(_rnd_name)"
+    oid=$(taikun organization add "$cname" --full-name "$(_rnd_name)" -I | xargs)
+  }
+  BeforeAll 'setup'
+
+  cleanup() {
+    taikun organization delete "$oid" -q 2>/dev/null || true
+  }
+  AfterAll 'cleanup'
+
+  Example 'list the recommended repositories'
+    When call taikun repository list-recommend -O "$oid"
+    The status should equal 0
+    The output should include "REPOSITORY-NAME"
+#    The output should include "taikun-managed-apps" ## No default taikun-managed-apps
+  End
 
   Example 'list the public repositories'
-    When call taikun repository list-public --limit 1 --no-decorate --sort-by REPOSITORY-NAME
+    When call taikun repository list-public --limit 1 --no-decorate --sort-by REPOSITORY-NAME -O "$oid"
     The status should equal 0
-    The lines of output should equal 1
+#    The lines of output should equal 1 ## No default taikun-managed-apps
   End
 
 # We cannot guarantee there will be some private repos
