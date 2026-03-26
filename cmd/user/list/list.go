@@ -2,6 +2,8 @@ package list
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -92,7 +94,6 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
-
 	cmdutils.AddSortByAndReverseFlags(cmd, "users", ListFields)
 	cmdutils.AddColumnsFlag(cmd, ListFields)
 	cmdutils.AddLimitFlag(cmd, &opts.Limit)
@@ -132,6 +133,8 @@ func ListUsers(opts *ListOptions) (userList []taikuncore.UserForListDto, err err
 	}
 	// Initialise a new, empty slice of UserForListDto structs generated in models.
 	userList = make([]taikuncore.UserForListDto, 0)
+
+	fmt.Printf("%s\n", myRequest)
 
 	// Execute the request, it returns 50 users and then execute it again with an Offset until you have read all of it.
 	for {

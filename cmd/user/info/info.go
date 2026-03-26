@@ -2,6 +2,7 @@ package info
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
@@ -22,12 +23,24 @@ func NewCmdInfo() *cobra.Command {
 		Long:  "Retrieve information about usertoken (shows all the bound endpoints)",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				return myInfoRun() // Info about current user
+			}
 			if len(args) == 1 {
 				infoFields.ShowAll()    // Long
 				return listRun(args[0]) // List user by ID
 			}
+			for _, id := range args {
+				_ = listRun(id)
+			}
+			return nil
 			// infoFields.ShowAll()
-			return myInfoRun() // Info about current user
+			//if len(args) == 1 {
+			//	infoFields.ShowAll()    // Long
+			//	return listRun(args[0]) // List user by ID
+			//}
+			//// infoFields.ShowAll()
+			//return myInfoRun() // Info about current user
 		},
 	}
 
@@ -50,15 +63,19 @@ func myInfoRun() (err error) {
 // listRun calls the API and gets the info about user with userID
 func listRun(userID string) (err error) {
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.UsersAPI.UsersList(context.TODO()).Id(userID).Execute()
+	data, response, err := myApiClient.Client.UsersAPI.UsersList(context.TODO()).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
 
-	// User not found
-	if len(data.Data) != 1 {
-		return cmderr.ResourceNotFoundError("User", userID)
+	// filter out user
+	for _, user := range data.Data {
+		if user.Id == userID {
+			// found a match
+			return out.PrintResult(user, infoFields)
+		}
 	}
 
-	return out.PrintResult(data.Data[0], infoFields)
+	// User not found
+	return cmderr.ResourceNotFoundError("User", userID)
 }

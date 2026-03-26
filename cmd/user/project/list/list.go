@@ -2,6 +2,7 @@ package list
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
@@ -41,7 +42,6 @@ func NewCmdList() *cobra.Command {
 	}
 
 	complete.CompleteArgsWithUserID(&cmd)
-
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd

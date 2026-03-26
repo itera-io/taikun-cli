@@ -4,7 +4,7 @@ Context 'user/info'
         ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
         pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -I)
         username="$(_rnd_name)"
-        uid=$(taikun user add "$username" --role user --email "${username}@mailinator.com" -O "$oid" -I)
+        uid=$(taikun user add "$username" --email "${username}@mailinator.com" -O "$oid" -I)
       }
       BeforeAll 'setup'
 

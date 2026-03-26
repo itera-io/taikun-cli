@@ -17,7 +17,7 @@ Context 'user'
     Context
       add_user() {
         username="$(_rnd_name)"
-        uid=$(taikun user add "$username" --role user --email "${username}@mailinator.com" -O "$oid" -I)
+        uid=$(taikun user add "$username" --email "${username}@mailinator.com" -O "$oid" -I)
       }
       BeforeAll 'add_user'
 
@@ -34,14 +34,14 @@ Context 'user'
       End
 
       Example 'duplicate name causes error'
-        When call taikun user add "$username" --role manager --email "${username}2@mailinator.com" -O "$oid"
+        When call taikun user add "$username" --email "${username}2@mailinator.com" -O "$oid"
         The status should equal 1
         The stderr should include 'already exists'
         The stderr should include "$username"
       End
 
       Example 'duplicate email causes error'
-        When call taikun user add "${username}2" --role manager --email "${username}@mailinator.com" -O "$oid"
+        When call taikun user add "${username}2" --email "${username}@mailinator.com" -O "$oid"
         The status should equal 1
         The stderr should include 'already exists'
         The stderr should include "${username}@mailinator.com"

@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -117,7 +118,7 @@ func addRun(opts *AddOptions) (err error) {
 	body := taikuncore.CreateUserCommand{}
 	body.SetDisplayName(opts.DisplayName)
 	body.SetEmail(opts.Email)
-	body.SetAccountId(opts.OrganizationID)
+	//body.SetAccountId(opts.OrganizationID)
 	body.SetUsername(opts.Username)
 
 	data, response, err := myApiClient.Client.UsersAPI.UsersCreate(context.TODO()).CreateUserCommand(body).Execute()
