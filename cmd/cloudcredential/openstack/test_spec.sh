@@ -28,7 +28,7 @@ Context 'cloudcredential/openstack'
     End
 
     Example 'check invalid openstack cloud credential'
-      When call taikun cloud-credential openstack check -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" -u "$OS_USERNAME" --url "mockup.local"
+      When call taikun cloud-credential openstack check -s "$OS_APPLICATION_CREDENTIAL_SECRET" -i "$OS_APPLICATION_CREDENTIAL_ID" --url "mockup.local"
       The lines of stderr should equal 1
       The status should equal 1
       The stderr should include "Error: OpenStack cloud credential is not valid"
