@@ -76,7 +76,7 @@ Context 'repostory/two'
   End
 
   Example 'enable the new repo'
-    When call taikun repository enable tk-cli-susetest -O "$oid"
+    When call taikun repository enable tk-cli-susetest -O "$oid" -n "$cname"
     The status should equal 0
     The output should include "Operation was successful."
   End

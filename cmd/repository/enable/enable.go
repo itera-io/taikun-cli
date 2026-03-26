@@ -2,7 +2,6 @@ package enable
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -12,8 +11,9 @@ import (
 )
 
 type EnableOptions struct {
-	RepoName       string
-	OrganizationID int32
+	RepoName         string
+	OrganizationID   int32
+	OrganizationName string
 }
 
 func NewCmdEnable() *cobra.Command {
@@ -30,6 +30,7 @@ func NewCmdEnable() *cobra.Command {
 	}
 
 	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
+	cmd.Flags().StringVarP(&opts.OrganizationName, "orgname", "n", "", "Organization's Name")
 
 	return &cmd
 }
@@ -40,15 +41,13 @@ func enableRun(opts EnableOptions) (err error) {
 		return err
 	}
 
-	orgIDStr := fmt.Sprintf("%s", orgID)
-
 	myApiClient := tk.NewClient()
 
 	command := taikuncore.BindAppRepositoryCommand{
 		FilteringElements: []taikuncore.FilteringElementDto{
 			{
 				Name:             *taikuncore.NewNullableString(&opts.RepoName),
-				OrganizationName: *taikuncore.NewNullableString(&orgIDStr),
+				OrganizationName: *taikuncore.NewNullableString(&opts.OrganizationName),
 			},
 		},
 	}
