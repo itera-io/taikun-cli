@@ -2,7 +2,9 @@ package root
 
 import (
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
+	"github.com/itera-io/taikun-cli/cmd/accounts"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/application"
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
@@ -11,6 +13,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/groups"
 	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile"
 	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile"
@@ -60,6 +63,8 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(application.NewCmdApplication())
 	cmd.AddCommand(repository.NewCmdRepository())
 	cmd.AddCommand(catalog.NewCmdCatalog())
+	cmd.AddCommand(groups.NewCmdGroups())
+	cmd.AddCommand(accounts.NewCmdAccounts())
 
 	return cmd
 }
