@@ -3,6 +3,7 @@ package update
 import (
 	"context"
 
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
@@ -32,7 +33,7 @@ func NewCmdUpdateOrganization() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "O", 0, "ID of organization to add to the group")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role to add to the group")
 	opts.Projects = *cmd.Flags().Int32SliceP("project-id", "p", nil, "Project ID")
 

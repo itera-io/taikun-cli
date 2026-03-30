@@ -11,7 +11,7 @@ import (
 )
 
 type CreateOptions struct {
-	AccountID int
+	AccountID int32
 }
 
 func NewCmdCreateGroup() *cobra.Command {
@@ -26,7 +26,7 @@ func NewCmdCreateGroup() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().IntVarP(&opts.AccountID, "account-id", "a", 0, "Account ID")
+	cmd.Flags().Int32VarP(&opts.AccountID, "account-id", "a", 0, "Account ID")
 	_ = cmd.MarkFlagRequired("account-id")
 
 	return &cmd
@@ -41,7 +41,7 @@ func createGroup(groupName string, opts CreateOptions) (err error) {
 
 	body := taikuncore.CreateGroupCommand{
 		Name:      groupName,
-		AccountId: int32(opts.AccountID),
+		AccountId: opts.AccountID,
 	}
 
 	_, response, err := myApiClient.Client.GroupsAPI.GroupsCreate(context.TODO()).CreateGroupCommand(body).Execute()
