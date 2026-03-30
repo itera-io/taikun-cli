@@ -18,6 +18,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/policyprofile"
 	"github.com/itera-io/taikun-cli/cmd/project"
 	"github.com/itera-io/taikun-cli/cmd/repository"
+	"github.com/itera-io/taikun-cli/cmd/robot"
 	"github.com/itera-io/taikun-cli/cmd/showback"
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration"
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile"
@@ -64,7 +65,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(catalog.NewCmdCatalog())
 	cmd.AddCommand(groups.NewCmdGroups())
 	//cmd.AddCommand(accounts.NewCmdAccounts())
-	//cmd.AddCommand(robot.NewCmdRobot())
+	cmd.AddCommand(robot.NewCmdRobot())
 
 	return cmd
 }
