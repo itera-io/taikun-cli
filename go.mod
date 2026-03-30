@@ -4,13 +4,12 @@ go 1.24.0
 
 require (
 	github.com/go-openapi/strfmt v0.24.0
-	github.com/itera-io/taikungoclient v0.0.0-20260311195523-e6c343d40faf
+	github.com/itera-io/taikungoclient v0.0.0-20260330140102-581da6aec853
 	github.com/jedib0t/go-pretty/v6 v6.6.8
 	github.com/spf13/cobra v1.10.1
 )
 
 //replace github.com/itera-io/taikungoclient v0.0.0-20250808111946-67f44fc8d658 => /home/smidra/taikun/taikungoclient/taikungoclient-official
-replace github.com/itera-io/taikungoclient v0.0.0-20260311195523-e6c343d40faf => ../taikungoclient
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
