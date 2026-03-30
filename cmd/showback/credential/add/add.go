@@ -101,7 +101,7 @@ func addRun(opts *AddOptions) (err error) {
 		Url:            *taikunshowback.NewNullableString(&opts.URL),
 		Username:       *taikunshowback.NewNullableString(&opts.Username),
 		Password:       *taikunshowback.NewNullableString(&opts.Password),
-		OrganizationId: *taikunshowback.NewNullableInt32(&opts.OrganizationID),
+		OrganizationId: &opts.OrganizationID,
 	}
 
 	// Execute a query into the API + graceful exit
