@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
+	"github.com/itera-io/taikun-cli/cmd/accounts"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/application"
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
@@ -64,7 +65,7 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(repository.NewCmdRepository())
 	cmd.AddCommand(catalog.NewCmdCatalog())
 	cmd.AddCommand(groups.NewCmdGroups())
-	//cmd.AddCommand(accounts.NewCmdAccounts())
+	cmd.AddCommand(accounts.NewCmdAccounts())
 	cmd.AddCommand(robot.NewCmdRobot())
 
 	return cmd
