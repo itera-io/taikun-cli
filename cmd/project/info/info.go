@@ -2,6 +2,7 @@ package info
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -37,6 +38,9 @@ var infoFields = fields.New(
 		),
 		field.NewVisible(
 			"ACCESS-PROFILE-ID", "accessProfileId",
+		),
+		field.NewVisible(
+			"ACCESS-IP", "accessIp",
 		),
 		field.NewVisibleWithToStringFunc(
 			"CLOUD", "cloudType", out.FormatCloudType,
