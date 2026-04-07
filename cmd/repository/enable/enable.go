@@ -52,7 +52,7 @@ func enableRun(opts EnableOptions) (err error) {
 		},
 	}
 	if orgID != 0 {
-		command.OrganizationId = &orgID
+		command.OrganizationId = *taikuncore.NewNullableInt32(&orgID)
 	}
 
 	response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryBind(context.TODO()).BindAppRepositoryCommand(command).Execute()

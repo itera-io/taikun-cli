@@ -21,7 +21,7 @@ func CompleteArgsWithUserID(cmd *cobra.Command) {
 				completions[i] = fmt.Sprintf(
 					"%s\t%s",
 					user.GetId(),
-					user.GetUsername(),
+					//user.GetUsername(),
 				)
 			}
 

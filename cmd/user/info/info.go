@@ -3,7 +3,6 @@ package info
 import (
 	"context"
 
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -63,19 +62,20 @@ func myInfoRun() (err error) {
 // listRun calls the API and gets the info about user with userID
 func listRun(userID string) (err error) {
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.UsersAPI.UsersList(context.TODO()).Execute()
+	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
+	return out.PrintResult(data, infoFields)
 
 	// filter out user
-	for _, user := range data.Data {
-		if user.Id == userID {
-			// found a match
-			return out.PrintResult(user, infoFields)
-		}
-	}
-
-	// User not found
-	return cmderr.ResourceNotFoundError("User", userID)
+	//for _, user := range data.Data {
+	//	if user.Id == userID {
+	//		// found a match
+	//		return out.PrintResult(user, infoFields)
+	//	}
+	//}
+	//
+	//// User not found
+	//return cmderr.ResourceNotFoundError("User", userID)
 }
