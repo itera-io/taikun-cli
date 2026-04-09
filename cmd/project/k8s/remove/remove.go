@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 
@@ -47,7 +48,7 @@ func NewCmdDelete() *cobra.Command {
 	}
 
 	cmd.Flags().Int32SliceVarP(&opts.ServerIDs, "server-ids", "s", []int32{}, "IDs of the servers to delete")
-	cmd.Flags().BoolVarP(&opts.DeleteAll, "all-servers", "a", false, "Delete all of the project's servers")
+	cmd.Flags().BoolVarP(&opts.DeleteAll, "all-servers", "", false, "Delete all of the project's servers")
 
 	return &cmd
 }

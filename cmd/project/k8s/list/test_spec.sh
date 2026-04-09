@@ -70,14 +70,14 @@ Context 'project/k8s/list'
 
   Context
     add_servers() {
-      bsid=$(taikun project k8s add "$pid" -n bastion -r bastion -f "$flavor" -a b -I)
-      msid=$(taikun project k8s add "$pid" -n master -r kubemaster -f "$flavor" -a b -I)
-      wsid=$(taikun project k8s add "$pid" -n worker -r kubeworker -f "$flavor" -a c -I)
+      bsid=$(taikun project k8s add "$pid" -n bastion -r bastion -f "$flavor" --availability-zone b -I)
+      msid=$(taikun project k8s add "$pid" -n master -r kubemaster -f "$flavor" --availability-zone b -I)
+      wsid=$(taikun project k8s add "$pid" -n worker -r kubeworker -f "$flavor" --availability-zone c -I)
     }
     Before 'add_servers'
 
     remove_servers() {
-      taikun project k8s delete "$pid" -a -q 2>/dev/null || true
+      taikun project k8s delete "$pid" --all-servers -q 2>/dev/null || true
     }
     AfterAll 'remove_servers'
 

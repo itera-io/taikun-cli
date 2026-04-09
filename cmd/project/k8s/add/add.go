@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	tk "github.com/itera-io/taikungoclient"
-	taikuncore "github.com/itera-io/taikungoclient/client"
 	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -13,6 +11,8 @@ import (
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	"github.com/itera-io/taikun-cli/utils/types"
+	tk "github.com/itera-io/taikungoclient"
+	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
 )
 

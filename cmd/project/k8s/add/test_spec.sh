@@ -94,19 +94,19 @@ Context 'project/k8s/add'
 
   Context
     remove_master() {
-      taikun project k8s delete "$pid" -a -q 2>/dev/null || true
+      taikun project k8s delete "$pid" --all-servers -q 2>/dev/null || true
     }
     AfterAll 'remove_master'
 
     Example 'add one server with availability zone'
-      When call taikun project k8s add "$pid" -n master --flavor "$flavor" -r kubemaster -a a
+      When call taikun project k8s add "$pid" -n master --flavor "$flavor" -r kubemaster --availability-zone a
       The status should equal 0
       The lines of output should equal 8
       The output should include 'master'
     End
 
     Example 'add one server with bad availability zone'
-      When call taikun project k8s add "$pid" -n master2 --flavor "$flavor" -r kubemaster -a f
+      When call taikun project k8s add "$pid" -n master2 --flavor "$flavor" -r kubemaster --availability-zone f
       The status should equal 1
       The stderr should include 'There is no zone f for this cloud credential'
     End
