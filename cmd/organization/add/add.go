@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -77,9 +78,10 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	Email    string
-	FullName string
-	Name     string
+	Email     string
+	FullName  string
+	Name      string
+	AccountID int32
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -100,6 +102,9 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.Email, "email", "e", "", "Email")
 
+	cmd.Flags().Int32VarP(&opts.AccountID, "account-id", "", -1, "Account ID")
+	//cmdutils.MarkFlagRequired(cmd, "account-id")
+
 	cmdutils.AddOutputOnlyIDFlag(cmd)
 	cmdutils.AddColumnsFlag(cmd, addFields)
 
@@ -113,6 +118,11 @@ func addRun(opts *AddOptions) (err error) {
 		FullName: *taikuncore.NewNullableString(&opts.FullName),
 		Email:    *taikuncore.NewNullableString(&opts.Email),
 	}
+
+	if opts.AccountID != -1 {
+		body.AccountId = *taikuncore.NewNullableInt32(&opts.AccountID)
+	}
+	
 	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsCreate(context.TODO()).OrganizationCreateCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
