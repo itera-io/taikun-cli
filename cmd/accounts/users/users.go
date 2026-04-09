@@ -1,6 +1,7 @@
 package users
 
 import (
+	"github.com/itera-io/taikun-cli/cmd/accounts/users/available"
 	"github.com/itera-io/taikun-cli/cmd/accounts/users/info"
 	"github.com/itera-io/taikun-cli/cmd/accounts/users/list"
 	"github.com/spf13/cobra"
@@ -14,6 +15,7 @@ func NewCmdUsers() *cobra.Command {
 
 	cmd.AddCommand(list.NewCmdList())
 	cmd.AddCommand(info.NewCmdInfo())
+	cmd.AddCommand(available.NewCmdListAvailable())
 
 	return &cmd
 }

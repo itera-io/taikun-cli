@@ -54,8 +54,7 @@ func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
 	var organizations = make([]taikuncore.OrganizationsWithGroupInfoResultDto, 0)
 
-	req := myApiClient.Client.AccountsAPI.AccountsAccountOrganizationsWithGroup(context.TODO(), opts.AccountID)
-
+	req := myApiClient.Client.AccountsAPI.AccountsAccountOrganizationsWithGroup(context.TODO(), opts.AccountID).Limit(opts.Limit)
 	for {
 		data, response, err := req.Execute()
 		if err != nil {
