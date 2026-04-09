@@ -71,10 +71,10 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	DisplayName    string
-	Email          string
-	OrganizationID int32
-	Username       string
+	DisplayName string
+	Email       string
+	AccountID   int32
+	Username    string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -97,8 +97,9 @@ func NewCmdAdd() *cobra.Command {
 	// Display name optional flag. Default none.
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
 
-	// Organization ID optional flag. Default 0.
-	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
+	// Account ID mandatory flag. Default 0.
+	cmd.Flags().Int32VarP(&opts.AccountID, "account-id", "", -1, "Account ID")
+	cmdutils.MarkFlagRequired(&cmd, "account-id")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -108,17 +109,11 @@ func NewCmdAdd() *cobra.Command {
 
 // addRun calls the API with a custom body from arguments. It than prints the result.
 func addRun(opts *AddOptions) (err error) {
-	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
-	if err != nil {
-		return err
-	}
-	opts.OrganizationID = orgID
-
 	myApiClient := tk.NewClient()
 	body := taikuncore.CreateUserCommand{}
 	body.SetDisplayName(opts.DisplayName)
 	body.SetEmail(opts.Email)
-	//body.SetAccountId(opts.OrganizationID)
+	body.SetAccountId(opts.AccountID)
 	body.SetUsername(opts.Username)
 
 	data, response, err := myApiClient.Client.UsersAPI.UsersCreate(context.TODO()).CreateUserCommand(body).Execute()
