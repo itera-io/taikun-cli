@@ -57,12 +57,6 @@ func NewCmdListRobots() *cobra.Command {
 	}
 
 	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
-	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
-	cmdutils.AddSortByAndReverseFlags(&cmd, "robot", listFields)
-	cmdutils.AddColumnsFlag(&cmd, listFields)
-	cmd.Flags().Int32VarP(&opts.Offset, "offset", "", 0, "Offset")
-	cmd.Flags().StringVarP(&opts.Search, "search", "", "", "Search")
-	cmd.Flags().StringVarP(&opts.SearchID, "search-id", "", "", "Search ID")
 	_ = cmd.MarkFlagRequired("organization-id")
 
 	return &cmd
@@ -72,14 +66,7 @@ func listRobots(accountID int32, opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
 	var robots = make([]taikuncore.RobotUsersListDto, 0)
 
-	req := myApiClient.Client.RobotAPI.RobotList(context.TODO())
-	req.AccountId(accountID)
-	req.OrganizationId(opts.OrganizationID)
-	req.Limit(opts.Limit)
-	req.Offset(opts.Offset)
-	req.Search(opts.Search)
-	req.SearchId(opts.SearchID)
-
+	req := myApiClient.Client.RobotAPI.RobotList(context.TODO()).AccountId(accountID).OrganizationId(opts.OrganizationID)
 	data, response, err := req.Execute()
 	if err != nil {
 		return tk.CreateError(response, err)

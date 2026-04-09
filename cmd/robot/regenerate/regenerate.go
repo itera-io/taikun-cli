@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
@@ -52,7 +51,6 @@ func regenerateRobotTokens(robotID string, opts *RegenerateOptions) (err error) 
 		return tk.CreateError(response, err)
 	}
 
-	out.PrintStandardSuccess()
 	fmt.Printf("{\n\tACCESS_KEY: %s,\n\tSECRET_KEY: %s,\n}\n", *data.AccessKey.Get(), *data.SecretKey.Get())
 	return nil
 }

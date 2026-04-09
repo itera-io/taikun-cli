@@ -1,5 +1,3 @@
-
-
 Context 'robot'
   setup(){
     # Skip if TAIKUN_EMAIL is not set (not in CI or no credentials provided)
@@ -7,10 +5,20 @@ Context 'robot'
       Skip "No credentials found, skipping integration tests"
     fi
 
-    org_id=$(taikun organization list --limit 1 --columns id --no-decorate | head -n 1)
-    account_id=$(taikun accounts list --limit 1 --columns id --no-decorate | head -n 1)
+    ## Create account
+    account_name=$(_rnd_name)
+    taikun accounts create "$account_name" --email "${account_name}@itera.io" -q
+    account_id=$(taikun accounts list --limit 100 --columns id,name --no-decorate | grep "$account_name" | awk '{print $1}')
+
+    ## Create organization
+    org_id=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" --account-id "$account_id" -I | xargs )
+
+    ## Create Robot
     robot_name=$(_rnd_name)
-    expires_at="2030-01-01T00:00:00Z"
+    echo $robot_name
+
+    ## Getting date of expiration 5 months ahead of now
+    expires_at=$(date -u -d "+5 months" +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v+5m +"%Y-%m-%dT%H:%M:%SZ")
     
     if [ -z "$org_id" ] || [ -z "$account_id" ]; then
       Skip "No organization or account found"
@@ -22,31 +30,31 @@ Context 'robot'
     if [ -n "$robot_id" ]; then
       taikun robot delete "$robot_id" -q 2>/dev/null || true
     fi
+    if [ -n "$org_id" ]; then
+      taikun organization delete "$org_id" -q 2>/dev/null || true
+    fi
+    if [ -n "$account_id" ]; then
+      taikun accounts delete "$account_id" -q 2>/dev/null || true
+    fi
   }
   AfterAll clean_up
 
   Example 'robot create'
-    When call taikun robot create "$robot_name" --organization-id "$org_id" --account-id "$account_id" --description "test robot" --expires-at "$expires_at"
+    When call taikun robot create "$robot_name" --organization-id "$org_id" --account-id "$account_id" --description "test-robot" --expires-at "$expires_at" --scope "scope:kubernetes-profiles:read"
     The status should equal 0
     The output should include "Operation was successful"
   End
 
-  Example 'robot list and find robot_id'
-    find_robot(){
-      robot_id=$(taikun robot list "$account_id" --organization-id "$org_id" --search "$robot_name" --columns userid --no-decorate | head -n 1)
-      export robot_id
-      echo "$robot_id"
-    }
-    When call find_robot
+  Example 'robot list'
+    When call taikun robot list "$account_id" --organization-id "$org_id" --no-decorate
     The status should equal 0
-    The output should not be empty
+    The output should be present
   End
 
+  robot_id=$(taikun robot list "$account_id" --organization-id "$org_id"  --no-decorate | xargs | awk '{print $1}')
+
   Example 'robot details'
-    get_details(){
-      taikun robot details "$robot_id"
-    }
-    When call get_details
+    When call taikun robot details
     The status should equal 0
     The output should include "$robot_name"
     The output should include "$robot_id"
@@ -65,7 +73,7 @@ Context 'robot'
   End
 
   Example 'robot update'
-    When call taikun robot update "$robot_id" --description "updated description"
+    When call taikun robot update "$robot_id" --description "updated-description" --name "$robot_name"
     The status should equal 0
     The output should include "Operation was successful"
   End
@@ -82,8 +90,10 @@ Context 'robot'
     The output should include "Operation was successful"
   End
 
+  new_expires_at=$(date -u -d "+5 months" +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date -u -v+5m +"%Y-%m-%dT%H:%M:%SZ")
+
   Example 'robot regenerate'
-    When call taikun robot regenerate "$robot_id"
+    When call taikun robot regenerate "$robot_id" --expires_at "$new_expires_at"
     The status should equal 0
     The output should include "ACCESS_KEY"
     The output should include "SECRET_KEY"
