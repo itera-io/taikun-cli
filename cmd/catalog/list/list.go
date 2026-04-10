@@ -27,8 +27,8 @@ var listFields = fields.New(
 )
 
 type ListOptions struct {
-	Organization int32
-	Limit        int32
+	OrganizationID int32
+	Limit          int32
 }
 
 // We want do display organization name, but want to download the organizations only once.
@@ -77,7 +77,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.Organization, "organization", "o", 0, "Id of the organization to use for the list-private (partner)")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "catalogs", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
@@ -86,6 +86,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	myApiClient := tk.NewClient()
 	var catalogs = make([]taikuncore.CatalogListDto, 0)
 
@@ -93,8 +99,8 @@ func listRun(opts *ListOptions) (err error) {
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}
-	if opts.Organization != 0 {
-		myRequest = myRequest.OrganizationId(opts.Organization)
+	if opts.OrganizationID != 0 {
+		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 
 	for {

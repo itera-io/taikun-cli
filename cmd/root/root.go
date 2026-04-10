@@ -2,7 +2,9 @@ package root
 
 import (
 	"fmt"
+
 	"github.com/itera-io/taikun-cli/cmd/accessprofile"
+	"github.com/itera-io/taikun-cli/cmd/accounts"
 	"github.com/itera-io/taikun-cli/cmd/alertingprofile"
 	"github.com/itera-io/taikun-cli/cmd/application"
 	"github.com/itera-io/taikun-cli/cmd/backupcredential"
@@ -11,16 +13,17 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/itera-io/taikun-cli/cmd/groups"
 	"github.com/itera-io/taikun-cli/cmd/kubernetesprofile"
 	"github.com/itera-io/taikun-cli/cmd/organization"
 	"github.com/itera-io/taikun-cli/cmd/policyprofile"
 	"github.com/itera-io/taikun-cli/cmd/project"
 	"github.com/itera-io/taikun-cli/cmd/repository"
+	"github.com/itera-io/taikun-cli/cmd/robot"
 	"github.com/itera-io/taikun-cli/cmd/showback"
 	"github.com/itera-io/taikun-cli/cmd/slackconfiguration"
 	"github.com/itera-io/taikun-cli/cmd/standaloneprofile"
 	"github.com/itera-io/taikun-cli/cmd/user"
-	"github.com/itera-io/taikun-cli/cmd/usertoken"
 	"github.com/itera-io/taikun-cli/cmd/virtualcluster"
 	"github.com/itera-io/taikun-cli/cmd/whoami"
 	"github.com/itera-io/taikun-cli/config"
@@ -56,12 +59,14 @@ func NewCmdRoot() *cobra.Command {
 	cmd.AddCommand(slackconfiguration.NewCmdSlackConfiguration())
 	cmd.AddCommand(standaloneprofile.NewCmdStandaloneProfile())
 	cmd.AddCommand(user.NewCmdUser())
-	cmd.AddCommand(usertoken.NewCmdUserToken())
 	cmd.AddCommand(whoami.NewCmdWhoami())
 	cmd.AddCommand(virtualcluster.NewCmdVirtualcluster())
 	cmd.AddCommand(application.NewCmdApplication())
 	cmd.AddCommand(repository.NewCmdRepository())
 	cmd.AddCommand(catalog.NewCmdCatalog())
+	cmd.AddCommand(groups.NewCmdGroups())
+	cmd.AddCommand(accounts.NewCmdAccounts())
+	cmd.AddCommand(robot.NewCmdRobot())
 
 	return cmd
 }

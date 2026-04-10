@@ -11,7 +11,7 @@ Context 'accessprofile/unlock'
     setup() {
       oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
       name=$(_rnd_name)
-      id=$(taikun access-profile add "$name" -o "$oid" -I | xargs)
+      id=$(taikun access-profile add "$name" -O "$oid" -I | xargs)
     }
 
     Example 'unlocked access profile'
@@ -25,7 +25,7 @@ Context 'accessprofile/unlock'
     setup() {
       oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
       name=$(_rnd_name)
-      id=$(taikun access-profile add "$name" -o "$oid" -I | xargs)
+      id=$(taikun access-profile add "$name" -O "$oid" -I | xargs)
       taikun access-profile lock "$id" -q
     }
 

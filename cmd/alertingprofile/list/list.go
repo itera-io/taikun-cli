@@ -63,7 +63,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "alerting-profiles", listFields)
@@ -73,6 +73,12 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	myApiClient := tk.NewClient()
 	myRequest := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesList(context.TODO())
 	if opts.OrganizationID != 0 {

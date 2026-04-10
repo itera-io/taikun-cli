@@ -79,12 +79,18 @@ func NewCmdList() *cobra.Command {
 	cmdutils.AddSortByAndReverseFlags(&cmd, "cloud-credentials", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	googleCloudCredentials, err := ListCloudCredentialsGoogle(opts)
 	if err != nil {
 		return err

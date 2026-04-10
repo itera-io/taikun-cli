@@ -3,7 +3,7 @@ Context 'cloudcredential/openstack'
       orgname="$(_rnd_name)"
       ccname="$(_rnd_name)"
       oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-      ccid=$(taikun cloud-credential openstack add "$ccname" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
+      ccid=$(taikun cloud-credential openstack add "$ccname" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
     }
     BeforeAll 'setup'
 
@@ -14,7 +14,7 @@ Context 'cloudcredential/openstack'
     AfterAll 'cleanup'
 
     list_cc(){
-      taikun cloud-credential list -o "$oid" --no-decorate
+      taikun cloud-credential list -O "$oid" --no-decorate
     }
 
     Example 'list openstack cloud credential'
@@ -28,7 +28,7 @@ Context 'cloudcredential/openstack'
     End
 
     Example 'check invalid openstack cloud credential'
-      When call taikun cloud-credential openstack check -d "$OS_USER_DOMAIN_NAME" -p "$OS_PASSWORD" -u "$OS_USERNAME" --url "mockup.local"
+      When call taikun cloud-credential openstack check -s "$OS_APPLICATION_CREDENTIAL_SECRET" -i "$OS_APPLICATION_CREDENTIAL_ID" --url "mockup.local"
       The lines of stderr should equal 1
       The status should equal 1
       The stderr should include "Error: OpenStack cloud credential is not valid"

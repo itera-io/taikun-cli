@@ -1,7 +1,7 @@
 Context 'project/autoscaler/disable'
     setup() {
         oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I)
-        ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
+        ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
         pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid"  --autoscaler-flavor "$AUTOSCALER_FLAVOR" -I)
         taikun project autoscaler disable "$pid" -q
     }
@@ -16,7 +16,7 @@ Context 'project/autoscaler/disable'
     AfterAll 'cleanup'
 
     Example 'disable autoscaling succesfully'
-        When call taikun project list -o "$oid" --limit 1 --format json
+        When call taikun project list -O "$oid" --limit 1 --format json
         The status should equal 0
         The output should include '"isAutoscalingEnabled": false'
     End

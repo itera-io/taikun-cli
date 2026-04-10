@@ -1,12 +1,12 @@
 Context 'project/vm/disk'
   setup() {
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs)
-    cc=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
+    cc=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
     sleep 0.1
     flavor=$(taikun cloud-credential flavors "$cc" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
     id=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$cc" --flavors "$flavor" -I | xargs)
     img=$(taikun cc images "$cc" --no-decorate | grep -E -i '(ubuntu)|(focal)' | head -1 | cut -d ' ' -f 1 | xargs)
-    profile=$(taikun standalone-profile add "$(_rnd_name)" -o "$oid" --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I | xargs)
+    profile=$(taikun standalone-profile add "$(_rnd_name)" -O "$oid" --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I | xargs)
     taikun project image bind "$id" --image-ids "$img" -q
     vm=$(taikun project vm add "$id" --name foo --flavor "$flavor" --image-id "$img" --volume-size 8 --standalone-profile-id "$profile" -I | xargs)
   }

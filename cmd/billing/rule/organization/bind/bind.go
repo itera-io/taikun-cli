@@ -35,13 +35,18 @@ func NewCmdBind() *cobra.Command {
 	cmd.Flags().Float64VarP(&opts.DiscountRate, "discount-rate", "d", 0, "Discount rate (required)")
 	cmdutils.MarkFlagRequired(&cmd, "discount-rate")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (required)")
-	cmdutils.MarkFlagRequired(&cmd, "organization-id")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	return &cmd
 }
 
 func bindRun(opts *BindOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 

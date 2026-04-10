@@ -1,8 +1,6 @@
 package complete
 
 import (
-	"fmt"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/spf13/cobra"
@@ -18,11 +16,12 @@ func CompleteArgsWithUserID(cmd *cobra.Command) {
 
 			completions := make([]string, len(users))
 			for i, user := range users {
-				completions[i] = fmt.Sprintf(
-					"%s\t%s",
-					user.GetId(),
-					user.GetUsername(),
-				)
+				completions[i] = user.GetId()
+				//completions[i] = fmt.Sprintf(
+				//	"%s\t%s",
+				//	user.GetId(),
+				//user.GetUsername(),
+				//)
 			}
 
 			return completions

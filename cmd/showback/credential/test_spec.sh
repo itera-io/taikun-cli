@@ -2,7 +2,7 @@ Context 'showback/credential'
   setup(){
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
-    cid=$(taikun showback credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -o "$oid" -I | xargs)
+    cid=$(taikun showback credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -O "$oid" -I | xargs)
     taikun showback credential lock "$cid" -q
   }
   BeforeAll 'setup'
@@ -14,7 +14,7 @@ Context 'showback/credential'
   AfterAll 'cleanup'
 
   list_cred(){
-    taikun showback credential list -o "$oid" --no-decorate
+    taikun showback credential list -O "$oid" --no-decorate
   }
 
   Example 'lock already locked'

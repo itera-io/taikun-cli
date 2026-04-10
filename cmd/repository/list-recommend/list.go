@@ -2,7 +2,7 @@ package list_recommend
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -24,8 +24,7 @@ var listFields = fields.New(
 )
 
 type ListOptions struct {
-	Organization int32
-	//Limit        int32
+	OrganizationID int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -41,22 +40,25 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.Organization, "organization", "o", 0, "Id of the organization to use for the list-recommend (partner) - default is your home organization.")
-	//cmdutils.AddLimitFlag(&cmd, &opts.Limit)
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
 	return &cmd
 }
 
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+
 	myApiClient := tk.NewClient()
 	var repositories = make([]taikuncore.ArtifactRepositoryDto, 0)
 
 	// Recommended
 	myquery := myApiClient.Client.AppRepositoriesAPI.RepositoryRecommendedList(context.TODO())
-	if opts.Organization != 0 {
-		fmt.Println("setting org to ", opts.Organization)
-		myquery = myquery.OrganizationId(opts.Organization)
+	if orgID != 0 {
+		myquery = myquery.OrganizationId(orgID)
 	}
 	data, response, err := myquery.Execute()
 	if err != nil {

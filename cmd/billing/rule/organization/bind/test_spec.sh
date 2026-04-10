@@ -6,7 +6,7 @@ Context 'billing/rule/organization/bind'
     user="$PROMETHEUS_USERNAME"
 
     oid=$(taikun organization add "$name" --full-name "$name" -I | xargs)
-    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid" -I | xargs)
+    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -O "$oid" -I | xargs)
     id=$(taikun billing rule add "$name" -b "$cid" -l foo=foo -m abc --price 1 --price-rate 1 --type count -I | xargs)
   }
   BeforeAll 'setup'
@@ -19,7 +19,7 @@ Context 'billing/rule/organization/bind'
 
   Context
     bind_org() {
-      taikun billing rule organization bind "$id" -o "$oid" -d 42 -q
+      taikun billing rule organization bind "$id" -O "$oid" -d 42 -q
     }
 
     Before 'bind_org'
@@ -33,7 +33,7 @@ Context 'billing/rule/organization/bind'
   End
 
   Example 'bind a nonexistent organization'
-    When call taikun billing rule organization bind "$id" -o 0 -d 42 -q
+    When call taikun billing rule organization bind "$id" -O 987654321 -d 42 -q
     The status should equal 1
     The stderr should include 'Please specify an existing organization'
     The stderr should include '400'

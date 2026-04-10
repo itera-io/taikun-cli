@@ -2,6 +2,8 @@ package list
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -63,8 +65,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
-
+	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
 	cmdutils.AddLimitFlag(cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(cmd, "cloud-credentials", listFields)
 	cmdutils.AddColumnsFlag(cmd, listFields)
@@ -73,6 +74,11 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) error {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
 	amazonCloudCredentials, err := ListCloudCredentialsAws(opts)
 	if err != nil {
 		return err
@@ -97,6 +103,7 @@ func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err 
 	for {
 		data, response, newError := myRequest.Execute()
 		if newError != nil {
+			fmt.Println(newError.Error())
 			err = tk.CreateError(response, err)
 			return
 		}

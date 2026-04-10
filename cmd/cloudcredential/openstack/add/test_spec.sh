@@ -3,7 +3,7 @@ Context 'cloudcredential/openstack-appcred'
       orgname="$(_rnd_name)"
       ccname="$(_rnd_name)"
       oid=$(taikun organization add "$orgname" -f "$orgname" -I)
-      ccid=$(taikun cloud-credential openstack add "$ccname" -o "$oid" -i "$OS_APPLICATION_CREDENTIAL_ID" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME"  --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
+      ccid=$(taikun cloud-credential openstack add "$ccname" -O "$oid" -i "$OS_APPLICATION_CREDENTIAL_ID" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME"  --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -I)
     }
     BeforeAll 'setup'
 
@@ -14,7 +14,7 @@ Context 'cloudcredential/openstack-appcred'
     AfterAll 'cleanup'
 
     list_cc(){
-      taikun cloud-credential list -o "$oid" --no-decorate
+      taikun cloud-credential list -O "$oid" --no-decorate
     }
 
     Example 'list openstack cloud credential appcred'

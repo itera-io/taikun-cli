@@ -14,6 +14,7 @@ import (
 	"github.com/itera-io/taikun-cli/cmd/project/k8s"
 	"github.com/itera-io/taikun-cli/cmd/project/kubeconfig"
 	"github.com/itera-io/taikun-cli/cmd/project/list"
+	list_subnets "github.com/itera-io/taikun-cli/cmd/project/list-subnets"
 	"github.com/itera-io/taikun-cli/cmd/project/lock"
 	"github.com/itera-io/taikun-cli/cmd/project/purge"
 	"github.com/itera-io/taikun-cli/cmd/project/quota"
@@ -54,6 +55,7 @@ func NewCmdProject() *cobra.Command {
 	cmd.AddCommand(set.NewCmdSet())
 	cmd.AddCommand(spot.NewCmdSpot())
 	cmd.AddCommand(purge.NewCmdPurge())
+	cmd.AddCommand(list_subnets.NewCmdListSubnets())
 
 	return cmd
 }

@@ -1,7 +1,9 @@
 Context 'standaloneprofile/securitygroup'
 
   setup() {
-    id=$(taikun standalone-profile add "$(_rnd_name)" --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I)
+    oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I)
+
+    id=$(taikun standalone-profile add "$(_rnd_name)" -O "$oid" --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I)
     udp_id=$(taikun standalone-profile security-group add "$id" --name "doom" --protocol udp --min-port 666 --max-port 666 --remote-ip-prefix '0.0.0.0/0' -I)
     tcp_id=$(taikun standalone-profile security-group add "$id" --name "rsync" --protocol tcp --min-port 873 --max-port 873 --remote-ip-prefix '0.0.0.0/0' -I)
     icmp_id=$(taikun standalone-profile security-group add "$id" --name "icmp" --protocol icmp --remote-ip-prefix '0.0.0.0/0' -I)
@@ -13,6 +15,7 @@ Context 'standaloneprofile/securitygroup'
     taikun standalone-profile security-group delete "$tcp_id" -q
     taikun standalone-profile security-group delete "$icmp_id" -q
     taikun standalone-profile delete "$id" -q
+    taikun organization delete "$oid"
   }
   AfterAll 'cleanup'
 

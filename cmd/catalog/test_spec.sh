@@ -2,6 +2,11 @@ Context 'catalog'
   setup() {
     orgname="$(_rnd_name)"
     oid=$(taikun organization add "$orgname" -f "$orgname" -I)
+    ## Creating catalog managed-apps
+    taikun catalog create "managed-apps" -d "managed-apps" -O "$oid"
+    defcatid=`taikun catalog list -O "$oid" --no-decorate | grep "managed-apps" | cut -d ' ' -f1 | xargs`
+    ## Making managed-apps catalog to be default one
+    taikun catalog make-default "$defcatid"
   }
   BeforeAll 'setup'
 
@@ -11,26 +16,26 @@ Context 'catalog'
   AfterAll 'cleanup'
 
   list_cat(){
-    taikun catalog list -o "$oid" | grep "$orgname-catalog"
+    taikun catalog list -O "$oid" | grep "$orgname-catalog"
   }
 
   makecatdefault(){
-      catid=`taikun catalog list -o "$oid" --no-decorate | grep "$orgname-catalog" | cut -d ' ' -f1 | xargs`
+      catid=`taikun catalog list -O "$oid" --no-decorate | grep "$orgname-catalog" | cut -d ' ' -f1 | xargs`
       taikun catalog make-default "$catid"
   }
 
   unmakedefault(){
-      managedid=`taikun catalog list -o "$oid" --no-decorate | grep "managed-apps" | cut -d ' ' -f1 | xargs`
+      managedid=`taikun catalog list -O "$oid" --no-decorate | grep "managed-apps" | cut -d ' ' -f1 | xargs`
       taikun catalog make-default "$managedid"
   }
 
   deletecat(){
-      catid=`taikun catalog list -o "$oid" --no-decorate | grep "$orgname-catalog" | cut -d ' ' -f1 | xargs`
+      catid=`taikun catalog list -O "$oid" --no-decorate | grep "$orgname-catalog" | cut -d ' ' -f1 | xargs`
       taikun catalog delete "$catid"
   }
 
   Example 'create catalog'
-    When call taikun catalog create "$orgname-catalog" -d "$orgname-catalog" -o "$oid"
+    When call taikun catalog create "$orgname-catalog" -d "$orgname-catalog" -O "$oid"
     The lines of output should equal 1
     The status should equal 0
     The output should include 'Operation was successful.'
@@ -83,7 +88,7 @@ Context 'catalog'
   End
 
   Example 'list catalog 3'
-    When call taikun catalog list -o "$oid" --no-decorate
+    When call taikun catalog list -O "$oid" --no-decorate
     The lines of output should equal 1
     The status should equal 0
     The output should not include "$orgname-catalog"

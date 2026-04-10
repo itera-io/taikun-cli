@@ -4,7 +4,7 @@ Context 'billing/rule/remove'
     name="$(_rnd_name)"
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$name" --full-name "$name" -I | xargs)
-    cid=$(taikun billing credential add -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -o "$oid" "$cname" -I | xargs)
+    cid=$(taikun billing credential add -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -O "$oid" "$cname" -I | xargs)
 
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
   }

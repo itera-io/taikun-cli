@@ -98,10 +98,10 @@ func listRun(projectIdString string, opts *ListOptions) (err error) {
 		}
 
 		vcsList = append(vcsList, data.GetData()...)
-		vcsCount := int32(len(vcsList))
+		vcsCount := int64(len(vcsList))
 
 		// We have (over)reached the limit, cut it at the limit and break
-		if opts.Limit != 0 && vcsCount >= opts.Limit {
+		if opts.Limit != 0 && vcsCount >= int64(opts.Limit) {
 			if int32(len(vcsList)) > opts.Limit {
 				vcsList = vcsList[:opts.Limit]
 			}
@@ -113,7 +113,7 @@ func listRun(projectIdString string, opts *ListOptions) (err error) {
 		}
 
 		// The new request will be shifted to the next page of vcs.
-		myRequest = myRequest.Offset(vcsCount)
+		myRequest = myRequest.Offset(int32(vcsCount))
 	}
 
 	return out.PrintResults(vcsList, ListFields)

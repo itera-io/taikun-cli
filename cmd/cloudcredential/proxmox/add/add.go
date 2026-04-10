@@ -99,7 +99,7 @@ func NewCmdAdd() *cobra.Command {
 
 	cmd.Flags().StringVar(&opts.Continent, "continent", "", "Proxmox continent (optional)")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization", "o", 0, "Proxmox organization ID (optional)")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	// Private network
 	cmd.Flags().StringVar(&opts.PrivateNetwork, "private-network", "", "Proxmox private network (required)")
@@ -146,6 +146,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 

@@ -2,7 +2,7 @@ package add
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -78,17 +78,10 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	Address                      string
-	BillingEmail                 string
-	City                         string
-	Country                      string
-	DiscountRate                 float64
-	Email                        string
-	FullName                     string
-	IsEligibleUpdateSubscription bool
-	Name                         string
-	Phone                        string
-	VatNumber                    string
+	Email     string
+	FullName  string
+	Name      string
+	AccountID int32
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -100,7 +93,6 @@ func NewCmdAdd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-			opts.IsEligibleUpdateSubscription = true
 			return addRun(&opts)
 		},
 	}
@@ -108,45 +100,10 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.FullName, "full-name", "f", "", "Full name (required)")
 	cmdutils.MarkFlagRequired(cmd, "full-name")
 
-	cmd.Flags().StringVarP(&opts.Address, "address", "a", "", "Address")
-	cmd.Flags().StringVarP(&opts.BillingEmail, "billing-email", "b", "", "Billing email")
-	cmd.Flags().StringVar(&opts.City, "city", "", "City")
-	cmd.Flags().Float64VarP(&opts.DiscountRate, "discount-rate", "d", 100, "Discount rate")
 	cmd.Flags().StringVarP(&opts.Email, "email", "e", "", "Email")
-	cmd.Flags().StringVarP(&opts.Phone, "phone", "p", "", "Phone")
-	cmd.Flags().StringVarP(&opts.VatNumber, "vat-number", "v", "", "VAT number")
 
-	cmd.Flags().StringVar(&opts.Country, "country", "", "Country")
-	cmdutils.SetFlagCompletionFunc(cmd, "country", func(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
-		completions = make([]string, 0)
-
-		myApiClient := tk.NewClient()
-		data, response, err := myApiClient.Client.CommonAPI.CommonCountries(context.TODO()).Execute()
-		if err != nil {
-			fmt.Println(tk.CreateError(response, err))
-			return
-		}
-		for _, countryListDto := range data {
-			completions = append(completions, countryListDto.GetName())
-		}
-
-		return
-
-		//apiClient, err := taikungoclient.NewClient()
-		//if err != nil {
-		//	return
-		//}
-		//params := common.NewCommonGetCountryListParams().WithV(taikungoclient.Version)
-		//result, err := apiClient.Client.Common.CommonGetCountryList(params, apiClient)
-		//if err != nil {
-		//	return
-		//}
-		//for _, countryListDto := range result.Payload {
-		//	completions = append(completions, countryListDto.Name)
-		//}
-		//
-		//return
-	})
+	cmd.Flags().Int32VarP(&opts.AccountID, "account-id", "", -1, "Account ID")
+	//cmdutils.MarkFlagRequired(cmd, "account-id")
 
 	cmdutils.AddOutputOnlyIDFlag(cmd)
 	cmdutils.AddColumnsFlag(cmd, addFields)
@@ -157,18 +114,15 @@ func NewCmdAdd() *cobra.Command {
 func addRun(opts *AddOptions) (err error) {
 	myApiClient := tk.NewClient()
 	body := taikuncore.OrganizationCreateCommand{
-		Name:                         *taikuncore.NewNullableString(&opts.Name),
-		FullName:                     *taikuncore.NewNullableString(&opts.FullName),
-		Phone:                        *taikuncore.NewNullableString(&opts.Phone),
-		Email:                        *taikuncore.NewNullableString(&opts.Email),
-		BillingEmail:                 *taikuncore.NewNullableString(&opts.BillingEmail),
-		Address:                      *taikuncore.NewNullableString(&opts.Address),
-		Country:                      *taikuncore.NewNullableString(&opts.Country),
-		City:                         *taikuncore.NewNullableString(&opts.City),
-		VatNumber:                    *taikuncore.NewNullableString(&opts.VatNumber),
-		DiscountRate:                 *taikuncore.NewNullableFloat64(&opts.DiscountRate),
-		IsEligibleUpdateSubscription: &opts.IsEligibleUpdateSubscription,
+		Name:     *taikuncore.NewNullableString(&opts.Name),
+		FullName: *taikuncore.NewNullableString(&opts.FullName),
+		Email:    *taikuncore.NewNullableString(&opts.Email),
 	}
+
+	if opts.AccountID != -1 {
+		body.AccountId = *taikuncore.NewNullableInt32(&opts.AccountID)
+	}
+	
 	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsCreate(context.TODO()).OrganizationCreateCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)

@@ -87,6 +87,7 @@ type AddOptions struct {
 	AutoUpgrade              bool
 	BackupCredentialID       int32
 	CloudCredentialID        int32
+	OrganizationID           int32
 	DeleteOnExpiration       bool
 	ExpirationDate           string
 	Flavors                  []string
@@ -178,6 +179,8 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().BoolVar(&opts.SpotVms, "spot-vms", false, "Enable spot flavors for standalone VMs, bool")
 	cmd.Flags().Float64Var(&opts.SpotMaxPrice, "spot-max-price", -1, "Set maximum price for spots")
 
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
+
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
 
@@ -267,10 +270,17 @@ func addRun(opts *AddOptions) (err error) {
 }
 
 func setDefaultAddOptions(opts *AddOptions, client *tk.Client) (err error) {
-	// Get organization ID from cloud credential ID
-	organizationID, err := organization.GetOrganizationIDFromCloudCredential(opts.CloudCredentialID, client)
-	if err != nil {
-		return err
+	// Try to resolve org ID from flag/env var; fall back to cloud credential derivation.
+	orgID, resolveErr := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	var organizationID int32
+	if resolveErr == nil && orgID != 0 {
+		organizationID = orgID
+	} else {
+		// Get organization ID from cloud credential ID
+		organizationID, err = organization.GetOrganizationIDFromCloudCredential(opts.CloudCredentialID, client)
+		if err != nil {
+			return err
+		}
 	}
 
 	if opts.AccessProfileID == 0 {

@@ -5,7 +5,7 @@ Describe 'accessprofile/trustedregistry'
     apname="$(_rnd_name)"
     registryname="ghcr.io"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
-    apid=$(taikun access-profile add "$apname" -o "$oid" -I | xargs )
+    apid=$(taikun access-profile add "$apname" -O "$oid" -I | xargs )
   }
 
   cleanup() {

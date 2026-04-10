@@ -7,13 +7,13 @@ Context 'cloudcredential/proxmox/list'
       oid=$(taikun organization add "$orgname" -f "$orgname" -I)
 
       ccname="$(_rnd_name)"
-      ccid=$(taikun cloud-credential proxmox add "$ccname" --api-host "$PROXMOX_API_HOST" --client-id "$PROXMOX_CLIENT_ID" --client-secret "$PROXMOX_CLIENT_SECRET" --storage "$PROXMOX_STORAGE" --vm-template "$PROXMOX_VM_TEMPLATE_NAME" --hypervisors "$PROXMOX_HYPERVISOR,$PROXMOX_HYPERVISOR2" --continent "$PROXMOX_CONTINENT" --private-network "$PROXMOX_PRIVATE_NETWORK" --private-netmask "$PROXMOX_PRIVATE_NETMASK" --private-gateway "$PROXMOX_PRIVATE_GATEWAY" --private-begin-range "$PROXMOX_PRIVATE_BEGIN_RANGE" --private-end-range "$PROXMOX_PRIVATE_END_RANGE" --private-bridge "$PROXMOX_PRIVATE_BRIDGE" --public-network "$PROXMOX_PUBLIC_NETWORK" --public-netmask "$PROXMOX_PUBLIC_NETMASK" --public-gateway "$PROXMOX_PUBLIC_GATEWAY" --public-begin-range "$PROXMOX_PUBLIC_BEGIN_RANGE" --public-end-range "$PROXMOX_PUBLIC_END_RANGE" --public-bridge "$PROXMOX_PUBLIC_BRIDGE" -o "$oid" -I)
+      ccid=$(taikun cloud-credential proxmox add "$ccname" --api-host "$PROXMOX_API_HOST" --client-id "$PROXMOX_CLIENT_ID" --client-secret "$PROXMOX_CLIENT_SECRET" --storage "$PROXMOX_STORAGE" --vm-template "$PROXMOX_VM_TEMPLATE_NAME" --hypervisors "$PROXMOX_HYPERVISOR,$PROXMOX_HYPERVISOR2" --continent "$PROXMOX_CONTINENT" --private-network "$PROXMOX_PRIVATE_NETWORK" --private-netmask "$PROXMOX_PRIVATE_NETMASK" --private-gateway "$PROXMOX_PRIVATE_GATEWAY" --private-begin-range "$PROXMOX_PRIVATE_BEGIN_RANGE" --private-end-range "$PROXMOX_PRIVATE_END_RANGE" --private-bridge "$PROXMOX_PRIVATE_BRIDGE" --public-network "$PROXMOX_PUBLIC_NETWORK" --public-netmask "$PROXMOX_PUBLIC_NETMASK" --public-gateway "$PROXMOX_PUBLIC_GATEWAY" --public-begin-range "$PROXMOX_PUBLIC_BEGIN_RANGE" --public-end-range "$PROXMOX_PUBLIC_END_RANGE" --public-bridge "$PROXMOX_PUBLIC_BRIDGE" -O "$oid" -I)
 
       flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 2 --max-cpu 4 --min-ram 4 --max-ram 8 -C name --limit 1 | xargs)
       image=$(taikun cc images "$ccid" --no-decorate -C id --limit 1)
 
       k8sprofilename="$(_rnd_name)"
-      k8sprofileid=$(taikun kubernetes-profile add "$k8sprofilename" --enable-taikun-lb -o "$oid" -I)
+      k8sprofileid=$(taikun kubernetes-profile add "$k8sprofilename" --enable-taikun-lb -O "$oid" -I)
 
       projectname="$(_rnd_name)"
       projectid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" --kubernetes-profile-id "$k8sprofileid" --flavors "$flavor" -I)
@@ -21,7 +21,7 @@ Context 'cloudcredential/proxmox/list'
       taikun project image bind "$projectid" --image-ids "$image" -q
       standaloneprofile="$(_rnd_name)"
       pubkey="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy"
-      standaloneprofileid=$(taikun standalone-profile add "$standaloneprofile" --public-key "$pubkey" -o "$oid" -I)
+      standaloneprofileid=$(taikun standalone-profile add "$standaloneprofile" --public-key "$pubkey" -O "$oid" -I)
       vmname="tk-cli1"
       vmid=$(taikun project vm add "$projectid" --name "$vmname" --hypervisor "$PROXMOX_HYPERVISOR2" --flavor "$flavor" --image-id "$image" --standalone-profile-id "$standaloneprofileid" --volume-size 42 -I)
 
@@ -42,7 +42,7 @@ Context 'cloudcredential/proxmox/list'
     AfterAll 'cleanup'
 
     Example 'list proxmox cloud credential'
-      When call taikun cloud-credential proxmox list -o "$oid" --no-decorate
+      When call taikun cloud-credential proxmox list -O "$oid" --no-decorate
       The lines of output should equal 1
       The status should equal 0
       The output should include "$orgname"
@@ -52,7 +52,7 @@ Context 'cloudcredential/proxmox/list'
     End
 
     Example 'list all cloud credentials'
-      When call taikun cloud-credential list -o "$oid" --no-decorate
+      When call taikun cloud-credential list -O "$oid" --no-decorate
       The status should equal 0
       The output should include "$orgname"
       The output should include "$ccname"

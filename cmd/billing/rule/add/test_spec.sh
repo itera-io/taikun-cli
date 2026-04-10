@@ -4,7 +4,7 @@ Context 'billing/rule/add'
     name="$(_rnd_name)"
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
-    cid=$(taikun billing credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -o "$oid" -I | xargs)
+    cid=$(taikun billing credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -O "$oid" -I | xargs)
     flags="-b $cid -l foo=bar -m foo --price 1 --price-rate 5 -t count"
     id=$(taikun billing rule add "$name" $flags -I | xargs)
   }

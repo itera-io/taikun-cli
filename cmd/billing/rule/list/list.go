@@ -92,8 +92,8 @@ func listRun(opts *ListOptions) (err error) {
 
 		billingRules = append(billingRules, data.GetData()...)
 
-		count := int32(len(billingRules))
-		if opts.Limit != 0 && count >= opts.Limit {
+		count := int64(len(billingRules))
+		if opts.Limit != 0 && count >= int64(opts.Limit) {
 			break
 		}
 
@@ -101,7 +101,7 @@ func listRun(opts *ListOptions) (err error) {
 			break
 		}
 
-		myRequest = myRequest.Offset(count)
+		myRequest = myRequest.Offset(int32(count))
 	}
 
 	if opts.Limit != 0 && int32(len(billingRules)) > opts.Limit {

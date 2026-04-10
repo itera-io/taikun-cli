@@ -2,9 +2,8 @@ package list
 
 import (
 	"context"
-	"github.com/itera-io/taikun-cli/api"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
-	"github.com/itera-io/taikun-cli/config"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -91,8 +90,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
-
+	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
 	cmdutils.AddSortByAndReverseFlags(cmd, "users", ListFields)
 	cmdutils.AddColumnsFlag(cmd, ListFields)
 	cmdutils.AddLimitFlag(cmd, &opts.Limit)
@@ -102,6 +100,12 @@ func NewCmdList() *cobra.Command {
 
 // listRun calls the API, gets the Users and prints them in a table.
 func listRun(opts *ListOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	users, err := ListUsers(opts)
 	if err != nil {
 		return err
@@ -112,20 +116,23 @@ func listRun(opts *ListOptions) (err error) {
 
 // ListUsers sends multiple queries to the API and returns a list of users.
 // Users are returned in the UserForListDto structs generated in models.
-func ListUsers(opts *ListOptions) (userList []taikuncore.UserForListDto, err error) {
+func ListUsers(opts *ListOptions) (userList []taikuncore.CommonStringBasedDropdownDto, err error) {
 	// Prepare the request
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.UsersAPI.UsersList(context.TODO())
+	myRequest := myApiClient.Client.UsersAPI.UsersDropdown(context.TODO())
 	// Set Organization ID if it is set in command line options
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
 	// Set Sorting if set in command line options
-	if config.SortBy != "" {
-		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
-	}
+	//if config.SortBy != "" {
+	//	myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
+	//}
 	// Initialise a new, empty slice of UserForListDto structs generated in models.
-	userList = make([]taikuncore.UserForListDto, 0)
+	//userList = make([]taikuncore.UserForListDto, 0)
+	userList = make([]taikuncore.CommonStringBasedDropdownDto, 0)
+
+	//fmt.Printf("%s\n", myRequest)
 
 	// Execute the request, it returns 50 users and then execute it again with an Offset until you have read all of it.
 	for {
@@ -145,7 +152,7 @@ func ListUsers(opts *ListOptions) (userList []taikuncore.UserForListDto, err err
 			break
 		}
 		// We have read all the users
-		if usersCount == data.GetTotalCount() {
+		if usersCount == int32(data.GetTotalCount()) {
 			break
 		}
 

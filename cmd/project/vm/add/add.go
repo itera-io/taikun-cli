@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
-	"strings"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/project/vm/add/complete"
@@ -78,6 +79,7 @@ type AddOptions struct {
 	VolumeSize          int64
 	VolumeType          string
 	hypervisor          string
+	AvailabilityZone    string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -96,6 +98,7 @@ func NewCmdAdd() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVarP(&opts.AvailabilityZone, "availability-zone", "", "", "Availability zone (or subnet)")
 	cmd.Flags().StringVarP(&opts.CloudInit, "cloud-init", "c", "", "Cloud init")
 
 	cmd.Flags().StringVarP(&opts.Flavor, "flavor", "f", "", "Flavor (required)")
@@ -175,6 +178,10 @@ func addRun(opts *AddOptions) error {
 		StandAloneProfileId: &opts.StandAloneProfileID,
 		StandAloneVmDisks:   make([]taikuncore.StandAloneVmDiskDto, 0),
 		VolumeSize:          &opts.VolumeSize,
+	}
+
+	if opts.AvailabilityZone != "" {
+		body.AvailabilityZone = *taikuncore.NewNullableString(&opts.AvailabilityZone)
 	}
 
 	if opts.hypervisor != "" {

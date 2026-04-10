@@ -2,6 +2,7 @@ package create
 
 import (
 	"context"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -25,7 +26,7 @@ func NewCmdCreatecatalog() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmd.Flags().StringVarP(&opts.Description, "description", "d", "", "Description (min 3 characters)")
 	_ = cmd.MarkFlagRequired("description")
@@ -34,6 +35,12 @@ func NewCmdCreatecatalog() *cobra.Command {
 }
 
 func createcatalogRun(catalogname string, opts CreateOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.CreateCatalogCommand{

@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -76,7 +77,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.URL, "url", "u", "", "URL of the source (required)")
 	cmdutils.MarkFlagRequired(&cmd, "url")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID (only applies for Partner role)")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -85,6 +86,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -94,7 +101,7 @@ func addRun(opts *AddOptions) (err error) {
 		Url:            *taikunshowback.NewNullableString(&opts.URL),
 		Username:       *taikunshowback.NewNullableString(&opts.Username),
 		Password:       *taikunshowback.NewNullableString(&opts.Password),
-		OrganizationId: *taikunshowback.NewNullableInt32(&opts.OrganizationID),
+		OrganizationId: &opts.OrganizationID,
 	}
 
 	// Execute a query into the API + graceful exit

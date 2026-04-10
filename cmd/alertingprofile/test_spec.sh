@@ -13,7 +13,7 @@ Context 'alertingprofile'
     Context
       add_profile() {
         name="$(_rnd_name)"
-        pid=$(taikun alerting-profile add "$name" --reminder daily -o "$oid" -I | xargs)
+        pid=$(taikun alerting-profile add "$name" --reminder daily -O "$oid" -I | xargs)
       }
       BeforeEach 'add_profile'
 
@@ -23,7 +23,7 @@ Context 'alertingprofile'
       AfterEach 'del_profile'
 
       Example 'add and then remove'
-        When call taikun alerting-profile list -o "$oid" --columns name,reminder --no-decorate
+        When call taikun alerting-profile list -O "$oid" --columns name,reminder --no-decorate
         The status should equal 0
         The lines of output should equal 2 # counting the default
         The output should include "$name"
@@ -31,13 +31,13 @@ Context 'alertingprofile'
       End
 
       Example 'duplicate name causes error'
-        When call taikun alerting-profile add "$name" --reminder daily -o "$oid"
+        When call taikun alerting-profile add "$name" --reminder daily -O "$oid"
         The status should equal 1
         The stderr should include 'already exists'
       End
 
       Example 'invalid reminder causes error'
-        When call taikun alerting-profile add "$name" --reminder random -o "$oid"
+        When call taikun alerting-profile add "$name" --reminder random -O "$oid"
         The status should equal 1
         The stderr should include 'reminder'
       End
@@ -46,7 +46,7 @@ Context 'alertingprofile'
     Context 'lock and unlock'
       add_profile() {
         name="$(_rnd_name)"
-        apid=$(taikun alerting-profile add "$name" --reminder daily -o "$oid" -I | xargs)
+        apid=$(taikun alerting-profile add "$name" --reminder daily -O "$oid" -I | xargs)
         taikun alerting-profile lock "$apid" -q
       }
       BeforeAll 'add_profile'
@@ -57,7 +57,7 @@ Context 'alertingprofile'
       AfterAll 'del_profile'
 
       list_profile(){
-        taikun alerting-profile list -o "$oid" --columns id,name,reminder,lock --no-decorate
+        taikun alerting-profile list -O "$oid" --columns id,name,reminder,lock --no-decorate
       }
 
       Example 'list locked'

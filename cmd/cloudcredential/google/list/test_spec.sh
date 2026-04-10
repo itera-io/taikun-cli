@@ -8,14 +8,14 @@ Context 'cloudcredential/google/list'
 
       echo "$GCP_CONFIG_FILE" > gcp.json
       ccname="$(_rnd_name)"
-      ccid=$(taikun cloud-credential google add "$ccname" -z "$GCP_AZ_COUNT" -c ./gcp.json -r "$GCP_REGION" --import-project  -o "$oid" -I)
+      ccid=$(taikun cloud-credential google add "$ccname" -z "$GCP_AZ_COUNT" -c ./gcp.json -r "$GCP_REGION" --import-project  -O "$oid" -I)
 
       flavor=$(taikun cloud-credential flavors "$ccid" --no-decorate --min-cpu 2 --max-cpu 4 --min-ram 4 --max-ram 8 -C name --limit 1 | xargs)
       image=$(taikun cc images "$ccid" --no-decorate -C id --limit 1 --google-image-type all --google-latest --show-large-values | xargs)
       image_name=$(taikun cc images "$ccid" --no-decorate -C name --limit 1 --google-image-type all --google-latest --show-large-values | xargs)
 
       k8sprofilename="$(_rnd_name)"
-      k8sprofileid=$(taikun kubernetes-profile add "$k8sprofilename" --enable-taikun-lb -o "$oid" -I)
+      k8sprofileid=$(taikun kubernetes-profile add "$k8sprofilename" --enable-taikun-lb -O "$oid" -I)
 
       projectname="$(_rnd_name)"
       projectid=$(taikun project add "$projectname" --cloud-credential-id "$ccid" --kubernetes-profile-id "$k8sprofileid" --flavors "$flavor" -I)
@@ -23,7 +23,7 @@ Context 'cloudcredential/google/list'
       taikun project image bind "$projectid" --image-ids "$image_name" -q
       standaloneprofile="$(_rnd_name)"
       pubkey="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy"
-      standaloneprofileid=$(taikun standalone-profile add "$standaloneprofile" --public-key "$pubkey" -o "$oid" -I)
+      standaloneprofileid=$(taikun standalone-profile add "$standaloneprofile" --public-key "$pubkey" -O "$oid" -I)
       vmname="tk-cli1"
       vmid=$(taikun project vm add "$projectid" --name "$vmname" --flavor "$flavor" --image-id "$image" --standalone-profile-id "$standaloneprofileid" --volume-size 42 -I)
 
@@ -45,7 +45,7 @@ Context 'cloudcredential/google/list'
     AfterAll 'cleanup'
 
     Example 'list google cloud credential'
-      When call taikun cloud-credential google list -o "$oid" --no-decorate
+      When call taikun cloud-credential google list -O "$oid" --no-decorate
       The lines of output should equal 1
       The status should equal 0
       The output should include "$orgname"
@@ -55,7 +55,7 @@ Context 'cloudcredential/google/list'
     End
 
     Example 'list all cloud credentials'
-      When call taikun cloud-credential list -o "$oid" --no-decorate
+      When call taikun cloud-credential list -O "$oid" --no-decorate
       The status should equal 0
       The output should include "$orgname"
       The output should include "$ccname"

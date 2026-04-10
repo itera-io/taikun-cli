@@ -2,6 +2,8 @@ package importrepo
 
 import (
 	"context"
+
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -9,10 +11,10 @@ import (
 )
 
 type importOpts struct {
-	Username     string
-	Password     string
-	Organization int32
-	Url          string
+	Username       string
+	Password       string
+	OrganizationID int32
+	Url            string
 }
 
 func NewCmdEnable() *cobra.Command {
@@ -23,13 +25,11 @@ func NewCmdEnable() *cobra.Command {
 		Short: "Import a repository. Specify repository name and a URL and import it.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			//repo, err :=args[0]
 			return enableRun(args[0], opts)
 		},
 	}
 
-	cmd.Flags().Int32VarP(&opts.Organization, "organization", "o", 0, "Id of the organization to use for the list-public (partner)")
-	_ = cmd.MarkFlagRequired("organization")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmd.Flags().StringVarP(&opts.Url, "url", "u", "", "URL to use for the import")
 	_ = cmd.MarkFlagRequired("url")
@@ -42,21 +42,19 @@ func NewCmdEnable() *cobra.Command {
 }
 
 func enableRun(name string, opts importOpts) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+
 	myApiClient := tk.NewClient()
 
-	//command := taikuncore.BindAppRepositoryCommand{
-	//	FilteringElements: []taikuncore.FilteringElementDto{
-	//		{
-	//			OrganizationName: *taikuncore.NewNullableString(&org),
-	//			Name:             *taikuncore.NewNullableString(&name),
-	//		},
-	//	},
-	//}
-
 	command := taikuncore.ImportRepoCommand{
-		Name:           *taikuncore.NewNullableString(&name),
-		Url:            *taikuncore.NewNullableString(&opts.Url),
-		OrganizationId: *taikuncore.NewNullableInt32(&opts.Organization),
+		Name: *taikuncore.NewNullableString(&name),
+		Url:  *taikuncore.NewNullableString(&opts.Url),
+	}
+	if orgID != 0 {
+		command.OrganizationId = &orgID
 	}
 
 	if opts.Username != "" {

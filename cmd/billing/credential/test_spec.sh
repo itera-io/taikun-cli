@@ -2,7 +2,7 @@ Context 'billing/credential'
   setup(){
     cname="$(_rnd_name)"
     oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I | xargs)
-    cid=$(taikun billing credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -o "$oid" -I | xargs)
+    cid=$(taikun billing credential add "$cname" -p "$PROMETHEUS_PASSWORD" -u "$PROMETHEUS_URL" -l "$PROMETHEUS_USERNAME" -O "$oid" -I | xargs)
     taikun billing credential lock "$cid" -q
   }
   BeforeAll 'setup'
@@ -14,7 +14,7 @@ Context 'billing/credential'
   AfterAll 'cleanup'
 
   list_cred(){
-    taikun billing credential list | grep "$cid"
+    taikun billing credential list -O "$oid" | grep "$cid"
   }
 
   Example 'lock already locked'

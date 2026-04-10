@@ -1,14 +1,14 @@
 Context 'project/vm'
   setup() {
     oid=$(taikun organization add "$(_rnd_name)" -f "$(_rnd_name)" -I | xargs)
-    cc=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -o "$oid" -I)
+    cc=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
     sleep 0.1
     flavor=$(taikun cloud-credential flavors "$cc" --no-decorate --min-cpu 4 --max-cpu 4 --min-ram 8 --max-ram 8 -C name --limit 1 | xargs)
     id=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$cc" --flavors "$flavor" -I | xargs)
     img=$(taikun cc images "$cc" --no-decorate | grep -E -i '(ubuntu)|(focal)' | head -1 | cut -d ' ' -f 1 | xargs)
-    image=$(taikun cc images "$cc" --no-decorate | grep -E -i 'Debian' | head -1 | cut -d ' ' -f 1 | xargs)
-    image_name=$(taikun cc images "$cc" -C name --no-decorate | grep -E -i 'Debian' | head -1 | xargs)
-    profile=$(taikun standalone-profile add "$(_rnd_name)" -o "$oid" --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I | xargs)
+    image_id=$(taikun cc images "$cc" --no-decorate | grep -E -i 'ubuntu' | sed -n '2 p' | cut -d ' ' -f 1 | xargs) ## Choosing second ID
+    image_name=$(taikun cc images "$cc" -C name --no-decorate | grep -E -i 'ubuntu' | head -1 | xargs)
+    profile=$(taikun standalone-profile add "$(_rnd_name)" -O "$oid" --public-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHshx25CJGDd0HfOQqNt65n/970dsPt0y12lfKKO9fAs dummy" -I | xargs)
     taikun project image bind "$id" --image-ids "$img" -q
     vm_onetag=$(taikun project vm add "$id" --name onetag --flavor "$flavor" --image-id "$img" --volume-size 8 --standalone-profile-id "$profile" --tags foo=bar -I | xargs)
     vm_notags=$(taikun project vm add "$id" --name notags --flavor "$flavor" --image-id "$img" --volume-size 8 --standalone-profile-id "$profile" -I | xargs)
@@ -71,7 +71,7 @@ Context 'project/vm'
           The lines of output should equal 1
       End
       Example 'bind image'
-          When call taikun project image bind "$id" -i "$image"
+          When call taikun project image bind "$id" -i "$image_id"
           The status should equal 0
           The lines of output should equal 1
           The stdout should include 'successful'
@@ -80,11 +80,12 @@ Context 'project/vm'
           When call taikun project image list "$id" --no-decorate
           The status should equal 0
           The lines of output should equal 2
-          The output should include "$image"
+          The output should include "$img"
+          The output should include "$image_id"
           The output should include "$image_name"
       End
       Example 'create 3 vms with image'
-          When call taikun project vm add "$id" --count 3 --name countvms --flavor "$flavor" --image-id "$image" --volume-size 25 --standalone-profile-id "$profile"
+          When call taikun project vm add "$id" --count 3 --name countvms --flavor "$flavor" --image-id "$image_id" --volume-size 25 --standalone-profile-id "$profile"
           The status should equal 0
           The output should include "countvms"
       End

@@ -104,7 +104,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVar(&opts.VolumeType, "volume-type", "", "OpenStack Volume Type")
 	cmd.Flags().BoolVar(&opts.ImportNetwork, "import-network", false, "Import Network (false by default)")
 
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", -1, "Organization ID")
+	cmdutils.AddOrgIDFlag(&cmd, &opts.OrganizationID)
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -113,6 +113,12 @@ func NewCmdAdd() *cobra.Command {
 }
 
 func addRun(opts *AddOptions) (err error) {
+	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
+	if err != nil {
+		return err
+	}
+	opts.OrganizationID = orgID
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -134,7 +140,7 @@ func addRun(opts *AddOptions) (err error) {
 		OrganizationId:            *taikuncore.NewNullableInt32(&opts.OrganizationID),
 	}
 
-	if opts.OrganizationID == -1 {
+	if opts.OrganizationID == 0 {
 		body.OrganizationId = *taikuncore.NewNullableInt32(nil)
 	}
 

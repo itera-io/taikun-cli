@@ -7,7 +7,7 @@ Context 'billing/rule/organization/unbind'
     user="$PROMETHEUS_USERNAME"
 
     oid=$(taikun organization add "$name" --full-name "$name" -I)
-    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -o "$oid" -I)
+    cid=$(taikun billing credential add "$name" -p "$pass" -u "$url" -l "$user" -O "$oid" -I)
     id=$(taikun billing rule add "$name" -b "$cid" -l foo=foo -m abc --price 1 --price-rate 1 --type count -I)
   }
 
@@ -23,8 +23,8 @@ Context 'billing/rule/organization/unbind'
 
   Context
     bind_unbind_org() {
-      taikun billing rule organization bind "$id" -o "$oid" -d 42 -q
-      taikun billing rule organization unbind "$id" -o "$oid" -q
+      taikun billing rule organization bind "$id" -O "$oid" -d 42 -q
+      taikun billing rule organization unbind "$id" -O "$oid" -q
     }
 
     Before 'bind_unbind_org'
@@ -37,7 +37,7 @@ Context 'billing/rule/organization/unbind'
   End
 
   Example 'unbind a nonexistent organization'
-    When call taikun billing rule organization unbind "$id" -o 0 -q
+    When call taikun billing rule organization unbind "$id" -O 987654321 -q
     The status should equal 1
     The stderr should include 'Can not find organization'
     The stderr should include '400'

@@ -13,14 +13,14 @@ Context 'policyprofile'
   AfterAll 'cleanup'
 
   Example 'No policy profiles'
-    When call taikun policy-profile list -o "$oid" --no-decorate
+    When call taikun policy-profile list -O "$oid" --no-decorate
     The status should equal 0
     The lines of output should equal 0
   End
 
   Context 'add/delete'
     add_config() {
-      ppid=$(taikun policy-profile add "$(_rnd_name)" -o "$oid" -I)
+      ppid=$(taikun policy-profile add "$(_rnd_name)" -O "$oid" -I)
     }
 
     Before 'add_config'
@@ -32,7 +32,7 @@ Context 'policyprofile'
     After 'delete_config'
 
     Example 'add then delete policy profile'
-      When call taikun policy-profile list -o "$oid" --no-decorate
+      When call taikun policy-profile list -O "$oid" --no-decorate
       The status should equal 0
       The lines of output should equal 1
     End
@@ -40,7 +40,7 @@ Context 'policyprofile'
 
   Context 'lock/unlock'
     add_config() {
-      ppid=$(taikun policy-profile add "$(_rnd_name)" -o "$oid" -I)
+      ppid=$(taikun policy-profile add "$(_rnd_name)" -O "$oid" -I)
       taikun policy-profile lock "$ppid" -q
     }
 

@@ -2,11 +2,11 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
-	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
@@ -71,11 +71,10 @@ var addFields = fields.New(
 )
 
 type AddOptions struct {
-	DisplayName    string
-	Email          string
-	OrganizationID int32
-	Role           string
-	Username       string
+	DisplayName string
+	Email       string
+	AccountID   int32
+	Username    string
 }
 
 func NewCmdAdd() *cobra.Command {
@@ -86,12 +85,6 @@ func NewCmdAdd() *cobra.Command {
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Username = args[0]
-
-			// Check if flag is in roles
-			//if err := cmdutils.CheckFlagValue("role", opts.Role, types.UserRoles); err != nil {
-			if err := cmdutils.CheckFlagValue("role", opts.Role, types.GetUserRoles()); err != nil {
-				return err
-			}
 			return addRun(&opts)
 		},
 		Args: cobra.ExactArgs(1),
@@ -101,16 +94,12 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().StringVarP(&opts.Email, "email", "e", "", "Email (required)")
 	cmdutils.MarkFlagRequired(&cmd, "email")
 
-	// Role is a required flag
-	cmd.Flags().StringVarP(&opts.Role, "role", "r", "", "Role (required). [Admin, Manager, Partner, User, Autoscaler]")
-	cmdutils.MarkFlagRequired(&cmd, "role")
-	cmdutils.SetFlagCompletionValues(&cmd, "role", types.GetUserRoles().Keys()...)
-
 	// Display name optional flag. Default none.
 	cmd.Flags().StringVarP(&opts.DisplayName, "display-name", "d", "", "Display name")
 
-	// Organization ID optional flag. Default 0.
-	cmd.Flags().Int32VarP(&opts.OrganizationID, "organization-id", "o", 0, "Organization ID. Default org ID is '0'.")
+	// Account ID mandatory flag. Default 0.
+	cmd.Flags().Int32VarP(&opts.AccountID, "account-id", "", -1, "Account ID")
+	cmdutils.MarkFlagRequired(&cmd, "account-id")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)
 	cmdutils.AddColumnsFlag(&cmd, addFields)
@@ -124,9 +113,8 @@ func addRun(opts *AddOptions) (err error) {
 	body := taikuncore.CreateUserCommand{}
 	body.SetDisplayName(opts.DisplayName)
 	body.SetEmail(opts.Email)
-	body.SetOrganizationId(opts.OrganizationID)
+	body.SetAccountId(opts.AccountID)
 	body.SetUsername(opts.Username)
-	body.SetRole(taikuncore.UserRole(opts.Role))
 
 	data, response, err := myApiClient.Client.UsersAPI.UsersCreate(context.TODO()).CreateUserCommand(body).Execute()
 	if err != nil {
