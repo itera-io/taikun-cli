@@ -2,8 +2,8 @@ package list
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -20,6 +20,27 @@ var listFields = fields.New(
 		),
 		field.NewVisible(
 			"NAME", "projectName",
+		),
+		field.NewVisible(
+			"IS-BOUND", "isBound",
+		),
+		field.NewVisible(
+			"KUBERNETES-VERSION", "kubernetesVersion",
+		),
+		field.NewVisible(
+			"IS-LOCKED", "isLocked",
+		),
+		field.NewVisible(
+			"MAINTENANCE-MODE-ENABLED", "maintenanceModeEnabled",
+		),
+		field.NewVisible(
+			"VIRTUAL-CLUSTER", "isVirtualCluster",
+		),
+		field.NewVisible(
+			"STATUS", "status",
+		),
+		field.NewVisible(
+			"HEALTH", "health",
 		),
 	},
 )
@@ -50,13 +71,13 @@ func NewCmdList() *cobra.Command {
 // listRun calls the API, gets the Users and prints their bound projects.
 func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.UsersAPI.UsersList(context.TODO()).Id(opts.UserID).Execute()
+	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsDropdown(context.TODO()).UserId(opts.UserID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
-	// No user with such ID found.
-	if len(data.Data) != 1 {
-		return cmderr.ResourceNotFoundError("User", opts.UserID)
+	// No projects found for user.
+	if len(data) == 0 {
+		return fmt.Errorf("no projects found for user with ID %s", opts.UserID)
 	}
-	return out.PrintResults(data.Data[0].BoundProjects, listFields)
+	return out.PrintResults(data, listFields)
 }
