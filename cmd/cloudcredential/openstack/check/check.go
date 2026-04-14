@@ -85,6 +85,6 @@ func checkRun(opts *CheckOptions) (err error) {
 		out.PrintCheckSuccess("OpenStack cloud credential")
 	}
 
-	err = fmt.Errorf("cloud credentials are invalid")
+	err = fmt.Errorf("OpenStack cloud credentials are invalid")
 	return err
 }
