@@ -3,13 +3,12 @@ package check
 import (
 	"context"
 	"fmt"
-	"github.com/itera-io/taikun-cli/cmd/cmderr"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 type CheckOptions struct {
@@ -74,25 +73,18 @@ func checkRun(opts *CheckOptions) (err error) {
 
 	// Execute a query into the API + graceful exit
 	myRequest := myApiClient.Client.CheckerAPI.CheckerOpenstack(context.TODO()).CheckOpenstackCommand(body)
-	_, response, err := myRequest.Execute()
+	data, response, err := myRequest.Execute()
+	if err != nil {
+		return tk.CreateError(response, err) // Something else happened
+	}
 
-	if err == nil {
+	// now, checking response body
+	if data.GetIsOpenstackAvailable() {
+		// Credentials are valid
+		// report success
 		out.PrintCheckSuccess("OpenStack cloud credential")
 	}
 
-	// Did it fail because the request failed (e.g. cannot connect to Taikun) or because the credentials are not valid?
-	if err != nil {
-		myError := tk.CreateError(response, err)
-		myStringError := fmt.Sprint(myError)
-		if strings.Contains(myStringError, "Failed to validate") {
-			err = cmderr.ErrCheckFailure("OpenStack cloud credential") // Taikun responded that credentials are not valid.
-		} else {
-			err = tk.CreateError(response, err) // Something else happened
-		}
-
-		return
-	}
-
-	return
-
+	err = fmt.Errorf("OpenStack cloud credentials are invalid")
+	return err
 }
