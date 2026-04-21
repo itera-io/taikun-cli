@@ -115,7 +115,7 @@ func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err 
 			break
 		}
 
-		if count == data.GetTotalCount() {
+		if int64(count) == data.GetTotalCount() { // casting is safe, extending maximum bounds
 			break
 		}
 

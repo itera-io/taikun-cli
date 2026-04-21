@@ -2,6 +2,7 @@ package list
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -112,7 +113,7 @@ func ListCloudCredentialsvSphere(opts *ListOptions) (credentials []interface{}, 
 			break
 		}
 
-		if count == data.GetTotalCount() {
+		if int64(count) == data.GetTotalCount() { // casting is safe, extending maximum bounds
 			break
 		}
 
