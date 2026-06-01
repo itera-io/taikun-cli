@@ -2,6 +2,7 @@ package add
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -111,7 +112,7 @@ func addRun(opts *AddOptions) (err error) {
 		AzureClientSecret:   *taikuncore.NewNullableString(&opts.AzureClientSecret),
 		AzureTenantId:       *taikuncore.NewNullableString(&opts.AzureTenantId),
 		AzureLocation:       *taikuncore.NewNullableString(&opts.AzureLocation),
-		AzCount:             &opts.AzCount,
+		AzCount:             *taikuncore.NewNullableInt32(&opts.AzCount),
 		OrganizationId:      *taikuncore.NewNullableInt32(&opts.OrganizationID),
 	}
 
