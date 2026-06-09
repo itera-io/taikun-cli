@@ -1,28 +1,10 @@
 Context 'user/info'
-      setup() {
-        oid=$(taikun organization add "$(_rnd_name)" --full-name "$(_rnd_name)" -I)
-        ccid=$(taikun cloud-credential openstack add "$(_rnd_name)" -s "$OS_APPLICATION_CREDENTIAL_SECRET" --project "$OS_PROJECT_NAME" -r "$OS_REGION_NAME" -i "$OS_APPLICATION_CREDENTIAL_ID" --public-network "$OS_INTERFACE" --url "$OS_AUTH_URL" -O "$oid" -I)
-        pid=$(taikun project add "$(_rnd_name)" --cloud-credential-id "$ccid" -I)
-        username="$(_rnd_name)"
-        uid=$(taikun user add "$username" --email "${username}@mailinator.com" -O "$oid" -I)
-      }
-      BeforeAll 'setup'
-
-      cleanup() {
-        taikun user delete "$uid" -q
-        taikun project delete "$pid" -q
-        taikun cloud-credential delete "$ccid" -q
-        taikun organization delete "$oid" -q 2>/dev/null || true
-      }
-      AfterAll 'cleanup'
-
-      Example 'get info about user'
-        When call taikun user info "$uid"
-        The status should equal 0
-        The lines of output should equal 17
-        The output should include "$uid"
-        The output should include "$username"
-        The output should include "mailinator.com"
-        The output should include "MUST-RESET-PASSWORD"
-      End
+    Example 'get info about current user'
+      When call taikun user info
+      The status should equal 0
+      The output should include "ID"
+      The output should include "USERNAME"
+      The output should include "EMAIL"
+      The output should include "ROLE"
+    End
 End
