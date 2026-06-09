@@ -62,21 +62,33 @@ func NewCmdList() *cobra.Command {
 }
 
 func listRun(opts *ListOptions) (err error) {
-	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
+	myRequest := myApiClient.Client.AllowedHostAPI.AllowedhostList(context.TODO(), opts.AccessProfileID)
 
-	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.AllowedHostAPI.AllowedhostList(context.TODO(), opts.AccessProfileID).Execute()
-	if err != nil {
-		return tk.CreateError(response, err)
+	var allowedHosts []interface{}
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		for _, host := range data.GetData() {
+			allowedHosts = append(allowedHosts, host)
+		}
+
+		count := int32(len(allowedHosts))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
+		if count == data.GetTotalCount() {
+			break
+		}
+		myRequest = myRequest.Offset(count)
 	}
 
-	// Manipulate the gathered data
-	allowedHosts := data.Data
 	if opts.Limit != 0 && int32(len(allowedHosts)) > opts.Limit {
 		allowedHosts = allowedHosts[:opts.Limit]
 	}
 
 	return out.PrintResults(allowedHosts, listFields)
-
 }
