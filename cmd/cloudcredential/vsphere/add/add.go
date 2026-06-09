@@ -135,22 +135,22 @@ func NewCmdAdd() *cobra.Command {
 	cmdutils.MarkFlagRequired(&cmd, "private-end-range")
 
 	// Public network
-	cmd.Flags().StringVar(&opts.PrivateNetworkName, "public-network-name", "", "vSphere private network name (required)")
+	cmd.Flags().StringVar(&opts.PublicNetworkName, "public-network-name", "", "vSphere public network name (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-network-name")
 
-	cmd.Flags().StringVar(&opts.PublicNetwork, "public-network", "", "vSphere private network (required)")
+	cmd.Flags().StringVar(&opts.PublicNetwork, "public-network", "", "vSphere public network (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-network")
 
-	cmd.Flags().Int32Var(&opts.PublicNetmask, "public-netmask", 0, "vSphere private netmask (required)")
+	cmd.Flags().Int32Var(&opts.PublicNetmask, "public-netmask", 0, "vSphere public netmask (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-netmask")
 
-	cmd.Flags().StringVar(&opts.PublicGateway, "public-gateway", "", "vSphere private gateway (required)")
+	cmd.Flags().StringVar(&opts.PublicGateway, "public-gateway", "", "vSphere public gateway (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-gateway")
 
-	cmd.Flags().StringVar(&opts.PublicBeginRange, "public-begin-range", "", "vSphere begin of the range of the private network (required)")
+	cmd.Flags().StringVar(&opts.PublicBeginRange, "public-begin-range", "", "vSphere begin of the range of the public network (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-begin-range")
 
-	cmd.Flags().StringVar(&opts.PublicEndRange, "public-end-range", "", "vSphere end of the range of the private network (required)")
+	cmd.Flags().StringVar(&opts.PublicEndRange, "public-end-range", "", "vSphere end of the range of the public network (required)")
 	cmdutils.MarkFlagRequired(&cmd, "public-end-range")
 
 	cmdutils.AddOutputOnlyIDFlag(&cmd)

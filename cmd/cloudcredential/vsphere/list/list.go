@@ -29,7 +29,7 @@ var listFields = fields.New(
 			"ORG-ID", "organizationId",
 		),
 		field.NewVisible(
-			"STORAGE", "storage",
+			"DATASTORE", "datastore",
 		),
 		field.NewVisible(
 			"DEFAULT", "isDefault",

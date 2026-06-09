@@ -53,6 +53,7 @@ func clearRun(opts *ClearOptions) error {
 		Type:              types.GetEPrometheusType(showbackRule.GetType()),
 		Price:             *taikunshowback.NewNullableFloat64(showbackRule.Price),
 		ProjectAlertLimit: *taikunshowback.NewNullableInt32(showbackRule.ProjectAlertLimit),
+		GlobalAlertLimit:  *taikunshowback.NewNullableInt32(showbackRule.GlobalAlertLimit),
 		Labels:            emptyLabels,
 	}
 

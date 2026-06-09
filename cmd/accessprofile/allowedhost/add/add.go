@@ -56,7 +56,7 @@ func NewCmdAdd() *cobra.Command {
 				return fmt.Errorf("IP address must be valid")
 			}
 
-			if opts.MaskBits < 0 && opts.MaskBits > 32 {
+			if opts.MaskBits < 0 || opts.MaskBits > 32 {
 				return fmt.Errorf("mask bits must be in the range of [0, 32]")
 			}
 

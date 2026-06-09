@@ -3,7 +3,6 @@ package check
 import (
 	"context"
 	"fmt"
-	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -16,7 +15,6 @@ import (
 type CheckOptions struct {
 	AWSSecretAccessKey string
 	AWSAccessKeyID     string
-	AWSRegion          string
 }
 
 func NewCmdCheck() *cobra.Command {
@@ -36,10 +34,6 @@ func NewCmdCheck() *cobra.Command {
 
 	cmd.Flags().StringVarP(&opts.AWSAccessKeyID, "access-key-id", "a", "", "AWS Access Key ID (required)")
 	cmdutils.MarkFlagRequired(cmd, "access-key-id")
-
-	cmd.Flags().StringVarP(&opts.AWSRegion, "region", "r", "", "AWS Region (required)")
-	cmdutils.MarkFlagRequired(cmd, "region")
-	cmdutils.SetFlagCompletionFunc(cmd, "region", complete.MakeAwsRegionCompletionFunc(&opts.AWSAccessKeyID, &opts.AWSSecretAccessKey))
 
 	return cmd
 }

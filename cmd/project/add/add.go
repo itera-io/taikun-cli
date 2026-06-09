@@ -163,7 +163,7 @@ func NewCmdAdd() *cobra.Command {
 	cmd.Flags().Int32Var(&opts.RouterIDStartRange, "router-id-start-range", -1, "Router ID start range (required with OpenStack and Taikun load balancer")
 	cmd.Flags().Int32Var(&opts.RouterIDEndRange, "router-id-end-range", -1, "Router ID end range (required with OpenStack and Taikun load balancer")
 	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "taikun-lb-flavor", "", "Taikun load balancer flavor(required with OpenStack and Taikun load balancer")
-	cmd.Flags().StringVar(&opts.TaikunLBFlavor, "cidr", "", "Cidr IP")
+	cmd.Flags().StringVar(&opts.Cidr, "cidr", "", "Cidr IP")
 
 	cmd.Flags().StringVar(&opts.DeprecatedAutoscalerName, "autoscaler-name", "", "The autoscaler name (specify autoscaler name and flavor to enable autoscaler) DEPRECATED")
 	//cmd.Flags().BoolP("autoscaler-name", "", false, "Help message for root version")

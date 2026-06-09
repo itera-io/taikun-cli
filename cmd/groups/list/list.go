@@ -41,7 +41,7 @@ func listGroups(accountID int32) (err error) {
 	var groups = make([]taikuncore.GroupListItem, 0)
 
 	req := myApiClient.Client.GroupsAPI.GroupsList(context.TODO())
-	req.AccountId(accountID)
+	req = req.AccountId(accountID)
 
 	data, response, err := req.Execute()
 	if err != nil {
