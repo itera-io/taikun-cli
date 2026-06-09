@@ -1,12 +1,11 @@
 package transferownership
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type TransferOwnershipOptions struct {
@@ -22,20 +21,23 @@ func NewCmdTransferOwnership() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.UserID = args[0]
-			return transferOwnershipRun(&opts)
+			return transferOwnershipRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func transferOwnershipRun(opts *TransferOwnershipOptions) (err error) {
+func transferOwnershipRun(cmd *cobra.Command, opts *TransferOwnershipOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.TransferOwnershipCommand{}
 	body.SetUserId(opts.UserID)
 
-	response, err := myApiClient.Client.AccountsAPI.AccountsTransferOwnership(context.TODO()).TransferOwnershipCommand(body).Execute()
+	response, err := myApiClient.Client.AccountsAPI.AccountsTransferOwnership(ctx).TransferOwnershipCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

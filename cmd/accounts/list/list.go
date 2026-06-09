@@ -1,8 +1,6 @@
 package list
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -36,7 +34,7 @@ func NewCmdListAccounts() *cobra.Command {
 		Short: "List available accounts",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listAccounts(&opts)
+			return listAccounts(cmd, &opts)
 		},
 	}
 
@@ -46,11 +44,14 @@ func NewCmdListAccounts() *cobra.Command {
 	return &cmd
 }
 
-func listAccounts(opts *ListOptions) (err error) {
+func listAccounts(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	var accounts = make([]taikuncore.AccountList, 0)
 
-	req := myApiClient.Client.AccountsAPI.AccountsListAccounts(context.TODO())
+	req := myApiClient.Client.AccountsAPI.AccountsListAccounts(ctx)
 	if opts.Search != "" {
 		req = req.Search(opts.Search)
 	}

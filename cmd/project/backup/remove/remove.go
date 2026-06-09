@@ -26,7 +26,9 @@ func NewCmdDelete() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return deleteRun(opts)
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
+			return deleteRun(ctx, opts)
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -37,13 +39,13 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(opts DeleteOption) (err error) {
+func deleteRun(ctx context.Context, opts DeleteOption) (err error) {
 	myApiClient := tk.NewClient()
 	body := taikuncore.DeleteBackupCommand{
 		ProjectId: &opts.ProjectID,
 		Name:      *taikuncore.NewNullableString(&opts.Name),
 	}
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackup(context.TODO()).DeleteBackupCommand(body).Execute()
+	response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackup(ctx).DeleteBackupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

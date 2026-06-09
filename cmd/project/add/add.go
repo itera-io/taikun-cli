@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -140,7 +139,7 @@ func NewCmdAdd() *cobra.Command {
 				}
 			}
 
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -187,10 +186,13 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	err = setDefaultAddOptions(opts, myApiClient)
+	err = setDefaultAddOptions(cmd, opts, myApiClient)
 	if err != nil {
 		return err
 	}
@@ -261,7 +263,7 @@ func addRun(opts *AddOptions) (err error) {
 		body.SetMaxSpotPrice(opts.SpotMaxPrice)
 	}
 
-	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsCreate(context.TODO()).CreateProjectCommand(body).Execute()
+	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsCreate(ctx).CreateProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
@@ -269,7 +271,9 @@ func addRun(opts *AddOptions) (err error) {
 
 }
 
-func setDefaultAddOptions(opts *AddOptions, client *tk.Client) (err error) {
+func setDefaultAddOptions(cmd *cobra.Command, opts *AddOptions, client *tk.Client) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
 	// Try to resolve org ID from flag/env var; fall back to cloud credential derivation.
 	orgID, resolveErr := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	var organizationID int32
@@ -277,28 +281,28 @@ func setDefaultAddOptions(opts *AddOptions, client *tk.Client) (err error) {
 		organizationID = orgID
 	} else {
 		// Get organization ID from cloud credential ID
-		organizationID, err = organization.GetOrganizationIDFromCloudCredential(opts.CloudCredentialID, client)
+		organizationID, err = organization.GetOrganizationIDFromCloudCredential(ctx, opts.CloudCredentialID, client)
 		if err != nil {
 			return err
 		}
 	}
 
 	if opts.AccessProfileID == 0 {
-		opts.AccessProfileID, err = getDefaultAccessProfileID(organizationID)
+		opts.AccessProfileID, err = getDefaultAccessProfileID(cmd, organizationID)
 		if err != nil {
 			return
 		}
 	}
 
 	if opts.AlertingProfileID == 0 {
-		opts.AlertingProfileID, err = getDefaultAlertingProfileID(organizationID)
+		opts.AlertingProfileID, err = getDefaultAlertingProfileID(cmd, organizationID)
 		if err != nil {
 			return
 		}
 	}
 
 	if opts.KubernetesProfileID == 0 {
-		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(organizationID)
+		opts.KubernetesProfileID, err = getDefaultKubernetesProfileID(cmd, organizationID)
 		if err != nil {
 			return err
 		}
@@ -307,9 +311,12 @@ func setDefaultAddOptions(opts *AddOptions, client *tk.Client) (err error) {
 	return
 }
 
-func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
+func getDefaultAccessProfileID(cmd *cobra.Command, organizationID int32) (id int32, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesList(context.TODO()).OrganizationId(organizationID).Execute()
+	data, response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesList(ctx).OrganizationId(organizationID).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return
@@ -325,9 +332,12 @@ func getDefaultAccessProfileID(organizationID int32) (id int32, err error) {
 	return
 }
 
-func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
+func getDefaultAlertingProfileID(cmd *cobra.Command, organizationID int32) (id int32, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiclient := tk.NewClient()
-	data, response, err := myApiclient.Client.AlertingProfilesAPI.AlertingprofilesList(context.TODO()).OrganizationId(organizationID).Execute()
+	data, response, err := myApiclient.Client.AlertingProfilesAPI.AlertingprofilesList(ctx).OrganizationId(organizationID).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return
@@ -343,9 +353,12 @@ func getDefaultAlertingProfileID(organizationID int32) (id int32, err error) {
 	return
 }
 
-func getDefaultKubernetesProfileID(organizationID int32) (id int32, err error) {
+func getDefaultKubernetesProfileID(cmd *cobra.Command, organizationID int32) (id int32, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesList(context.TODO()).OrganizationId(organizationID).Execute()
+	data, response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesList(ctx).OrganizationId(organizationID).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

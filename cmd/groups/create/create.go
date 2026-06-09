@@ -1,13 +1,13 @@
 package create
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type CreateOptions struct {
@@ -22,7 +22,7 @@ func NewCmdCreateGroup() *cobra.Command {
 		Short: "Create a new group",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return createGroup(args[0], opts)
+			return createGroup(cmd, args[0], opts)
 		},
 	}
 
@@ -32,7 +32,10 @@ func NewCmdCreateGroup() *cobra.Command {
 	return &cmd
 }
 
-func createGroup(groupName string, opts CreateOptions) (err error) {
+func createGroup(cmd *cobra.Command, groupName string, opts CreateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// input parameters sanity check
 	if opts.AccountID == 0 {
 		return fmt.Errorf("account ID must be specified")
@@ -44,7 +47,7 @@ func createGroup(groupName string, opts CreateOptions) (err error) {
 		AccountId: opts.AccountID,
 	}
 
-	_, response, err := myApiClient.Client.GroupsAPI.GroupsCreate(context.TODO()).CreateGroupCommand(body).Execute()
+	_, response, err := myApiClient.Client.GroupsAPI.GroupsCreate(ctx).CreateGroupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

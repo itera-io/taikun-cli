@@ -15,11 +15,15 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more backup credentials",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return cmdutils.DeleteMultiple(ids, deleteRun)
+			return cmdutils.DeleteMultiple(ids, func(id int32) error {
+				return deleteRun(ctx, id)
+			})
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -27,12 +31,12 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(backupCredentialID int32) (err error) {
+func deleteRun(ctx context.Context, backupCredentialID int32) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsDelete(context.TODO(), backupCredentialID).Execute()
+	response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsDelete(ctx, backupCredentialID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

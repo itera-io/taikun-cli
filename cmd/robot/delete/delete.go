@@ -1,11 +1,10 @@
 package delete
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdDeleteRobot() *cobra.Command {
@@ -14,17 +13,20 @@ func NewCmdDeleteRobot() *cobra.Command {
 		Short: "Delete group",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return deleteRobot(args[0])
+			return deleteRobot(cmd, args[0])
 		},
 	}
 
 	return &cmd
 }
 
-func deleteRobot(robotID string) (err error) {
+func deleteRobot(cmd *cobra.Command, robotID string) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.RobotAPI.RobotDelete(context.TODO(), robotID).Execute()
+	response, err := myApiClient.Client.RobotAPI.RobotDelete(ctx, robotID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

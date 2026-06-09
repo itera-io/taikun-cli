@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
@@ -47,7 +46,7 @@ func NewCmdAdd() *cobra.Command {
 				return
 			}
 
-			isValid, err := sshPublicKeyIsValid(opts.PublicKey)
+			isValid, err := sshPublicKeyIsValid(cmd, opts.PublicKey)
 			if err != nil {
 				return
 			}
@@ -55,7 +54,7 @@ func NewCmdAdd() *cobra.Command {
 				return fmt.Errorf("SSH public key must be valid")
 			}
 
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -71,7 +70,10 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
+func sshPublicKeyIsValid(cmd *cobra.Command, sshPublicKey string) (bool, error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -81,7 +83,7 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.CheckerAPI.CheckerSsh(context.TODO()).SshKeyCommand(body).Execute()
+	response, err := myApiClient.Client.CheckerAPI.CheckerSsh(ctx).SshKeyCommand(body).Execute()
 	if err != nil {
 		return false, tk.CreateError(response, err)
 	}
@@ -89,7 +91,10 @@ func sshPublicKeyIsValid(sshPublicKey string) (bool, error) {
 
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -101,7 +106,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.SshUsersAPI.SshusersCreate(context.TODO()).CreateSshUserCommand(body).Execute()
+	data, response, err := myApiClient.Client.SshUsersAPI.SshusersCreate(ctx).CreateSshUserCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

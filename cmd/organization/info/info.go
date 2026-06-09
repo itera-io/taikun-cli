@@ -1,7 +1,6 @@
 package info
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/organization/list"
@@ -30,7 +29,7 @@ func NewCmdInfo() *cobra.Command {
 				return
 			}
 			infoFields.ShowAll()
-			return infoRun(&opts)
+			return infoRun(cmd, &opts)
 		},
 	}
 
@@ -40,9 +39,12 @@ func NewCmdInfo() *cobra.Command {
 }
 
 // infoRun calls the API and gets an object with information which it prints
-func infoRun(opts *InfoOptions) (err error) {
+func infoRun(cmd *cobra.Command, opts *InfoOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsList(context.TODO()).Id(opts.OrganizationID).Execute()
+	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsList(ctx).Id(opts.OrganizationID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

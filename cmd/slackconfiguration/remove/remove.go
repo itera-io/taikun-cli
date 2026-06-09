@@ -16,11 +16,15 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more Slack configurations",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return cmdutils.DeleteMultiple(ids, deleteRun)
+			return cmdutils.DeleteMultiple(ids, func(id int32) error {
+				return deleteRun(ctx, id)
+			})
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -28,7 +32,7 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(slackConfigID int32) (err error) {
+func deleteRun(ctx context.Context, slackConfigID int32) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -38,7 +42,7 @@ func deleteRun(slackConfigID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.SlackAPI.SlackDeleteMultiple(context.TODO()).DeleteSlackConfigCommand(body).Execute()
+	response, err := myApiClient.Client.SlackAPI.SlackDeleteMultiple(ctx).DeleteSlackConfigCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

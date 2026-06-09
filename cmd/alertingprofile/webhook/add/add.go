@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -32,7 +31,7 @@ func NewCmdAdd() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AlertingProfileID = alertingProfileID
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -44,12 +43,15 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func getAlertingProfileWebhooks(alertingProfileID int32) ([]taikuncore.AlertingWebhookDto, error) {
+func getAlertingProfileWebhooks(cmd *cobra.Command, alertingProfileID int32) ([]taikuncore.AlertingWebhookDto, error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesList(context.TODO()).Id(alertingProfileID).Execute()
+	data, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesList(ctx).Id(alertingProfileID).Execute()
 	if err != nil {
 		return nil, tk.CreateError(response, err)
 	}
@@ -91,10 +93,13 @@ func parseAddOptions(opts *AddOptions) (*taikuncore.AlertingWebhookDto, error) {
 
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	alertingWebhooks, err := getAlertingProfileWebhooks(opts.AlertingProfileID)
+	alertingWebhooks, err := getAlertingProfileWebhooks(cmd, opts.AlertingProfileID)
 	if err != nil {
 		return
 	}
@@ -106,7 +111,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	alertingWebhooks = append(alertingWebhooks, *newAlertingWebhook)
 
-	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAssignWebhooks(context.TODO(), opts.AlertingProfileID).AlertingWebhookDto(alertingWebhooks).Execute()
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAssignWebhooks(ctx, opts.AlertingProfileID).AlertingWebhookDto(alertingWebhooks).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

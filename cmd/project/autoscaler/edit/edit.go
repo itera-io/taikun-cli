@@ -1,7 +1,6 @@
 package edit
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -32,7 +31,7 @@ func NewCmdEdit() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return editRun(&opts)
+			return editRun(cmd, &opts)
 		},
 	}
 
@@ -42,8 +41,11 @@ func NewCmdEdit() *cobra.Command {
 	return &cmd
 }
 
-func editRun(opts *EditOptions) (err error) {
-	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(opts.ProjectID)
+func editRun(cmd *cobra.Command, opts *EditOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
+	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(cmd, opts.ProjectID)
 	if err != nil {
 		return err
 	}
@@ -58,7 +60,7 @@ func editRun(opts *EditOptions) (err error) {
 		MinSize:   &opts.MinSize,
 		MaxSize:   &opts.MaxSize,
 	}
-	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEdit(context.TODO()).EditAutoscalingCommand(body).Execute()
+	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEdit(ctx).EditAutoscalingCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

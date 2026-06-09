@@ -1,7 +1,6 @@
 package offers
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -28,7 +27,7 @@ func NewCmdOffers() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return offersRun(&opts)
+			return offersRun(cmd, &opts)
 		},
 	}
 
@@ -44,7 +43,7 @@ func NewCmdOffers() *cobra.Command {
 					opts := publishers.PublishersOptions{
 						CloudCredentialID: cloudCredentialID,
 					}
-					completions, _ = publishers.ListPublishers(&opts)
+					completions, _ = publishers.ListPublishers(cmd, &opts)
 				}
 			}
 
@@ -57,8 +56,8 @@ func NewCmdOffers() *cobra.Command {
 	return &cmd
 }
 
-func offersRun(opts *OffersOptions) (err error) {
-	offers, err := ListOffers(opts)
+func offersRun(cmd *cobra.Command, opts *OffersOptions) (err error) {
+	offers, err := ListOffers(cmd, opts)
 	if err == nil {
 		out.PrintStringSlice(offers)
 	}
@@ -66,9 +65,12 @@ func offersRun(opts *OffersOptions) (err error) {
 	return
 }
 
-func ListOffers(opts *OffersOptions) (offers []string, err error) {
+func ListOffers(cmd *cobra.Command, opts *OffersOptions) (offers []string, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzureOffers(context.TODO(), opts.CloudCredentialID, opts.Publisher)
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzureOffers(ctx, opts.CloudCredentialID, opts.Publisher)
 	offers = make([]string, 0)
 	for {
 		data, response, err := myRequest.Execute()

@@ -2,6 +2,7 @@ package remove
 
 import (
 	"context"
+
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/cmd/user/complete"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -15,7 +16,11 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more users",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return cmdutils.DeleteMultipleStringID(args, deleteRun)
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
+			return cmdutils.DeleteMultipleStringID(args, func(id string) error {
+				return deleteRun(ctx, id)
+			})
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -25,9 +30,9 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(userID string) (err error) {
+func deleteRun(ctx context.Context, userID string) (err error) {
 	myApiClient := tk.NewClient()
-	response, err := myApiClient.Client.UsersAPI.UsersDelete(context.TODO(), userID).Execute()
+	response, err := myApiClient.Client.UsersAPI.UsersDelete(ctx, userID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

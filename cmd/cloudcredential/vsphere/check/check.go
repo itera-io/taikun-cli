@@ -1,7 +1,6 @@
 package check
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -26,7 +25,7 @@ func NewCmdCheck() *cobra.Command {
 		Short: "Check the validity of an vSphere cloud credential",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return checkRun(&opts)
+			return checkRun(cmd, &opts)
 		},
 	}
 
@@ -42,7 +41,10 @@ func NewCmdCheck() *cobra.Command {
 	return cmd
 }
 
-func checkRun(opts *CheckOptions) (err error) {
+func checkRun(cmd *cobra.Command, opts *CheckOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create an authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -54,7 +56,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	myRequest := myApiClient.Client.VsphereCloudCredentialAPI.VsphereValidate(context.TODO()).ValidateVsphereCommand(body)
+	myRequest := myApiClient.Client.VsphereCloudCredentialAPI.VsphereValidate(ctx).ValidateVsphereCommand(body)
 	response, err := myRequest.Execute()
 
 	if err == nil {

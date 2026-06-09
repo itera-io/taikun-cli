@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
@@ -52,7 +51,7 @@ func NewCmdList() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			localCatID = &catid
-			return listRun(&catid, opts.OrganizationID)
+			return listRun(cmd, &catid, opts.OrganizationID)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -63,10 +62,13 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(catid *int32, orgid int32) (err error) {
+func listRun(cmd *cobra.Command, catid *int32, orgid int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	listCommand := myApiClient.Client.CatalogAPI.CatalogList(context.TODO()).Id(*catid)
+	listCommand := myApiClient.Client.CatalogAPI.CatalogList(ctx).Id(*catid)
 	if orgid != -1 {
 		listCommand = listCommand.OrganizationId(orgid)
 	}

@@ -1,13 +1,13 @@
 package lock
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type LockOptions struct {
@@ -26,14 +26,17 @@ func NewCmdLock() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return lockRun(&opts)
+			return lockRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func lockRun(opts *LockOptions) (err error) {
+func lockRun(cmd *cobra.Command, opts *LockOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -44,7 +47,7 @@ func lockRun(opts *LockOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileLockManagement(context.TODO()).StandAloneProfileLockManagementCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileLockManagement(ctx).StandAloneProfileLockManagementCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

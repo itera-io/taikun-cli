@@ -1,7 +1,6 @@
 package remove
 
 import (
-	"context"
 	"errors"
 	"fmt"
 
@@ -42,7 +41,7 @@ func NewCmdDelete() *cobra.Command {
 					return errors.New("must set one of --server-ids and --all-servers flags")
 				}
 			}
-			return deleteRun(&opts)
+			return deleteRun(cmd, &opts)
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -53,14 +52,16 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(opts *DeleteOptions) (err error) {
+func deleteRun(cmd *cobra.Command, opts *DeleteOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
 	myApiClient := tk.NewClient()
 	body := taikuncore.ProjectDeploymentDeleteServersCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
 	if opts.DeleteAll {
-		allServers, err := list.ListServers(&list.ListOptions{ProjectID: opts.ProjectID})
+		allServers, err := list.ListServers(cmd, &list.ListOptions{ProjectID: opts.ProjectID})
 		if err != nil {
 			return err
 		}
@@ -77,7 +78,7 @@ func deleteRun(opts *DeleteOptions) (err error) {
 	} else {
 		body.SetServerIds(opts.ServerIDs)
 	}
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(ctx).ProjectDeploymentDeleteServersCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

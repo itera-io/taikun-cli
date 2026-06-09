@@ -1,12 +1,11 @@
 package delete
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdDeleteGroup() *cobra.Command {
@@ -19,17 +18,20 @@ func NewCmdDeleteGroup() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return deleteGroup(groupID)
+			return deleteGroup(cmd, groupID)
 		},
 	}
 
 	return &cmd
 }
 
-func deleteGroup(groupID int32) (err error) {
+func deleteGroup(cmd *cobra.Command, groupID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.GroupsAPI.GroupsDelete(context.TODO(), groupID).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsDelete(ctx, groupID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

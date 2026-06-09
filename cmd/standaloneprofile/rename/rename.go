@@ -1,7 +1,6 @@
 package rename
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -28,7 +27,7 @@ func NewCmdRename() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return renameRun(&opts)
+			return renameRun(cmd, &opts)
 		},
 	}
 
@@ -38,7 +37,10 @@ func NewCmdRename() *cobra.Command {
 	return &cmd
 }
 
-func renameRun(opts *RenameOptions) (err error) {
+func renameRun(cmd *cobra.Command, opts *RenameOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -49,7 +51,7 @@ func renameRun(opts *RenameOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileEdit(context.TODO()).StandAloneProfileUpdateCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneProfileAPI.StandaloneprofileEdit(ctx).StandAloneProfileUpdateCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

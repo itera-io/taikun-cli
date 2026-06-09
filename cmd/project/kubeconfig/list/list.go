@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -66,7 +65,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -78,9 +77,12 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.KubeConfigAPI.KubeconfigList(context.TODO()).ProjectId(opts.ProjectID)
+	myRequest := myApiClient.Client.KubeConfigAPI.KubeconfigList(ctx).ProjectId(opts.ProjectID)
 
 	var kubeconfigs []interface{}
 	for {

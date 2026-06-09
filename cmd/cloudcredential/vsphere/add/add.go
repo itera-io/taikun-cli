@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -82,7 +81,7 @@ func NewCmdAdd() *cobra.Command {
 			if ((opts.DrsEnabled) && (len(opts.Hypervisors) != 0)) || (!opts.DrsEnabled) && (len(opts.Hypervisors) == 0) {
 				return fmt.Errorf("specify only one of [--drs-enabled,--hypervisors]")
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -159,7 +158,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -176,7 +178,7 @@ func addRun(opts *AddOptions) (err error) {
 		Password:       *taikuncore.NewNullableString(&opts.Password),
 		DatacenterName: *taikuncore.NewNullableString(&opts.Datacenter),
 	}
-	dataDC, responseDC, errDC := myApiClient.Client.VsphereCloudCredentialAPI.VsphereDatacenterList(context.TODO()).DatacenterListCommand(datacenterBody).Execute()
+	dataDC, responseDC, errDC := myApiClient.Client.VsphereCloudCredentialAPI.VsphereDatacenterList(ctx).DatacenterListCommand(datacenterBody).Execute()
 	if errDC != nil {
 		err = tk.CreateError(responseDC, errDC)
 		return
@@ -222,7 +224,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.VsphereCloudCredentialAPI.VsphereCreate(context.TODO()).CreateVsphereCommand(body).Execute()
+	data, response, err := myApiClient.Client.VsphereCloudCredentialAPI.VsphereCreate(ctx).CreateVsphereCommand(body).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

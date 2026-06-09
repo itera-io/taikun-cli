@@ -1,13 +1,12 @@
 package uninstall
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type UninstallOptions struct {
@@ -26,17 +25,20 @@ func NewCmdUninstall() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return uninstallAppRun(opts)
+			return uninstallAppRun(cmd, opts)
 		},
 	}
 
 	return &cmd
 }
 
-func uninstallAppRun(opts UninstallOptions) (err error) {
+func uninstallAppRun(cmd *cobra.Command, opts UninstallOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	_, response, err := myApiClient.Client.ProjectAppsAPI.ProjectappDelete(context.TODO(), opts.ProjectAppId).Execute()
+	_, response, err := myApiClient.Client.ProjectAppsAPI.ProjectappDelete(ctx, opts.ProjectAppId).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

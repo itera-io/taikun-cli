@@ -1,7 +1,6 @@
 package resize
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -28,7 +27,7 @@ func NewCmdResize() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return resizeRun(&opts)
+			return resizeRun(cmd, &opts)
 		},
 	}
 
@@ -38,7 +37,10 @@ func NewCmdResize() *cobra.Command {
 	return &cmd
 }
 
-func resizeRun(opts *ResizeOptions) (err error) {
+func resizeRun(cmd *cobra.Command, opts *ResizeOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -49,7 +51,7 @@ func resizeRun(opts *ResizeOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneVMDisksAPI.StandalonevmdisksUpdateSize(context.TODO()).UpdateStandaloneVmDiskSizeCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneVMDisksAPI.StandalonevmdisksUpdateSize(ctx).UpdateStandaloneVmDiskSizeCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

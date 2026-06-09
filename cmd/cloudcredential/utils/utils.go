@@ -1,16 +1,19 @@
 package utils
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
+	"github.com/spf13/cobra"
 )
 
-func GetCloudType(cloudCredentialID int32) (cloudType taikuncore.CloudType, err error) {
+func GetCloudType(cmd *cobra.Command, cloudCredentialID int32) (cloudType taikuncore.CloudType, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsOrgList(context.TODO()).IsAdmin(false).Id(cloudCredentialID).Execute()
+	data, response, err := myApiClient.Client.CloudCredentialAPI.CloudcredentialsOrgList(ctx).IsAdmin(false).Id(cloudCredentialID).Execute()
 
 	if len(data) == 0 {
 		return taikuncore.CLOUDTYPE_NONE, cmderr.ResourceNotFoundError("Cloud credential", cloudCredentialID)

@@ -1,13 +1,13 @@
 package unbind
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdUnbind() *cobra.Command {
@@ -23,7 +23,7 @@ func NewCmdUnbind() *cobra.Command {
 				}
 				bindings[i] = binding
 			}
-			return unbindRun(bindings)
+			return unbindRun(cmd, bindings)
 		},
 		Args: cobra.MinimumNArgs(1),
 	}
@@ -31,12 +31,15 @@ func NewCmdUnbind() *cobra.Command {
 	return cmd
 }
 
-func unbindRun(bindings []int32) (err error) {
+func unbindRun(cmd *cobra.Command, bindings []int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.UnbindFlavorFromProjectCommand{
 		Ids: bindings,
 	}
-	response, err := myApiClient.Client.FlavorsAPI.FlavorsUnbindFromProject(context.TODO()).UnbindFlavorFromProjectCommand(body).Execute()
+	response, err := myApiClient.Client.FlavorsAPI.FlavorsUnbindFromProject(ctx).UnbindFlavorFromProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,12 +1,12 @@
 package detach
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type DetachOptions struct {
@@ -25,19 +25,22 @@ func NewCmdDetach() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return detachRun(&opts)
+			return detachRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func detachRun(opts *DetachOptions) (err error) {
+func detachRun(cmd *cobra.Command, opts *DetachOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.AttachDetachAlertingProfileCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesDetach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesDetach(ctx).AttachDetachAlertingProfileCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

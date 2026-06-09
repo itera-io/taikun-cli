@@ -1,13 +1,13 @@
 package repair
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type RepairOptions struct {
@@ -26,14 +26,17 @@ func NewCmdRepair() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return repairRun(&opts)
+			return repairRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func repairRun(opts *RepairOptions) (err error) {
+func repairRun(cmd *cobra.Command, opts *RepairOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -43,7 +46,7 @@ func repairRun(opts *RepairOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepairVm(context.TODO()).ProjectDeploymentRepairVmCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepairVm(ctx).ProjectDeploymentRepairVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

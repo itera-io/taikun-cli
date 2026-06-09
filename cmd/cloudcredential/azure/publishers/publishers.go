@@ -1,8 +1,6 @@
 package publishers
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -27,7 +25,7 @@ func NewCmdPublishers() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return publishersRun(&opts)
+			return publishersRun(cmd, &opts)
 		},
 	}
 
@@ -36,8 +34,8 @@ func NewCmdPublishers() *cobra.Command {
 	return &cmd
 }
 
-func publishersRun(opts *PublishersOptions) (err error) {
-	publishers, err := ListPublishers(opts)
+func publishersRun(cmd *cobra.Command, opts *PublishersOptions) (err error) {
+	publishers, err := ListPublishers(cmd, opts)
 	if err == nil {
 		out.PrintStringSlice(publishers)
 	}
@@ -45,9 +43,12 @@ func publishersRun(opts *PublishersOptions) (err error) {
 	return
 }
 
-func ListPublishers(opts *PublishersOptions) (publishers []string, err error) {
+func ListPublishers(cmd *cobra.Command, opts *PublishersOptions) (publishers []string, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzurePublishers(context.TODO(), opts.CloudCredentialID).Limit(1000)
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzurePublishers(ctx, opts.CloudCredentialID).Limit(1000)
 	publishers = make([]string, 0)
 	for {
 		data, response, err := myRequest.Execute()

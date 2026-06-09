@@ -1,13 +1,13 @@
 package full
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type FullOptions struct {
@@ -28,7 +28,7 @@ func NewCmdFull() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return fullRun(&opts)
+			return fullRun(cmd, &opts)
 		},
 	}
 
@@ -40,7 +40,10 @@ func NewCmdFull() *cobra.Command {
 	return &cmd
 }
 
-func fullRun(opts *FullOptions) (err error) {
+func fullRun(cmd *cobra.Command, opts *FullOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.FullSpotOperationCommand{
 		Id: &opts.ProjectID,
@@ -54,7 +57,7 @@ func fullRun(opts *FullOptions) (err error) {
 		return fmt.Errorf("unknown mode. Either disable or enable")
 	}
 
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleFullSpot(context.TODO()).FullSpotOperationCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleFullSpot(ctx).FullSpotOperationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

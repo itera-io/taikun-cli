@@ -1,7 +1,6 @@
 package expiration
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type ExtendLifetimeOptions struct {
@@ -37,7 +37,7 @@ func NewCmdExpiration() *cobra.Command {
 					return cmderr.ErrUnknownDateFormat
 				}
 			}
-			return extendProjectLifetime(&opts)
+			return extendProjectLifetime(cmd, &opts)
 		},
 	}
 
@@ -48,7 +48,10 @@ func NewCmdExpiration() *cobra.Command {
 	return &cmd
 }
 
-func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
+func extendProjectLifetime(cmd *cobra.Command, opts *ExtendLifetimeOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -68,7 +71,7 @@ func extendProjectLifetime(opts *ExtendLifetimeOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsExtendLifetime(context.TODO()).ProjectExtendLifeTimeCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsExtendLifetime(ctx).ProjectExtendLifeTimeCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -57,7 +56,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 	}
 
@@ -66,12 +65,15 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.ImagesAPI.ImagesSelectedImagesForProject(context.TODO()).ProjectId(opts.ProjectID).Execute()
+	data, response, err := myApiClient.Client.ImagesAPI.ImagesSelectedImagesForProject(ctx).ProjectId(opts.ProjectID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

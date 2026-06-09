@@ -1,7 +1,6 @@
 package disable
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -27,15 +26,18 @@ func NewCmdDisable() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return disableRun(&opts)
+			return disableRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func disableRun(opts *DisableOptions) (err error) {
-	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(opts.ProjectID)
+func disableRun(cmd *cobra.Command, opts *DisableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
+	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(cmd, opts.ProjectID)
 	if err != nil {
 		return err
 	}
@@ -48,7 +50,7 @@ func disableRun(opts *DisableOptions) (err error) {
 	body := taikuncore.DisableAutoscalingCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingDisable(context.TODO()).DisableAutoscalingCommand(body).Execute()
+	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingDisable(ctx).DisableAutoscalingCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

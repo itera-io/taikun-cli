@@ -1,7 +1,6 @@
 package delete
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -9,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type DeleteOptions struct {
@@ -29,7 +29,7 @@ func NewCmdDeleteOrganizations() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return deleteOrganizationsFromGroup(groupID, &opts)
+			return deleteOrganizationsFromGroup(cmd, groupID, &opts)
 		},
 	}
 
@@ -37,7 +37,10 @@ func NewCmdDeleteOrganizations() *cobra.Command {
 	return &cmd
 }
 
-func deleteOrganizationsFromGroup(groupID int32, opts *DeleteOptions) (err error) {
+func deleteOrganizationsFromGroup(cmd *cobra.Command, groupID int32, opts *DeleteOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// input parameters sanity check
 	if len(opts.OrganizationIDs) == 0 {
 		return fmt.Errorf("no organization IDs are specified")
@@ -45,7 +48,7 @@ func deleteOrganizationsFromGroup(groupID int32, opts *DeleteOptions) (err error
 	myApiClient := tk.NewClient()
 
 	body := *taikuncore.NewDeleteOrganizationFromGroupCommand(groupID, opts.OrganizationIDs)
-	response, err := myApiClient.Client.GroupsAPI.GroupsDeleteOrganizations(context.TODO()).DeleteOrganizationFromGroupCommand(body).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsDeleteOrganizations(ctx).DeleteOrganizationFromGroupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

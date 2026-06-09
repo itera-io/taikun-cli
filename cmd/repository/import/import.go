@@ -1,8 +1,6 @@
 package importrepo
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
@@ -25,7 +23,7 @@ func NewCmdEnable() *cobra.Command {
 		Short: "Import a repository. Specify repository name and a URL and import it.",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return enableRun(args[0], opts)
+			return enableRun(cmd, args[0], opts)
 		},
 	}
 
@@ -41,7 +39,10 @@ func NewCmdEnable() *cobra.Command {
 	return &cmd
 }
 
-func enableRun(name string, opts importOpts) (err error) {
+func enableRun(cmd *cobra.Command, name string, opts importOpts) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -64,7 +65,7 @@ func enableRun(name string, opts importOpts) (err error) {
 		command.SetPassword(opts.Password)
 	}
 
-	response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryImport(context.TODO()).ImportRepoCommand(command).Execute()
+	response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryImport(ctx).ImportRepoCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

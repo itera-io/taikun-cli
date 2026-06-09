@@ -1,13 +1,13 @@
 package unlock
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdUnlock() *cobra.Command {
@@ -20,14 +20,17 @@ func NewCmdUnlock() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return unlockRun(id)
+			return unlockRun(cmd, id)
 		},
 	}
 
 	return cmd
 }
 
-func unlockRun(kubernetesProfileID int32) (err error) {
+func unlockRun(cmd *cobra.Command, kubernetesProfileID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -38,7 +41,7 @@ func unlockRun(kubernetesProfileID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesLockManager(context.TODO()).KubernetesProfilesLockManagerCommand(body).Execute()
+	response, err := myApiClient.Client.KubernetesProfilesAPI.KubernetesprofilesLockManager(ctx).KubernetesProfilesLockManagerCommand(body).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

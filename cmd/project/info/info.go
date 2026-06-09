@@ -1,8 +1,6 @@
 package info
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -177,7 +175,7 @@ func NewCmdInfo() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return infoRun(&opts)
+			return infoRun(cmd, &opts)
 		},
 	}
 
@@ -186,9 +184,12 @@ func NewCmdInfo() *cobra.Command {
 	return &cmd
 }
 
-func infoRun(opts *InfoOptions) (err error) {
+func infoRun(cmd *cobra.Command, opts *InfoOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), opts.ProjectID).Execute()
+	data, response, err := myApiClient.Client.ServersAPI.ServersDetails(ctx, opts.ProjectID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

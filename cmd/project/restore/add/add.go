@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -45,7 +44,7 @@ func NewCmdAdd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -60,7 +59,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.RestoreBackupCommand{
 		ProjectId:         &opts.ProjectID,
@@ -69,7 +71,7 @@ func addRun(opts *AddOptions) (err error) {
 		IncludeNamespaces: opts.IncludeNamespaces,
 		ExcludeNamespaces: opts.ExcludeNamespaces,
 	}
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupRestoreBackup(context.TODO()).RestoreBackupCommand(body).Execute()
+	response, err := myApiClient.Client.BackupPolicyAPI.BackupRestoreBackup(ctx).RestoreBackupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

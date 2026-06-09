@@ -1,8 +1,6 @@
 package list
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -52,7 +50,7 @@ func NewCmdListRobots() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return listRobots(accountID, &opts)
+			return listRobots(cmd, accountID, &opts)
 		},
 	}
 
@@ -62,11 +60,14 @@ func NewCmdListRobots() *cobra.Command {
 	return &cmd
 }
 
-func listRobots(accountID int32, opts *ListOptions) (err error) {
+func listRobots(cmd *cobra.Command, accountID int32, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	var robots = make([]taikuncore.RobotUsersListDto, 0)
 
-	req := myApiClient.Client.RobotAPI.RobotList(context.TODO()).AccountId(accountID).OrganizationId(opts.OrganizationID)
+	req := myApiClient.Client.RobotAPI.RobotList(ctx).AccountId(accountID).OrganizationId(opts.OrganizationID)
 	data, response, err := req.Execute()
 	if err != nil {
 		return tk.CreateError(response, err)

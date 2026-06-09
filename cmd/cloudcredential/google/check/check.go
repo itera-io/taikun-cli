@@ -1,7 +1,6 @@
 package check
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -9,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"strings"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type CheckOptions struct {
@@ -24,20 +24,23 @@ func NewCmdCheck() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			opts.ConfigFilePath = args[0]
-			return checkRun(&opts)
+			return checkRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func checkRun(opts *CheckOptions) (err error) {
+func checkRun(cmd *cobra.Command, opts *CheckOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	configFile, err := os.Open(opts.ConfigFilePath)
 	if err != nil {
 		return err
 	}
-	_, response, err := myApiClient.Client.CheckerAPI.CheckerGoogle(context.TODO()).Config(configFile).Execute()
+	_, response, err := myApiClient.Client.CheckerAPI.CheckerGoogle(ctx).Config(configFile).Execute()
 	if err == nil {
 		out.PrintCheckSuccess("Google Cloud Platform credential")
 	}

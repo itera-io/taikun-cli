@@ -1,7 +1,6 @@
 package bind
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -28,7 +27,7 @@ func NewCmdBind() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return bindRun(&opts)
+			return bindRun(cmd, &opts)
 		},
 	}
 
@@ -40,7 +39,10 @@ func NewCmdBind() *cobra.Command {
 	return &cmd
 }
 
-func bindRun(opts *BindOptions) (err error) {
+func bindRun(cmd *cobra.Command, opts *BindOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -60,7 +62,7 @@ func bindRun(opts *BindOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesAddOrganizations(context.TODO(), billingRuleId).AddOrganizationsToRuleDto(body).Execute()
+	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesAddOrganizations(ctx, billingRuleId).AddOrganizationsToRuleDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,13 +1,13 @@
 package unlock
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdUnlock() *cobra.Command {
@@ -20,20 +20,23 @@ func NewCmdUnlock() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return unlockRun(id)
+			return unlockRun(cmd, id)
 		},
 	}
 
 	return cmd
 }
 
-func unlockRun(accessProfileID int32) (err error) {
+func unlockRun(cmd *cobra.Command, accessProfileID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.AccessProfilesLockManagementCommand{
 		Id:   &accessProfileID,
 		Mode: *taikuncore.NewNullableString(&types.UnlockedMode),
 	}
-	response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesLockManager(context.TODO()).AccessProfilesLockManagementCommand(body).Execute()
+	response, err := myApiClient.Client.AccessProfilesAPI.AccessprofilesLockManager(ctx).AccessProfilesLockManagementCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

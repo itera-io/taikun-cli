@@ -1,13 +1,12 @@
 package info
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 var infoFields = fields.New(
@@ -54,16 +53,19 @@ func NewCmdInfo() *cobra.Command {
 		Short: "Retrieve information about the current user",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return infoRun()
+			return infoRun(cmd)
 		},
 	}
 
 	return &cmd
 }
 
-func infoRun() error {
+func infoRun(cmd *cobra.Command) error {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
+	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(ctx).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

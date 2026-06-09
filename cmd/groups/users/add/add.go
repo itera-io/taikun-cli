@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -9,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type AddOptions struct {
@@ -29,7 +29,7 @@ func NewCmdAddUser() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return addUsersToGroup(groupID, &opts)
+			return addUsersToGroup(cmd, groupID, &opts)
 		},
 	}
 
@@ -37,7 +37,10 @@ func NewCmdAddUser() *cobra.Command {
 	return &cmd
 }
 
-func addUsersToGroup(groupID int32, opts *AddOptions) (err error) {
+func addUsersToGroup(cmd *cobra.Command, groupID int32, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// input parameters sanity check
 	if len(opts.UserIDs) == 0 {
 		return fmt.Errorf("no user IDs are specified")
@@ -49,7 +52,7 @@ func addUsersToGroup(groupID int32, opts *AddOptions) (err error) {
 		body = append(body, *taikuncore.NewCreateGroupUserDto(*taikuncore.NewNullableString(&userID)))
 	}
 
-	response, err := myApiClient.Client.GroupsAPI.GroupsAddUsers(context.TODO(), groupID).CreateGroupUserDto(body).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsAddUsers(ctx, groupID).CreateGroupUserDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

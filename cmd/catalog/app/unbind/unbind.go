@@ -1,12 +1,12 @@
 package unbind
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type UnbindOptions struct {
@@ -26,17 +26,20 @@ func NewCmdUnbind() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 
-			return bindRun(&opts)
+			return bindRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func bindRun(opts *UnbindOptions) (err error) {
+func bindRun(cmd *cobra.Command, opts *UnbindOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.CatalogAppAPI.CatalogAppDelete(context.TODO(), opts.catalogappid).Execute()
+	response, err := myApiClient.Client.CatalogAppAPI.CatalogAppDelete(ctx, opts.catalogappid).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

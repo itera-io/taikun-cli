@@ -37,6 +37,7 @@ func NewCmdRoot() *cobra.Command {
 		Long:         `Manage Taikun resources from the command line.`,
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			config.APITimeout = config.ParseTimeout()
 			if !config.OutputFormatIsValid() {
 				return cmderr.ErrUnknownOutputFormat
 			}

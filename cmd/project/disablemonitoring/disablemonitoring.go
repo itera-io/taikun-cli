@@ -1,13 +1,13 @@
 package disablemonitoring
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type DisableMonitoringOptions struct {
@@ -26,14 +26,17 @@ func NewCmdDisableMonitoring() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return disableMonitoringRun(&opts)
+			return disableMonitoringRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func disableMonitoringRun(opts *DisableMonitoringOptions) (err error) {
+func disableMonitoringRun(cmd *cobra.Command, opts *DisableMonitoringOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 	body := taikuncore.DeploymentDisableMonitoringCommand{
@@ -41,7 +44,7 @@ func disableMonitoringRun(opts *DisableMonitoringOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	_, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableMonitoring(context.TODO()).DeploymentDisableMonitoringCommand(body).Execute()
+	_, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableMonitoring(ctx).DeploymentDisableMonitoringCommand(body).Execute()
 	if err != nil {
 		return cmderr.ErrProjectMonitoringAlreadyDisabled
 	}

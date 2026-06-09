@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -94,7 +93,7 @@ func NewCmdAdd() *cobra.Command {
 			if err := cmdutils.CheckFlagValue("role", opts.Role, types.ServerRoles); err != nil {
 				return err
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -124,7 +123,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	diskSizeValue := types.GiBToBInt64(opts.DiskSize)
 	serverRole := types.GetServerRole(opts.Role)
@@ -144,7 +146,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	// Only set if optional Proxmox parameter is present
 	if opts.ProxmoxDisk != 0 {
-		proxmoxRole, err1 := getProxmoxRole(opts.ProjectID)
+		proxmoxRole, err1 := getProxmoxRole(cmd, opts.ProjectID)
 		if err1 != nil {
 			return err1
 		}
@@ -163,7 +165,7 @@ func addRun(opts *AddOptions) (err error) {
 			return
 		}
 	}
-	data, response, err := myApiClient.Client.ServersAPI.ServersCreate(context.TODO()).ServerForCreateDto(body).Execute()
+	data, response, err := myApiClient.Client.ServersAPI.ServersCreate(ctx).ServerForCreateDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
@@ -196,9 +198,12 @@ func parseKubernetesNodeLabelsFlag(labelsData []string) ([]taikuncore.Kubernetes
 
 // Proxmox Role type for a k8s server depends on Proxmox type specified in the Kubernetes profile.
 // The names in profile don't match the names we send to the server, for it, we have this function.
-func getProxmoxRole(projectId int32) (returnRole *taikuncore.ProxmoxRole, returnErr error) {
+func getProxmoxRole(cmd *cobra.Command, projectId int32) (returnRole *taikuncore.ProxmoxRole, returnErr error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myclient := tk.NewClient()
-	data, response, err := myclient.Client.ServersAPI.ServersDetails(context.TODO(), projectId).Execute()
+	data, response, err := myclient.Client.ServersAPI.ServersDetails(ctx, projectId).Execute()
 	if err != nil {
 		returnErr = tk.CreateError(response, err)
 		return

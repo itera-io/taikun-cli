@@ -1,7 +1,6 @@
 package complete
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	tk "github.com/itera-io/taikungoclient"
@@ -17,6 +16,9 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) c
 			return
 		}
 
+		ctx, cancel := cmdutils.APIContext(cmd)
+		defer cancel()
+
 		myApiClient := tk.NewClient()
 
 		body := taikuncore.RegionListCommand{
@@ -24,7 +26,7 @@ func MakeAwsRegionCompletionFunc(accessKeyID *string, secretAccessKey *string) c
 			AwsSecretAccessKey: *taikuncore.NewNullableString(secretAccessKey),
 		}
 
-		data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsRegionlist(context.TODO()).RegionListCommand(body).Execute()
+		data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsRegionlist(ctx).RegionListCommand(body).Execute()
 		if err != nil {
 			fmt.Println(tk.CreateError(response, err))
 			return

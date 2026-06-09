@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -57,7 +56,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List access profiles",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -72,7 +71,10 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -83,7 +85,7 @@ func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	myRequest := myApiClient.Client.AccessProfilesAPI.AccessprofilesList(context.TODO())
+	myRequest := myApiClient.Client.AccessProfilesAPI.AccessprofilesList(ctx)
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}

@@ -59,7 +59,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List AWS cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -73,13 +73,15 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func listRun(opts *ListOptions) error {
+func listRun(cmd *cobra.Command, opts *ListOptions) error {
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
 	}
 	opts.OrganizationID = orgID
-	amazonCloudCredentials, err := ListCloudCredentialsAws(opts)
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+	amazonCloudCredentials, err := ListCloudCredentialsAws(ctx, opts)
 	if err != nil {
 		return err
 	}
@@ -87,9 +89,9 @@ func listRun(opts *ListOptions) error {
 	return out.PrintResults(amazonCloudCredentials, listFields)
 }
 
-func ListCloudCredentialsAws(opts *ListOptions) (credentials []interface{}, err error) {
+func ListCloudCredentialsAws(ctx context.Context, opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.AWSCloudCredentialAPI.AwsList(context.TODO())
+	myRequest := myApiClient.Client.AWSCloudCredentialAPI.AwsList(ctx)
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}

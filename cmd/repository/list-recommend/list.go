@@ -1,8 +1,6 @@
 package list_recommend
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -35,7 +33,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List available managed repositories",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -46,7 +44,10 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -56,7 +57,7 @@ func listRun(opts *ListOptions) (err error) {
 	var repositories = make([]taikuncore.ArtifactRepositoryDto, 0)
 
 	// Recommended
-	myquery := myApiClient.Client.AppRepositoriesAPI.RepositoryRecommendedList(context.TODO())
+	myquery := myApiClient.Client.AppRepositoriesAPI.RepositoryRecommendedList(ctx)
 	if orgID != 0 {
 		myquery = myquery.OrganizationId(orgID)
 	}

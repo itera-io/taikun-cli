@@ -1,8 +1,6 @@
 package enable
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
@@ -25,7 +23,7 @@ func NewCmdEnable() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.RepoName = args[0]
-			return enableRun(opts)
+			return enableRun(cmd, opts)
 		},
 	}
 
@@ -35,7 +33,10 @@ func NewCmdEnable() *cobra.Command {
 	return &cmd
 }
 
-func enableRun(opts EnableOptions) (err error) {
+func enableRun(cmd *cobra.Command, opts EnableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -55,7 +56,7 @@ func enableRun(opts EnableOptions) (err error) {
 		command.OrganizationId = *taikuncore.NewNullableInt32(&orgID)
 	}
 
-	response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryBind(context.TODO()).BindAppRepositoryCommand(command).Execute()
+	response, err := myApiClient.Client.AppRepositoriesAPI.RepositoryBind(ctx).BindAppRepositoryCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

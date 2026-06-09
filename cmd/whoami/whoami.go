@@ -1,10 +1,10 @@
 package whoami
 
 import (
-	"context"
 	"fmt"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdWhoami() *cobra.Command {
@@ -13,18 +13,21 @@ func NewCmdWhoami() *cobra.Command {
 		Short: "Print username",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return whoamiRun()
+			return whoamiRun(cmd)
 		},
 	}
 	return cmd
 }
 
-func whoamiRun() (err error) {
+func whoamiRun(cmd *cobra.Command) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, _, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
+	data, _, err := myApiClient.Client.UsersAPI.UsersUserInfo(ctx).Execute()
 	if err != nil {
 		return err
 	}

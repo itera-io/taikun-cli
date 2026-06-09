@@ -1,14 +1,13 @@
 package update
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type UpdateOptions struct {
@@ -29,7 +28,7 @@ func NewCmdUpdate() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return updateRun(&opts)
+			return updateRun(cmd, &opts)
 		},
 	}
 
@@ -39,7 +38,10 @@ func NewCmdUpdate() *cobra.Command {
 	return &cmd
 }
 
-func updateRun(opts *UpdateOptions) (err error) {
+func updateRun(cmd *cobra.Command, opts *UpdateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.UpdateAccountCommand{
@@ -53,7 +55,7 @@ func updateRun(opts *UpdateOptions) (err error) {
 		body.SetEmail(opts.Email)
 	}
 
-	_, response, err := myApiClient.Client.AccountsAPI.AccountsUpdate(context.TODO()).UpdateAccountCommand(body).Execute()
+	_, response, err := myApiClient.Client.AccountsAPI.AccountsUpdate(ctx).UpdateAccountCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

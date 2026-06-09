@@ -1,12 +1,11 @@
 package delete
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdDeleteAccount() *cobra.Command {
@@ -19,17 +18,20 @@ func NewCmdDeleteAccount() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return deleteAccount(accountID)
+			return deleteAccount(cmd, accountID)
 		},
 	}
 
 	return &cmd
 }
 
-func deleteAccount(accountID int32) (err error) {
+func deleteAccount(cmd *cobra.Command, accountID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.AccountsAPI.AccountsDelete(context.TODO(), accountID).Execute()
+	response, err := myApiClient.Client.AccountsAPI.AccountsDelete(ctx, accountID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

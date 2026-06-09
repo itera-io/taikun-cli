@@ -1,8 +1,6 @@
 package subnet_list
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/aws/complete"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -48,7 +46,7 @@ func NewCmdSubnetList() *cobra.Command {
 		Short: "List subnets for an AWS cloud credential",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return subnetList(&opts)
+			return subnetList(cmd, &opts)
 		},
 	}
 
@@ -68,7 +66,10 @@ func NewCmdSubnetList() *cobra.Command {
 	return cmd
 }
 
-func subnetList(opts *SubnetListOptions) error {
+func subnetList(cmd *cobra.Command, opts *SubnetListOptions) error {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -81,7 +82,7 @@ func subnetList(opts *SubnetListOptions) error {
 	}
 
 	// Execute a query into the API + graceful exit
-	myRequest := myApiClient.Client.AWSCloudCredentialAPI.AwsSubnetList(context.TODO()).AwsSubnetListCommand(body)
+	myRequest := myApiClient.Client.AWSCloudCredentialAPI.AwsSubnetList(ctx).AwsSubnetListCommand(body)
 	subnets, response, err := myRequest.Execute()
 	// Did it fail because the request failed (e.g. cannot connect to Taikun) or because the credentials are not valid?
 	if err != nil {

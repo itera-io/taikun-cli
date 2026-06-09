@@ -26,6 +26,8 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more virtual projects",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
 			optsList := make([]*DeleteOptions, len(args))
 			for i, arg := range args {
 				projectID, err := types.Atoi32(arg)
@@ -36,7 +38,7 @@ func NewCmdDelete() *cobra.Command {
 					ProjectID: projectID,
 				}
 			}
-			return deleteMultiple(optsList)
+			return deleteMultiple(ctx, optsList)
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -44,11 +46,11 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteMultiple(optsList []*DeleteOptions) error {
+func deleteMultiple(ctx context.Context, optsList []*DeleteOptions) error {
 	errorOccured := false
 
 	for _, opts := range optsList {
-		if err := deleteRun(opts); err != nil {
+		if err := deleteRun(ctx, opts); err != nil {
 			errorOccured = true
 
 			_, _ = fmt.Fprintln(os.Stderr, err)
@@ -63,13 +65,13 @@ func deleteMultiple(optsList []*DeleteOptions) error {
 	return nil
 }
 
-func deleteRun(opts *DeleteOptions) (err error) {
+func deleteRun(ctx context.Context, opts *DeleteOptions) (err error) {
 	myApiClient := tk.NewClient()
 	body := taikuncore.DeleteVirtualClusterCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
-	request, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterDelete(context.TODO()).DeleteVirtualClusterCommand(body).Execute()
+	request, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterDelete(ctx).DeleteVirtualClusterCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(request, err)
 	}

@@ -1,7 +1,6 @@
 package install
 
 import (
-	"context"
 	"encoding/base64"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -11,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type InstallOptions struct {
@@ -40,7 +40,7 @@ func NewCmdInstall() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return installAppRun(opts)
+			return installAppRun(cmd, opts)
 		},
 	}
 
@@ -54,7 +54,10 @@ func NewCmdInstall() *cobra.Command {
 	return &cmd
 }
 
-func installAppRun(opts InstallOptions) (err error) {
+func installAppRun(cmd *cobra.Command, opts InstallOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	var extraValuesB64 string
 
@@ -80,7 +83,7 @@ func installAppRun(opts InstallOptions) (err error) {
 		AutoSync:     &opts.Autosync,
 	}
 
-	_, response, err := myApiClient.Client.ProjectAppsAPI.ProjectappInstall(context.TODO()).CreateProjectAppCommand(body).Execute()
+	_, response, err := myApiClient.Client.ProjectAppsAPI.ProjectappInstall(ctx).CreateProjectAppCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

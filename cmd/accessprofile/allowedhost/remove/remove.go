@@ -2,25 +2,28 @@ package remove
 
 import (
 	"context"
+	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
-	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
 func NewCmdDelete() *cobra.Command {
-	var id int32
 	cmd := &cobra.Command{
 		Use:   "delete <allowed-host-id>...",
 		Short: "Delete an allowed host",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			id, err = types.Atoi32(args[0])
+		Args:  cobra.MinimumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
+			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
-				return
+				return cmderr.ErrIDArgumentNotANumber
 			}
-			return deleteRun(id)
+			return cmdutils.DeleteMultiple(ids, func(id int32) error {
+				return deleteRun(ctx, id)
+			})
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -28,12 +31,12 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(allowedHostID int32) (err error) {
+func deleteRun(ctx context.Context, allowedHostID int32) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.AllowedHostAPI.AllowedhostDelete(context.TODO(), allowedHostID).Execute()
+	response, err := myApiClient.Client.AllowedHostAPI.AllowedhostDelete(ctx, allowedHostID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

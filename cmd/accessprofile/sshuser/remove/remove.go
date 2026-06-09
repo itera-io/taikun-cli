@@ -16,11 +16,15 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more SSH users",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return cmdutils.DeleteMultiple(ids, deleteRun)
+			return cmdutils.DeleteMultiple(ids, func(id int32) error {
+				return deleteRun(ctx, id)
+			})
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -28,7 +32,7 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(sshUserID int32) (err error) {
+func deleteRun(ctx context.Context, sshUserID int32) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -38,7 +42,7 @@ func deleteRun(sshUserID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.SshUsersAPI.SshusersDelete(context.TODO()).DeleteSshUserCommand(body).Execute()
+	response, err := myApiClient.Client.SshUsersAPI.SshusersDelete(ctx).DeleteSshUserCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

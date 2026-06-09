@@ -1,7 +1,6 @@
 package unbind
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -26,14 +25,17 @@ func NewCmdUnbind() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return unbindRun(&opts)
+			return unbindRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func unbindRun(opts *UnbindOptions) (err error) {
+func unbindRun(cmd *cobra.Command, opts *UnbindOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -43,7 +45,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ImagesAPI.ImagesUnbindImagesFromProject(context.TODO()).DeleteImageFromProjectCommand(body).Execute()
+	response, err := myApiClient.Client.ImagesAPI.ImagesUnbindImagesFromProject(ctx).DeleteImageFromProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

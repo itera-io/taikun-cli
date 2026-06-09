@@ -1,7 +1,6 @@
 package enable
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -36,7 +35,7 @@ func NewCmdEnable() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return enableRun(&opts)
+			return enableRun(cmd, &opts)
 		},
 	}
 
@@ -56,8 +55,11 @@ func NewCmdEnable() *cobra.Command {
 	return &cmd
 }
 
-func enableRun(opts *EnableOptions) (err error) {
-	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(opts.ProjectID)
+func enableRun(cmd *cobra.Command, opts *EnableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
+	autoscalingEnabled, err := cmdutils.IsAutoscalingEnabled(cmd, opts.ProjectID)
 	if err != nil {
 		return err
 	}
@@ -77,7 +79,7 @@ func enableRun(opts *EnableOptions) (err error) {
 		Flavor:      *taikuncore.NewNullableString(&opts.Flavor),
 		SpotEnabled: &opts.Spot,
 	}
-	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEnable(context.TODO()).EnableAutoscalingCommand(body).Execute()
+	response, err := myApiClient.Client.AutoscalingAPI.AutoscalingEnable(ctx).EnableAutoscalingCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

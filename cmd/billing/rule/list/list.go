@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -60,7 +59,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List billing rules",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -72,12 +71,15 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Prepare the arguments for the query
-	myRequest := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesList(context.TODO())
+	myRequest := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesList(ctx)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}

@@ -1,12 +1,12 @@
 package commit
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type CommitOptions struct {
@@ -25,17 +25,20 @@ func NewCmdCommit() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return commitRun(&opts)
+			return commitRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func commitRun(opts *CommitOptions) (err error) {
+func commitRun(cmd *cobra.Command, opts *CommitOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	commitCommand := taikuncore.ProjectDeploymentCommitCommand{ProjectId: &opts.ProjectID}
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommit(context.TODO()).ProjectDeploymentCommitCommand(commitCommand).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommit(ctx).ProjectDeploymentCommitCommand(commitCommand).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

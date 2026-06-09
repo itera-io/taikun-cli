@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -39,7 +38,7 @@ func NewCmdAdd() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -49,7 +48,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -59,7 +61,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupImportBackupStorage(context.TODO()).ImportBackupStorageLocationCommand(body).Execute()
+	response, err := myApiClient.Client.BackupPolicyAPI.BackupImportBackupStorage(ctx).ImportBackupStorageLocationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

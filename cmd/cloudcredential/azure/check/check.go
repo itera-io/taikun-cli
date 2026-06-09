@@ -1,7 +1,6 @@
 package check
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
@@ -27,7 +26,7 @@ func NewCmdCheck() *cobra.Command {
 		Short: "Check the validity of an Azure cloud credential",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return checkRun(&opts)
+			return checkRun(cmd, &opts)
 		},
 	}
 
@@ -43,7 +42,10 @@ func NewCmdCheck() *cobra.Command {
 	return cmd
 }
 
-func checkRun(opts *CheckOptions) (err error) {
+func checkRun(cmd *cobra.Command, opts *CheckOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -55,7 +57,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	myRequest := myApiClient.Client.CheckerAPI.CheckerAzure(context.TODO()).CheckAzureCommand(body)
+	myRequest := myApiClient.Client.CheckerAPI.CheckerAzure(ctx).CheckAzureCommand(body)
 	response, err := myRequest.Execute()
 
 	if err == nil {

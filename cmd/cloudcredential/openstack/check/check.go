@@ -1,7 +1,6 @@
 package check
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -28,7 +27,7 @@ func NewCmdCheck() *cobra.Command {
 		Short: "Check the validity of an OpenStack cloud credential",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return checkRun(&opts)
+			return checkRun(cmd, &opts)
 		},
 	}
 
@@ -49,7 +48,10 @@ func NewCmdCheck() *cobra.Command {
 	return cmd
 }
 
-func checkRun(opts *CheckOptions) (err error) {
+func checkRun(cmd *cobra.Command, opts *CheckOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -72,7 +74,7 @@ func checkRun(opts *CheckOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	myRequest := myApiClient.Client.CheckerAPI.CheckerOpenstack(context.TODO()).CheckOpenstackCommand(body)
+	myRequest := myApiClient.Client.CheckerAPI.CheckerOpenstack(ctx).CheckOpenstackCommand(body)
 	data, response, err := myRequest.Execute()
 	if err != nil {
 		return tk.CreateError(response, err) // Something else happened

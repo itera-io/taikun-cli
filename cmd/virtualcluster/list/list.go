@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -59,7 +58,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list [project-id]",
 		Short: "List virtual clusters for a project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(args[0], &opts) // List user by ID
+			return listRun(cmd, args[0], &opts) // List user by ID
 		},
 		Args:    cobra.ExactArgs(1),
 		Aliases: cmdutils.ListAliases,
@@ -73,7 +72,10 @@ func NewCmdList() *cobra.Command {
 }
 
 // listRun calls the API, gets the Users and prints them in a table.
-func listRun(projectIdString string, opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, projectIdString string, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	projectId, err := types.Atoi32(projectIdString)
 	if err != nil {
 		return err
@@ -81,7 +83,7 @@ func listRun(projectIdString string, opts *ListOptions) (err error) {
 
 	// Prepare the request
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.VirtualClusterAPI.VirtualClusterList(context.TODO(), projectId)
+	myRequest := myApiClient.Client.VirtualClusterAPI.VirtualClusterList(ctx, projectId)
 
 	// Set Sorting if set in command line options
 	if config.SortBy != "" {

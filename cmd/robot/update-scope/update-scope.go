@@ -1,12 +1,11 @@
 package updatescope
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type UpdateScopeOptions struct {
@@ -21,7 +20,7 @@ func NewCmdUpdateScope() *cobra.Command {
 		Short: "Update robot user scope",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return updateRobotScope(args[0], &opts)
+			return updateRobotScope(cmd, args[0], &opts)
 		},
 	}
 
@@ -31,7 +30,10 @@ func NewCmdUpdateScope() *cobra.Command {
 	return &cmd
 }
 
-func updateRobotScope(robotID string, opts *UpdateScopeOptions) (err error) {
+func updateRobotScope(cmd *cobra.Command, robotID string, opts *UpdateScopeOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.UpdateRobotScopeCommand{
@@ -39,7 +41,7 @@ func updateRobotScope(robotID string, opts *UpdateScopeOptions) (err error) {
 		Scopes: opts.Scopes,
 	}
 
-	response, err := myApiClient.Client.RobotAPI.RobotUpdateScope(context.TODO()).UpdateRobotScopeCommand(body).Execute()
+	response, err := myApiClient.Client.RobotAPI.RobotUpdateScope(ctx).UpdateRobotScopeCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

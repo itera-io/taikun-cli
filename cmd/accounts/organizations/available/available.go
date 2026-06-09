@@ -1,8 +1,6 @@
 package available
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -10,6 +8,7 @@ import (
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 var listFields = fields.New(
@@ -29,16 +28,19 @@ func NewCmdListAvailable() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return listAvailableRun(accountID)
+			return listAvailableRun(cmd, accountID)
 		},
 	}
 
 	return &cmd
 }
 
-func listAvailableRun(accountID int32) (err error) {
+func listAvailableRun(cmd *cobra.Command, accountID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.AccountsAPI.AccountsAccountOrganizationsAvailable(context.TODO(), accountID).Execute()
+	data, response, err := myApiClient.Client.AccountsAPI.AccountsAccountOrganizationsAvailable(ctx, accountID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

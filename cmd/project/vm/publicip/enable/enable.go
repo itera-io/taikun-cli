@@ -1,13 +1,13 @@
 package enable
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type EnableOptions struct {
@@ -26,14 +26,17 @@ func NewCmdEnable() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return enableRun(&opts)
+			return enableRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func enableRun(opts *EnableOptions) (err error) {
+func enableRun(cmd *cobra.Command, opts *EnableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -45,7 +48,7 @@ func enableRun(opts *EnableOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneAPI.StandaloneIpManagement(context.TODO()).StandAloneVmIpManagementCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneAPI.StandaloneIpManagement(ctx).StandAloneVmIpManagementCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -56,7 +55,7 @@ func NewCmdList() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.ProjectID = projectID
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -68,9 +67,12 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsSelectedFlavorsForProject(context.TODO()).ProjectId(opts.ProjectID)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsSelectedFlavorsForProject(ctx).ProjectId(opts.ProjectID)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}

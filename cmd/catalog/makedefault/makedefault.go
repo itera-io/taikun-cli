@@ -1,13 +1,13 @@
 package makedefault
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdMakedefault() *cobra.Command {
@@ -21,21 +21,24 @@ func NewCmdMakedefault() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 
-			return makedefaultRun(catalogid)
+			return makedefaultRun(cmd, catalogid)
 		},
 	}
 
 	return &cmd
 }
 
-func makedefaultRun(catalogid int32) (err error) {
+func makedefaultRun(cmd *cobra.Command, catalogid int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.CatalogMakeDefaultCommand{
 		Id: &catalogid,
 	}
 
-	response, err := myApiClient.Client.CatalogAPI.CatalogMakeDefault(context.TODO()).CatalogMakeDefaultCommand(body).Execute()
+	response, err := myApiClient.Client.CatalogAPI.CatalogMakeDefault(ctx).CatalogMakeDefaultCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

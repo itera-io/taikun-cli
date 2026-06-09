@@ -51,7 +51,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List all cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -65,18 +65,21 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
 	}
 	opts.OrganizationID = orgID
 
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	amazonOpts := awslist.ListOptions{
 		OrganizationID: opts.OrganizationID,
 	}
 
-	credentialsAmazon, err := awslist.ListCloudCredentialsAws(&amazonOpts)
+	credentialsAmazon, err := awslist.ListCloudCredentialsAws(ctx, &amazonOpts)
 	if err != nil {
 		return
 	}
@@ -85,7 +88,7 @@ func listRun(opts *ListOptions) (err error) {
 		OrganizationID: opts.OrganizationID,
 	}
 
-	credentialsAzure, err := azlist.ListCloudCredentialsAzure(&azureOpts)
+	credentialsAzure, err := azlist.ListCloudCredentialsAzure(ctx, &azureOpts)
 	if err != nil {
 		return
 	}
@@ -94,7 +97,7 @@ func listRun(opts *ListOptions) (err error) {
 		OrganizationID: opts.OrganizationID,
 	}
 
-	credentialsGoogle, err := gcplist.ListCloudCredentialsGoogle(&googleOpts)
+	credentialsGoogle, err := gcplist.ListCloudCredentialsGoogle(ctx, &googleOpts)
 	if err != nil {
 		return
 	}
@@ -103,7 +106,7 @@ func listRun(opts *ListOptions) (err error) {
 		OrganizationID: opts.OrganizationID,
 	}
 
-	credentialsOpenStack, err := oslist.ListCloudCredentialsOpenStack(&openstackOpts)
+	credentialsOpenStack, err := oslist.ListCloudCredentialsOpenStack(ctx, &openstackOpts)
 	if err != nil {
 		return
 	}
@@ -112,7 +115,7 @@ func listRun(opts *ListOptions) (err error) {
 		OrganizationID: opts.OrganizationID,
 	}
 
-	credentialsProxmox, err := proxmoxlist.ListCloudCredentialsProxmox(&proxmoxOpts)
+	credentialsProxmox, err := proxmoxlist.ListCloudCredentialsProxmox(ctx, &proxmoxOpts)
 	if err != nil {
 		return
 	}
@@ -120,7 +123,7 @@ func listRun(opts *ListOptions) (err error) {
 	vsphereOpts := vspherelist.ListOptions{
 		OrganizationID: opts.OrganizationID,
 	}
-	credentialsVSphere, err := vspherelist.ListCloudCredentialsvSphere(&vsphereOpts)
+	credentialsVSphere, err := vspherelist.ListCloudCredentialsvSphere(ctx, &vsphereOpts)
 	if err != nil {
 		return
 	}

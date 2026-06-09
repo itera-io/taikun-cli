@@ -1,7 +1,6 @@
 package checker
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -27,7 +26,7 @@ func NewCmdCreateRobotChecker() *cobra.Command {
 		Short: "Dry-run for create a new robot user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return checkCreateRobot(args[0], &opts)
+			return checkCreateRobot(cmd, args[0], &opts)
 		},
 	}
 
@@ -42,7 +41,10 @@ func NewCmdCreateRobotChecker() *cobra.Command {
 	return &cmd
 }
 
-func checkCreateRobot(robotName string, opts *CreateOptions) (err error) {
+func checkCreateRobot(cmd *cobra.Command, robotName string, opts *CreateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// converting time from string to time.time
 	expiresAt, err := time.Parse(time.RFC3339, opts.ExpiresAt)
 	if err != nil {
@@ -59,7 +61,7 @@ func checkCreateRobot(robotName string, opts *CreateOptions) (err error) {
 		ExpiresAt:      *taikuncore.NewNullableTime(&expiresAt),
 	}
 
-	response, err := myApiClient.Client.RobotAPI.RobotChecker(context.TODO()).CheckerRobotCommand(body).Execute()
+	response, err := myApiClient.Client.RobotAPI.RobotChecker(ctx).CheckerRobotCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

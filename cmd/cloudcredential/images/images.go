@@ -57,7 +57,7 @@ func NewCmdImages() *cobra.Command {
 					return err
 				}
 			}
-			return imagesRun(&opts)
+			return imagesRun(cmd, &opts)
 		},
 	}
 
@@ -81,8 +81,8 @@ func NewCmdImages() *cobra.Command {
 	return &cmd
 }
 
-func imagesRun(opts *ImagesOptions) (err error) {
-	images, err := getImages(opts)
+func imagesRun(cmd *cobra.Command, opts *ImagesOptions) (err error) {
+	images, err := getImages(cmd, opts)
 	if err != nil {
 		return err
 	}
@@ -90,33 +90,36 @@ func imagesRun(opts *ImagesOptions) (err error) {
 	return out.PrintResults(images, imagesFields)
 }
 
-func getImages(opts *ImagesOptions) (images interface{}, err error) {
-	cloudType, err := utils.GetCloudType(opts.CloudCredentialID)
+func getImages(cmd *cobra.Command, opts *ImagesOptions) (images interface{}, err error) {
+	cloudType, err := utils.GetCloudType(cmd, opts.CloudCredentialID)
 	if err != nil {
 		return
 	}
 
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	switch cloudType {
 	case taikuncore.CLOUDTYPE_AWS:
-		images, err = getAwsImages(opts)
+		images, err = getAwsImages(ctx, opts)
 	case taikuncore.CLOUDTYPE_AZURE:
-		images, err = getAzureImages(opts)
+		images, err = getAzureImages(cmd, ctx, opts)
 	case taikuncore.CLOUDTYPE_OPENSTACK:
-		images, err = getOpenstackImages(opts)
+		images, err = getOpenstackImages(ctx, opts)
 	case taikuncore.CLOUDTYPE_GOOGLE:
-		images, err = getGoogleImages(opts)
+		images, err = getGoogleImages(ctx, opts)
 	case taikuncore.CLOUDTYPE_PROXMOX:
-		images, err = getProxmoxImages(opts)
+		images, err = getProxmoxImages(ctx, opts)
 	case taikuncore.CLOUDTYPE_VSPHERE:
-		images, err = getVsphereImages(opts)
+		images, err = getVsphereImages(ctx, opts)
 	}
 
 	return
 }
 
-func getVsphereImages(opts *ImagesOptions) (vsphereImages interface{}, err error) {
+func getVsphereImages(ctx context.Context, opts *ImagesOptions) (vsphereImages interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ImagesAPI.ImagesVsphereImages(context.TODO(), opts.CloudCredentialID)
+	myRequest := myApiClient.Client.ImagesAPI.ImagesVsphereImages(ctx, opts.CloudCredentialID)
 
 	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
@@ -149,9 +152,9 @@ func getVsphereImages(opts *ImagesOptions) (vsphereImages interface{}, err error
 	return vsphereImages, nil
 }
 
-func getProxmoxImages(opts *ImagesOptions) (proxmoxImages interface{}, err error) {
+func getProxmoxImages(ctx context.Context, opts *ImagesOptions) (proxmoxImages interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ImagesAPI.ImagesProxmoxImages(context.TODO(), opts.CloudCredentialID)
+	myRequest := myApiClient.Client.ImagesAPI.ImagesProxmoxImages(ctx, opts.CloudCredentialID)
 
 	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
@@ -185,11 +188,11 @@ func getProxmoxImages(opts *ImagesOptions) (proxmoxImages interface{}, err error
 	return proxmoxImages, nil
 }
 
-func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
+func getAwsImages(ctx context.Context, opts *ImagesOptions) (awsImages interface{}, err error) {
 	myApiClient := tk.NewClient()
 
 	// Get owners
-	data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsOwners(context.TODO()).Execute()
+	data, response, err := myApiClient.Client.AWSCloudCredentialAPI.AwsOwners(ctx).Execute()
 	if err != nil {
 		return nil, tk.CreateError(response, err)
 	}
@@ -204,7 +207,7 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 		Owners:  owners,
 	}
 
-	myRequest := myApiClient.Client.ImagesAPI.ImagesAwsImagesList(context.TODO())
+	myRequest := myApiClient.Client.ImagesAPI.ImagesAwsImagesList(ctx)
 
 	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
@@ -239,9 +242,9 @@ func getAwsImages(opts *ImagesOptions) (awsImages interface{}, err error) {
 
 }
 
-func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err error) {
+func getOpenstackImages(ctx context.Context, opts *ImagesOptions) (openStackImages interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ImagesAPI.ImagesOpenstackImages(context.TODO(), opts.CloudCredentialID)
+	myRequest := myApiClient.Client.ImagesAPI.ImagesOpenstackImages(ctx, opts.CloudCredentialID)
 
 	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
@@ -276,13 +279,13 @@ func getOpenstackImages(opts *ImagesOptions) (openStackImages interface{}, err e
 
 }
 
-func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) {
+func getGoogleImages(ctx context.Context, opts *ImagesOptions) (googleImages interface{}, err error) {
 	if opts.GoogleImageType == "" {
 		return nil, errors.New(`required flag(s) "google-image-type" not set`)
 	}
 
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ImagesAPI.ImagesGoogleImages(context.TODO(), opts.CloudCredentialID, opts.GoogleImageType).Latest(opts.GoogleLatest)
+	myRequest := myApiClient.Client.ImagesAPI.ImagesGoogleImages(ctx, opts.CloudCredentialID, opts.GoogleImageType).Latest(opts.GoogleLatest)
 
 	images := make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
@@ -317,13 +320,13 @@ func getGoogleImages(opts *ImagesOptions) (googleImages interface{}, err error) 
 
 }
 
-func getAzureImages(opts *ImagesOptions) (azureImages interface{}, err error) {
+func getAzureImages(cmd *cobra.Command, ctx context.Context, opts *ImagesOptions) (azureImages interface{}, err error) {
 	if opts.AzureSKU != "" {
 		if opts.AzureOffer == "" || opts.AzurePublisher == "" {
 			return nil, errors.New("before setting --azure-sku, please set --azure-publisher and --azure-offer")
 		}
 
-		return getAzureImagesWithSKU(opts)
+		return getAzureImagesWithSKU(cmd, ctx, opts)
 	}
 
 	if opts.AzureOffer != "" {
@@ -331,20 +334,20 @@ func getAzureImages(opts *ImagesOptions) (azureImages interface{}, err error) {
 			return nil, errors.New("before settings --azure-offer, please set --azure-publisher")
 		}
 
-		return getAzureImagesWithOffer(opts)
+		return getAzureImagesWithOffer(cmd, ctx, opts)
 	}
 
 	if opts.AzurePublisher != "" {
-		return getAzureImagesWithPublisher(opts)
+		return getAzureImagesWithPublisher(cmd, ctx, opts)
 	}
 
-	return getAllAzureImages(opts)
+	return getAllAzureImages(cmd, ctx, opts)
 }
 
-func getAllAzureImages(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
+func getAllAzureImages(cmd *cobra.Command, ctx context.Context, opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	publishersOptions := publishers.PublishersOptions{CloudCredentialID: opts.CloudCredentialID}
 
-	myPublishers, err := publishers.ListPublishers(&publishersOptions)
+	myPublishers, err := publishers.ListPublishers(cmd, &publishersOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -354,7 +357,7 @@ func getAllAzureImages(opts *ImagesOptions) (azureImages []taikuncore.CommonStri
 	for _, publisher := range myPublishers {
 		opts.AzurePublisher = publisher
 
-		moreImages, err := getAzureImagesWithPublisher(opts)
+		moreImages, err := getAzureImagesWithPublisher(cmd, ctx, opts)
 		if err != nil {
 			return nil, err
 		}
@@ -372,13 +375,13 @@ func getAllAzureImages(opts *ImagesOptions) (azureImages []taikuncore.CommonStri
 	return azureImages, nil
 }
 
-func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
+func getAzureImagesWithPublisher(cmd *cobra.Command, ctx context.Context, opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	offersOptions := offers.OffersOptions{
 		CloudCredentialID: opts.CloudCredentialID,
 		Publisher:         opts.AzurePublisher,
 	}
 
-	myOffers, err := offers.ListOffers(&offersOptions)
+	myOffers, err := offers.ListOffers(cmd, &offersOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -388,7 +391,7 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []taikuncore.
 	for _, offer := range myOffers {
 		opts.AzureOffer = offer
 
-		moreImages, err := getAzureImagesWithOffer(opts)
+		moreImages, err := getAzureImagesWithOffer(cmd, ctx, opts)
 		if err != nil {
 			return nil, err
 		}
@@ -406,14 +409,14 @@ func getAzureImagesWithPublisher(opts *ImagesOptions) (azureImages []taikuncore.
 	return azureImages, nil
 }
 
-func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
+func getAzureImagesWithOffer(cmd *cobra.Command, ctx context.Context, opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	skusOptions := skus.SKUsOptions{
 		CloudCredentialID: opts.CloudCredentialID,
 		Publisher:         opts.AzurePublisher,
 		Offer:             opts.AzureOffer,
 	}
 
-	mySkus, err := skus.ListSKUs(&skusOptions)
+	mySkus, err := skus.ListSKUs(cmd, &skusOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -423,7 +426,7 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []taikuncore.Comm
 	for _, sku := range mySkus {
 		opts.AzureSKU = sku
 
-		moreImages, err := getAzureImagesWithSKU(opts)
+		moreImages, err := getAzureImagesWithSKU(cmd, ctx, opts)
 		if err != nil {
 			return nil, err
 		}
@@ -441,9 +444,9 @@ func getAzureImagesWithOffer(opts *ImagesOptions) (azureImages []taikuncore.Comm
 	return azureImages, nil
 }
 
-func getAzureImagesWithSKU(opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
+func getAzureImagesWithSKU(cmd *cobra.Command, ctx context.Context, opts *ImagesOptions) (azureImages []taikuncore.CommonStringBasedDropdownDto, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ImagesAPI.ImagesAzureImages(context.TODO(), opts.CloudCredentialID, opts.AzurePublisher, opts.AzureOffer, opts.AzureSKU)
+	myRequest := myApiClient.Client.ImagesAPI.ImagesAzureImages(ctx, opts.CloudCredentialID, opts.AzurePublisher, opts.AzureOffer, opts.AzureSKU)
 	azureImages = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
 	for {

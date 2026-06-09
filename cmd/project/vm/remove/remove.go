@@ -1,7 +1,6 @@
 package remove
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	tk "github.com/itera-io/taikungoclient"
@@ -42,7 +41,7 @@ func NewCmdDelete() *cobra.Command {
 					return errors.New("must set one of --vm-ids and --all-project flags")
 				}
 			}
-			return deleteRun(&opts)
+			return deleteRun(cmd, &opts)
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -53,14 +52,16 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(opts *DeleteOptions) error {
+func deleteRun(cmd *cobra.Command, opts *DeleteOptions) error {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
 	myApiClient := tk.NewClient()
 	body := taikuncore.ProjectDeploymentDeleteVmsCommand{
 		ProjectId: &opts.ProjectID,
 	}
 
 	if opts.DeleteAll {
-		allVMs, err := list.ListVMs(&list.ListOptions{ProjectID: opts.ProjectID})
+		allVMs, err := list.ListVMs(cmd, &list.ListOptions{ProjectID: opts.ProjectID})
 		if err != nil {
 			return err
 		}
@@ -78,7 +79,7 @@ func deleteRun(opts *DeleteOptions) error {
 		body.VmIds = opts.VMIDs
 	}
 
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVms(context.TODO()).ProjectDeploymentDeleteVmsCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDeleteVms(ctx).ProjectDeploymentDeleteVmsCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

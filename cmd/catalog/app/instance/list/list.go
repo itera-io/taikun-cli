@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -52,7 +51,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -67,8 +66,8 @@ func NewCmdList() *cobra.Command {
 }
 
 // listRun calls the API, gets the Users and prints them in a table.
-func listRun(opts *ListOptions) (err error) {
-	users, err := ListAppInstances(opts)
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	users, err := ListAppInstances(cmd, opts)
 	if err != nil {
 		return err
 	}
@@ -76,10 +75,13 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(users, ListFields)
 }
 
-func ListAppInstances(opts *ListOptions) (appInstanceList []taikuncore.InstanceAppListDto, err error) {
+func ListAppInstances(cmd *cobra.Command, opts *ListOptions) (appInstanceList []taikuncore.InstanceAppListDto, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Prepare the request
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ProjectAppsAPI.ProjectappList(context.TODO()).ProjectId(opts.projectId)
+	myRequest := myApiClient.Client.ProjectAppsAPI.ProjectappList(ctx).ProjectId(opts.projectId)
 	// Set Organization ID if it is set in command line options
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)

@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -58,7 +57,7 @@ func NewCmdList() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.UserID = args[0]
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 	}
 
@@ -69,9 +68,12 @@ func NewCmdList() *cobra.Command {
 }
 
 // listRun calls the API, gets the Users and prints their bound projects.
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsDropdown(context.TODO()).UserId(opts.UserID).Execute()
+	data, response, err := myApiClient.Client.ProjectsAPI.ProjectsDropdown(ctx).UserId(opts.UserID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -65,7 +64,7 @@ func NewCmdAdd() *cobra.Command {
 		Short: "Add a backup credential",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			isValid, err := backupCredentialIsValid(&opts)
+			isValid, err := backupCredentialIsValid(cmd, &opts)
 			if err != nil {
 				return err
 			}
@@ -73,7 +72,7 @@ func NewCmdAdd() *cobra.Command {
 				return fmt.Errorf("backup credential must be valid")
 			}
 			opts.S3Name = args[0]
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -97,7 +96,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func backupCredentialIsValid(opts *AddOptions) (bool, error) {
+func backupCredentialIsValid(cmd *cobra.Command, opts *AddOptions) (bool, error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -110,7 +112,7 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.CheckerAPI.CheckerS3(context.TODO()).CheckS3Command(body).Execute()
+	response, err := myApiClient.Client.CheckerAPI.CheckerS3(ctx).CheckS3Command(body).Execute()
 	if err != nil {
 		return false, tk.CreateError(response, err)
 	}
@@ -119,7 +121,10 @@ func backupCredentialIsValid(opts *AddOptions) (bool, error) {
 
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -140,7 +145,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsCreate(context.TODO()).BackupCredentialsCreateCommand(body).Execute()
+	data, response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsCreate(ctx).BackupCredentialsCreateCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -15,11 +15,15 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more showback rules",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return cmdutils.DeleteMultiple(ids, deleteRun)
+			return cmdutils.DeleteMultiple(ids, func(id int32) error {
+				return deleteRun(ctx, id)
+			})
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -27,12 +31,12 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(showbackRuleID int32) (err error) {
+func deleteRun(ctx context.Context, showbackRuleID int32) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesDelete(context.TODO(), showbackRuleID).Execute()
+	response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesDelete(ctx, showbackRuleID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

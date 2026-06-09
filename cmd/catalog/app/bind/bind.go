@@ -1,8 +1,6 @@
 package bind
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -11,6 +9,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 var addFields = fields.New(
@@ -49,14 +48,17 @@ func NewCmdBind() *cobra.Command {
 			opts.appName = args[1]
 			opts.repoName = args[2]
 
-			return bindRun(&opts)
+			return bindRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func bindRun(opts *BindOptions) (err error) {
+func bindRun(cmd *cobra.Command, opts *BindOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.CreateCatalogAppCommand{
@@ -69,7 +71,7 @@ func bindRun(opts *BindOptions) (err error) {
 		body.SetVersion(opts.version)
 	}
 
-	data, response, err := myApiClient.Client.CatalogAppAPI.CatalogAppCreate(context.TODO()).CreateCatalogAppCommand(body).Execute()
+	data, response, err := myApiClient.Client.CatalogAppAPI.CatalogAppCreate(ctx).CreateCatalogAppCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

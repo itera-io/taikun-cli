@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -9,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type AddOptions struct {
@@ -30,7 +30,7 @@ func NewCmdAdd() *cobra.Command {
 			}
 			opts.virtualClusterName = args[1]
 
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 		Args: cobra.ExactArgs(2),
 	}
@@ -41,12 +41,15 @@ func NewCmdAdd() *cobra.Command {
 }
 
 // addRun calls the API with a custom body from arguments. It than prints the result.
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	if opts.alertingProfileId == 0 {
 		// Get alerting profile ID of parent
-		data, response, err := myApiClient.Client.ProjectsAPI.ProjectsList(context.TODO()).Id(opts.parentProjectId).Execute()
+		data, response, err := myApiClient.Client.ProjectsAPI.ProjectsList(ctx).Id(opts.parentProjectId).Execute()
 		if err != nil {
 			return tk.CreateError(response, err)
 		}
@@ -64,7 +67,7 @@ func addRun(opts *AddOptions) (err error) {
 		AlertingProfileId: *taikuncore.NewNullableInt32(&opts.alertingProfileId),
 	}
 
-	response, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterCreate(context.TODO()).CreateVirtualClusterCommand(body).Execute()
+	response, err := myApiClient.Client.VirtualClusterAPI.VirtualClusterCreate(ctx).CreateVirtualClusterCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

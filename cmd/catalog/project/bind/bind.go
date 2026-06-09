@@ -1,12 +1,12 @@
 package bind
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdBind() *cobra.Command {
@@ -24,17 +24,20 @@ func NewCmdBind() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return bindRun(catalogid, projectid)
+			return bindRun(cmd, catalogid, projectid)
 		},
 	}
 
 	return &cmd
 }
 
-func bindRun(catalogid int32, projectid int32) (err error) {
+func bindRun(cmd *cobra.Command, catalogid int32, projectid int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.CatalogAPI.CatalogAddProject(context.TODO(), catalogid).RequestBody([]int32{projectid}).Execute()
+	response, err := myApiClient.Client.CatalogAPI.CatalogAddProject(ctx, catalogid).RequestBody([]int32{projectid}).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

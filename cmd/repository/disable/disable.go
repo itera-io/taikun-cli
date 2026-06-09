@@ -1,7 +1,6 @@
 package disable
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -25,7 +24,7 @@ func NewCmdDisable() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.RepoName = args[0]
-			return disableRun(opts)
+			return disableRun(cmd, opts)
 		},
 	}
 
@@ -34,7 +33,10 @@ func NewCmdDisable() *cobra.Command {
 	return &cmd
 }
 
-func disableRun(opts DisableOptions) (err error) {
+func disableRun(cmd *cobra.Command, opts DisableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -47,7 +49,7 @@ func disableRun(opts DisableOptions) (err error) {
 	foundId = ""
 
 	// Try recommended
-	recommendCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryRecommendedList(context.TODO())
+	recommendCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryRecommendedList(ctx)
 	if orgID != 0 {
 		recommendCommand = recommendCommand.OrganizationId(orgID)
 	}
@@ -63,7 +65,7 @@ func disableRun(opts DisableOptions) (err error) {
 	}
 	// Try public
 	if foundId == "" {
-		publicCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(false).Search(opts.RepoName)
+		publicCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(ctx).IsPrivate(false).Search(opts.RepoName)
 		if orgID != 0 {
 			publicCommand = publicCommand.OrganizationId(orgID)
 		}
@@ -81,7 +83,7 @@ func disableRun(opts DisableOptions) (err error) {
 
 	// Try private
 	if foundId == "" {
-		privateCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(true).Search(opts.RepoName)
+		privateCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(ctx).IsPrivate(true).Search(opts.RepoName)
 		if orgID != 0 {
 			privateCommand = privateCommand.OrganizationId(orgID)
 		}
@@ -109,7 +111,7 @@ func disableRun(opts DisableOptions) (err error) {
 		command.OrganizationId = &orgID
 	}
 
-	response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryUnbind(context.TODO()).UnbindAppRepositoryCommand(command).Execute()
+	response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryUnbind(ctx).UnbindAppRepositoryCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

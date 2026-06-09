@@ -1,7 +1,6 @@
 package flavors
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/api"
@@ -59,13 +58,13 @@ func NewCmdFlavors() *cobra.Command {
 			}
 			opts.CloudCredentialID = cloudCredentialID
 
-			cloudType, err := utils.GetCloudType(opts.CloudCredentialID)
+			cloudType, err := utils.GetCloudType(cmd, opts.CloudCredentialID)
 			if err != nil {
 				return err
 			}
 			opts.CloudType = cloudType
 
-			return flavorRun(&opts)
+			return flavorRun(cmd, &opts)
 		},
 	}
 
@@ -81,28 +80,31 @@ func NewCmdFlavors() *cobra.Command {
 	return &cmd
 }
 
-func flavorRun(opts *FlavorsOptions) (err error) {
+func flavorRun(cmd *cobra.Command, opts *FlavorsOptions) (err error) {
 	switch opts.CloudType {
 	case taikuncore.CLOUDTYPE_AWS:
-		return getAwsFlavors(opts)
+		return getAwsFlavors(cmd, opts)
 	case taikuncore.CLOUDTYPE_AZURE:
-		return getAzureFlavors(opts)
+		return getAzureFlavors(cmd, opts)
 	case taikuncore.CLOUDTYPE_PROXMOX:
-		return getProxmoxFlavors(opts)
+		return getProxmoxFlavors(cmd, opts)
 	case taikuncore.CLOUDTYPE_GOOGLE:
-		return getGoogleFlavors(opts)
+		return getGoogleFlavors(cmd, opts)
 	case taikuncore.CLOUDTYPE_OPENSTACK:
-		return getOpenstackFlavors(opts)
+		return getOpenstackFlavors(cmd, opts)
 	case taikuncore.CLOUDTYPE_VSPHERE:
-		return getVsphereFlavors(opts)
+		return getVsphereFlavors(cmd, opts)
 	default:
 		return fmt.Errorf("could not determine cloud type")
 	}
 }
 
-func getAwsFlavors(opts *FlavorsOptions) (err error) {
+func getAwsFlavors(cmd *cobra.Command, opts *FlavorsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAwsInstanceTypes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAwsInstanceTypes(ctx, opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
 	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000).Limit(1000)
 
 	if config.SortBy != "" {
@@ -137,9 +139,12 @@ func getAwsFlavors(opts *FlavorsOptions) (err error) {
 	return out.PrintResults(flavors, flavorsFields)
 }
 
-func getProxmoxFlavors(opts *FlavorsOptions) (err error) {
+func getProxmoxFlavors(cmd *cobra.Command, opts *FlavorsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsProxmoxFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsProxmoxFlavors(ctx, opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
 	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 
 	if config.SortBy != "" {
@@ -174,9 +179,12 @@ func getProxmoxFlavors(opts *FlavorsOptions) (err error) {
 	return out.PrintResults(flavors, flavorsFields)
 }
 
-func getOpenstackFlavors(opts *FlavorsOptions) (err error) {
+func getOpenstackFlavors(cmd *cobra.Command, opts *FlavorsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsOpenstackFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsOpenstackFlavors(ctx, opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
 	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 
 	if config.SortBy != "" {
@@ -211,9 +219,12 @@ func getOpenstackFlavors(opts *FlavorsOptions) (err error) {
 	return out.PrintResults(flavors, flavorsFields)
 }
 
-func getAzureFlavors(opts *FlavorsOptions) (err error) {
+func getAzureFlavors(cmd *cobra.Command, opts *FlavorsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAzureVmSizes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsAzureVmSizes(ctx, opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
 	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
@@ -247,9 +258,12 @@ func getAzureFlavors(opts *FlavorsOptions) (err error) {
 	return out.PrintResults(flavors, flavorsFields)
 }
 
-func getGoogleFlavors(opts *FlavorsOptions) (err error) {
+func getGoogleFlavors(cmd *cobra.Command, opts *FlavorsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsGoogleMachineTypes(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsGoogleMachineTypes(ctx, opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
 	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
@@ -283,9 +297,12 @@ func getGoogleFlavors(opts *FlavorsOptions) (err error) {
 	return out.PrintResults(flavors, flavorsFields)
 }
 
-func getVsphereFlavors(opts *FlavorsOptions) (err error) {
+func getVsphereFlavors(cmd *cobra.Command, opts *FlavorsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsVsphereFlavors(context.TODO(), opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsVsphereFlavors(ctx, opts.CloudCredentialID).StartCpu(opts.MinCPU).EndCpu(opts.MaxCPU)
 	myRequest = myRequest.StartRam(types.GiBToB(opts.MinRAM) - 100000).EndRam(types.GiBToB(opts.MaxRAM) + 100000)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())

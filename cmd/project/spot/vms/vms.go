@@ -1,13 +1,13 @@
 package vms
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type VmsOptions struct {
@@ -28,7 +28,7 @@ func NewCmdVms() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return vmsRun(&opts)
+			return vmsRun(cmd, &opts)
 		},
 	}
 
@@ -40,7 +40,10 @@ func NewCmdVms() *cobra.Command {
 	return &cmd
 }
 
-func vmsRun(opts *VmsOptions) (err error) {
+func vmsRun(cmd *cobra.Command, opts *VmsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.SpotVmOperationCommand{
 		Id: &opts.ProjectID,
@@ -54,7 +57,7 @@ func vmsRun(opts *VmsOptions) (err error) {
 		return fmt.Errorf("unknown mode. Either disable or enable")
 	}
 
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotVms(context.TODO()).SpotVmOperationCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotVms(ctx).SpotVmOperationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

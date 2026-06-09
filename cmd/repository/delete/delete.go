@@ -1,7 +1,6 @@
 package deleterepo
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -24,7 +23,7 @@ func NewCmdDelete() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.RepoName = args[0]
-			return deleteRun(opts)
+			return deleteRun(cmd, opts)
 		},
 	}
 
@@ -33,7 +32,10 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(opts DeleteOptions) (err error) {
+func deleteRun(cmd *cobra.Command, opts DeleteOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -46,7 +48,7 @@ func deleteRun(opts DeleteOptions) (err error) {
 	foundId = -1
 
 	// Try private
-	privateCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(context.TODO()).IsPrivate(true).Search(opts.RepoName)
+	privateCommand := myApiClient.Client.AppRepositoriesAPI.RepositoryAvailableList(ctx).IsPrivate(true).Search(opts.RepoName)
 	if orgID != 0 {
 		privateCommand = privateCommand.OrganizationId(orgID)
 	}
@@ -68,7 +70,7 @@ func deleteRun(opts DeleteOptions) (err error) {
 		AppRepoId: &foundId,
 	}
 
-	response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryDelete(context.TODO()).DeleteRepositoryCommand(command).Execute()
+	response, err = myApiClient.Client.AppRepositoriesAPI.RepositoryDelete(ctx).DeleteRepositoryCommand(command).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

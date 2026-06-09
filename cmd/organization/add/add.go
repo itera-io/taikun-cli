@@ -1,8 +1,6 @@
 package add
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -93,7 +91,7 @@ func NewCmdAdd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Name = args[0]
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -111,7 +109,10 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.OrganizationCreateCommand{
 		Name:     *taikuncore.NewNullableString(&opts.Name),
@@ -123,7 +124,7 @@ func addRun(opts *AddOptions) (err error) {
 		body.AccountId = *taikuncore.NewNullableInt32(&opts.AccountID)
 	}
 	
-	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsCreate(context.TODO()).OrganizationCreateCommand(body).Execute()
+	data, response, err := myApiClient.Client.OrganizationsAPI.OrganizationsCreate(ctx).OrganizationCreateCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

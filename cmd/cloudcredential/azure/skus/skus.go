@@ -1,7 +1,6 @@
 package skus
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/offers"
 	"github.com/itera-io/taikun-cli/cmd/cloudcredential/azure/publishers"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -30,7 +29,7 @@ func NewCmdSKUs() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return skusRun(&opts)
+			return skusRun(cmd, &opts)
 		},
 	}
 
@@ -46,7 +45,7 @@ func NewCmdSKUs() *cobra.Command {
 					opts := publishers.PublishersOptions{
 						CloudCredentialID: cloudCredentialID,
 					}
-					completions, _ = publishers.ListPublishers(&opts)
+					completions, _ = publishers.ListPublishers(cmd, &opts)
 				}
 			}
 
@@ -67,7 +66,7 @@ func NewCmdSKUs() *cobra.Command {
 						CloudCredentialID: cloudCredentialID,
 						Publisher:         opts.Publisher,
 					}
-					completions, _ = offers.ListOffers(&opts)
+					completions, _ = offers.ListOffers(cmd, &opts)
 				}
 			}
 
@@ -80,8 +79,8 @@ func NewCmdSKUs() *cobra.Command {
 	return &cmd
 }
 
-func skusRun(opts *SKUsOptions) (err error) {
-	skus, err := ListSKUs(opts)
+func skusRun(cmd *cobra.Command, opts *SKUsOptions) (err error) {
+	skus, err := ListSKUs(cmd, opts)
 	if err == nil {
 		out.PrintStringSlice(skus)
 	}
@@ -89,9 +88,12 @@ func skusRun(opts *SKUsOptions) (err error) {
 	return
 }
 
-func ListSKUs(opts *SKUsOptions) (skus []string, err error) {
+func ListSKUs(cmd *cobra.Command, opts *SKUsOptions) (skus []string, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzureSkus(context.TODO(), opts.CloudCredentialID, opts.Publisher, opts.Offer)
+	myRequest := myApiClient.Client.AzureCloudCredentialAPI.AzureSkus(ctx, opts.CloudCredentialID, opts.Publisher, opts.Offer)
 	skus = make([]string, 0)
 	for {
 		data, response, err := myRequest.Execute()

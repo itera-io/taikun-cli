@@ -1,8 +1,6 @@
 package list_subnets
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -33,7 +31,7 @@ func NewCmdListSubnets() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return listSubnetsRun(projectID)
+			return listSubnetsRun(cmd, projectID)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -41,9 +39,12 @@ func NewCmdListSubnets() *cobra.Command {
 	return &cmd
 }
 
-func listSubnetsRun(projectID int32) (err error) {
+func listSubnetsRun(cmd *cobra.Command, projectID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	req := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), projectID)
+	req := myApiClient.Client.ServersAPI.ServersDetails(ctx, projectID)
 	details, response, err := req.Execute()
 	if err != nil {
 		return tk.CreateError(response, err)

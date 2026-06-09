@@ -1,7 +1,6 @@
 package update
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -9,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type UpdateOptions struct {
@@ -28,7 +28,7 @@ func NewCmdUpdateGroup() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return updateGroup(groupID, &opts)
+			return updateGroup(cmd, groupID, &opts)
 		},
 	}
 
@@ -38,7 +38,10 @@ func NewCmdUpdateGroup() *cobra.Command {
 	return &cmd
 }
 
-func updateGroup(groupID int32, opts *UpdateOptions) (err error) {
+func updateGroup(cmd *cobra.Command, groupID int32, opts *UpdateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// input parameters sanity check
 	if opts.GroupName == "" && opts.ClaimValue == "" {
 		return fmt.Errorf("no parameters to update are passed")
@@ -50,7 +53,7 @@ func updateGroup(groupID int32, opts *UpdateOptions) (err error) {
 		ClaimValue: *taikuncore.NewNullableString(&opts.ClaimValue),
 	}
 
-	response, err := myApiClient.Client.GroupsAPI.GroupsUpdate(context.TODO(), groupID).UpdateGroupDto(body).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsUpdate(ctx, groupID).UpdateGroupDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

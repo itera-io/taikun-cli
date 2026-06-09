@@ -1,13 +1,13 @@
 package commit
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type CommitOptions struct {
@@ -26,14 +26,17 @@ func NewCmdCommit() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return commitRun(&opts)
+			return commitRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func commitRun(opts *CommitOptions) (err error) {
+func commitRun(cmd *cobra.Command, opts *CommitOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -43,7 +46,7 @@ func commitRun(opts *CommitOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommitVm(context.TODO()).DeploymentCommitVmCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentCommitVm(ctx).DeploymentCommitVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

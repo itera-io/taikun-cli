@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -43,7 +42,7 @@ func NewCmdAdd() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -56,7 +55,10 @@ func NewCmdAdd() *cobra.Command {
 	return cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -67,7 +69,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.TrustedRegistriesAPI.TrustedregistriesCreate(context.TODO()).CreateTrustedRegistriesCommand(body).Execute()
+	data, response, err := myApiClient.Client.TrustedRegistriesAPI.TrustedregistriesCreate(ctx).CreateTrustedRegistriesCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

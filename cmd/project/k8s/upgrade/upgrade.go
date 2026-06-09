@@ -1,11 +1,11 @@
 package upgrade
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type UpgradeOptions struct {
@@ -24,16 +24,19 @@ func NewCmdUpgrade() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return upgradeRun(&opts)
+			return upgradeRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func upgradeRun(opts *UpgradeOptions) (err error) {
+func upgradeRun(cmd *cobra.Command, opts *UpgradeOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentUpgrade(context.TODO(), opts.ProjectID).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentUpgrade(ctx, opts.ProjectID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

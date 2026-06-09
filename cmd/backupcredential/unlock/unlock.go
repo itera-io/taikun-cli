@@ -1,13 +1,13 @@
 package unlock
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdUnlock() *cobra.Command {
@@ -20,14 +20,17 @@ func NewCmdUnlock() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return unlockRun(backupCredentialID)
+			return unlockRun(cmd, backupCredentialID)
 		},
 	}
 
 	return cmd
 }
 
-func unlockRun(backupCredentialID int32) (err error) {
+func unlockRun(cmd *cobra.Command, backupCredentialID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -38,7 +41,7 @@ func unlockRun(backupCredentialID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsLockManagement(context.TODO()).BackupLockManagerCommand(body).Execute()
+	response, err := myApiClient.Client.S3CredentialsAPI.S3credentialsLockManagement(ctx).BackupLockManagerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

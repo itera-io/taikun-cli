@@ -1,8 +1,6 @@
 package add
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -29,7 +27,7 @@ func NewCmdAddOrganizations() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return addOrganizationToGroup(groupID, &opts)
+			return addOrganizationToGroup(cmd, groupID, &opts)
 		},
 	}
 
@@ -42,7 +40,10 @@ func NewCmdAddOrganizations() *cobra.Command {
 	return &cmd
 }
 
-func addOrganizationToGroup(groupID int32, opts *AddOptions) (err error) {
+func addOrganizationToGroup(cmd *cobra.Command, groupID int32, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	role, err := taikuncore.NewAccessLevelRolesFromValue(opts.Role)
 	if err != nil {
 		return err
@@ -52,7 +53,7 @@ func addOrganizationToGroup(groupID int32, opts *AddOptions) (err error) {
 	orgDtos := []taikuncore.CreateGroupOrganizationDto{orgDto}
 
 	myApiClient := tk.NewClient()
-	response, err := myApiClient.Client.GroupsAPI.GroupsAddOrganizations(context.TODO(), groupID).CreateGroupOrganizationDto(orgDtos).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsAddOrganizations(ctx, groupID).CreateGroupOrganizationDto(orgDtos).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
