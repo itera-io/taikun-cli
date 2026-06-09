@@ -51,6 +51,7 @@ var listFields = fields.New(
 
 type ListOptions struct {
 	ProjectID int32
+	Limit     int32
 }
 
 func NewCmdList() *cobra.Command {
@@ -70,6 +71,7 @@ func NewCmdList() *cobra.Command {
 		Aliases: cmdutils.ListAliases,
 	}
 
+	cmdutils.AddLimitFlag(&cmd, &opts.Limit)
 	cmdutils.AddSortByAndReverseFlags(&cmd, "kube-configs", listFields)
 	cmdutils.AddColumnsFlag(&cmd, listFields)
 
@@ -78,10 +80,32 @@ func NewCmdList() *cobra.Command {
 
 func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigList(context.TODO()).ProjectId(opts.ProjectID).Execute()
-	if err != nil {
-		return tk.CreateError(response, err)
-	}
-	return out.PrintResults(data.GetData(), listFields)
+	myRequest := myApiClient.Client.KubeConfigAPI.KubeconfigList(context.TODO()).ProjectId(opts.ProjectID)
 
+	var kubeconfigs []interface{}
+	for {
+		data, response, err := myRequest.Execute()
+		if err != nil {
+			return tk.CreateError(response, err)
+		}
+
+		for _, kc := range data.GetData() {
+			kubeconfigs = append(kubeconfigs, kc)
+		}
+
+		count := int32(len(kubeconfigs))
+		if opts.Limit != 0 && count >= opts.Limit {
+			break
+		}
+		if count == data.GetTotalCount() {
+			break
+		}
+		myRequest = myRequest.Offset(count)
+	}
+
+	if opts.Limit != 0 && int32(len(kubeconfigs)) > opts.Limit {
+		kubeconfigs = kubeconfigs[:opts.Limit]
+	}
+
+	return out.PrintResults(kubeconfigs, listFields)
 }

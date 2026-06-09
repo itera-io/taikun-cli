@@ -28,14 +28,14 @@ Context 'cloudcredential/aws'
     End
 
     Example 'check valid aws cloud credential'
-      When call taikun cloud-credential aws check -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY" -r "$AWS_DEFAULT_REGION"
+      When call taikun cloud-credential aws check -a "$AWS_ACCESS_KEY_ID" -s "$AWS_SECRET_ACCESS_KEY"
       The lines of output should equal 1
       The status should equal 0
       The output should include "AWS cloud credential is valid."
     End
 
     Example 'check invalid aws cloud credential'
-      When call taikun cloud-credential aws check -a "$AWS_ACCESS_KEY_ID" -s "mockup" -r "$AWS_DEFAULT_REGION"
+      When call taikun cloud-credential aws check -a "$AWS_ACCESS_KEY_ID" -s "mockup"
       The lines of stderr should equal 1
       The status should equal 1
       The stderr should include "Error: AWS cloud credential is not valid"

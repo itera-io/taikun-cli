@@ -16,10 +16,10 @@ import (
 var listFields = fields.New(
 	[]*field.Field{
 		field.NewVisible(
-			"ID", "projectId",
+			"ID", "id",
 		),
 		field.NewVisible(
-			"NAME", "projectName",
+			"NAME", "name",
 		),
 		field.NewVisible(
 			"IS-BOUND", "isBound",

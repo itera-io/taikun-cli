@@ -12,60 +12,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ListFields defines a slice of fields corresponding to the columns in the output.
-// Some columns are set as visible by default and some are hidden by default.
 var ListFields = fields.New(
 	[]*field.Field{
 		field.NewVisible(
 			"ID", "id",
 		),
 		field.NewVisible(
-			"NAME", "username",
-		),
-		field.NewVisible(
-			"ORG", "organizationName",
+			"NAME", "name",
 		),
 		field.NewHidden(
 			"DISPLAY-NAME", "displayName",
 		),
 		field.NewVisible(
-			"ROLE", "role",
-		),
-		field.NewHidden(
-			"ORG-ID", "organizationId",
-		),
-		field.NewHidden(
-			"OWNER", "owner",
-		),
-		field.NewHidden(
 			"EMAIL", "email",
 		),
-		field.NewHidden(
-			"EMAIL-CONFIRMED", "isEmailConfirmed",
-		),
-		field.NewHidden(
-			"EMAIL-NOTIFICATIONS", "isEmailNotificationEnabled",
-		),
-		field.NewHidden(
-			"APPROVED-BY-PARTNER", "isApprovedByPartner",
-		),
-		field.NewHidden(
-			"CSM", "isCsm",
-		),
-		field.NewHidden(
-			"SUBSCRIPTION-UPDATES", "isEligibleUpdateSubscription",
-		),
-		field.NewHidden(
-			"MUST-RESET-PASSWORD", "isForcedToResetPassword",
-		),
-		field.NewVisibleWithToStringFunc(
-			"LOCK", "isLocked", out.FormatLockStatus,
-		),
-		field.NewHidden(
-			"READ-ONLY", "isReadOnly",
+		field.NewVisible(
+			"ROLE", "globalRole",
 		),
 		field.NewHiddenWithToStringFunc(
 			"CREATED", "createdAt", out.FormatDateTimeString,
+		),
+		field.NewHidden(
+			"2FA", "is2FAEnabled",
 		),
 	},
 )
@@ -75,8 +43,6 @@ type ListOptions struct {
 	Limit          int32
 }
 
-// NewCmdList creates and returns a cobra command for listing users.
-// It supports Sorting (with Reverse) and Limiting the output
 func NewCmdList() *cobra.Command {
 	var opts ListOptions
 
@@ -91,14 +57,12 @@ func NewCmdList() *cobra.Command {
 	}
 
 	cmdutils.AddOrgIDFlag(cmd, &opts.OrganizationID)
-	cmdutils.AddSortByAndReverseFlags(cmd, "users", ListFields)
 	cmdutils.AddColumnsFlag(cmd, ListFields)
 	cmdutils.AddLimitFlag(cmd, &opts.Limit)
 
 	return cmd
 }
 
-// listRun calls the API, gets the Users and prints them in a table.
 func listRun(opts *ListOptions) (err error) {
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
@@ -114,51 +78,55 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(users, ListFields)
 }
 
-// ListUsers sends multiple queries to the API and returns a list of users.
-// Users are returned in the UserForListDto structs generated in models.
-func ListUsers(opts *ListOptions) (userList []taikuncore.CommonStringBasedDropdownDto, err error) {
-	// Prepare the request
+func ListUsers(opts *ListOptions) ([]interface{}, error) {
 	myApiClient := tk.NewClient()
+
+	// Get current user's account ID for detail fetches
+	userInfo, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
+	if err != nil {
+		return nil, tk.CreateError(response, err)
+	}
+	accountID := userInfo.Data.Account.AccountId
+
+	// Fetch user IDs via dropdown (paginated)
 	myRequest := myApiClient.Client.UsersAPI.UsersDropdown(context.TODO())
-	// Set Organization ID if it is set in command line options
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
-	// Set Sorting if set in command line options
-	//if config.SortBy != "" {
-	//	myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
-	//}
-	// Initialise a new, empty slice of UserForListDto structs generated in models.
-	//userList = make([]taikuncore.UserForListDto, 0)
-	userList = make([]taikuncore.CommonStringBasedDropdownDto, 0)
 
-	//fmt.Printf("%s\n", myRequest)
-
-	// Execute the request, it returns 50 users and then execute it again with an Offset until you have read all of it.
+	var dropdownUsers []taikuncore.CommonStringBasedDropdownDto
 	for {
 		data, response, err := myRequest.Execute()
 		if err != nil {
 			return nil, tk.CreateError(response, err)
 		}
 
-		userList = append(userList, data.GetData()...)
-		usersCount := int32(len(userList))
+		dropdownUsers = append(dropdownUsers, data.GetData()...)
+		count := int32(len(dropdownUsers))
 
-		// We have (over)reached the limit, cut it at the limit and break
-		if opts.Limit != 0 && usersCount >= opts.Limit {
-			if int32(len(userList)) > opts.Limit {
-				userList = userList[:opts.Limit]
+		if opts.Limit != 0 && count >= opts.Limit {
+			if count > opts.Limit {
+				dropdownUsers = dropdownUsers[:opts.Limit]
 			}
 			break
 		}
-		// We have read all the users
-		if usersCount == int32(data.GetTotalCount()) {
+		if count == int32(data.GetTotalCount()) {
 			break
 		}
-
-		// The new request will be shifted to the next page of users.
-		myRequest = myRequest.Offset(usersCount)
+		myRequest = myRequest.Offset(count)
 	}
 
-	return userList, nil
+	// Fetch full details for each user
+	results := make([]interface{}, 0, len(dropdownUsers))
+	for _, u := range dropdownUsers {
+		userID := u.GetId()
+		detail, response, err := myApiClient.Client.AccountsAPI.AccountsAccountUserDetails(context.TODO(), accountID, userID).Execute()
+		if err != nil {
+			_ = tk.CreateError(response, err)
+			continue
+		}
+		results = append(results, detail)
+	}
+
+	return results, nil
 }
