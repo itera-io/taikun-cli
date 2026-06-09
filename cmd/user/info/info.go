@@ -3,53 +3,65 @@ package info
 import (
 	"context"
 
-	"github.com/itera-io/taikun-cli/cmd/user/complete"
-	"github.com/itera-io/taikun-cli/cmd/user/list"
 	"github.com/itera-io/taikun-cli/utils/out"
+	"github.com/itera-io/taikun-cli/utils/out/field"
+	"github.com/itera-io/taikun-cli/utils/out/fields"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
 )
 
-var infoFields = list.ListFields
+var infoFields = fields.New(
+	[]*field.Field{
+		field.NewVisible(
+			"ID", "id",
+		),
+		field.NewVisible(
+			"USERNAME", "username",
+		),
+		field.NewVisible(
+			"EMAIL", "email",
+		),
+		field.NewVisible(
+			"ROLE", "role",
+		),
+		field.NewHidden(
+			"DISPLAY-NAME", "displayName",
+		),
+		field.NewHidden(
+			"EMAIL-CONFIRMED", "isEmailConfirmed",
+		),
+		field.NewHidden(
+			"EMAIL-NOTIFICATIONS", "isEmailNotificationEnabled",
+		),
+		field.NewHidden(
+			"MUST-RESET-PASSWORD", "isForcedToResetPassword",
+		),
+		field.NewVisibleWithToStringFunc(
+			"LOCK", "isLocked", out.FormatLockStatus,
+		),
+		field.NewHidden(
+			"OWNER", "owner",
+		),
+		field.NewHiddenWithToStringFunc(
+			"CREATED", "createdAt", out.FormatDateTimeString,
+		),
+	},
+)
 
-// NewCmdInfo creates and returns a cobra command for getting more Information on users.
-// When called without an argument it gets the short User Info about the current user
-// When called with one argument (user ID) it gets the long List information about the user with corresponding ID.
 func NewCmdInfo() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "info [user-id]",
-		Short: "Retrieve information about usertoken",
-		Long:  "Retrieve information about usertoken (shows all the bound endpoints)",
-		Args:  cobra.MaximumNArgs(1),
+		Use:   "info",
+		Short: "Retrieve information about the current user",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) == 0 {
-				return myInfoRun() // Info about current user
-			}
-			if len(args) == 1 {
-				infoFields.ShowAll()    // Long
-				return listRun(args[0]) // List user by ID
-			}
-			for _, id := range args {
-				_ = listRun(id)
-			}
-			return nil
-			// infoFields.ShowAll()
-			//if len(args) == 1 {
-			//	infoFields.ShowAll()    // Long
-			//	return listRun(args[0]) // List user by ID
-			//}
-			//// infoFields.ShowAll()
-			//return myInfoRun() // Info about current user
+			return infoRun()
 		},
 	}
-
-	complete.CompleteArgsWithUserID(&cmd)
 
 	return &cmd
 }
 
-// myInfoRun calls the API and gets the info about the current user
-func myInfoRun() (err error) {
+func infoRun() error {
 	myApiClient := tk.NewClient()
 	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
 	if err != nil {
@@ -57,25 +69,4 @@ func myInfoRun() (err error) {
 	}
 
 	return out.PrintResult(data.Data, infoFields)
-}
-
-// listRun calls the API and gets the info about user with userID
-func listRun(userID string) (err error) {
-	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
-	if err != nil {
-		return tk.CreateError(response, err)
-	}
-	return out.PrintResult(data, infoFields)
-
-	// filter out user
-	//for _, user := range data.Data {
-	//	if user.Id == userID {
-	//		// found a match
-	//		return out.PrintResult(user, infoFields)
-	//	}
-	//}
-	//
-	//// User not found
-	//return cmderr.ResourceNotFoundError("User", userID)
 }

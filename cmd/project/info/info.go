@@ -88,9 +88,6 @@ var infoFields = fields.New(
 		field.NewVisible(
 			"K8S-VERSION", "kubernetesVersion",
 		),
-		field.NewHidden(
-			"KUBESPRAY-VERSION", "kubeCurrentVersion",
-		),
 		field.NewVisible(
 			"K8S-PROFILE-ID", "kubernetesProfileId",
 		),

@@ -25,35 +25,8 @@ var ListFields = fields.New(
 		field.NewVisible(
 			"FULL-NAME", "fullName",
 		),
-		field.NewVisible(
-			"DISCOUNT-RATE", "discountRate",
-		),
-		field.NewVisible(
-			"PARTNER", "partnerName",
-		),
 		field.NewHidden(
 			"EMAIL", "email",
-		),
-		field.NewHidden(
-			"BILLING-EMAIL", "billingEmail",
-		),
-		field.NewHidden(
-			"CITY", "city",
-		),
-		field.NewHidden(
-			"COUNTRY", "country",
-		),
-		field.NewHidden(
-			"PHONE", "phone",
-		),
-		field.NewHidden(
-			"VAT", "vatNumber",
-		),
-		field.NewHidden(
-			"SUBSCRIPTION-UPDATES", "isEligibleUpdateSubscription",
-		),
-		field.NewHidden(
-			"PARTNER-ID", "partnerId",
 		),
 		field.NewHidden(
 			"CLOUD-CREDENTIALS", "cloudCredentials",
@@ -63,15 +36,6 @@ var ListFields = fields.New(
 		),
 		field.NewHidden(
 			"SERVERS", "servers",
-		),
-		field.NewHidden(
-			"USERS", "users",
-		),
-		field.NewVisibleWithToStringFunc(
-			"LOCK", "isLocked", out.FormatLockStatus,
-		),
-		field.NewHidden(
-			"READ-ONLY", "isReadOnly",
 		),
 		field.NewHiddenWithToStringFunc(
 			"CREATED-AT", "createdAt", out.FormatDateTimeString,
