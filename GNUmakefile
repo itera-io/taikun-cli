@@ -1,5 +1,5 @@
 BINARY=taikun
-GOLANGCI_LINTERS_VERSION := v2.11.4
+GOLANGCI_LINTERS_VERSION := v2.12.2
 
 default: install
 
@@ -12,7 +12,7 @@ goreleaser-install: ## Installs goreleaser binary with go install
 	go install github.com/goreleaser/goreleaser/v2@latest
 
 go-linters-install: ## Installs Golang's linters locally for verification
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin ${GOLANGCI_LINTERS_VERSION}
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b $(shell go env GOPATH)/bin ${GOLANGCI_LINTERS_VERSION}
 
 .PHONY: build
 build: go-vendor ## Builds taikun-cli binary
