@@ -1,13 +1,13 @@
 package stop
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type StopOptions struct {
@@ -26,14 +26,17 @@ func NewCmdStop() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return stopRun(&opts)
+			return stopRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func stopRun(opts *StopOptions) (err error) {
+func stopRun(cmd *cobra.Command, opts *StopOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -43,7 +46,7 @@ func stopRun(opts *StopOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsStop(context.TODO()).StopStandaloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsStop(ctx).StopStandaloneVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

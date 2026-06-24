@@ -1,12 +1,12 @@
 package purge
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdPurge() *cobra.Command {
@@ -14,7 +14,7 @@ func NewCmdPurge() *cobra.Command {
 		Use:   "purge <project-id>",
 		Short: "Deletes all k8s servers and all virtual clusters for this project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return purgeRun(args[0])
+			return purgeRun(cmd, args[0])
 		},
 		Args: cobra.ExactArgs(1),
 	}
@@ -22,7 +22,10 @@ func NewCmdPurge() *cobra.Command {
 	return cmd
 }
 
-func purgeRun(projectIdString string) (err error) {
+func purgeRun(cmd *cobra.Command, projectIdString string) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	// Project ID
@@ -32,7 +35,7 @@ func purgeRun(projectIdString string) (err error) {
 	}
 
 	// Server IDs
-	data, response, err := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), projectId).Execute()
+	data, response, err := myApiClient.Client.ServersAPI.ServersDetails(ctx, projectId).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
@@ -50,7 +53,7 @@ func purgeRun(projectIdString string) (err error) {
 		DeleteAutoscalingServers: &alwaysTellThe,
 	}
 
-	response, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(context.TODO()).ProjectDeploymentDeleteServersCommand(body).Execute()
+	response, err = myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDelete(ctx).ProjectDeploymentDeleteServersCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

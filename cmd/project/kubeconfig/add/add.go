@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"fmt"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
@@ -77,7 +76,7 @@ func NewCmdAdd() *cobra.Command {
 			if err := cmdutils.CheckFlagValue("access-scope", opts.AccessScope, types.KubeconfigAccessScopes); err != nil {
 				return err
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -105,7 +104,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.CreateKubeConfigCommand{}
 	body.SetName(opts.Name)
@@ -114,7 +116,7 @@ func addRun(opts *AddOptions) (err error) {
 	body.SetIsAccessibleForManager(opts.AccessScope == types.KubeconfigAccessManagers)
 	body.SetKubeConfigRoleId(types.GetKubeconfigRole(opts.Role))
 
-	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigCreate(context.TODO()).CreateKubeConfigCommand(body).Execute()
+	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigCreate(ctx).CreateKubeConfigCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

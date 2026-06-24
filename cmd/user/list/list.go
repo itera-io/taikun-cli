@@ -50,7 +50,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List users",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -63,14 +63,15 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
 	}
 	opts.OrganizationID = orgID
-
-	users, err := ListUsers(opts)
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+	users, err := ListUsers(ctx, opts)
 	if err != nil {
 		return err
 	}
@@ -78,18 +79,18 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(users, ListFields)
 }
 
-func ListUsers(opts *ListOptions) ([]interface{}, error) {
+func ListUsers(ctx context.Context, opts *ListOptions) ([]interface{}, error) {
 	myApiClient := tk.NewClient()
 
 	// Get current user's account ID for detail fetches
-	userInfo, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
+	userInfo, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(ctx).Execute()
 	if err != nil {
 		return nil, tk.CreateError(response, err)
 	}
 	accountID := userInfo.Data.Account.AccountId
 
 	// Fetch user IDs via dropdown (paginated)
-	myRequest := myApiClient.Client.UsersAPI.UsersDropdown(context.TODO())
+	myRequest := myApiClient.Client.UsersAPI.UsersDropdown(ctx)
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}
@@ -120,7 +121,7 @@ func ListUsers(opts *ListOptions) ([]interface{}, error) {
 	results := make([]interface{}, 0, len(dropdownUsers))
 	for _, u := range dropdownUsers {
 		userID := u.GetId()
-		detail, response, err := myApiClient.Client.AccountsAPI.AccountsAccountUserDetails(context.TODO(), accountID, userID).Execute()
+		detail, response, err := myApiClient.Client.AccountsAPI.AccountsAccountUserDetails(ctx, accountID, userID).Execute()
 		if err != nil {
 			_ = tk.CreateError(response, err)
 			continue

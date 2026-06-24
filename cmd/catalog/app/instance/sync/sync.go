@@ -1,13 +1,13 @@
 package syncpackage
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type SyncOptions struct {
@@ -26,19 +26,22 @@ func NewCmdSync() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return syncAppRun(opts)
+			return syncAppRun(cmd, opts)
 		},
 	}
 
 	return &cmd
 }
 
-func syncAppRun(opts SyncOptions) (err error) {
+func syncAppRun(cmd *cobra.Command, opts SyncOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.SyncProjectAppCommand{ProjectAppId: &opts.ProjectAppId}
 
-	response, err := myApiClient.Client.ProjectAppsAPI.ProjectappSync(context.TODO()).SyncProjectAppCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectAppsAPI.ProjectappSync(ctx).SyncProjectAppCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -15,11 +15,15 @@ func NewCmdDelete() *cobra.Command {
 		Short: "Delete one or more policy profiles",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
 			ids, err := cmdutils.ArgsToNumericalIDs(args)
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return cmdutils.DeleteMultiple(ids, deleteRun)
+			return cmdutils.DeleteMultiple(ids, func(id int32) error {
+				return deleteRun(ctx, id)
+			})
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -27,12 +31,12 @@ func NewCmdDelete() *cobra.Command {
 	return cmd
 }
 
-func deleteRun(policyProfileID int32) (err error) {
+func deleteRun(ctx context.Context, policyProfileID int32) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesDelete(context.TODO(), policyProfileID).Execute()
+	response, err := myApiClient.Client.OpaProfilesAPI.OpaprofilesDelete(ctx, policyProfileID).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

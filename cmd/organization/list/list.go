@@ -54,7 +54,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List organizations",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -67,10 +67,11 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-// listRun sends multiple queries to the API and returns a list of organizations.
-// Organizations are returned in the UserForListDto structs generated in models.
-func listRun(opts *ListOptions) (err error) {
-	organizations, err := ListOrganizations(opts)
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
+	organizations, err := ListOrganizations(ctx, opts)
 	if err != nil {
 		return err
 	}
@@ -78,10 +79,9 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(organizations, ListFields)
 }
 
-// List organizations, also used in list catalogs
-func ListOrganizations(opts *ListOptions) (organizations []taikuncore.OrganizationDetailsDto, err error) {
+func ListOrganizations(ctx context.Context, opts *ListOptions) (organizations []taikuncore.OrganizationDetailsDto, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.OrganizationsAPI.OrganizationsList(context.TODO())
+	myRequest := myApiClient.Client.OrganizationsAPI.OrganizationsList(ctx)
 	// Set Sorting if set in command line options
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())

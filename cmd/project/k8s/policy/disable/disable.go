@@ -1,11 +1,11 @@
 package disable
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type DisableOptions struct {
@@ -24,19 +24,22 @@ func NewCmdDisable() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return disableRun(&opts)
+			return disableRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func disableRun(opts *DisableOptions) (err error) {
+func disableRun(cmd *cobra.Command, opts *DisableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.DeploymentDisableOpaCommand{
 		ProjectId: &opts.ProjectID,
 	}
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableOpa(context.TODO()).DeploymentDisableOpaCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentDisableOpa(ctx).DeploymentDisableOpaCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,13 +1,13 @@
 package worker
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type WorkerOptions struct {
@@ -28,7 +28,7 @@ func NewCmdWorker() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return workerRun(&opts)
+			return workerRun(cmd, &opts)
 		},
 	}
 
@@ -40,7 +40,10 @@ func NewCmdWorker() *cobra.Command {
 	return &cmd
 }
 
-func workerRun(opts *WorkerOptions) (err error) {
+func workerRun(cmd *cobra.Command, opts *WorkerOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.SpotWorkerOperationCommand{
 		Id: &opts.ProjectID,
@@ -54,7 +57,7 @@ func workerRun(opts *WorkerOptions) (err error) {
 		return fmt.Errorf("unknown mode. Either disable or enable")
 	}
 
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotWorkers(context.TODO()).SpotWorkerOperationCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsToggleSpotWorkers(ctx).SpotWorkerOperationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

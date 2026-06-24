@@ -1,13 +1,12 @@
 package scope_list
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 var listFields = fields.New(
@@ -25,17 +24,20 @@ func NewCmdScopeList() *cobra.Command {
 		Short: "List available scopes for robot users",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRobots()
+			return listRobots(cmd)
 		},
 	}
 
 	return &cmd
 }
 
-func listRobots() (err error) {
+func listRobots(cmd *cobra.Command) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	data, response, err := myApiClient.Client.RobotAPI.RobotScopeList(context.TODO()).Execute()
+	data, response, err := myApiClient.Client.RobotAPI.RobotScopeList(ctx).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

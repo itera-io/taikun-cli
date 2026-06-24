@@ -1,8 +1,6 @@
 package add
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -85,7 +83,7 @@ func NewCmdAdd() *cobra.Command {
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.Username = args[0]
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 		Args: cobra.ExactArgs(1),
 	}
@@ -108,7 +106,10 @@ func NewCmdAdd() *cobra.Command {
 }
 
 // addRun calls the API with a custom body from arguments. It than prints the result.
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.CreateUserCommand{}
 	body.SetDisplayName(opts.DisplayName)
@@ -116,7 +117,7 @@ func addRun(opts *AddOptions) (err error) {
 	body.SetAccountId(opts.AccountID)
 	body.SetUsername(opts.Username)
 
-	data, response, err := myApiClient.Client.UsersAPI.UsersCreate(context.TODO()).CreateUserCommand(body).Execute()
+	data, response, err := myApiClient.Client.UsersAPI.UsersCreate(ctx).CreateUserCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,7 +1,6 @@
 package edit
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -27,7 +26,7 @@ func NewCmdEdit() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -37,12 +36,15 @@ func NewCmdEdit() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// List other information that needs to be send
-	data, response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesList(context.TODO()).Id(opts.BillingRuleID).Execute()
+	data, response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesList(ctx).Id(opts.BillingRuleID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
@@ -62,7 +64,7 @@ func addRun(opts *AddOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err = myApiClient.Client.PrometheusRulesAPI.PrometheusrulesUpdate(context.TODO(), opts.BillingRuleID).RuleForUpdateDto(body).Execute()
+	response, err = myApiClient.Client.PrometheusRulesAPI.PrometheusrulesUpdate(ctx, opts.BillingRuleID).RuleForUpdateDto(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

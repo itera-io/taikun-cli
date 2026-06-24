@@ -55,7 +55,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List Proxmox cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -70,14 +70,15 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func listRun(opts *ListOptions) error {
+func listRun(cmd *cobra.Command, opts *ListOptions) error {
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
 	}
 	opts.OrganizationID = orgID
-
-	proxmoxCloudCredentials, err := ListCloudCredentialsProxmox(opts)
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+	proxmoxCloudCredentials, err := ListCloudCredentialsProxmox(ctx, opts)
 	if err != nil {
 		return err
 	}
@@ -85,9 +86,9 @@ func listRun(opts *ListOptions) error {
 	return out.PrintResults(proxmoxCloudCredentials, listFields)
 }
 
-func ListCloudCredentialsProxmox(opts *ListOptions) (credentials []interface{}, err error) {
+func ListCloudCredentialsProxmox(ctx context.Context, opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.ProxmoxCloudCredentialAPI.ProxmoxList(context.TODO())
+	myRequest := myApiClient.Client.ProxmoxCloudCredentialAPI.ProxmoxList(ctx)
 
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)

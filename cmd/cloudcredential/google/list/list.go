@@ -71,7 +71,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List Google Cloud Platform credentials",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -85,14 +85,15 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
 	}
 	opts.OrganizationID = orgID
-
-	googleCloudCredentials, err := ListCloudCredentialsGoogle(opts)
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+	googleCloudCredentials, err := ListCloudCredentialsGoogle(ctx, opts)
 	if err != nil {
 		return err
 	}
@@ -100,9 +101,9 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(googleCloudCredentials, listFields)
 }
 
-func ListCloudCredentialsGoogle(opts *ListOptions) (credentials []interface{}, err error) {
+func ListCloudCredentialsGoogle(ctx context.Context, opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.GoogleAPI.GooglecloudList(context.TODO())
+	myRequest := myApiClient.Client.GoogleAPI.GooglecloudList(ctx)
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}

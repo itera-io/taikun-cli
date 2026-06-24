@@ -76,7 +76,7 @@ func NewCmdList() *cobra.Command {
 		Use:   "list",
 		Short: "List OpenStack cloud credentials",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Args:    cobra.NoArgs,
 		Aliases: cmdutils.ListAliases,
@@ -91,14 +91,15 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) error {
+func listRun(cmd *cobra.Command, opts *ListOptions) error {
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
 	}
 	opts.OrganizationID = orgID
-
-	openstackCloudCredentials, err := ListCloudCredentialsOpenStack(opts)
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+	openstackCloudCredentials, err := ListCloudCredentialsOpenStack(ctx, opts)
 	if err != nil {
 		return err
 	}
@@ -106,9 +107,9 @@ func listRun(opts *ListOptions) error {
 	return out.PrintResults(openstackCloudCredentials, listFields)
 }
 
-func ListCloudCredentialsOpenStack(opts *ListOptions) (credentials []interface{}, err error) {
+func ListCloudCredentialsOpenStack(ctx context.Context, opts *ListOptions) (credentials []interface{}, err error) {
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.OpenstackCloudCredentialAPI.OpenstackList(context.TODO())
+	myRequest := myApiClient.Client.OpenstackCloudCredentialAPI.OpenstackList(ctx)
 	if opts.OrganizationID != 0 {
 		myRequest = myRequest.OrganizationId(opts.OrganizationID)
 	}

@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -92,7 +91,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -103,8 +102,8 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
-	vms, err := ListVMs(opts)
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	vms, err := ListVMs(cmd, opts)
 	if err == nil {
 		return out.PrintResults(vms, listFields)
 	}
@@ -112,11 +111,14 @@ func listRun(opts *ListOptions) (err error) {
 	return
 }
 
-func ListVMs(opts *ListOptions) (vms []taikuncore.StandaloneVmsListForDetailsDto, err error) {
+func ListVMs(cmd *cobra.Command, opts *ListOptions) (vms []taikuncore.StandaloneVmsListForDetailsDto, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
-	myRequest := myApiClient.Client.StandaloneAPI.StandaloneDetails(context.TODO(), opts.ProjectID)
+	myRequest := myApiClient.Client.StandaloneAPI.StandaloneDetails(ctx, opts.ProjectID)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}

@@ -26,7 +26,9 @@ func NewCmdDelete() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return deleteRun(opts)
+			ctx, cancel := cmdutils.APIContext(cmd)
+			defer cancel()
+			return deleteRun(ctx, opts)
 		},
 		Aliases: cmdutils.DeleteAliases,
 	}
@@ -37,7 +39,7 @@ func NewCmdDelete() *cobra.Command {
 	return &cmd
 }
 
-func deleteRun(opts DeleteOption) (err error) {
+func deleteRun(ctx context.Context, opts DeleteOption) (err error) {
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -47,7 +49,7 @@ func deleteRun(opts DeleteOption) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackupLocation(context.TODO()).DeleteBackupStorageLocationCommand(body).Execute()
+	response, err := myApiClient.Client.BackupPolicyAPI.BackupDeleteBackupLocation(ctx).DeleteBackupStorageLocationCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

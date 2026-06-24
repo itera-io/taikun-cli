@@ -1,8 +1,6 @@
 package update
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -29,7 +27,7 @@ func NewCmdUpdateOrganization() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return updateOrganizationToGroup(groupID, &opts)
+			return updateOrganizationToGroup(cmd, groupID, &opts)
 		},
 	}
 
@@ -42,12 +40,15 @@ func NewCmdUpdateOrganization() *cobra.Command {
 	return &cmd
 }
 
-func updateOrganizationToGroup(groupID int32, opts *UpdateOptions) (err error) {
+func updateOrganizationToGroup(cmd *cobra.Command, groupID int32, opts *UpdateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgDto := *taikuncore.NewUpdateGroupOrganizationDto(opts.Role)
 	orgDto.SetProjects(opts.Projects)
 
 	myApiClient := tk.NewClient()
-	response, err := myApiClient.Client.GroupsAPI.GroupsUpdateGroupOrganization(context.TODO(), groupID, opts.OrganizationID).UpdateGroupOrganizationDto(orgDto).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsUpdateGroupOrganization(ctx, groupID, opts.OrganizationID).UpdateGroupOrganizationDto(orgDto).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

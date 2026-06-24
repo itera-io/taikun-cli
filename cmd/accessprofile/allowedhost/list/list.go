@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -50,7 +49,7 @@ func NewCmdList() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AccessProfileID = accessProfileID
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -61,9 +60,12 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.AllowedHostAPI.AllowedhostList(context.TODO(), opts.AccessProfileID)
+	myRequest := myApiClient.Client.AllowedHostAPI.AllowedhostList(ctx, opts.AccessProfileID)
 
 	var allowedHosts []interface{}
 	for {

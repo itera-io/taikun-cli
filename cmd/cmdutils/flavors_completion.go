@@ -1,7 +1,6 @@
 package cmdutils
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -10,6 +9,9 @@ import (
 )
 
 func FlavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) []string {
+	ctx, cancel := APIContext(cmd)
+	defer cancel()
+
 	if len(args) == 0 {
 		return []string{}
 	}
@@ -19,7 +21,7 @@ func FlavorCompletionFunc(cmd *cobra.Command, args []string, toComplete string) 
 		return []string{}
 	}
 	myApiClient := tk.NewClient()
-	myRequest := myApiClient.Client.FlavorsAPI.FlavorsSelectedFlavorsForProject(context.TODO()).ProjectId(projectID)
+	myRequest := myApiClient.Client.FlavorsAPI.FlavorsSelectedFlavorsForProject(ctx).ProjectId(projectID)
 	completions := make([]string, 0)
 
 	for {

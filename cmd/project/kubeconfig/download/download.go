@@ -1,7 +1,6 @@
 package download
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -30,7 +29,7 @@ func NewCmdDownload() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return downloadRun(&opts)
+			return downloadRun(cmd, &opts)
 		},
 	}
 
@@ -42,11 +41,14 @@ func NewCmdDownload() *cobra.Command {
 	return &cmd
 }
 
-func downloadRun(opts *DownloadOptions) (err error) {
+func downloadRun(cmd *cobra.Command, opts *DownloadOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	if opts.OutputFile == "" {
-		kubeconfigName, err := getKubeconfigName(opts)
+		kubeconfigName, err := getKubeconfigName(cmd, opts)
 		if err != nil {
 			return err
 		}
@@ -61,7 +63,7 @@ func downloadRun(opts *DownloadOptions) (err error) {
 		Id:        &opts.KubeconfigID,
 		ProjectId: &opts.ProjectID,
 	}
-	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigDownload(context.TODO()).DownloadKubeConfigCommand(body).Execute()
+	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigDownload(ctx).DownloadKubeConfigCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
@@ -72,10 +74,13 @@ func downloadRun(opts *DownloadOptions) (err error) {
 
 }
 
-func getKubeconfigName(opts *DownloadOptions) (name string, err error) {
+func getKubeconfigName(cmd *cobra.Command, opts *DownloadOptions) (name string, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigList(context.TODO()).ProjectId(opts.ProjectID).Id(opts.KubeconfigID).Execute()
-	//data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigList(context.TODO()).Id(kubeconfigID).Execute()
+	data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigList(ctx).ProjectId(opts.ProjectID).Id(opts.KubeconfigID).Execute()
+	//data, response, err := myApiClient.Client.KubeConfigAPI.KubeconfigList(ctx).Id(kubeconfigID).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

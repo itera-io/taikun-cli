@@ -1,13 +1,13 @@
 package unlock
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdUnlock() *cobra.Command {
@@ -20,14 +20,17 @@ func NewCmdUnlock() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return unlockRun(projectID)
+			return unlockRun(cmd, projectID)
 		},
 	}
 
 	return cmd
 }
 
-func unlockRun(projectID int32) (err error) {
+func unlockRun(cmd *cobra.Command, projectID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -37,7 +40,7 @@ func unlockRun(projectID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.ProjectsAPI.ProjectsLockManager(context.TODO()).ProjectLockManagerCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectsAPI.ProjectsLockManager(ctx).ProjectLockManagerCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

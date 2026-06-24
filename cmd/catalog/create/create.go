@@ -1,7 +1,6 @@
 package create
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
@@ -22,7 +21,7 @@ func NewCmdCreatecatalog() *cobra.Command {
 		Short: "Create a new catalog",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return createcatalogRun(args[0], opts)
+			return createcatalogRun(cmd, args[0], opts)
 		},
 	}
 
@@ -34,7 +33,10 @@ func NewCmdCreatecatalog() *cobra.Command {
 	return &cmd
 }
 
-func createcatalogRun(catalogname string, opts CreateOptions) (err error) {
+func createcatalogRun(cmd *cobra.Command, catalogname string, opts CreateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -52,7 +54,7 @@ func createcatalogRun(catalogname string, opts CreateOptions) (err error) {
 		body.SetOrganizationId(opts.OrganizationID)
 	}
 
-	response, err := myApiClient.Client.CatalogAPI.CatalogCreate(context.TODO()).CreateCatalogCommand(body).Execute()
+	response, err := myApiClient.Client.CatalogAPI.CatalogCreate(ctx).CreateCatalogCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

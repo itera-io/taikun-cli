@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -39,7 +38,7 @@ func NewCmdList() *cobra.Command {
 				return cmderr.ErrIDArgumentNotANumber
 			}
 			opts.AlertingProfileID = alertingProfileID
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -51,12 +50,15 @@ func NewCmdList() *cobra.Command {
 	return cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesList(context.TODO()).Id(opts.AlertingProfileID).Execute()
+	data, response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesList(ctx).Id(opts.AlertingProfileID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

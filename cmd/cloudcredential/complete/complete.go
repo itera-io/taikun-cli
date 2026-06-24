@@ -19,7 +19,7 @@ func MakeAzurePublisherCompletionFunc() cmdutils.CompletionCoreFunc {
 				opts := publishers.PublishersOptions{
 					CloudCredentialID: cloudCredentialID,
 				}
-				completions, _ = publishers.ListPublishers(&opts)
+				completions, _ = publishers.ListPublishers(cmd, &opts)
 			}
 		}
 
@@ -38,7 +38,7 @@ func MakeAzureOfferCompletionFunc(publisher *string) cmdutils.CompletionCoreFunc
 					CloudCredentialID: cloudCredentialID,
 					Publisher:         *publisher,
 				}
-				completions, _ = offers.ListOffers(&opts)
+				completions, _ = offers.ListOffers(cmd, &opts)
 			}
 		}
 
@@ -58,7 +58,7 @@ func MakeAzureSKUCompletionFunc(publisher *string, offer *string) cmdutils.Compl
 					Publisher:         *publisher,
 					Offer:             *offer,
 				}
-				completions, _ = skus.ListSKUs(&opts)
+				completions, _ = skus.ListSKUs(cmd, &opts)
 			}
 		}
 

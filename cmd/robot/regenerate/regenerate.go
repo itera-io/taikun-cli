@@ -1,13 +1,13 @@
 package regenerate
 
 import (
-	"context"
 	"fmt"
 	"time"
 
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type RegenerateOptions struct {
@@ -22,7 +22,7 @@ func NewCmdRobotRegenerateTokens() *cobra.Command {
 		Short: "Regenerate tokens for a robot user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return regenerateRobotTokens(args[0], &opts)
+			return regenerateRobotTokens(cmd, args[0], &opts)
 		},
 	}
 
@@ -32,7 +32,10 @@ func NewCmdRobotRegenerateTokens() *cobra.Command {
 	return &cmd
 }
 
-func regenerateRobotTokens(robotID string, opts *RegenerateOptions) (err error) {
+func regenerateRobotTokens(cmd *cobra.Command, robotID string, opts *RegenerateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// converting time from string to time.time
 	expiresAt, err := time.Parse(time.RFC3339, opts.ExpiresAt)
 	if err != nil {
@@ -46,7 +49,7 @@ func regenerateRobotTokens(robotID string, opts *RegenerateOptions) (err error) 
 		ExpiresAt: *taikuncore.NewNullableTime(&expiresAt),
 	}
 
-	data, response, err := myApiClient.Client.RobotAPI.RobotRegenerate(context.TODO()).RegenerateRobotTokenCommand(body).Execute()
+	data, response, err := myApiClient.Client.RobotAPI.RobotRegenerate(ctx).RegenerateRobotTokenCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

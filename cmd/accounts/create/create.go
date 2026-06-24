@@ -1,13 +1,13 @@
 package create
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type CreateOptions struct {
@@ -23,7 +23,7 @@ func NewCmdCreateAccount() *cobra.Command {
 		Short: "Create a new account",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return createAccount(args[0], &opts)
+			return createAccount(cmd, args[0], &opts)
 		},
 	}
 
@@ -34,7 +34,10 @@ func NewCmdCreateAccount() *cobra.Command {
 	return &cmd
 }
 
-func createAccount(accountName string, opts *CreateOptions) (err error) {
+func createAccount(cmd *cobra.Command, accountName string, opts *CreateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// input parameters sanity check
 	if opts.Email == "" {
 		return fmt.Errorf("email must be specified")
@@ -47,7 +50,7 @@ func createAccount(accountName string, opts *CreateOptions) (err error) {
 		CreateOrganization: &opts.CreateOrg,
 	}
 
-	_, response, err := myApiClient.Client.AccountsAPI.AccountsCreate(context.TODO()).CreateAccountCommand(body).Execute()
+	_, response, err := myApiClient.Client.AccountsAPI.AccountsCreate(ctx).CreateAccountCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

@@ -1,7 +1,6 @@
 package create
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -32,7 +31,7 @@ func NewCmdCreateRobot() *cobra.Command {
 		Short: "Create a new robot user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return createRobot(args[0], &opts)
+			return createRobot(cmd, args[0], &opts)
 		},
 	}
 
@@ -49,7 +48,10 @@ func NewCmdCreateRobot() *cobra.Command {
 	return &cmd
 }
 
-func createRobot(robotName string, opts *CreateOptions) (err error) {
+func createRobot(cmd *cobra.Command, robotName string, opts *CreateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// converting time from string to time.time
 	expiresAt, err := time.Parse(time.RFC3339, opts.ExpiresAt)
 	if err != nil {
@@ -68,7 +70,7 @@ func createRobot(robotName string, opts *CreateOptions) (err error) {
 		Ips:            opts.IPs,
 	}
 
-	data, response, err := myApiClient.Client.RobotAPI.RobotCreate(context.TODO()).CreateRobotUserCommand(body).Execute()
+	data, response, err := myApiClient.Client.RobotAPI.RobotCreate(ctx).CreateRobotUserCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

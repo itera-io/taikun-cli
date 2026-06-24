@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"errors"
 	tk "github.com/itera-io/taikungoclient"
 	"os"
@@ -71,7 +70,7 @@ func NewCmdAdd() *cobra.Command {
 			} else if !opts.ImportProject {
 				return errors.New("must set --folder-id if not importing a project")
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -98,7 +97,10 @@ func NewCmdAdd() *cobra.Command {
 	return &cmd
 }
 
-func addRun(opts *AddOptions) (err error) {
+func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -112,7 +114,7 @@ func addRun(opts *AddOptions) (err error) {
 
 	myApiClient := tk.NewClient()
 
-	myRequest := myApiClient.Client.GoogleAPI.GooglecloudCreate(context.TODO())
+	myRequest := myApiClient.Client.GoogleAPI.GooglecloudCreate(ctx)
 	myRequest = myRequest.Config(configFile)
 	myRequest = myRequest.Name(opts.Name)
 	myRequest = myRequest.OrganizationId(opts.OrganizationID)

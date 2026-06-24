@@ -1,7 +1,6 @@
 package enable
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -28,7 +27,7 @@ func NewCmdEnable() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return enableRun(&opts)
+			return enableRun(cmd, &opts)
 		},
 	}
 
@@ -42,13 +41,16 @@ func NewCmdEnable() *cobra.Command {
 	return &cmd
 }
 
-func enableRun(opts *EnableOptions) (err error) {
+func enableRun(cmd *cobra.Command, opts *EnableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.DeploymentEnableBackupCommand{
 		ProjectId:      &opts.ProjectID,
 		S3CredentialId: &opts.BackupCredentialID,
 	}
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableBackup(context.TODO()).DeploymentEnableBackupCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableBackup(ctx).DeploymentEnableBackupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

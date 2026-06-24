@@ -1,14 +1,13 @@
 package lock
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikunshowback "github.com/itera-io/taikungoclient/showbackclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdLock() *cobra.Command {
@@ -21,14 +20,17 @@ func NewCmdLock() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return lockRun(showbackCredentialID)
+			return lockRun(cmd, showbackCredentialID)
 		},
 	}
 
 	return &cmd
 }
 
-func lockRun(showbackCredentialID int32) (err error) {
+func lockRun(cmd *cobra.Command, showbackCredentialID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -39,7 +41,7 @@ func lockRun(showbackCredentialID int32) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.ShowbackClient.ShowbackCredentialsAPI.ShowbackcredentialsLockManagement(context.TODO()).ShowbackCredentialLockCommand(body).Execute()
+	response, err := myApiClient.ShowbackClient.ShowbackCredentialsAPI.ShowbackcredentialsLockManagement(ctx).ShowbackCredentialLockCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

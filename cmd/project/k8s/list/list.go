@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/api"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/config"
@@ -106,7 +105,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -117,8 +116,8 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
-	projectServers, err := ListServers(opts)
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	projectServers, err := ListServers(cmd, opts)
 	if err == nil {
 		flavorJsonPropertyName := "flavor"
 
@@ -133,9 +132,12 @@ func listRun(opts *ListOptions) (err error) {
 
 }
 
-func ListServers(opts *ListOptions) (projectServers []taikuncore.ServerListDto, err error) {
+func ListServers(cmd *cobra.Command, opts *ListOptions) (projectServers []taikuncore.ServerListDto, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	myApiRequest := myApiClient.Client.ServersAPI.ServersDetails(context.TODO(), opts.ProjectID)
+	myApiRequest := myApiClient.Client.ServersAPI.ServersDetails(ctx, opts.ProjectID)
 	if config.SortBy != "" {
 		myApiRequest = myApiRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}

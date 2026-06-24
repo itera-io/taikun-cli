@@ -3,12 +3,13 @@ package organization
 import (
 	"context"
 	"fmt"
+
 	tk "github.com/itera-io/taikungoclient"
 )
 
-func GetDefaultOrganizationID() (id int32, err error) {
+func GetDefaultOrganizationID(ctx context.Context) (id int32, err error) {
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(context.TODO()).Execute()
+	data, response, err := myApiClient.Client.UsersAPI.UsersUserInfo(ctx).Execute()
 	if err != nil {
 		return -1, tk.CreateError(response, err)
 	}
@@ -20,8 +21,8 @@ func GetDefaultOrganizationID() (id int32, err error) {
 	return
 }
 
-func GetOrganizationIDFromCloudCredential(ccid int32, client *tk.Client) (int32, error) {
-	data, response, err := client.Client.CloudCredentialAPI.CloudcredentialsOrgList(context.TODO()).IsAdmin(false).Id(ccid).Execute()
+func GetOrganizationIDFromCloudCredential(ctx context.Context, ccid int32, client *tk.Client) (int32, error) {
+	data, response, err := client.Client.CloudCredentialAPI.CloudcredentialsOrgList(ctx).IsAdmin(false).Id(ccid).Execute()
 	if err != nil {
 		return -1, tk.CreateError(response, err)
 	} else if len(data) != 1 {

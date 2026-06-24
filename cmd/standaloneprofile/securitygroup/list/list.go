@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -53,7 +52,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -63,12 +62,15 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.SecurityGroupAPI.SecuritygroupList(context.TODO(), opts.StandAloneProfileID).Execute()
+	data, response, err := myApiClient.Client.SecurityGroupAPI.SecuritygroupList(ctx, opts.StandAloneProfileID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

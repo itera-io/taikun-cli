@@ -1,14 +1,13 @@
 package addadmin
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type AddAdminOptions struct {
@@ -28,7 +27,7 @@ func NewCmdAddAdmin() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return addAdminRun(&opts)
+			return addAdminRun(cmd, &opts)
 		},
 	}
 
@@ -38,7 +37,10 @@ func NewCmdAddAdmin() *cobra.Command {
 	return &cmd
 }
 
-func addAdminRun(opts *AddAdminOptions) (err error) {
+func addAdminRun(cmd *cobra.Command, opts *AddAdminOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.AddAccountAdminCommand{
@@ -46,7 +48,7 @@ func addAdminRun(opts *AddAdminOptions) (err error) {
 		UserId:    *taikuncore.NewNullableString(&opts.UserID),
 	}
 
-	response, err := myApiClient.Client.AccountsAPI.AccountsAddAccountAdmin(context.TODO()).AddAccountAdminCommand(body).Execute()
+	response, err := myApiClient.Client.AccountsAPI.AccountsAddAccountAdmin(ctx).AddAccountAdminCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

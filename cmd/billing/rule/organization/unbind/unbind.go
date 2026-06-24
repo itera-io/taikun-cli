@@ -1,7 +1,6 @@
 package unbind
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -26,7 +25,7 @@ func NewCmdUnbind() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return unbindRun(&opts)
+			return unbindRun(cmd, &opts)
 		},
 	}
 
@@ -35,7 +34,10 @@ func NewCmdUnbind() *cobra.Command {
 	return &cmd
 }
 
-func unbindRun(opts *UnbindOptions) (err error) {
+func unbindRun(cmd *cobra.Command, opts *UnbindOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -50,7 +52,7 @@ func unbindRun(opts *UnbindOptions) (err error) {
 	body := []int32{opts.OrganizationID}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesDeleteOrganizations(context.TODO(), billingRuleId).RequestBody(body).Execute()
+	response, err := myApiClient.Client.PrometheusRulesAPI.PrometheusrulesDeleteOrganizations(ctx, billingRuleId).RequestBody(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

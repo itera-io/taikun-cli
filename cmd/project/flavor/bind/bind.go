@@ -1,7 +1,6 @@
 package bind
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -26,7 +25,7 @@ func NewCmdBind() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return bindRun(&opts)
+			return bindRun(cmd, &opts)
 		},
 		Args: cobra.ExactArgs(1),
 	}
@@ -37,13 +36,16 @@ func NewCmdBind() *cobra.Command {
 	return cmd
 }
 
-func bindRun(opts *BindOptions) (err error) {
+func bindRun(cmd *cobra.Command, opts *BindOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.BindFlavorToProjectCommand{
 		ProjectId: &opts.ProjectID,
 		Flavors:   opts.Flavors,
 	}
-	response, err := myApiClient.Client.FlavorsAPI.FlavorsBindToProject(context.TODO()).BindFlavorToProjectCommand(body).Execute()
+	response, err := myApiClient.Client.FlavorsAPI.FlavorsBindToProject(ctx).BindFlavorToProjectCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

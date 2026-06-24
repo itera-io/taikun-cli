@@ -1,7 +1,6 @@
 package delete
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -9,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type DeleteOptions struct {
@@ -29,7 +29,7 @@ func NewCmdDeleteUsers() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return deleteUsersFromGroup(groupID, &opts)
+			return deleteUsersFromGroup(cmd, groupID, &opts)
 		},
 	}
 
@@ -37,7 +37,10 @@ func NewCmdDeleteUsers() *cobra.Command {
 	return &cmd
 }
 
-func deleteUsersFromGroup(groupID int32, opts *DeleteOptions) (err error) {
+func deleteUsersFromGroup(cmd *cobra.Command, groupID int32, opts *DeleteOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// input parameters sanity check
 	if len(opts.UserIDs) == 0 {
 		return fmt.Errorf("no user IDs are specified")
@@ -45,7 +48,7 @@ func deleteUsersFromGroup(groupID int32, opts *DeleteOptions) (err error) {
 	myApiClient := tk.NewClient()
 
 	body := *taikuncore.NewDeleteUserFromGroupCommand(groupID, opts.UserIDs)
-	response, err := myApiClient.Client.GroupsAPI.GroupsDeleteUsers(context.TODO()).DeleteUserFromGroupCommand(body).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsDeleteUsers(ctx).DeleteUserFromGroupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

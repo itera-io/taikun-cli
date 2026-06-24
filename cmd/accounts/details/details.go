@@ -1,8 +1,6 @@
 package details
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -43,7 +41,7 @@ func NewCmdDetails() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return detailsRun(&opts)
+			return detailsRun(cmd, &opts)
 		},
 	}
 
@@ -52,9 +50,12 @@ func NewCmdDetails() *cobra.Command {
 	return &cmd
 }
 
-func detailsRun(opts *DetailsOptions) (err error) {
+func detailsRun(cmd *cobra.Command, opts *DetailsOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.AccountsAPI.AccountsDetails(context.TODO(), opts.AccountID).Execute()
+	data, response, err := myApiClient.Client.AccountsAPI.AccountsDetails(ctx, opts.AccountID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

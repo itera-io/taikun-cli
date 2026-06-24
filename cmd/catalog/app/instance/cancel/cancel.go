@@ -1,14 +1,13 @@
 package cancel
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type CancelOptions struct {
@@ -27,21 +26,24 @@ func NewCmdCancel() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return cancelAppRun(opts)
+			return cancelAppRun(cmd, opts)
 		},
 	}
 
 	return &cmd
 }
 
-func cancelAppRun(opts CancelOptions) (err error) {
+func cancelAppRun(cmd *cobra.Command, opts CancelOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.CancelProjectAppCommand{
 		ProjectAppId: &opts.ProjectAppId,
 	}
 
-	response, err := myApiClient.Client.ProjectAppsAPI.ProjectappCancel(context.TODO()).CancelProjectAppCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectAppsAPI.ProjectappCancel(ctx).CancelProjectAppCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

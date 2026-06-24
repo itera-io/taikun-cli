@@ -1,12 +1,11 @@
 package status
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type StatusOptions struct {
@@ -21,7 +20,7 @@ func NewCmdRobotStatus() *cobra.Command {
 		Short: "Activate or deactivate robot user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return changeRobotStatus(args[0], &opts)
+			return changeRobotStatus(cmd, args[0], &opts)
 		},
 	}
 
@@ -31,7 +30,10 @@ func NewCmdRobotStatus() *cobra.Command {
 	return &cmd
 }
 
-func changeRobotStatus(robotID string, opts *StatusOptions) (err error) {
+func changeRobotStatus(cmd *cobra.Command, robotID string, opts *StatusOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.RobotUserStatusManagementCommand{
@@ -39,7 +41,7 @@ func changeRobotStatus(robotID string, opts *StatusOptions) (err error) {
 		Mode: *taikuncore.NewNullableString(&opts.Mode),
 	}
 
-	response, err := myApiClient.Client.RobotAPI.RobotStatus(context.TODO()).RobotUserStatusManagementCommand(body).Execute()
+	response, err := myApiClient.Client.RobotAPI.RobotStatus(ctx).RobotUserStatusManagementCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

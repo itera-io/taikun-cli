@@ -1,7 +1,6 @@
 package cmdutils
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
@@ -59,7 +58,7 @@ func makeSortByPreRunE(fields fields.Fields) runE {
 
 func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *cobra.Command, args []string, toComplete string) []string {
 	return func(cmd *cobra.Command, args []string, toComplete string) []string {
-		sortingElements, err := getSortingElements(sortType)
+		sortingElements, err := getSortingElements(cmd, sortType)
 		if err != nil {
 			return []string{}
 		}
@@ -79,12 +78,15 @@ func makeSortByCompletionFunc(sortType string, fields fields.Fields) func(cmd *c
 	}
 }
 
-func getSortingElements(sortType string) (sortingElements []string, err error) {
+func getSortingElements(cmd *cobra.Command, sortType string) (sortingElements []string, err error) {
+	ctx, cancel := APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.CommonAPI.CommonSortingElements(context.TODO(), sortType).Execute()
+	data, response, err := myApiClient.Client.CommonAPI.CommonSortingElements(ctx, sortType).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

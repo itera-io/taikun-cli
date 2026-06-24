@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -41,7 +40,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -52,8 +51,8 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
-	showbackRule, err := GetShowbackRuleByID(opts.ShowbackRuleID)
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	showbackRule, err := GetShowbackRuleByID(cmd, opts.ShowbackRuleID)
 	if err != nil {
 		return
 	}
@@ -67,12 +66,15 @@ func listRun(opts *ListOptions) (err error) {
 	return out.PrintResults(labels, listFields)
 }
 
-func GetShowbackRuleByID(showbackRuleID int32) (showbackRule *taikunshowback.ShowbackRulesListDto, err error) {
+func GetShowbackRuleByID(cmd *cobra.Command, showbackRuleID int32) (showbackRule *taikunshowback.ShowbackRulesListDto, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesList(context.TODO()).Id(showbackRuleID).Execute()
+	data, response, err := myApiClient.ShowbackClient.ShowbackRulesAPI.ShowbackrulesList(ctx).Id(showbackRuleID).Execute()
 	if err != nil {
 		return nil, tk.CreateError(response, err)
 	}

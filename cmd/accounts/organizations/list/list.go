@@ -1,8 +1,6 @@
 package list
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -40,7 +38,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 	}
 
@@ -50,11 +48,14 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	var organizations = make([]taikuncore.OrganizationsWithGroupInfoResultDto, 0)
 
-	req := myApiClient.Client.AccountsAPI.AccountsAccountOrganizationsWithGroup(context.TODO(), opts.AccountID).Limit(opts.Limit)
+	req := myApiClient.Client.AccountsAPI.AccountsAccountOrganizationsWithGroup(ctx, opts.AccountID).Limit(opts.Limit)
 	for {
 		data, response, err := req.Execute()
 		if err != nil {

@@ -1,7 +1,6 @@
 package list
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
@@ -34,7 +33,7 @@ func NewCmdList() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return listRun(catid)
+			return listRun(cmd, catid)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -44,10 +43,13 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(catid int32) (err error) {
+func listRun(cmd *cobra.Command, catid int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	data, response, err := myApiClient.Client.CatalogAPI.CatalogList(context.TODO()).Id(catid).Execute()
+	data, response, err := myApiClient.Client.CatalogAPI.CatalogList(ctx).Id(catid).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

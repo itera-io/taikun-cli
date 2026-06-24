@@ -33,15 +33,16 @@ type ListOptions struct {
 
 // We want do display organization name, but want to download the organizations only once.
 var organizationCache map[int32]string
+var catalogCtx context.Context
 
-func initOrganizationCache() {
+func initOrganizationCache(ctx context.Context) {
 	if organizationCache != nil {
 		return
 	}
 
 	organizationCache = make(map[int32]string)
 	var opts list.ListOptions
-	organizations, err := list.ListOrganizations(&opts)
+	organizations, err := list.ListOrganizations(ctx, &opts)
 	if err != nil {
 		fmt.Println("Error fetching organizations:", err)
 		return
@@ -53,7 +54,7 @@ func initOrganizationCache() {
 }
 
 func formatOrganizationName(orgidinput interface{}) string {
-	initOrganizationCache()
+	initOrganizationCache(catalogCtx)
 
 	orgid := int32(orgidinput.(float64))
 	if name, found := organizationCache[orgid]; found {
@@ -72,7 +73,7 @@ func NewCmdList() *cobra.Command {
 		Short: "List available catalogs",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listRun(&opts)
+			return listRun(cmd, &opts)
 		},
 		Aliases: cmdutils.ListAliases,
 	}
@@ -85,7 +86,11 @@ func NewCmdList() *cobra.Command {
 	return &cmd
 }
 
-func listRun(opts *ListOptions) (err error) {
+func listRun(cmd *cobra.Command, opts *ListOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+	catalogCtx = ctx
+
 	orgID, err := cmdutils.ResolveOrgID(opts.OrganizationID, cmdutils.IsRobotAuth())
 	if err != nil {
 		return err
@@ -95,7 +100,7 @@ func listRun(opts *ListOptions) (err error) {
 	myApiClient := tk.NewClient()
 	var catalogs = make([]taikuncore.CatalogListDto, 0)
 
-	myRequest := myApiClient.Client.CatalogAPI.CatalogList(context.TODO())
+	myRequest := myApiClient.Client.CatalogAPI.CatalogList(ctx)
 	if config.SortBy != "" {
 		myRequest = myRequest.SortBy(config.SortBy).SortDirection(*api.GetSortDirection())
 	}

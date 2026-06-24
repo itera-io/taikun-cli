@@ -1,13 +1,12 @@
 package unbind
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdUnbind() *cobra.Command {
@@ -25,17 +24,20 @@ func NewCmdUnbind() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return unbindRun(catalogid, projectid)
+			return unbindRun(cmd, catalogid, projectid)
 		},
 	}
 
 	return &cmd
 }
 
-func unbindRun(catalogid int32, projectid int32) (err error) {
+func unbindRun(cmd *cobra.Command, catalogid int32, projectid int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.CatalogAPI.CatalogDeleteProject(context.TODO(), catalogid).RequestBody([]int32{projectid}).Execute()
+	response, err := myApiClient.Client.CatalogAPI.CatalogDeleteProject(ctx, catalogid).RequestBody([]int32{projectid}).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

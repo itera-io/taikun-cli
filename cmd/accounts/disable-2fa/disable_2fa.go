@@ -1,12 +1,11 @@
 package disable2fa
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type Disable2faOptions struct {
@@ -21,7 +20,7 @@ func NewCmdDisable2fa() *cobra.Command {
 		Short: "Disable 2FA management",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return disable2fa(&opts)
+			return disable2fa(cmd, &opts)
 		},
 	}
 
@@ -30,7 +29,10 @@ func NewCmdDisable2fa() *cobra.Command {
 	return &cmd
 }
 
-func disable2fa(opts *Disable2faOptions) (err error) {
+func disable2fa(cmd *cobra.Command, opts *Disable2faOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.NewDisableTwoFaManagementCommand()
@@ -38,7 +40,7 @@ func disable2fa(opts *Disable2faOptions) (err error) {
 		body.SetVerificationCode(opts.VerificationCode)
 	}
 
-	response, err := myApiClient.Client.AccountsAPI.AccountsDisable2faManagement(context.TODO()).DisableTwoFaManagementCommand(*body).Execute()
+	response, err := myApiClient.Client.AccountsAPI.AccountsDisable2faManagement(ctx).DisableTwoFaManagementCommand(*body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

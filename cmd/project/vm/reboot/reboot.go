@@ -1,13 +1,13 @@
 package reboot
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type RebootOptions struct {
@@ -27,7 +27,7 @@ func NewCmdReboot() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return rebootRun(&opts)
+			return rebootRun(cmd, &opts)
 		},
 	}
 
@@ -36,7 +36,10 @@ func NewCmdReboot() *cobra.Command {
 	return &cmd
 }
 
-func rebootRun(opts *RebootOptions) (err error) {
+func rebootRun(cmd *cobra.Command, opts *RebootOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -50,7 +53,7 @@ func rebootRun(opts *RebootOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsReboot(context.TODO()).RebootStandAloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsReboot(ctx).RebootStandAloneVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

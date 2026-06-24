@@ -1,8 +1,6 @@
 package details
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
@@ -37,7 +35,7 @@ func NewCmdDetails() *cobra.Command {
 		Short: "Get robot user details",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return detailsRun()
+			return detailsRun(cmd)
 		},
 	}
 
@@ -46,9 +44,12 @@ func NewCmdDetails() *cobra.Command {
 	return &cmd
 }
 
-func detailsRun() (err error) {
+func detailsRun(cmd *cobra.Command) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.RobotAPI.RobotDetails(context.TODO()).Execute()
+	data, response, err := myApiClient.Client.RobotAPI.RobotDetails(ctx).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

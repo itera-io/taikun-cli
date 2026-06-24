@@ -1,8 +1,6 @@
 package list
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/out/field"
 	"github.com/itera-io/taikun-cli/utils/out/fields"
@@ -10,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 var listFields = fields.New(
@@ -30,17 +29,20 @@ func NewCmdListGroups() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return listGroups(accountID)
+			return listGroups(cmd, accountID)
 		},
 	}
 	return &cmd
 }
 
-func listGroups(accountID int32) (err error) {
+func listGroups(cmd *cobra.Command, accountID int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	var groups = make([]taikuncore.GroupListItem, 0)
 
-	req := myApiClient.Client.GroupsAPI.GroupsList(context.TODO())
+	req := myApiClient.Client.GroupsAPI.GroupsList(ctx)
 	req = req.AccountId(accountID)
 
 	data, response, err := req.Execute()

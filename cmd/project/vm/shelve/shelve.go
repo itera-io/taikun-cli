@@ -1,13 +1,13 @@
 package shelve
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type ShelveOptions struct {
@@ -26,14 +26,17 @@ func NewCmdShelve() *cobra.Command {
 			if err != nil {
 				return cmderr.ErrIDArgumentNotANumber
 			}
-			return shelveRun(&opts)
+			return shelveRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func shelveRun(opts *ShelveOptions) (err error) {
+func shelveRun(cmd *cobra.Command, opts *ShelveOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -43,7 +46,7 @@ func shelveRun(opts *ShelveOptions) (err error) {
 	}
 
 	// Execute a query into the API + graceful exit
-	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsShelve(context.TODO()).ShelveStandAloneVmCommand(body).Execute()
+	response, err := myApiClient.Client.StandaloneActionsAPI.StandaloneactionsShelve(ctx).ShelveStandAloneVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

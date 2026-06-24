@@ -1,11 +1,11 @@
 package complete
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func VolumeTypeCompletionFunc(cmd *cobra.Command, args []string, toComplete string) (completions []string) {
@@ -20,7 +20,7 @@ func VolumeTypeCompletionFunc(cmd *cobra.Command, args []string, toComplete stri
 		return
 	}
 
-	volumeTypes, err := getOpenStackVolumeTypes(projectID)
+	volumeTypes, err := getOpenStackVolumeTypes(cmd, projectID)
 	if err == nil {
 		completions = append(completions, volumeTypes...)
 	}
@@ -28,7 +28,10 @@ func VolumeTypeCompletionFunc(cmd *cobra.Command, args []string, toComplete stri
 	return
 }
 
-func getOpenStackVolumeTypes(projectID int32) (volumeTypes []string, err error) {
+func getOpenStackVolumeTypes(cmd *cobra.Command, projectID int32) (volumeTypes []string, err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 
@@ -38,7 +41,7 @@ func getOpenStackVolumeTypes(projectID int32) (volumeTypes []string, err error) 
 	}
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.OpenstackCloudCredentialAPI.OpenstackVolumes(context.TODO()).OpenstackVolumeTypeListQuery(body).Execute()
+	data, response, err := myApiClient.Client.OpenstackCloudCredentialAPI.OpenstackVolumes(ctx).OpenstackVolumeTypeListQuery(body).Execute()
 	if err != nil {
 		err = tk.CreateError(response, err)
 		return

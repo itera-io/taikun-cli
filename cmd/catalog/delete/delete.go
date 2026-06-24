@@ -1,11 +1,11 @@
 package delete
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 func NewCmdDelete() *cobra.Command {
@@ -19,17 +19,20 @@ func NewCmdDelete() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return deletecatalogRun(catalogid)
+			return deletecatalogRun(cmd, catalogid)
 		},
 	}
 
 	return &cmd
 }
 
-func deletecatalogRun(catalogid int32) (err error) {
+func deletecatalogRun(cmd *cobra.Command, catalogid int32) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
-	response, err := myApiClient.Client.CatalogAPI.CatalogDelete(context.TODO(), catalogid).Execute()
+	response, err := myApiClient.Client.CatalogAPI.CatalogDelete(ctx, catalogid).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

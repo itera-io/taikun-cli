@@ -1,11 +1,11 @@
 package status
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type StatusOptions struct {
@@ -24,16 +24,19 @@ func NewCmdStatus() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return statusRun(&opts)
+			return statusRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func statusRun(opts *StatusOptions) (err error) {
+func statusRun(cmd *cobra.Command, opts *StatusOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
-	data, response, err := myApiClient.Client.ServersAPI.ServersStatus(context.TODO(), opts.ServerID).Execute()
+	data, response, err := myApiClient.Client.ServersAPI.ServersStatus(ctx, opts.ServerID).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

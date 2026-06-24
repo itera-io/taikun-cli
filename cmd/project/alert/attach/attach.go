@@ -1,7 +1,6 @@
 package attach
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -27,7 +26,7 @@ func NewCmdAttach() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return attachRun(&opts)
+			return attachRun(cmd, &opts)
 		},
 	}
 
@@ -37,13 +36,16 @@ func NewCmdAttach() *cobra.Command {
 	return &cmd
 }
 
-func attachRun(opts *AttachOptions) (err error) {
+func attachRun(cmd *cobra.Command, opts *AttachOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.AttachDetachAlertingProfileCommand{
 		ProjectId:         &opts.ProjectID,
 		AlertingProfileId: *taikuncore.NewNullableInt32(&opts.AlertingProfileID),
 	}
-	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAttach(context.TODO()).AttachDetachAlertingProfileCommand(body).Execute()
+	response, err := myApiClient.Client.AlertingProfilesAPI.AlertingprofilesAttach(ctx).AttachDetachAlertingProfileCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

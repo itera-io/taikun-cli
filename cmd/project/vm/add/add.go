@@ -1,7 +1,6 @@
 package add
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -94,7 +93,7 @@ func NewCmdAdd() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return addRun(&opts)
+			return addRun(cmd, &opts)
 		},
 	}
 
@@ -157,7 +156,10 @@ func parseTagsOption(tagsOption []string) ([]taikuncore.StandAloneMetaDataDto, e
 	return tags, nil
 }
 
-func addRun(opts *AddOptions) error {
+func addRun(cmd *cobra.Command, opts *AddOptions) error {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	// Create and authenticated client to the Taikun API
 	myApiClient := tk.NewClient()
 	tags, err := parseTagsOption(opts.Tags)
@@ -197,7 +199,7 @@ func addRun(opts *AddOptions) error {
 	}
 
 	// Execute a query into the API + graceful exit
-	data, response, err := myApiClient.Client.StandaloneAPI.StandaloneCreate(context.TODO()).CreateStandAloneVmCommand(body).Execute()
+	data, response, err := myApiClient.Client.StandaloneAPI.StandaloneCreate(ctx).CreateStandAloneVmCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

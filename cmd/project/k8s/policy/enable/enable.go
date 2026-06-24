@@ -1,7 +1,6 @@
 package enable
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
@@ -27,7 +26,7 @@ func NewCmdEnable() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return enableRun(&opts)
+			return enableRun(cmd, &opts)
 		},
 	}
 
@@ -37,13 +36,16 @@ func NewCmdEnable() *cobra.Command {
 	return &cmd
 }
 
-func enableRun(opts *EnableOptions) (err error) {
+func enableRun(cmd *cobra.Command, opts *EnableOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	body := taikuncore.DeploymentOpaEnableCommand{
 		ProjectId:       &opts.ProjectID,
 		OpaCredentialId: &opts.PolicyProfileID,
 	}
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableOpa(context.TODO()).DeploymentOpaEnableCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentEnableOpa(ctx).DeploymentOpaEnableCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

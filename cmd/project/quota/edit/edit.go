@@ -1,7 +1,6 @@
 package edit
 
 import (
-	"context"
 	"fmt"
 	"github.com/itera-io/taikun-cli/cmd/cmderr"
 	"github.com/itera-io/taikun-cli/utils/out"
@@ -9,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 const (
@@ -69,10 +69,13 @@ func NewCmdEdit() *cobra.Command {
 }
 
 func editRun(cmd *cobra.Command, opts *EditOptions) error {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	client := tk.NewClient()
 
 	// Load existing quotas
-	data, response, err := client.Client.ProjectQuotasAPI.ProjectquotasList(context.TODO()).Id(opts.projectId).Execute()
+	data, response, err := client.Client.ProjectQuotasAPI.ProjectquotasList(ctx).Id(opts.projectId).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
@@ -145,7 +148,7 @@ func editRun(cmd *cobra.Command, opts *EditOptions) error {
 	body.SetVmRam(types.GiBToB(vmRam))
 
 	// Send the update request
-	response, err = client.Client.ProjectQuotasAPI.ProjectquotasUpdate(context.TODO()).UpdateQuotaCommand(body).Execute()
+	response, err = client.Client.ProjectQuotasAPI.ProjectquotasUpdate(ctx).UpdateQuotaCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

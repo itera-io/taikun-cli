@@ -1,12 +1,12 @@
 package repair
 
 import (
-	"context"
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type RepairOptions struct {
@@ -25,18 +25,21 @@ func NewCmdRepair() *cobra.Command {
 			if err != nil {
 				return
 			}
-			return repairRun(&opts)
+			return repairRun(cmd, &opts)
 		},
 	}
 
 	return &cmd
 }
 
-func repairRun(opts *RepairOptions) (err error) {
+func repairRun(cmd *cobra.Command, opts *RepairOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 	var body taikuncore.ProjectDeploymentRepairCommand
 	body.SetProjectId(opts.ProjectID)
-	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepair(context.TODO()).ProjectDeploymentRepairCommand(body).Execute()
+	response, err := myApiClient.Client.ProjectDeploymentAPI.ProjectDeploymentRepair(ctx).ProjectDeploymentRepairCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

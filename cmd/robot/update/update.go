@@ -1,7 +1,6 @@
 package update
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type UpdateOptions struct {
@@ -26,7 +26,7 @@ func NewCmdUpdate() *cobra.Command {
 		Short: "Update robot user",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return updateRobot(args[0], &opts)
+			return updateRobot(cmd, args[0], &opts)
 		},
 	}
 
@@ -38,7 +38,10 @@ func NewCmdUpdate() *cobra.Command {
 	return &cmd
 }
 
-func updateRobot(robotID string, opts *UpdateOptions) (err error) {
+func updateRobot(cmd *cobra.Command, robotID string, opts *UpdateOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.EditRobotUserCommand{
@@ -62,7 +65,7 @@ func updateRobot(robotID string, opts *UpdateOptions) (err error) {
 		body.SetExpiresAt(expiresAt)
 	}
 
-	response, err := myApiClient.Client.RobotAPI.RobotUpdate(context.TODO()).EditRobotUserCommand(body).Execute()
+	response, err := myApiClient.Client.RobotAPI.RobotUpdate(ctx).EditRobotUserCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}

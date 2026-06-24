@@ -1,13 +1,12 @@
 package check
 
 import (
-	"context"
-
 	"github.com/itera-io/taikun-cli/utils/out"
 	"github.com/itera-io/taikun-cli/utils/types"
 	tk "github.com/itera-io/taikungoclient"
 	taikuncore "github.com/itera-io/taikungoclient/client"
 	"github.com/spf13/cobra"
+	"github.com/itera-io/taikun-cli/cmd/cmdutils"
 )
 
 type CheckOptions struct {
@@ -26,7 +25,7 @@ func NewCmdCheckDuplicateEntity() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return checkDuplicateEntity(accountID, &opts)
+			return checkDuplicateEntity(cmd, accountID, &opts)
 		},
 	}
 
@@ -36,7 +35,10 @@ func NewCmdCheckDuplicateEntity() *cobra.Command {
 	return &cmd
 }
 
-func checkDuplicateEntity(accountID int32, opts *CheckOptions) (err error) {
+func checkDuplicateEntity(cmd *cobra.Command, accountID int32, opts *CheckOptions) (err error) {
+	ctx, cancel := cmdutils.APIContext(cmd)
+	defer cancel()
+
 	myApiClient := tk.NewClient()
 
 	body := taikuncore.CheckDuplicateGroupCommand{
@@ -44,7 +46,7 @@ func checkDuplicateEntity(accountID int32, opts *CheckOptions) (err error) {
 		Name:      *taikuncore.NewNullableString(&opts.Name),
 	}
 
-	response, err := myApiClient.Client.GroupsAPI.GroupsCheckDuplicateEntity(context.TODO()).CheckDuplicateGroupCommand(body).Execute()
+	response, err := myApiClient.Client.GroupsAPI.GroupsCheckDuplicateEntity(ctx).CheckDuplicateGroupCommand(body).Execute()
 	if err != nil {
 		return tk.CreateError(response, err)
 	}
