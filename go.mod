@@ -6,7 +6,7 @@ require (
 	github.com/go-openapi/strfmt v0.24.0
 	github.com/itera-io/taikungoclient v0.0.0-20251014100817-e7578ebb929f
 	github.com/jedib0t/go-pretty/v6 v6.6.8
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 )
 
 //replace github.com/itera-io/taikungoclient v0.0.0-20250808111946-67f44fc8d658 => /home/smidra/taikun/taikungoclient/taikungoclient-official
