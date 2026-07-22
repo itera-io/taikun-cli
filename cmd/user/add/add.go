@@ -72,20 +72,18 @@ type AddOptions struct {
 	DisplayName string
 	Email       string
 	AccountID   int32
-	Username    string
 }
 
 func NewCmdAdd() *cobra.Command {
 	var opts AddOptions
 
 	cmd := cobra.Command{
-		Use:   "add <username>",
+		Use:   "add",
 		Short: "Add a user",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.Username = args[0]
 			return addRun(cmd, &opts)
 		},
-		Args: cobra.ExactArgs(1),
+		Args: cobra.NoArgs,
 	}
 
 	// Email is a required flag
@@ -115,7 +113,6 @@ func addRun(cmd *cobra.Command, opts *AddOptions) (err error) {
 	body.SetDisplayName(opts.DisplayName)
 	body.SetEmail(opts.Email)
 	body.SetAccountId(opts.AccountID)
-	body.SetUsername(opts.Username)
 
 	data, response, err := myApiClient.Client.UsersAPI.UsersCreate(ctx).CreateUserCommand(body).Execute()
 	if err != nil {
