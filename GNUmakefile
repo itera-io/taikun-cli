@@ -1,6 +1,8 @@
 BINARY=taikun
 GOLANGCI_LINTERS_VERSION := v2.12.2
 
+all: help
+
 default: install
 
 deps: shellspec-install goreleaser-install go-linters-install ## Installing development prerequisites locally
